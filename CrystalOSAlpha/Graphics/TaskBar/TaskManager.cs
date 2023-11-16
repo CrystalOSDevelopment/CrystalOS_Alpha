@@ -1,6 +1,7 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
 using CrystalOSAlpha.Applications.Calculator;
+using CrystalOSAlpha.Applications.Gameboy;
 using CrystalOSAlpha.Applications.Minecraft;
 using CrystalOSAlpha.Applications.Settings;
 using CrystalOSAlpha.Graphics.Engine;
@@ -170,6 +171,11 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                                 m.Name = "Sett...";
                                 m.Source = "Settings";
                                 m.Icon = ImprovedVBE.ScaleImageStock(Resources.Settings, 56, 56);
+                                Items.Add(m);
+
+                                m.Name = "Gameboy";
+                                m.Source = "Gameboy";
+                                m.Icon = ImprovedVBE.ScaleImageStock(ImageViewer.Nr1, 56, 56);
                                 Items.Add(m);
 
                                 calendar = false;
@@ -370,6 +376,19 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                                 c.width = 550;
                                 c.height = 380;
                                 c.name = "Sett...";
+                                c.z = 999;
+                                c.icon = m.Icon;
+                                TaskScheduler.Apps.Add(c);
+                                MenuOpened = false;
+                            }
+                            else if (m.Source == "Gameboy")
+                            {
+                                Core c = new Core();
+                                c.x = 100;
+                                c.y = 100;
+                                c.width = 162 * 3 - 4;
+                                c.height = 165 * 3 - 39 + 25;
+                                c.name = "Gameboy";
                                 c.z = 999;
                                 c.icon = m.Icon;
                                 TaskScheduler.Apps.Add(c);

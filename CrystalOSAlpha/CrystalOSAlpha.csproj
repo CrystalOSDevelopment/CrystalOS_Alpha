@@ -28,6 +28,11 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <None Remove="Applications\Gameboy\4_in_1.gb" />
+      <None Remove="Applications\Gameboy\Caesars_Palace.gb" />
+      <None Remove="Applications\Gameboy\Smurfs_Nightmare.gb" />
+      <None Remove="Applications\Gameboy\Tetris.gb" />
+      <None Remove="Applications\Gameboy\Zelda.gb" />
       <None Remove="Applications\Minecraft\AMETHYST.bmp" />
       <None Remove="Applications\Minecraft\BOOKSHELF.bmp" />
       <None Remove="Applications\Minecraft\BRICK.bmp" />
@@ -86,6 +91,11 @@
     </ItemGroup>
 
     <ItemGroup>
+      <EmbeddedResource Include="Applications\Gameboy\4_in_1.gb" />
+      <EmbeddedResource Include="Applications\Gameboy\Caesars_Palace.gb" />
+      <EmbeddedResource Include="Applications\Gameboy\Smurfs_Nightmare.gb" />
+      <EmbeddedResource Include="Applications\Gameboy\Tetris.gb" />
+      <EmbeddedResource Include="Applications\Gameboy\Zelda.gb" />
       <EmbeddedResource Include="Applications\Minecraft\AMETHYST.bmp" />
       <EmbeddedResource Include="Applications\Minecraft\BOOKSHELF.bmp" />
       <EmbeddedResource Include="Applications\Minecraft\BRICK.bmp" />

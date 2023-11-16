@@ -206,7 +206,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                 {
                     if(MouseManager.X > X + button.X && MouseManager.X < X + button.X + button.Width)
                     {
-                        if(MouseManager.Y > Y + button.Y && MouseManager.Y < Y + button.Y + button.Y)
+                        if(MouseManager.Y > Y + button.Y && MouseManager.Y < Y + button.Y + button.Height)
                         {
                             if(clicked == false)
                             {
@@ -222,6 +222,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                                         }
                                         else
                                         {
+                                            Month = 1;
                                             Year++;
                                         }
                                         break;
@@ -231,6 +232,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                                         button.Clicked = true;
                                         if (Month == 1)
                                         {
+                                            Month = 12;
                                             Year--;
                                         }
                                         else

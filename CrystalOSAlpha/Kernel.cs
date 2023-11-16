@@ -15,6 +15,7 @@ using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics.TaskBar;
 using CrystalOSAlpha.Graphics.Widgets;
 using IL2CPU.API.Attribs;
+using ProjectDMG;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
@@ -41,9 +42,6 @@ namespace CrystalOS_Alpha
                 //This will automatically set the IP config after DHCP response
                 xClient.SendDiscoverPacket();
             }
-            
-            //NetworkDevice nic = NetworkDevice.GetDeviceByName("eth0"); //get network device by name
-            //IPConfig.Enable(nic, new Address(192, 168, 1, 69), new Address(255, 255, 255, 0), new Address(192, 168, 1, 254)); //enable IPv4 configuration
 
             FPS_Counter f = new FPS_Counter();
             f.X = 200;
@@ -93,6 +91,7 @@ MemoryStream VerdanaCustomCharset24 = new MemoryStream(Convert.FromBase64String(
             Ticken++;
         }
 
+        public static bool power_on = true;
         protected override void Run()
         {
             Rendering.render();
@@ -101,8 +100,6 @@ MemoryStream VerdanaCustomCharset24 = new MemoryStream(Convert.FromBase64String(
             //_3DRendering.Simple3DRendering.DrawCube();
 
             TaskManager.Main();
-
-            //ImprovedVBE.DrawFilledRectangle(ImprovedVBE.cover, ImprovedVBE.colourToNumber(255, 255, 255), (int)MouseManager.X, (int)MouseManager.Y, 10, 10, false);
 
             ImprovedVBE.DrawImageAlpha3(C, (int)MouseManager.X, (int)MouseManager.Y);
 
