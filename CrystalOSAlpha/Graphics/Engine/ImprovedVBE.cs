@@ -684,7 +684,7 @@ namespace CrystalOSAlpha
             }
         }
 
-        public static void DrawFilledEllipse(int xCenter, int yCenter, int yR, int xR, int color)
+        public static Bitmap DrawFilledEllipse(Bitmap input, int xCenter, int yCenter, int yR, int xR, int color)
         {
             /*
             int r = (color & 0xff0000) >> 16;
@@ -710,9 +710,9 @@ namespace CrystalOSAlpha
                         int g2 = (int)(inverseBlendFactor * g3 + blendFactor * g);
                         int b2 = (int)(inverseBlendFactor * b3 + blendFactor * b);
                         */
-                        if (xCenter + x > 0 && xCenter + x < width - 1 && yCenter + y > 0 && yCenter + y < height)
+                        if (xCenter + x > 0 && xCenter + x < input.Width - 1 && yCenter + y > 0 && yCenter + y < input.Height)
                         {
-                            cover.RawData[(yCenter + y) * width + xCenter + x] = color;
+                            input.RawData[(yCenter + y) * input.Width + xCenter + x] = color;
                         }
 
                         //DrawPixelfortext(xCenter + x, yCenter + y, GetGradientColor(x, 0, width, height));
@@ -721,6 +721,7 @@ namespace CrystalOSAlpha
                     }
                 }
             }
+            return input;
         }
     }
 }

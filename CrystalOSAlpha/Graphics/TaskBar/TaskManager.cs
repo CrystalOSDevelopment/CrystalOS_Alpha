@@ -4,6 +4,7 @@ using CrystalOSAlpha.Applications.Calculator;
 using CrystalOSAlpha.Applications.Minecraft;
 using CrystalOSAlpha.Applications.Settings;
 using CrystalOSAlpha.Graphics.Engine;
+using CrystalOSAlpha.Graphics.Icons;
 using CrystalOSAlpha.Graphics.Widgets;
 using IL2CPU.API.Attribs;
 using Microsoft.VisualBasic;
@@ -43,6 +44,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
         public static string DayOfWeek = "";
 
         public static bool update = true;
+        public static bool calendar = false;
 
         public static int Time = 0;
         public static void Main()
@@ -86,11 +88,14 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                         DayOfWeek = "Sunday";
                         break;
                 }
+
+                BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DateTime.UtcNow.Hour.ToString() + ":" + DateTime.UtcNow.Minute, 60, 5);
+                BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DayOfWeek + "," + DateTime.UtcNow.Day, (int)(Extension_Dock.Width / 2 - (DayOfWeek + "," + DateTime.UtcNow.Day).Length * 4), 20);
                 resize = false;
             }
-            if(MenuOpened == false)
+            if(MenuOpened == false && calendar == false)
             {
-                if(MouseManager.X > Left - ((ImprovedVBE.width / 192 * 1.3) * 35) && MouseManager.X < Left + ((ImprovedVBE.width / 192 * 1.3) * 35) && MouseManager.Y > ImprovedVBE.height - 70 && MouseManager.Y < ImprovedVBE.height)
+                if(MouseManager.X > Left - ((ImprovedVBE.width / 192 * 1.3) * 35) - 175 && MouseManager.X < Left + ((ImprovedVBE.width / 192 * 1.3) * 35) && MouseManager.Y > ImprovedVBE.height - 70 && MouseManager.Y < ImprovedVBE.height)
                 {
                     if(X_offset < ImprovedVBE.width / 192 * 1.3 * 35) //ImprovedVBE.height - 70
                     {
@@ -104,12 +109,13 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                         Extension_Dock = ImprovedVBE.DrawImageAlpha2(Extension_Dock, (int)(Left - X_offset) - 175, Top, Extension_Dock);
 
                         BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DateTime.UtcNow.Hour.ToString() + ":" + DateTime.UtcNow.Minute, 60, 5);
-                        BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DayOfWeek + "," + DateTime.UtcNow.Day, 44, 20);
+                        BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DayOfWeek + "," + DateTime.UtcNow.Day, (int)(Extension_Dock.Width / 2 - (DayOfWeek + "," + DateTime.UtcNow.Day).Length * 4), 20);//44
                         /*
                         ImprovedVBE.DrawFilledRectangle(ImprovedVBE.colourToNumber(255, 255, 255), Left - X_offset, Top, X_offset * 2, height, true);
                         ImprovedVBE.DrawFilledEllipse(Left - X_offset, Top + height / 2 - 1, height / 2, height / 2, ImprovedVBE.colourToNumber(255, 255, 255));
                         ImprovedVBE.DrawFilledEllipse(Left+ X_offset, Top + height / 2 - 1, height / 2, height / 2, ImprovedVBE.colourToNumber(255, 255, 255));
                         */
+
                     }
                 }
                 else
@@ -126,7 +132,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                         Extension_Dock = ImprovedVBE.DrawImageAlpha2(Extension_Dock, (int)(Left - X_offset) - 175, Top, Extension_Dock);
 
                         BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DateTime.UtcNow.Hour.ToString() + ":" + DateTime.UtcNow.Minute, 60, 5);
-                        BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DayOfWeek + "," + DateTime.UtcNow.Day, 44, 20);
+                        BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DayOfWeek + "," + DateTime.UtcNow.Day, (int)(Extension_Dock.Width / 2 - (DayOfWeek + "," + DateTime.UtcNow.Day).Length * 4), 20);
 
                         /*
                         ImprovedVBE.DrawFilledRectangle(ImprovedVBE.colourToNumber(255, 255, 255), Left - X_offset, Top, X_offset * 2, height, true);
@@ -158,16 +164,30 @@ namespace CrystalOSAlpha.Graphics.TaskBar
 
                                 m.Name = "Calc...";
                                 m.Source = "Calculator";
-                                m.Icon = ImprovedVBE.ScaleImageStock(ImageViewer.Nr1, 56, 56);
+                                m.Icon = ImprovedVBE.ScaleImageStock(Resources.Calculator, 56, 56);
                                 Items.Add(m);
 
                                 m.Name = "Sett...";
                                 m.Source = "Settings";
-                                m.Icon = ImprovedVBE.ScaleImageStock(ImageViewer.Nr1, 56, 56);
+                                m.Icon = ImprovedVBE.ScaleImageStock(Resources.Settings, 56, 56);
                                 Items.Add(m);
 
+                                calendar = false;
                                 MenuOpened = true;
                                 resize = true;
+                                Triggered = true;
+                            }
+                        }
+                    }
+                    if (MouseManager.X > Left - X_offset - 175 && MouseManager.X < Left - X_offset - 20)
+                    {
+                        if (MouseManager.Y > Top && MouseManager.Y < ImprovedVBE.height - 10)
+                        {
+                            update = true;
+                            if (Triggered == false)
+                            {
+                                MenuOpened = false;
+                                calendar = true;
                                 Triggered = true;
                             }
                         }
@@ -189,27 +209,73 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                            if(Triggered == false)
                            {
                                 Items.Clear();
-                                MenuOpened = false;
+                                if(MenuOpened == false)
+                                {
+                                    MenuOpened = true;
+                                    calendar = false;
+                                }
+                                else
+                                {
+                                    MenuOpened = false;
+                                }
                                 Triggered = true;
                            }
                         }
                     }
+                    else if (MouseManager.X > Left - X_offset - 175 && MouseManager.X < Left - X_offset - 20)
+                    {
+                        if (MouseManager.Y > Top && MouseManager.Y < ImprovedVBE.height - 10)
+                        {
+                            update = true;
+                            if (Triggered == false)
+                            {
+                                if(calendar == false)
+                                {
+                                    calendar = true;
+                                    MenuOpened = false;
+                                }
+                                else
+                                {
+                                    calendar = false;
+                                }
+                                Triggered = true;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        //MenuOpened = false;
+                        //calendar = false;
+                    }
                 }
-                Menu_Manager();
+                if(MenuOpened == true)
+                {
+                    Menu_Manager();
+                }
+                else if(calendar == true)
+                {
+                    Calendar.Calendar_Widget((int)(Left - X_offset) - 275, Top - 330);
+                }
             }
 
+
             ImprovedVBE.DrawImageAlpha(TaskBar, (int)(Left - X_offset), Top, ImprovedVBE.cover);
+
+            if(Top < ImprovedVBE.height - 10)
+            {
+                TaskScheduler.Render_Icons();
+            }
 
             if (Time != DateTime.UtcNow.Minute)
             {
                 Extension_Dock = Base.Widget_Back(150, 50, ImprovedVBE.colourToNumber(255, 255, 255));
                 Extension_Dock = ImprovedVBE.DrawImageAlpha2(Extension_Dock, (int)(Left - X_offset) - 175, Top, Extension_Dock);
+                BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DateTime.UtcNow.Hour.ToString() + ":" + DateTime.UtcNow.Minute, 60, 5);
+                BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DayOfWeek + "," + DateTime.UtcNow.Day, (int)(Extension_Dock.Width / 2 - (DayOfWeek + "," + DateTime.UtcNow.Day).Length * 4), 20);
 
                 Time = DateTime.UtcNow.Minute;
             }
 
-            BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DateTime.UtcNow.Hour.ToString() + ":" + DateTime.UtcNow.Minute, 60, 5);
-            BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DayOfWeek + "," + DateTime.UtcNow.Day, 44, 20);
             ImprovedVBE.DrawImageAlpha(Extension_Dock, (int)(Left - X_offset) - 175, Top, ImprovedVBE.cover);
             
             /*
@@ -277,6 +343,8 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                                 r.Layers.Add(layer9);
                                 r.Layers.Add(layer10);
 
+                                r.icon = m.Icon;
+
                                 TaskScheduler.Apps.Add(r);
 
                                 MenuOpened = false;
@@ -290,6 +358,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                                 c.height = 380;
                                 c.name = "Calc...";
                                 c.z = 999;
+                                c.icon = m.Icon;
                                 TaskScheduler.Apps.Add(c);
                                 MenuOpened = false;
                             }
@@ -302,6 +371,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                                 c.height = 380;
                                 c.name = "Sett...";
                                 c.z = 999;
+                                c.icon = m.Icon;
                                 TaskScheduler.Apps.Add(c);
                                 MenuOpened = false;
                             }

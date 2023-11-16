@@ -34,6 +34,8 @@ namespace CrystalOSAlpha.Applications.Settings
         public bool minimised { get; set; }
         public bool movable { get; set; }
 
+        public Bitmap icon { get; set; }
+
         public bool initial = true;
         public bool clicked = false;
 
@@ -109,6 +111,8 @@ namespace CrystalOSAlpha.Applications.Settings
                 DrawGradientLeftToRight();
 
                 DrawFilledEllipse(width - 13, 10, 8, 8, ImprovedVBE.colourToNumber(255, 0, 0));
+
+                DrawFilledEllipse(width - 34, 10, 8, 8, ImprovedVBE.colourToNumber(227, 162, 37));
 
                 BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, name, 2, 2);
 

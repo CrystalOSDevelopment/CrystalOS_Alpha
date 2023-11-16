@@ -2,6 +2,8 @@
 using CrystalOSAlpha.Applications;
 using CrystalOSAlpha.Applications.Calculator;
 using CrystalOSAlpha.Applications.Minecraft;
+using CrystalOSAlpha.Graphics.Engine;
+using CrystalOSAlpha.Graphics.TaskBar;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +19,11 @@ namespace CrystalOSAlpha.Graphics
         public static int neg_y = 0;
         public static bool get_values = true;
         public static int index = 0;
+
+        public static int x_offset = (int)(TaskManager.Left - TaskManager.X_offset) + 15;
+        public static int y_offset = TaskManager.Top - 35;
+
+        public static bool Clicked = false;
 
         public static void Exec()
         {
@@ -46,6 +53,13 @@ namespace CrystalOSAlpha.Graphics
                         if(MouseManager.Y > app.y + 2 && MouseManager.Y < app.y + 18)
                         {
                             Apps.Remove(app);
+                        }
+                    }
+                    if (MouseManager.X < app.x + app.width - 26 && MouseManager.X > app.x + app.width - 42)
+                    {
+                        if (MouseManager.Y > app.y + 2 && MouseManager.Y < app.y + 18)
+                        {
+                            app.minimised = true;
                         }
                     }
                     if (MouseManager.X < app.x + app.width - 21 && MouseManager.X > app.x)
@@ -107,10 +121,50 @@ namespace CrystalOSAlpha.Graphics
                         get_values = true;
                     }
                 }
-                app.App();
                 index++;
+                if(app.minimised == false)
+                {
+                    app.App();
+                }
             }
             index = 0;
+        }
+
+        public static void Render_Icons()
+        {
+            foreach(var app in Apps)
+            {
+                if(MouseManager.MouseState == MouseState.Left)
+                {
+                    if(MouseManager.X > x_offset && MouseManager.X < x_offset + app.icon.Width)
+                    {
+                        if(MouseManager.Y > y_offset && MouseManager.Y < y_offset + app.icon.Height + 15)
+                        {
+                            if(Clicked == false)
+                            {
+                                if(app.minimised == true)
+                                {
+                                    app.minimised = false;
+                                }
+                                else
+                                {
+                                    app.minimised = true;
+                                }
+                                Clicked = true;
+                            }
+                        }
+                    }
+                }
+                ImprovedVBE.DrawImageAlpha(app.icon, x_offset, y_offset, ImprovedVBE.cover);
+                BitFont.DrawBitFontString(ImprovedVBE.cover, "ArialCustomCharset16", System.Drawing.Color.White, app.name, x_offset + 4, (int)(y_offset + app.icon.Height + 3));
+                x_offset += (int)app.icon.Width + 8;
+            }
+            if(MouseManager.MouseState == MouseState.None)
+            {
+                Clicked = false;
+            }
+            x_offset = (int)(TaskManager.Left - TaskManager.X_offset) + 15;
+            y_offset = TaskManager.Top - 35;
         }
     }
 }

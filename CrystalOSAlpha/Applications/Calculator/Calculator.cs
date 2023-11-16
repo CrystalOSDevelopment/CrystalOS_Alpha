@@ -33,6 +33,8 @@ namespace CrystalOSAlpha.Applications.Calculator
         public int y_1 = 0;
         public int width { get; set; }
         public int height { get; set; }
+
+        public Bitmap icon { get; set; }
         public Bitmap canvas;
         public Bitmap back_canvas;
         public bool once = true;
@@ -102,6 +104,8 @@ namespace CrystalOSAlpha.Applications.Calculator
                 DrawGradientLeftToRight();
 
                 DrawFilledEllipse(width - 13, 10, 8, 8, ImprovedVBE.colourToNumber(255, 0, 0));
+
+                DrawFilledEllipse(width - 34, 10, 8, 8, ImprovedVBE.colourToNumber(227, 162, 37));
 
                 BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, name, 2, 2);
 

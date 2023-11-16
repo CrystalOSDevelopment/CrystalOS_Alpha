@@ -1,5 +1,6 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
+using CrystalOSAlpha.Graphics.Engine;
 using IL2CPU.API.Attribs;
 using System;
 using System.Collections.Generic;
@@ -32,6 +33,7 @@ namespace CrystalOSAlpha.Graphics.Widgets
                 Back = ImprovedVBE.DrawImageAlpha2(Back, X, Y, Back);
                 Bitmap bmp = new Bitmap(Elephant);
                 Nr1 = ImprovedVBE.ScaleImageStock(bmp, 175, 150);
+                BitFont.DrawBitFontString(Back, "ArialCustomCharset16", System.Drawing.Color.White, "ImageViewer", 7, 2);
                 Get_Back = false;
             }
             ImprovedVBE.DrawImageAlpha(Back, X, Y, ImprovedVBE.cover);
