@@ -1,4 +1,5 @@
 ﻿using Cosmos.System;
+using CrystalOSAlpha.Graphics.TaskBar;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,7 @@ namespace CrystalOSAlpha.Graphics.Widgets
 
         public static void render()
         {
+            SideNav.start_y = 40;
             for (int i = 0; i < widgets.Count; i++)
             {
                 for (int j = 0; j < widgets.Count - i - 1; j++)

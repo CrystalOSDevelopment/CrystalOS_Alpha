@@ -147,7 +147,7 @@ namespace CrystalOSAlpha.Applications.Calculator
                     }
                 }
 
-                TextBox.Box(canvas, 5, 25, (int)(canvas.Width - 10), 40, ImprovedVBE.colourToNumber(60, 60, 60), Content, "Sample text");
+                TextBox.Box(canvas, 5, 25, (int)(canvas.Width - 10), 40, ImprovedVBE.colourToNumber(60, 60, 60), Content, "Sample text", TextBox.Options.right);
 
                 window.RawData = canvas.RawData;
                 back_canvas = canvas;

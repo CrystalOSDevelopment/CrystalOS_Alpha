@@ -69,6 +69,30 @@ namespace CrystalOSAlpha.Graphics.Engine
             return UsedX;
         }
 
+        public static int DrawBitFontString(Bitmap Canvas, string FontName, Color[] color, string Text, int X, int Y, int Devide = 2, bool DisableAntiAliasing = false)
+        {
+            if (!RegisteredBitFont.ContainsKey(FontName))
+            {
+                throw new KeyNotFoundException($"\"{FontName}\" is not registered yet");
+            }
+
+            BitFontDescriptor bitFontDescriptor = RegisteredBitFont[FontName];
+            string[] Lines = Text.Split('\n');
+            int UsedX = 0;
+            int counter = 0;
+            for (int l = 0; l < Lines.Length; l++)
+            {
+                UsedX = 0;
+                for (int i = 0; i < Lines[l].Length; i++)
+                {
+                    char c = Lines[l][i];
+                    UsedX += DrawBitFontChar(Canvas, bitFontDescriptor.MS, bitFontDescriptor.Size, color[counter], bitFontDescriptor.Charset.Impl_Str_IndexOf(c), UsedX + X, Y + bitFontDescriptor.Size * l, !DisableAntiAliasing) + Devide;
+                    counter++;
+                }
+            }
+            return UsedX;
+        }
+
         public static int Impl_Str_IndexOf(this string s, char c)
         {
             for (int i = 0; i < s.Length; i++)

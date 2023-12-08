@@ -16,6 +16,7 @@ using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
+using TaskScheduler = CrystalOSAlpha.Graphics.TaskScheduler;
 
 namespace CrystalOSAlpha.Applications.Settings
 {
@@ -33,6 +34,7 @@ namespace CrystalOSAlpha.Applications.Settings
 
         public bool minimised { get; set; }
         public bool movable { get; set; }
+        
 
         public Bitmap icon { get; set; }
 
@@ -49,7 +51,7 @@ namespace CrystalOSAlpha.Applications.Settings
         
         public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
 
-        public string Active = "Display";
+        public string ActiveD = "Display";
 
         public string customres = "";
 
@@ -64,7 +66,7 @@ namespace CrystalOSAlpha.Applications.Settings
                 Buttons.Add(new Button_prop(5, 114, 98, 30, "Networking", 1));
                 Buttons.Add(new Button_prop(5, 155, 98, 30, "About OS", 1));
 
-                switch (Active)
+                switch (ActiveD)
                 {
                     case "Display":
                         Buttons.Add(new Button_prop(303, 338, 98, 20, "Apply", 1));
@@ -126,19 +128,19 @@ namespace CrystalOSAlpha.Applications.Settings
                         switch (button.Text)
                         {
                             case "Display":
-                                Active = button.Text;
+                                ActiveD = button.Text;
                                 initial = true;
                                 break;
                             case "Sound":
-                                Active = button.Text;
+                                ActiveD = button.Text;
                                 initial = true;
                                 break;
                             case "Networking":
-                                Active = button.Text;
+                                ActiveD = button.Text;
                                 initial = true;
                                 break;
                             case "About OS":
-                                Active = button.Text;
+                                ActiveD = button.Text;
                                 initial = true;
                                 break;
                         }
@@ -154,10 +156,10 @@ namespace CrystalOSAlpha.Applications.Settings
                     }
                 }
 
-                switch (Active)
+                switch (ActiveD)
                 {
                     case "Display":
-                        BitFont.DrawBitFontString(canvas, "VerdanaCustomCharset24", Color.White, Active, width - BitFont.DrawBitFontString(back_canvas, "VerdanaCustomCharset24", Color.White, Active, 0, 0) - 5, 24);
+                        BitFont.DrawBitFontString(canvas, "VerdanaCustomCharset24", Color.White, ActiveD, width - BitFont.DrawBitFontString(back_canvas, "VerdanaCustomCharset24", Color.White, ActiveD, 0, 0) - 5, 24);
                         
                         BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, "Current resolution: " + ImprovedVBE.width + "x" + ImprovedVBE.height + "x32", 128, 48);
                         BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, "Available resolutions:", 128, 73);
@@ -241,14 +243,14 @@ namespace CrystalOSAlpha.Applications.Settings
 
                         BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, " Use custom resolution:", 128, 317);
 
-                        TextBox.Box(canvas, 128, 338, 157, 20, ImprovedVBE.colourToNumber(60, 60, 60), customres, "Example: 800x600x32");
+                        TextBox.Box(canvas, 128, 338, 157, 20, ImprovedVBE.colourToNumber(60, 60, 60), customres, "Example: 800x600x32", TextBox.Options.left);
 
                         break;
                     case "Sound":
-                        BitFont.DrawBitFontString(canvas, "VerdanaCustomCharset24", Color.White, Active, width - BitFont.DrawBitFontString(back_canvas, "VerdanaCustomCharset24", Color.White, Active, 0, 0) - 5, 24);
+                        BitFont.DrawBitFontString(canvas, "VerdanaCustomCharset24", Color.White, ActiveD, width - BitFont.DrawBitFontString(back_canvas, "VerdanaCustomCharset24", Color.White, ActiveD, 0, 0) - 5, 24);
                         break;
                     case "Networking":
-                        BitFont.DrawBitFontString(canvas, "VerdanaCustomCharset24", Color.White, Active, width - BitFont.DrawBitFontString(back_canvas, "VerdanaCustomCharset24", Color.White, Active, 0, 0) - 5, 24);
+                        BitFont.DrawBitFontString(canvas, "VerdanaCustomCharset24", Color.White, ActiveD, width - BitFont.DrawBitFontString(back_canvas, "VerdanaCustomCharset24", Color.White, ActiveD, 0, 0) - 5, 24);
 
                         BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, "Attempting to ping google.com - 8.8.8.8", 128, 75);
 
@@ -330,7 +332,7 @@ namespace CrystalOSAlpha.Applications.Settings
                         BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, NetworkConfiguration.CurrentAddress.ToString(), 128, 48);
                         break;
                     case "About OS":
-                        BitFont.DrawBitFontString(canvas, "VerdanaCustomCharset24", Color.White, Active, width - BitFont.DrawBitFontString(back_canvas, "VerdanaCustomCharset24", Color.White, Active, 0, 0) - 5, 24);
+                        BitFont.DrawBitFontString(canvas, "VerdanaCustomCharset24", Color.White, ActiveD, width - BitFont.DrawBitFontString(back_canvas, "VerdanaCustomCharset24", Color.White, ActiveD, 0, 0) - 5, 24);
                         
                         BitFont.DrawBitFontString(canvas, "VerdanaCustomCharset24", Color.White, "CrystalOS Alpha Edition", 128, 58);
 
@@ -388,11 +390,14 @@ namespace CrystalOSAlpha.Applications.Settings
                 }
             }
 
-            KeyEvent key;
-            if (KeyboardManager.TryReadKey(out key))
+            if(TaskScheduler.counter == TaskScheduler.Apps.Count - 1)
             {
-                customres = Keyboard.HandleKeyboard(customres, key);
-                once = true;
+                KeyEvent key;
+                if (KeyboardManager.TryReadKey(out key))
+                {
+                    customres = Keyboard.HandleKeyboard(customres, key);
+                    once = true;
+                }
             }
 
             if (MouseManager.MouseState == MouseState.None && clicked == true)

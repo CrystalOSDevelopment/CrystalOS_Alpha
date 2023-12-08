@@ -22,11 +22,67 @@ namespace CrystalOSAlpha.UI_Elements
                         input = input.Remove(input.Length - 1);
                     }
                     break;
+                case ConsoleKeyEx.Tab:
+                    input += "    ";
+                    break;
                 default:
-                    input += key.KeyChar;
+                    input += Keyboard_HU(key);
                     break;
             }
             return input;
+        }
+
+        public static char Keyboard_HU(KeyEvent key)
+        {
+            if(KeyboardManager.ShiftPressed == true)
+            {
+                switch (key.Key)
+                {
+                    case ConsoleKeyEx.Backquote:
+                        return '§';
+                    case ConsoleKeyEx.D0:
+                        return 'Ö';
+                    case ConsoleKeyEx.D9:
+                        return ')';
+                    case ConsoleKeyEx.D8:
+                        return '(';
+                    case ConsoleKeyEx.D4:
+                        return '!';
+                    case ConsoleKeyEx.D1:
+                        return '\'';
+                    case ConsoleKeyEx.D2:
+                        return '\"';
+                    case ConsoleKeyEx.Z:
+                        return 'Y';
+                    case ConsoleKeyEx.Y:
+                        return 'Z';
+                    default:
+                        return key.KeyChar;
+
+                }
+            }
+            if(KeyboardManager.AltPressed == true)
+            {
+                switch (key.Key)
+                {
+                    case ConsoleKeyEx.V:
+                        return '@';
+                }
+            }
+            switch (key.Key)
+            {
+                case ConsoleKeyEx.Backquote:
+                    return '0';
+                case ConsoleKeyEx.D0:
+                    return 'ö';
+                case ConsoleKeyEx.Z:
+                    return 'y';
+                case ConsoleKeyEx.Y:
+                    return 'z';
+                default:
+                    return key.KeyChar;
+
+            }
         }
     }
 }

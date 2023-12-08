@@ -57,8 +57,6 @@ namespace CrystalOSAlpha
                     TaskManager.Top = ImprovedVBE.height;
                     TaskManager.Left = ImprovedVBE.width / 2 + 60;
 
-                    Kernel.disable = true;
-
                     //width = 1920;
                     //height = 1080;
 
@@ -312,7 +310,7 @@ namespace CrystalOSAlpha
                                 int g2 = (int)(inverseBlendFactor * g3 + blendFactor * g);
                                 int b2 = (int)(inverseBlendFactor * b3 + blendFactor * b);
 
-                                DrawPixelfortext(image, _x, _y, colourToNumber(r2, g2, b2));
+                                //DrawPixelfortext(image, _x, _y, colourToNumber(r2, g2, b2));
                                 output.RawData[counter] = colourToNumber(r2, g2, b2);
                                 counter++;
                             }
@@ -722,6 +720,139 @@ namespace CrystalOSAlpha
                 }
             }
             return input;
+        }
+
+        public static void DrawRoundRectangle(int x, int y, int width, int height, int cornerRadius, Color borderColor)
+        {
+            int xEnd = x + width - 1;
+            int yEnd = y + height - 1;
+
+            // Draw the top side
+            for (int i = x + cornerRadius; i < xEnd - cornerRadius; i++)
+            {
+                DrawPixelfortext(cover, i, y, borderColor.ToArgb());
+            }
+
+            // Draw the top-right corner
+            DrawCorner(borderColor, xEnd - cornerRadius, y + cornerRadius, cornerRadius, 270, 360);
+
+            // Draw the right side
+            for (int i = y + cornerRadius; i < yEnd - cornerRadius; i++)
+            {
+                DrawPixelfortext(cover, xEnd, i, borderColor.ToArgb());
+            }
+
+            // Draw the bottom-right corner
+            DrawCorner(borderColor, xEnd - cornerRadius, yEnd - cornerRadius, cornerRadius, 0, 90);
+
+            // Draw the bottom side
+            for (int i = xEnd - cornerRadius; i >= x + cornerRadius; i--)
+            {
+                DrawPixelfortext(cover, i, yEnd, borderColor.ToArgb());
+            }
+
+            // Draw the bottom-left corner
+            DrawCorner(borderColor, x + cornerRadius, yEnd - cornerRadius, cornerRadius, 90, 180);
+
+            // Draw the left side
+            for (int i = yEnd - cornerRadius; i >= y + cornerRadius; i--)
+            {
+                DrawPixelfortext(cover, x, i, borderColor.ToArgb());
+            }
+
+            // Draw the top-left corner
+            DrawCorner(borderColor, x + cornerRadius, y + cornerRadius, cornerRadius, 180, 270);
+        }
+        public static void DrawFilledRoundRectangle(int x, int y, int width, int height, int cornerRadius, Color borderColor, Color backgroundColor)
+        {
+            DrawRoundRectangle(x, y, width, height, cornerRadius, borderColor);
+
+            int xEnd = x + width - 1;
+            int yEnd = y + height - 1;
+
+            int Start_X = 0;
+            int Start_Y = 0;
+
+            int End_X = 0;
+            int End_Y = 0;
+
+            bool found = false;
+
+            for (int j = y; j < y + height; j++)
+            {
+                for (int i = x; i < x + width; i++)
+                {
+                    if (IsOnRoundedRectangleBorder(i, j, x, y, width, height, cornerRadius))
+                    {
+                        Start_X = i;
+                        Start_Y = j;
+                        found = true;
+                        break;
+                    }
+                    if(i == x + 10)
+                    {
+                        break;
+                    }
+                }
+                for (int i = x + width; i > x; i--)
+                {
+                    if (IsOnRoundedRectangleBorder(i, j, x, y, width, height, cornerRadius))
+                    {
+                        End_X = i;
+                        End_Y = j;
+                        found = true;
+                        break;
+                    }
+                    if (i == x + width - 10)
+                    {
+                        break;
+                    }
+                }
+                if(found == true)
+                {
+                    DrawFilledRectangle(cover, Color.Blue.ToArgb(), Start_X, Start_Y, End_X - Start_X, 1, false);
+                }
+                else
+                {
+                    DrawFilledRectangle(cover, Color.Blue.ToArgb(), x, j, width, 1, false);
+                }
+                found = false;
+            }
+        }
+        static bool IsInCorner(int x, int y, int centerX, int centerY, int radius, int startAngle, int endAngle)
+        {
+            const double tolerance = 0.1; // Adjust tolerance as needed
+
+            for (int angle = startAngle; angle <= endAngle; angle++)
+            {
+                double radians = angle * Math.PI / 180.0;
+                int cornerX = (int)(centerX + radius * Math.Cos(radians));
+                int cornerY = (int)(centerY + radius * Math.Sin(radians));
+
+                if (Math.Abs(x - cornerX) < tolerance && Math.Abs(y - cornerY) < tolerance)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        static void DrawCorner(Color color, int centerX, int centerY, int radius, int startAngle, int endAngle)
+        {
+            for (int angle = startAngle; angle <= endAngle; angle++)
+            {
+                double radians = angle * Math.PI / 180.0;
+                int x = (int)(centerX + radius * Math.Cos(radians));
+                int y = (int)(centerY + radius * Math.Sin(radians));
+                DrawPixelfortext(cover, x, y, color.ToArgb());
+            }
+        }
+        static bool IsOnRoundedRectangleBorder(int x, int y, int rectX, int rectY, int rectWidth, int rectHeight, int cornerRadius)
+        {
+            return IsInCorner(x, y, rectX + cornerRadius, rectY + cornerRadius, cornerRadius, 180, 270) ||
+                   IsInCorner(x, y, rectX + rectWidth - cornerRadius, rectY + cornerRadius, cornerRadius, 270, 360) ||
+                   IsInCorner(x, y, rectX + cornerRadius, rectY + rectHeight - cornerRadius, cornerRadius, 90, 180) ||
+                   IsInCorner(x, y, rectX + rectWidth - cornerRadius, rectY + rectHeight - cornerRadius, cornerRadius, 0, 90);
         }
     }
 }

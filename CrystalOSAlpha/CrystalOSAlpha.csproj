@@ -85,7 +85,15 @@
       <None Remove="Graphics\Engine\Cursor.bmp" />
       <None Remove="Graphics\Engine\Wallp1.bmp" />
       <None Remove="Graphics\Icons\Calculator.bmp" />
+      <None Remove="Graphics\Icons\Explorer.bmp" />
+      <None Remove="Graphics\Icons\File.bmp" />
+      <None Remove="Graphics\Icons\Folder.bmp" />
+      <None Remove="Graphics\Icons\Gameboy.bmp" />
+      <None Remove="Graphics\Icons\IDE.bmp" />
+      <None Remove="Graphics\Icons\Notepad.bmp" />
       <None Remove="Graphics\Icons\Settings.bmp" />
+      <None Remove="Graphics\Icons\Terminal.bmp" />
+      <None Remove="Graphics\Icons\WebBrowser.bmp" />
       <None Remove="Graphics\TaskBar\Icon.bmp" />
       <None Remove="Graphics\Widgets\Elephant.bmp" />
     </ItemGroup>
@@ -145,7 +153,15 @@
       <EmbeddedResource Include="Graphics\Engine\Cursor.bmp" />
       <EmbeddedResource Include="Graphics\Engine\Wallp1.bmp" />
       <EmbeddedResource Include="Graphics\Icons\Calculator.bmp" />
+      <EmbeddedResource Include="Graphics\Icons\Explorer.bmp" />
+      <EmbeddedResource Include="Graphics\Icons\File.bmp" />
+      <EmbeddedResource Include="Graphics\Icons\Folder.bmp" />
+      <EmbeddedResource Include="Graphics\Icons\Gameboy.bmp" />
+      <EmbeddedResource Include="Graphics\Icons\Notepad.bmp" />
       <EmbeddedResource Include="Graphics\Icons\Settings.bmp" />
+      <EmbeddedResource Include="Graphics\Icons\Terminal.bmp" />
+      <EmbeddedResource Include="Graphics\Icons\WebBrowser.bmp" />
+		<EmbeddedResource Include="Graphics\Icons\IDE.bmp" />
       <EmbeddedResource Include="Graphics\TaskBar\Icon.bmp" />
       <EmbeddedResource Include="Graphics\Widgets\Elephant.bmp" />
     </ItemGroup>
@@ -155,10 +171,6 @@
         <PackageReference Include="Cosmos.Debug.Kernel" Version="0-*" NoWarn="NU1604" />
         <PackageReference Include="Cosmos.System2" Version="0-*" NoWarn="NU1604" />
         <PackageReference Include="Cosmos.Plugs" Version="0-*" NoWarn="NU1604" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="NewFolder\" />
     </ItemGroup>
 
 </Project>

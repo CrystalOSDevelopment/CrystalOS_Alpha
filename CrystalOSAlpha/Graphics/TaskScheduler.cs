@@ -25,6 +25,8 @@ namespace CrystalOSAlpha.Graphics
 
         public static bool Clicked = false;
 
+        public static int counter = 0;
+
         public static void Exec()
         {
             for (int i = 0; i < Apps.Count; i++)
@@ -73,7 +75,10 @@ namespace CrystalOSAlpha.Graphics
                                 {
                                     if (MouseManager.Y > Apps[i].y && MouseManager.Y < Apps[i].y + Apps[i].height)
                                     {
-                                        found = true;
+                                        if(Apps[i].minimised == false)
+                                        {
+                                            found = true;
+                                        }
                                     }
                                 }
                             }
@@ -106,7 +111,11 @@ namespace CrystalOSAlpha.Graphics
                             }
                             if (found == false)
                             {
-                                app.z = 999;
+                                if(TaskManager.disable == false)
+                                {
+                                    app.z = 999;
+                                    TaskManager.disable = true;
+                                }
                             }
                         }
                     }
@@ -126,8 +135,14 @@ namespace CrystalOSAlpha.Graphics
                 {
                     app.App();
                 }
+                counter++;
+            }
+            if(MouseManager.MouseState == MouseState.None && TaskManager.disable == true)
+            {
+                TaskManager.disable = false;
             }
             index = 0;
+            counter = 0;
         }
 
         public static void Render_Icons()
@@ -149,17 +164,31 @@ namespace CrystalOSAlpha.Graphics
                                 else
                                 {
                                     app.minimised = true;
+                                    app.z = 999;
                                 }
                                 Clicked = true;
                             }
                         }
                     }
                 }
-                ImprovedVBE.DrawImageAlpha(app.icon, x_offset, y_offset, ImprovedVBE.cover);
-                BitFont.DrawBitFontString(ImprovedVBE.cover, "ArialCustomCharset16", System.Drawing.Color.White, app.name, x_offset + 4, (int)(y_offset + app.icon.Height + 3));
-                x_offset += (int)app.icon.Width + 8;
+                if(app.name != null)
+                {
+                    ImprovedVBE.DrawImageAlpha(app.icon, x_offset, y_offset, ImprovedVBE.cover);
+                }
+                if(app.name.Length > 7)
+                {
+                    BitFont.DrawBitFontString(ImprovedVBE.cover, "ArialCustomCharset16", System.Drawing.Color.White, app.name.Remove(7), x_offset + 4, (int)(y_offset + app.icon.Height + 3));
+                }
+                else
+                {
+                    BitFont.DrawBitFontString(ImprovedVBE.cover, "ArialCustomCharset16", System.Drawing.Color.White, app.name, x_offset + 4, (int)(y_offset + app.icon.Height + 3));
+                }
+                if(app.name != null)
+                {
+                    x_offset += (int)app.icon.Width + 8;
+                }
             }
-            if(MouseManager.MouseState == MouseState.None)
+            if (MouseManager.MouseState == MouseState.None)
             {
                 Clicked = false;
             }

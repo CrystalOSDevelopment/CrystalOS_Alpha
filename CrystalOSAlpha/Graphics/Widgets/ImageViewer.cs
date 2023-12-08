@@ -1,6 +1,7 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
+using CrystalOSAlpha.Graphics.TaskBar;
 using IL2CPU.API.Attribs;
 using System;
 using System.Collections.Generic;
@@ -25,19 +26,20 @@ namespace CrystalOSAlpha.Graphics.Widgets
         [ManifestResourceStream(ResourceName = "CrystalOSAlpha.Graphics.Widgets.Elephant.bmp")] public static byte[] Elephant;
         public static Bitmap Nr1;
         #endregion images
+        public static int sizeDec = 0;
         public void Core()
         {
             if (Get_Back == true)
             {
-                Back = Base.Widget_Back(200, 200, ImprovedVBE.colourToNumber(255, 255, 255));
+                Back = Base.Widget_Back(200 - sizeDec, 200 - sizeDec, ImprovedVBE.colourToNumber(255, 255, 255));
                 Back = ImprovedVBE.DrawImageAlpha2(Back, X, Y, Back);
                 Bitmap bmp = new Bitmap(Elephant);
-                Nr1 = ImprovedVBE.ScaleImageStock(bmp, 175, 150);
+                Nr1 = ImprovedVBE.ScaleImageStock(bmp, (uint)(175 - sizeDec), (uint)(150 - sizeDec));
                 BitFont.DrawBitFontString(Back, "ArialCustomCharset16", System.Drawing.Color.White, "ImageViewer", 7, 2);
+                ImprovedVBE.DrawImageAlpha(Nr1, (int)((100 - sizeDec / 2) - (Nr1.Width / 2)), 25, Back);
                 Get_Back = false;
             }
             ImprovedVBE.DrawImageAlpha(Back, X, Y, ImprovedVBE.cover);
-            ImprovedVBE.DrawImage(Nr1, (int)(X + (100 - (Nr1.Width / 2))), Y + 25);
 
             if (MouseManager.MouseState == MouseState.Left)
             {
@@ -53,12 +55,48 @@ namespace CrystalOSAlpha.Graphics.Widgets
                         }
                         X = (int)MouseManager.X - x_dif;
                         Y = (int)MouseManager.Y - y_dif;
+                        if(X + Back.Width > ImprovedVBE.width - 200)
+                        {
+                            if(sizeDec < 40)
+                            {
+                                Back = ImprovedVBE.ScaleImageStock(Back, (uint)(Back.Width - sizeDec), (uint)(Back.Height - sizeDec));
+                                sizeDec += 10;
+                                Get_Back = true;
+                            }
+                        }
+                        else
+                        {
+                            if (sizeDec > 0)
+                            {
+                                Back = ImprovedVBE.ScaleImageStock(Back, (uint)(Back.Width - sizeDec), (uint)(Back.Height - sizeDec));
+                                sizeDec -= 10;
+                                Get_Back = true;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    if (X + Back.Width > ImprovedVBE.width - 200)
+                    {
+                        X = SideNav.X + 15;
+                        Y = SideNav.start_y;
+                        SideNav.start_y += (int)Back.Height + 20;
                     }
                 }
                 if (mem == false)
                 {
                     X = (int)MouseManager.X - x_dif;
                     Y = (int)MouseManager.Y - y_dif;
+                }
+            }
+            else
+            {
+                if (X + Back.Width > ImprovedVBE.width - 200)
+                {
+                    X = SideNav.X + 15;
+                    Y = SideNav.start_y;
+                    SideNav.start_y += (int)Back.Height + 20;
                 }
             }
             if (mem == false && MouseManager.MouseState == MouseState.None)
