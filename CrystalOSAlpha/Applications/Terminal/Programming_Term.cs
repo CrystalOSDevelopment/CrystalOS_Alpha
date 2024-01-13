@@ -73,6 +73,15 @@ namespace CrystalOSAlpha.Applications.Terminal
         {
             if (initial == true)
             {
+                CSharp.WasIf = false;
+                CSharp.WasTrue = true;
+                CSharp.Checker = false;
+                CSharp.firstline = true;
+
+                CSharp.Variables.Clear();
+
+                CSharp.Clipboard = "";
+
                 Buttons.Add(new Button_prop(5, 27, 90, 20, "Clear", 1));
 
                 Scroll.Add(new Scrollbar_Values(width - 22, 30, 20, height - 60, 0));
@@ -220,9 +229,16 @@ namespace CrystalOSAlpha.Applications.Terminal
             string[] lines = code.Split('\n');
             if(pos < lines.Length && resp == false)
             {
-                content += CSharp.Returning_methods(lines[pos]);
+                if (lines[pos] == "bool looping = true;")
+                {
+                    pos = -1;
+                }
+                else
+                {
+                    content += CSharp.Returning_methods(lines[pos]);
+                }
                 resp = CSharp.WaitForResponse;
-                if(pos < content.Length - 1 && resp == false)
+                if(pos < content.Length && resp == false)
                 {
                     pos++;
                 }
@@ -340,10 +356,12 @@ namespace CrystalOSAlpha.Applications.Terminal
                     }
                 }
             }
-            if(pos == lines.Length)
+            if(pos == lines.Length)//|| pos == lines.Length + 1
             {
                 content += "\nProgram executed successfuly.\nPress any key to exit...";
                 CSharp.Variables.Clear();
+                CSharp.statements.Clear();
+                CSharp.statements = new List<bool>() { true };
                 pos++;
 
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);

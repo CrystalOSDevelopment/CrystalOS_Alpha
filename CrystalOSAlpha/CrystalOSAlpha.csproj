@@ -96,6 +96,7 @@
       <None Remove="Graphics\Icons\WebBrowser.bmp" />
       <None Remove="Graphics\TaskBar\Icon.bmp" />
       <None Remove="Graphics\Widgets\Elephant.bmp" />
+      <None Remove="SystemApps\celebrate.bmp" />
     </ItemGroup>
 
     <ItemGroup>
@@ -164,6 +165,7 @@
 		<EmbeddedResource Include="Graphics\Icons\IDE.bmp" />
       <EmbeddedResource Include="Graphics\TaskBar\Icon.bmp" />
       <EmbeddedResource Include="Graphics\Widgets\Elephant.bmp" />
+      <EmbeddedResource Include="SystemApps\celebrate.bmp" />
     </ItemGroup>
 
     <ItemGroup>

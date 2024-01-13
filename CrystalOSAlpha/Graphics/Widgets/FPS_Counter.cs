@@ -62,35 +62,32 @@ namespace CrystalOS_Alpha.Graphics.Widgets
 
             if (MouseManager.MouseState == MouseState.Left)
             {
-                if (MouseManager.X > X && MouseManager.X < X + Back.Width)
+                if (((MouseManager.X > X && MouseManager.X < X + Back.Width) && (MouseManager.Y > Y && MouseManager.Y < Y + Back.Height)) || mem == false)
                 {
-                    if (MouseManager.Y > Y && MouseManager.Y < Y + Back.Height)
+                    if (mem == true)
                     {
-                        if (mem == true)
+                        x_dif = (int)MouseManager.X - X;
+                        y_dif = (int)MouseManager.Y - Y;
+                        mem = false;
+                    }
+                    X = (int)MouseManager.X - x_dif;
+                    Y = (int)MouseManager.Y - y_dif;
+                    if (X + Back.Width > ImprovedVBE.width - 200)
+                    {
+                        if (sizeDec < 40)
                         {
-                            x_dif = (int)MouseManager.X - X;
-                            y_dif = (int)MouseManager.Y - Y;
-                            mem = false;
+                            Back = ImprovedVBE.ScaleImageStock(Back, (uint)(Back.Width - sizeDec), (uint)(Back.Height - sizeDec));
+                            sizeDec += 10;
+                            Get_Back = true;
                         }
-                        X = (int)MouseManager.X - x_dif;
-                        Y = (int)MouseManager.Y - y_dif;
-                        if (X + Back.Width > ImprovedVBE.width - 200)
+                    }
+                    else
+                    {
+                        if (sizeDec > 0)
                         {
-                            if (sizeDec < 40)
-                            {
-                                Back = ImprovedVBE.ScaleImageStock(Back, (uint)(Back.Width - sizeDec), (uint)(Back.Height - sizeDec));
-                                sizeDec += 10;
-                                Get_Back = true;
-                            }
-                        }
-                        else
-                        {
-                            if (sizeDec > 0)
-                            {
-                                Back = ImprovedVBE.ScaleImageStock(Back, (uint)(Back.Width - sizeDec), (uint)(Back.Height - sizeDec));
-                                sizeDec -= 10;
-                                Get_Back = true;
-                            }
+                            Back = ImprovedVBE.ScaleImageStock(Back, (uint)(Back.Width - sizeDec), (uint)(Back.Height - sizeDec));
+                            sizeDec -= 10;
+                            Get_Back = true;
                         }
                     }
                 }
@@ -99,10 +96,10 @@ namespace CrystalOS_Alpha.Graphics.Widgets
                     if (X + Back.Width > ImprovedVBE.width - 200)
                     {
                         X = SideNav.X + 15;
-                        Y = SideNav.Y;
-                        SideNav.start_y += (int)Back.Height + 20;
+                        Y = SideNav.start_y;
                     }
                 }
+                SideNav.start_y += (int)Back.Height + 20;
                 if (mem == false)
                 {
                     X = (int)MouseManager.X - x_dif;

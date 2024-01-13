@@ -1,6 +1,7 @@
 ﻿using Cosmos.System;
 using Cosmos.System.FileSystem;
 using Cosmos.System.Graphics;
+using CrystalOSAlpha.Applications.Artistic_Stuff.ColorView;
 using CrystalOSAlpha.Applications.Calculator;
 using CrystalOSAlpha.Applications.CarbonIDE;
 using CrystalOSAlpha.Applications.Gameboy;
@@ -342,7 +343,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                         }
                     }
                 }
-                if (clicked == true && MouseManager.MouseState == MouseState.None)
+                if (button.Clicked == true && MouseManager.MouseState == MouseState.None)
                 {
                     button.Clicked = false;
                 }
@@ -704,6 +705,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
 
                                     TaskScheduler.Apps.Add(ide);
                                     */
+                                    //CarbonInit c = new CarbonInit();
                                     CarbonInit c = new CarbonInit();
                                     c.name = "CarbonIDE - Init";
                                     c.x = 100;

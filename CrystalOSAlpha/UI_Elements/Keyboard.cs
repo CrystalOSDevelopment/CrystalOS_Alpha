@@ -1,9 +1,11 @@
 ﻿using Cosmos.System;
+using CrystalOS_Alpha;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Kernel = CrystalOS_Alpha.Kernel;
 
 namespace CrystalOSAlpha.UI_Elements
 {
@@ -11,23 +13,50 @@ namespace CrystalOSAlpha.UI_Elements
     {
         public static string HandleKeyboard(string input, KeyEvent key)
         {
-            switch (key.Key)
+            if(Kernel.Is_KeyboardMouse == false)
             {
-                case ConsoleKeyEx.Enter:
-                    input += "\n";
-                    break;
-                case ConsoleKeyEx.Backspace:
-                    if (input.Length != 0)
-                    {
-                        input = input.Remove(input.Length - 1);
-                    }
-                    break;
-                case ConsoleKeyEx.Tab:
-                    input += "    ";
-                    break;
-                default:
-                    input += Keyboard_HU(key);
-                    break;
+                switch (key.Key)
+                {
+                    case ConsoleKeyEx.Enter:
+                        input += "\n";
+                        break;
+                    case ConsoleKeyEx.Backspace:
+                        if (input.Length != 0)
+                        {
+                            input = input.Remove(input.Length - 1);
+                        }
+                        break;
+                    case ConsoleKeyEx.Tab:
+                        input += "    ";
+                        break;
+                    case ConsoleKeyEx.F1:
+                        Kernel.Is_KeyboardMouse = true;
+                        break;
+                    default:
+                        input += key.KeyChar;//Keyboard_HU(key);//key.KeyChar
+                        break;
+                }
+            }
+            else
+            {
+                switch(key.Key)
+                {
+                    case ConsoleKeyEx.Num8:
+                        MouseManager.Y -= 4;
+                        break;
+                    case ConsoleKeyEx.Num2:
+                        MouseManager.Y += 4;
+                        break;
+                    case ConsoleKeyEx.Num4:
+                        MouseManager.X -= 4;
+                        break;
+                    case ConsoleKeyEx.Num6:
+                        MouseManager.X += 4;
+                        break;
+                    case ConsoleKeyEx.F1:
+                        Kernel.Is_KeyboardMouse = false;
+                        break;
+                }
             }
             return input;
         }

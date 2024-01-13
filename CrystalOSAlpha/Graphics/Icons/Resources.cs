@@ -30,5 +30,8 @@ namespace CrystalOSAlpha.Graphics.Icons
         public static Bitmap Web = new Bitmap(WEB);
         [ManifestResourceStream(ResourceName = "CrystalOSAlpha.Graphics.Icons.IDE.bmp")] public static byte[] ide;
         public static Bitmap IDE = new Bitmap(ide);
+
+        [ManifestResourceStream(ResourceName = "CrystalOSAlpha.SystemApps.celebrate.bmp")] public static byte[] Celeb;
+        public static Bitmap Celebration = new Bitmap(Celeb);
     }
 }

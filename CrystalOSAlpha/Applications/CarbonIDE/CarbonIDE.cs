@@ -81,7 +81,9 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 d.Height = 20;
                 d.ID = "Type";
                 dropdowns.Add(d);
-                value.Add(new values(true, "C#", "Type"));
+
+                value.Add(new values(true, "C# console", "Type"));
+                value.Add(new values(true, "C# GUI", "Type"));
 
                 Buttons.Add(new Button_prop(195, 27, 60, 20, "Run", 1));
 
@@ -245,7 +247,14 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                 break;
                             case "Run":
                                 //BitFont.DrawBitFontString(window, "ArialCustomCharset16", Color.White, CSharp.Executor(content), 500, 500);
-                                end = CSharp.Executor(content);
+                                if (value[0].Highlighted == true)
+                                {
+                                    end = CSharp.Executor(content);
+                                }
+                                if (value[1].Highlighted == true)
+                                {
+                                    //end = CSharp.Executor(content);
+                                }
                                 break;
                         }
                     }
@@ -555,6 +564,13 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                         }
                         Extra = "";
                         break;
+                    case "File":
+                        for (int i = index - Extra.Length + 1; i <= index; i++)
+                        {
+                            colors[i] = Color.Green;
+                        }
+                        Extra = "";
+                        break;
                     case "int":
                         for (int i = index - Extra.Length + 1; i <= index; i++)
                         {
@@ -626,6 +642,20 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                         Extra = "";
                         break;
                     case "new":
+                        for (int i = index - Extra.Length + 1; i <= index; i++)
+                        {
+                            colors[i] = Color.Blue;
+                        }
+                        Extra = "";
+                        break;
+                    case "True":
+                        for (int i = index - Extra.Length + 1; i <= index; i++)
+                        {
+                            colors[i] = Color.Blue;
+                        }
+                        Extra = "";
+                        break;
+                    case "False":
                         for (int i = index - Extra.Length + 1; i <= index; i++)
                         {
                             colors[i] = Color.Blue;

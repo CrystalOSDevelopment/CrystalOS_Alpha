@@ -360,10 +360,5 @@ namespace CrystalOSAlpha.Applications.Calculator
             }
             return true;
         }
-
-        private static bool IsNumeric(char c)
-        {
-            return c >= '0' && c <= '9';
-        }
     }
 }

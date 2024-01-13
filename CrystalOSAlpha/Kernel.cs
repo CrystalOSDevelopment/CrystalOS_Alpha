@@ -18,6 +18,7 @@ using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics.Icons;
 using CrystalOSAlpha.Graphics.TaskBar;
 using CrystalOSAlpha.Graphics.Widgets;
+using CrystalOSAlpha.Programming;
 using CrystalOSAlpha.UI_Elements;
 using IL2CPU.API.Attribs;
 using ProjectDMG;
@@ -39,17 +40,23 @@ namespace CrystalOS_Alpha
         [ManifestResourceStream(ResourceName = "CrystalOSAlpha.Graphics.Engine.Cursor.bmp")] public static byte[] Cursor;
         public static Bitmap C = new Bitmap(Cursor);
         public static CosmosVFS fs = new CosmosVFS();
+        public static bool Is_KeyboardMouse = false;
         protected override void BeforeRun()
         {
             if(VMTools.IsVMWare == true)
             {
                 Sys.FileSystem.VFS.VFSManager.RegisterVFS(fs);
-            }
-            using (var xClient = new DHCPClient())
-            {
-                /** Send a DHCP Discover packet **/
-                //This will automatically set the IP config after DHCP response
-                xClient.SendDiscoverPacket();
+                using (var xClient = new DHCPClient())
+                {
+                    /** Send a DHCP Discover packet **/
+                    //This will automatically set the IP config after DHCP response
+                    xClient.SendDiscoverPacket();
+                }
+                if (!File.Exists("0:\\index.html"))
+                {
+                    File.Create("0:\\index.html");
+                }
+                File.WriteAllText("0:\\index.html", Network("example.com/index.html"));
             }
 
             FPS_Counter f = new FPS_Counter();
@@ -76,12 +83,6 @@ namespace CrystalOS_Alpha
             MouseManager.ScreenHeight = 1080;
 
             Fonts.RegisterFonts();
-
-            if (!File.Exists("0:\\index.html"))
-            {
-                File.Create("0:\\index.html");
-            }
-            File.WriteAllText("0:\\index.html", Network("example.com/index.html"));
         }
 
         public static int FPS = 0;
@@ -116,6 +117,8 @@ namespace CrystalOS_Alpha
             TaskScheduler.Exec();
 
             TaskManager.Main();
+
+            BitFont.DrawBitFontString(ImprovedVBE.cover, "ArialCustomCharset16", System.Drawing.Color.White, CSharp.Clipboard, 10, 10);
 
             ImprovedVBE.DrawImageAlpha3(C, (int)MouseManager.X, (int)MouseManager.Y);
 

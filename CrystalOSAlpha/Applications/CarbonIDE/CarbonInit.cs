@@ -64,6 +64,9 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public string typeOf = "Opening";
 
         public string namedProject = "";
+        public string SourceofProject = "";
+
+        public string activeTextbox = "name";
 
         public void App()
         {
@@ -165,6 +168,10 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     BitFont.DrawBitFontString(window, "ArialCustomCharset16", Color.White, "Project name:", 10, 65);
 
                     TextBox.Box(window, 10, 85, 200, 20, ImprovedVBE.colourToNumber(60, 60, 60), namedProject, "Example", TextBox.Options.left);
+
+                    BitFont.DrawBitFontString(window, "ArialCustomCharset16", Color.White, "Project location:", 10, 110);
+
+                    TextBox.Box(window, 10, 130, 200, 20, ImprovedVBE.colourToNumber(60, 60, 60), SourceofProject, "0:\\sources", TextBox.Options.left);
                 }
 
                 foreach (var button in Buttons)
@@ -254,18 +261,39 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
             #region Mechanical
             if (TaskScheduler.counter == TaskScheduler.Apps.Count - 1)
             {
+                if(MouseManager.MouseState == MouseState.Left)
+                {
+                    if(MouseManager.X > x + 10 && MouseManager.X < x + 210)
+                    {
+                        if (MouseManager.Y > y + 85 && MouseManager.Y < y + 105)
+                        {
+                            activeTextbox = "name";
+                        }
+                        if (MouseManager.Y > y + 130 && MouseManager.Y < y + 150)
+                        {
+                            activeTextbox = "source";
+                        }
+                    }
+                }
                 KeyEvent k;
                 if (KeyboardManager.TryReadKey(out k))
                 {
                     if (k.Key == ConsoleKeyEx.Enter)
                     {
-                        Buttons[0].Clicked = true;
+                        Buttons[1].Clicked = true;
                         clicked = true;
                         temp = true;
                     }
                     else
                     {
-                        namedProject = Keyboard.HandleKeyboard(namedProject, k);
+                        if(activeTextbox == "name")
+                        {
+                            namedProject = Keyboard.HandleKeyboard(namedProject, k);
+                        }
+                        else if(activeTextbox == "source")
+                        {
+                            SourceofProject = Keyboard.HandleKeyboard(SourceofProject, k);
+                        }
                         temp = true;
                     }
                 }
