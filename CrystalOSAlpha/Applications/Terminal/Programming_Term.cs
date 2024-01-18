@@ -68,19 +68,26 @@ namespace CrystalOSAlpha.Applications.Terminal
 
         public int pos = 0;
         public bool resp = false;
+        public string beforeLine = "";
 
         public void App()
         {
             if (initial == true)
             {
                 CSharp.WasIf = false;
-                CSharp.WasTrue = true;
+                CSharp.WasTrue = false;
                 CSharp.Checker = false;
                 CSharp.firstline = true;
 
                 CSharp.Variables.Clear();
 
                 CSharp.Clipboard = "";
+
+                CSharp.WaitForResponse = false;
+
+                //CSharp.Clipboard = "";
+
+                CSharp.Count = 0;
 
                 Buttons.Add(new Button_prop(5, 27, 90, 20, "Clear", 1));
 
@@ -236,12 +243,14 @@ namespace CrystalOSAlpha.Applications.Terminal
                 else
                 {
                     content += CSharp.Returning_methods(lines[pos]);
+                    CSharp.Clipboard += lines[pos] + "\n";
                 }
                 resp = CSharp.WaitForResponse;
-                if(pos < content.Length && resp == false)
+                if (resp == false)
                 {
                     pos++;
                 }
+                
                 temp = true;
             }
             else
@@ -255,6 +264,7 @@ namespace CrystalOSAlpha.Applications.Terminal
                     KeyEvent key;
                     if(pos == lines.Length + 1)
                     {
+                        CSharp.WaitForResponse = false;
                         if (KeyboardManager.TryReadKey(out key))
                         {
                             TaskScheduler.Apps.Remove(this);
@@ -269,48 +279,6 @@ namespace CrystalOSAlpha.Applications.Terminal
                             CSharp.Returning_Value = command;
                             content += CSharp.Returning_methods(lines[pos]);
                             pos++;
-                            /*
-                            if (command == "clear")
-                            {
-                                if (echo_off == true)
-                                {
-
-                                }
-                                else
-                                {
-                                    content = "Crystal-PC> ";
-                                }
-                                offset = 0;
-                                offset2 = 0;
-                            }
-                            else
-                            {
-                                cmd_history.Add(command);
-                                if (echo_off == true)
-                                {
-                                    content += "\n" + CommandLibrary.Execute(command);
-                                }
-                                else
-                                {
-                                    content += "\n" + CommandLibrary.Execute(command) + "\nCrystal-PC> ";
-                                }
-                                index = cmd_history.Count;
-                                if (cmd_history.Count > 20)
-                                {
-                                    cmd_history.RemoveAt(0);
-                                }
-                                if (Scroll[0].Pos < Scroll[0].Height - 48 && content.Split("\n").Length > 21)
-                                {
-                                    Scroll[0].Pos += CommandLibrary.offset * 8;
-                                }
-                                else if (Scroll[0].Pos < Scroll[0].Height - 48 == false)
-                                {
-                                    offset2 += CommandLibrary.offset * 8;
-                                    offset += CommandLibrary.offset;
-                                }
-                                CommandLibrary.offset = 0;
-                            }
-                            */
                             command = "";
                             content += "\n";
                             resp = false;
