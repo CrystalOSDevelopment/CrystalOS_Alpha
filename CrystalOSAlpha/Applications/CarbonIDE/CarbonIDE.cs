@@ -53,7 +53,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public Bitmap window;
         public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
 
-        public string content = "string name = Console.ReadLine();\nif(name == \"John\")\n{\n    Console.WriteLine(\"Hi\");\n}\nelse if(name == \"Doe\")\n{\n    Console.WriteLine(\"Hello\");\n}\nelse if(name == \"Carol\")\n{\n    Console.WriteLine(\"Who even are you?\");\n}\nelse\n{\n    Console.WriteLine(\"No message for you!\");\n}";
+        public string content = "string name = Console.ReadLine();\nif(name == \"John\")\n{\n    Console.WriteLine(\"Hi\");\n}\nelse if(name == \"Doe\")\n{\n    Console.WriteLine(\"Hello\");\n}\nelse if(name == \"Carol\")\n{\n    Console.WriteLine(\"Who even are you?\");\n}\nelse\n{\n    Console.WriteLine(\"No message for you!\");\n}\nfor(int i = 5; i < 10; i++)\n{\n    Console.WriteLine(i + \". Cycle\");\n}\nConsole.WriteLine(\"End of Program\");";
         public string source = "";
 
         public bool temp = true;
@@ -648,14 +648,14 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                         }
                         Extra = "";
                         break;
-                    case "True":
+                    case "true":
                         for (int i = index - Extra.Length + 1; i <= index; i++)
                         {
                             colors[i] = Color.Blue;
                         }
                         Extra = "";
                         break;
-                    case "False":
+                    case "false":
                         for (int i = index - Extra.Length + 1; i <= index; i++)
                         {
                             colors[i] = Color.Blue;
@@ -663,6 +663,13 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                         Extra = "";
                         break;
                     case "if(":
+                        for (int i = index - Extra.Length + 1; i < index; i++)
+                        {
+                            colors[i] = Color.DeepPink;
+                        }
+                        Extra = "";
+                        break;
+                    case "for(":
                         for (int i = index - Extra.Length + 1; i < index; i++)
                         {
                             colors[i] = Color.DeepPink;

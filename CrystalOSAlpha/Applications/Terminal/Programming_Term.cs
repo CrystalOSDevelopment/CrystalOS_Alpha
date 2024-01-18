@@ -4,6 +4,7 @@ using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Programming;
 using CrystalOSAlpha.UI_Elements;
+using ProjectDMG;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -70,6 +71,10 @@ namespace CrystalOSAlpha.Applications.Terminal
         public bool resp = false;
         public string beforeLine = "";
 
+        public int Bookmark = 0;
+
+        public string varname = "";
+
         public void App()
         {
             if (initial == true)
@@ -84,6 +89,8 @@ namespace CrystalOSAlpha.Applications.Terminal
                 CSharp.Clipboard = "";
 
                 CSharp.WaitForResponse = false;
+
+                CSharp.Cycles = 0;
 
                 //CSharp.Clipboard = "";
 
@@ -232,7 +239,6 @@ namespace CrystalOSAlpha.Applications.Terminal
                 }
             }
 
-
             string[] lines = code.Split('\n');
             if(pos < lines.Length && resp == false)
             {
@@ -242,8 +248,30 @@ namespace CrystalOSAlpha.Applications.Terminal
                 }
                 else
                 {
+                    if (lines[pos].StartsWith("for"))
+                    {
+                        string cutIT = lines[pos].Remove(0, 4).Replace(")", "").Replace(" ", "");
+                        string[] parts = cutIT.Split(";");
+                        parts[0] = parts[0].Replace("int", "");
+
+                        string[] values = parts[0].Split("=");
+                        if (int.TryParse(values[1], out int s) == true)
+                        {
+                            CSharp.Variables.Add(new Programming.Variables(values[0], s));
+                            CSharp.Cycles = s;
+                        }
+                        varname = values[0];
+
+                        CSharp.Bookmark = pos;
+                    }
+                    if((CSharp.Bracket == 0 && lines[pos] != "{" && CSharp.Cycles < 9 && CSharp.looping == true) || pos == lines.Length - 1 && lines[pos] == "}" && CSharp.Cycles < 9)
+                    {
+                        pos = CSharp.Bookmark;
+                        CSharp.Cycles++;
+                        CSharp.Variables.Find(d => d.I_Name == varname).I_Value = CSharp.Cycles;
+                    }
                     content += CSharp.Returning_methods(lines[pos]);
-                    CSharp.Clipboard += lines[pos] + "\n";
+                    //CSharp.Clipboard += lines[pos] + "\n";
                 }
                 resp = CSharp.WaitForResponse;
                 if (resp == false)

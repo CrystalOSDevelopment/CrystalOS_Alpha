@@ -39,6 +39,11 @@ namespace CrystalOSAlpha.Programming
         public static string Clipboard = "";
 
         public static int Count = 0;
+
+        public static bool looping = false;
+        public static int Bracket = 0;
+        public static int Bookmark = 0;
+        public static int Cycles = 0;
         public static string Executor(string input)
         {
             string output = "";
@@ -425,6 +430,7 @@ namespace CrystalOSAlpha.Programming
                                 }
                                 else
                                 {
+                                    /*
                                     if(firstline == true)
                                     {
                                         output += temp.Replace("\"", "");
@@ -433,8 +439,11 @@ namespace CrystalOSAlpha.Programming
                                     {
                                         output += "\n" + temp.Replace("\"", "");
                                     }
+                                    */
+                                    output += temp.Replace("\"", "");
                                 }
                             }
+                            output += "\n";
                         }
                         else if (temp.StartsWith("Write("))
                         {
@@ -539,17 +548,12 @@ namespace CrystalOSAlpha.Programming
                                 }
                                 if (sides[0] == sides[1])
                                 {
-                                    //statements.Add(true);
-                                    //WasTrue = true;
-
                                     blank = true;
                                 }
                                 else
                                 {
-                                    //statements.Add(false);
                                     Count++;
                                     Checker = true;
-                                    //WasTrue = false;
                                     blank = false;
                                 }
                             }
@@ -620,13 +624,13 @@ namespace CrystalOSAlpha.Programming
                                 }
                                 if (sides[0] != sides[1])
                                 {
-                                    statements.Add(true);
-                                    WasTrue = true;
+                                    blank = true;
                                 }
                                 else
                                 {
-                                    statements.Add(false);
-                                    WasTrue = false;
+                                    Count++;
+                                    Checker = true;
+                                    blank = false;
                                 }
                             }
                             if (temp.Contains(">"))
@@ -696,13 +700,13 @@ namespace CrystalOSAlpha.Programming
                                 }
                                 if (int.Parse(sides[0]) > int.Parse(sides[1]))
                                 {
-                                    statements.Add(true);
-                                    WasTrue = true;
+                                    blank = true;
                                 }
                                 else
                                 {
-                                    statements.Add(false);
-                                    WasTrue = false;
+                                    Count++;
+                                    Checker = true;
+                                    blank = false;
                                 }
                             }
                             if (temp.Contains("<"))
@@ -772,13 +776,13 @@ namespace CrystalOSAlpha.Programming
                                 }
                                 if (int.Parse(sides[0]) < int.Parse(sides[1]))
                                 {
-                                    statements.Add(true);
-                                    WasTrue = true;
+                                    blank = true;
                                 }
                                 else
                                 {
-                                    statements.Add(false);
-                                    WasTrue = false;
+                                    Count++;
+                                    Checker = true;
+                                    blank = false;
                                 }
                             }
                         }
@@ -860,7 +864,6 @@ namespace CrystalOSAlpha.Programming
                                 }
                                 if (sides[0] == sides[1])
                                 {
-                                    //statements.Add(true);
                                     if(blank == false)
                                     {
                                         blank = true;
@@ -873,10 +876,8 @@ namespace CrystalOSAlpha.Programming
                                 }
                                 else
                                 {
-                                    //statements.Add(false);
                                     Count++;
                                     Checker = true;
-                                    //blank = false;
                                 }
                             }
                             if (temp.Contains("!="))
@@ -946,13 +947,20 @@ namespace CrystalOSAlpha.Programming
                                 }
                                 if (sides[0] != sides[1])
                                 {
-                                    statements.Add(true);
-                                    WasTrue = true;
+                                    if (blank == false)
+                                    {
+                                        blank = true;
+                                    }
+                                    else
+                                    {
+                                        Count++;
+                                        Checker = true;
+                                    }
                                 }
                                 else
                                 {
-                                    statements.Add(false);
-                                    WasTrue = false;
+                                    Count++;
+                                    Checker = true;
                                 }
                             }
                             if (temp.Contains(">"))
@@ -1022,13 +1030,20 @@ namespace CrystalOSAlpha.Programming
                                 }
                                 if (int.Parse(sides[0]) > int.Parse(sides[1]))
                                 {
-                                    statements.Add(true);
-                                    WasTrue = true;
+                                    if (blank == false)
+                                    {
+                                        blank = true;
+                                    }
+                                    else
+                                    {
+                                        Count++;
+                                        Checker = true;
+                                    }
                                 }
                                 else
                                 {
-                                    statements.Add(false);
-                                    WasTrue = false;
+                                    Count++;
+                                    Checker = true;
                                 }
                             }
                             if (temp.Contains("<"))
@@ -1098,13 +1113,20 @@ namespace CrystalOSAlpha.Programming
                                 }
                                 if (int.Parse(sides[0]) < int.Parse(sides[1]))
                                 {
-                                    statements.Add(true);
-                                    WasTrue = true;
+                                    if (blank == false)
+                                    {
+                                        blank = true;
+                                    }
+                                    else
+                                    {
+                                        Count++;
+                                        Checker = true;
+                                    }
                                 }
                                 else
                                 {
-                                    statements.Add(false);
-                                    WasTrue = false;
+                                    Count++;
+                                    Checker = true;
                                 }
                             }
                         }
@@ -1116,19 +1138,6 @@ namespace CrystalOSAlpha.Programming
                     }
                     else if (line.StartsWith("else"))
                     {
-                        //statements.Add(true);
-                        /*
-                        if (WasTrue == false && WasIf == true)
-                        {
-                            WasIf = false;
-                        }
-                        else
-                        {
-                            statements.Add(false);
-                            WasIf = false;
-                            WasTrue = false;
-                        }
-                        */
                         if (blank == false && WasIf == true)
                         {
                             WasIf = false;
@@ -1136,10 +1145,29 @@ namespace CrystalOSAlpha.Programming
                         else
                         {
                             Count++;
-                            //statements.Add(false);
                             WasIf = false;
                             blank = false;
                             Checker = true;
+                        }
+                    }
+
+                    if (line.StartsWith("for"))
+                    {
+
+                        looping = true;
+                    }
+                    if (line.StartsWith("{"))
+                    {
+                        if(looping == true)
+                        {
+                            Bracket++;
+                        }
+                    }
+                    else if (line.Trim().StartsWith("}"))
+                    {
+                        if (looping == true)
+                        {
+                            Bracket++;
                         }
                     }
 
@@ -1173,14 +1201,6 @@ namespace CrystalOSAlpha.Programming
                 }
                 else
                 {
-                    //if (line.StartsWith("{") && WasIf == true && WasTrue == false)//&& Checker == false
-                    //{
-                    //    if (statements[^1] != false)
-                    //    {
-                    //        statements.Add(false);
-                    //    }
-                    //}
-                    //Checker = false;
                     if (line.StartsWith("{"))
                     {
                         if(Checker == false)
@@ -1195,7 +1215,6 @@ namespace CrystalOSAlpha.Programming
                     if (line.Trim().StartsWith("}"))
                     {
                         Count--;
-                        //statements.RemoveAt(statements.Count - 1);
                     }
                 }
                 firstline = false;
