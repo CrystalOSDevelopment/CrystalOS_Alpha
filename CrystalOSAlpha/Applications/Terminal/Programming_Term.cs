@@ -257,18 +257,27 @@ namespace CrystalOSAlpha.Applications.Terminal
                         string[] values = parts[0].Split("=");
                         if (int.TryParse(values[1], out int s) == true)
                         {
+                            CSharp.Variables.RemoveAll(d => d.I_Name == values[0]);
                             CSharp.Variables.Add(new Programming.Variables(values[0], s));
                             CSharp.Cycles = s;
                         }
                         varname = values[0];
 
+                        values = parts[1].Split("<");
+                        if (int.TryParse(values[1], out int rightSide) == true)
+                        {
+                            CSharp.MaxCycle = rightSide - 1;
+                        }
+                        varname = values[0];
+
                         CSharp.Bookmark = pos;
                     }
-                    if((CSharp.Bracket == 0 && lines[pos] != "{" && CSharp.Cycles < 9 && CSharp.looping == true) || pos == lines.Length - 1 && lines[pos] == "}" && CSharp.Cycles < 9)
+                    if ((CSharp.Bracket == 1 && lines[pos] == "}" && CSharp.Cycles < CSharp.MaxCycle && CSharp.looping == true) || pos == lines.Length - 1 && lines[pos] == "}" && CSharp.Cycles < CSharp.MaxCycle && CSharp.looping == true)//CSharp.Bracket == 0 && lines[pos] != "{" && CSharp.Cycles < 9 && CSharp.looping == true
                     {
                         pos = CSharp.Bookmark;
                         CSharp.Cycles++;
                         CSharp.Variables.Find(d => d.I_Name == varname).I_Value = CSharp.Cycles;
+                        CSharp.Bracket = 0;
                     }
                     content += CSharp.Returning_methods(lines[pos]);
                     //CSharp.Clipboard += lines[pos] + "\n";

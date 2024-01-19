@@ -53,7 +53,9 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public Bitmap window;
         public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
 
-        public string content = "string name = Console.ReadLine();\nif(name == \"John\")\n{\n    Console.WriteLine(\"Hi\");\n}\nelse if(name == \"Doe\")\n{\n    Console.WriteLine(\"Hello\");\n}\nelse if(name == \"Carol\")\n{\n    Console.WriteLine(\"Who even are you?\");\n}\nelse\n{\n    Console.WriteLine(\"No message for you!\");\n}\nfor(int i = 5; i < 10; i++)\n{\n    Console.WriteLine(i + \". Cycle\");\n}\nConsole.WriteLine(\"End of Program\");";
+        //public string content = "string name = Console.ReadLine();\nif(name == \"John\")\n{\n    Console.WriteLine(\"Hi\");\n}\nelse if(name == \"Doe\")\n{\n    Console.WriteLine(\"Hello\");\n}\nelse if(name == \"Carol\")\n{\n    Console.WriteLine(\"Who even are you?\");\n}\nelse\n{\n    Console.WriteLine(\"No message for you!\");\n}\nfor(int i = 5; i < 15; i++)\n{\n    Console.WriteLine(i + \". Cycle\");\n}\nConsole.WriteLine(\"End of Program\");\nfor(int i = 0; i < 10; i++)\n{\n    Console.WriteLine(i + \". Cycle\");\n}\nConsole.WriteLine(\"End of Program\");";
+        //public string content = "Console.WriteLine(\"Guess a number game!\");\nint num = Random.Next(0, 11);\nConsole.WriteLine(num);";
+        public string content = "Console.WriteLine(\"Guess a number game!\");\nbool match = false;\nint num = Random.Next(0, 11);\nConsole.WriteLine(\"You have 3 guesses!\");\nfor(int i = 0; i < 3; i++)\n{\n    Console.Write(i + \". Guess\");\n    int guessed = Console.ReadLine();\n    if(guessed == num)\n    {\n        Console.WriteLine(\"That's Correct\");\n        bool match = true;\n    }\n    else if(guessed > num)\n    {\n        Console.WriteLine(\"Guessed is bigger\");\n    }\n    else\n    {\n        Console.WriteLine(\"Guessed is smaller\");\n    }\n}\nConsole.WriteLine(\"The correct number was: \" + num);";
         public string source = "";
 
         public bool temp = true;
@@ -302,8 +304,9 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     }
                 }
 
-                string output = "";
+                //string output = "";
 
+                /*
                 output = content;
                 if (output.Split('\n').Length > 23)
                 {
@@ -318,7 +321,8 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 {
                     output = output.Remove(Get_index_of_char(output, '\n', 23));
                 }
-                BitFont.DrawBitFontString(Container, "ArialCustomCharset16", HighLight(output), output, 7, 7 - Scroll[0].Pos);
+                */
+                BitFont.DrawBitFontString(Container, "ArialCustomCharset16", HighLight(content), content, 7, 7 - Scroll[0].Pos);
 
                 ImprovedVBE.DrawImageAlpha(Container, 5, 52, window);
                 ImprovedVBE.DrawImageAlpha(Strucrure, width - 319, 52, window);
@@ -558,6 +562,13 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                         Extra = "";
                         break;
                     case "Math":
+                        for (int i = index - Extra.Length + 1; i <= index; i++)
+                        {
+                            colors[i] = Color.Green;
+                        }
+                        Extra = "";
+                        break;
+                    case "Random":
                         for (int i = index - Extra.Length + 1; i <= index; i++)
                         {
                             colors[i] = Color.Green;

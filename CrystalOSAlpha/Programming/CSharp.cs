@@ -44,6 +44,7 @@ namespace CrystalOSAlpha.Programming
         public static int Bracket = 0;
         public static int Bookmark = 0;
         public static int Cycles = 0;
+        public static int MaxCycle = 0;
         public static string Executor(string input)
         {
             string output = "";
@@ -200,24 +201,64 @@ namespace CrystalOSAlpha.Programming
                                 Variables.Add(new Programming.Variables(values[0], DateTime.UtcNow.Year));
                             }
                         }
-                        else
+                        else if (values[1].StartsWith("Random.Next("))
                         {
+                            string value = values[1].Replace("Random.Next(", "").Replace(")", "");
+                            string[] Sides = value.Split(',');
+
+                            Random rnd = new Random();
+
+                            int generated = rnd.Next(int.Parse(Sides[0]), int.Parse(Sides[1]));
+
                             bool found = false;
-                            foreach(var v in Variables)
+                            foreach (var v in Variables)
                             {
-                                if(v.I_Name == values[0])
+                                if (v.I_Name == values[0])
                                 {
                                     found = true;
+                                    
+                                    v.I_Value = generated;
                                 }
                             }
-                            if(found == false)
+                            if (found == false)
                             {
-                                name = values[0];
-                                if (Returning_Value == null)
+                                try
                                 {
-                                    format = "int";
-                                    WaitForResponse = true;
+                                    Variables.Add(new Programming.Variables(values[0], generated));
                                 }
+                                catch(Exception e)
+                                {
+                                    Clipboard = e.Message;
+                                }
+                            }
+                            
+                            //Clipboard = generated.ToString();
+                        }
+                        else
+                        {
+                            //bool found = false;
+                            //foreach(var v in Variables)
+                            //{
+                            //    if(v.I_Name == values[0])
+                            //    {
+                            //        found = true;
+                            //    }
+                            //}
+                            //if(found == false)
+                            //{
+                            //    name = values[0];
+                            //    if (Returning_Value == null)
+                            //    {
+                            //        format = "int";
+                            //        WaitForResponse = true;
+                            //    }
+                            //}
+                            name = values[0];
+                            Variables.RemoveAll(d => d.I_Name == name);
+                            if (Returning_Value == null)
+                            {
+                                format = "int";
+                                WaitForResponse = true;
                             }
                         }
                     }
@@ -228,7 +269,10 @@ namespace CrystalOSAlpha.Programming
                         string[] values = temp.Split("=");
                         if (bool.TryParse(values[1], out bool s) == true)
                         {
-                            Variables.Add(new Programming.Variables(values[0], s));
+                            //Variables.Add(new Programming.Variables(values[0], s));
+                            Variables.RemoveAll(d => d.B_Name == values[0]);
+                            Variables.Add(new Variables(values[0], s));
+                            Clipboard += Variables[^1].B_Value.ToString() + "\n" + Variables[^1].B_Name;
                         }
                         else
                         {
@@ -491,27 +535,34 @@ namespace CrystalOSAlpha.Programming
                                 }
                                 else
                                 {
-                                    foreach (var Item in Variables)
+                                    if (bool.TryParse(sides[0], out bool s))
                                     {
-                                        if (sides[0] == Item.S_Name)
+                                        sides[0] = s.ToString();
+                                    }
+                                    else
+                                    {
+                                        foreach (var Item in Variables)
                                         {
-                                            sides[0] = Item.S_Value;
-                                        }
-                                        if (sides[0] == Item.I_Name)
-                                        {
-                                            sides[0] = Item.I_Value.ToString();
-                                        }
-                                        if (sides[0] == Item.B_Name)
-                                        {
-                                            sides[0] = Item.B_Value.ToString();
-                                        }
-                                        if (sides[0] == Item.F_Name)
-                                        {
-                                            sides[0] = Item.F_Value.ToString();
-                                        }
-                                        if (sides[0] == Item.D_Name)
-                                        {
-                                            sides[0] = Item.D_Value.ToString();
+                                            if (sides[0] == Item.S_Name)
+                                            {
+                                                sides[0] = Item.S_Value;
+                                            }
+                                            if (sides[0] == Item.I_Name)
+                                            {
+                                                sides[0] = Item.I_Value.ToString();
+                                            }
+                                            if (sides[0] == Item.B_Name)
+                                            {
+                                                sides[0] = Item.B_Value.ToString();
+                                            }
+                                            if (sides[0] == Item.F_Name)
+                                            {
+                                                sides[0] = Item.F_Value.ToString();
+                                            }
+                                            if (sides[0] == Item.D_Name)
+                                            {
+                                                sides[0] = Item.D_Value.ToString();
+                                            }
                                         }
                                     }
                                 }
@@ -522,27 +573,34 @@ namespace CrystalOSAlpha.Programming
                                 }
                                 else
                                 {
-                                    foreach (var Item in Variables)
+                                    if (bool.TryParse(sides[1], out bool s))
                                     {
-                                        if (sides[1] == Item.S_Name)
+                                        sides[1] = s.ToString();
+                                    }
+                                    else
+                                    {
+                                        foreach (var Item in Variables)
                                         {
-                                            sides[1] = Item.S_Value;
-                                        }
-                                        if (sides[1] == Item.I_Name)
-                                        {
-                                            sides[1] = Item.I_Value.ToString();
-                                        }
-                                        if (sides[1] == Item.B_Name)
-                                        {
-                                            sides[1] = Item.B_Value.ToString();
-                                        }
-                                        if (sides[1] == Item.F_Name)
-                                        {
-                                            sides[1] = Item.F_Value.ToString();
-                                        }
-                                        if (sides[1] == Item.D_Name)
-                                        {
-                                            sides[1] = Item.D_Value.ToString();
+                                            if (sides[1] == Item.S_Name)
+                                            {
+                                                sides[1] = Item.S_Value;
+                                            }
+                                            if (sides[1] == Item.I_Name)
+                                            {
+                                                sides[1] = Item.I_Value.ToString();
+                                            }
+                                            if (sides[1] == Item.B_Name)
+                                            {
+                                                sides[1] = Item.B_Value.ToString();
+                                            }
+                                            if (sides[1] == Item.F_Name)
+                                            {
+                                                sides[1] = Item.F_Value.ToString();
+                                            }
+                                            if (sides[1] == Item.D_Name)
+                                            {
+                                                sides[1] = Item.D_Value.ToString();
+                                            }
                                         }
                                     }
                                 }
@@ -1167,8 +1225,13 @@ namespace CrystalOSAlpha.Programming
                     {
                         if (looping == true)
                         {
-                            Bracket++;
+                            Bracket--;
                         }
+                    }
+                    if(Bracket == 0 && Cycles >= MaxCycle)
+                    {
+                        looping = false;
+                        Cycles = 0;
                     }
 
                     if (line.StartsWith("MsgBox.New("))
@@ -1190,14 +1253,23 @@ namespace CrystalOSAlpha.Programming
                     }
                     if (line.StartsWith("//")) { }
 
+                    /*
                     foreach (var v in Variables)
                     {
                         if (line.StartsWith(v.S_Name))
                         {
                             string[] data = line.Split("=");
-                            v.S_Value = data[1].Replace(" ", "");
+                            v.S_Value = data[1].Replace("\"", "");
                         }
+                        if (line.Contains(v.B_Name))
+                        {
+                            string[] data = line.Split("=");
+                            v.B_Value = bool.Parse(data[1]);
+                        }
+                        Clipboard += "\nHello from b_Name\nValue of v.B_Value: " + v.B_Value.ToString() + "\nThe name of variable: " + v.B_Name;
                     }
+                    Clipboard += "\nLength of Variables: " + Variables.Count;
+                    */
                 }
                 else
                 {
