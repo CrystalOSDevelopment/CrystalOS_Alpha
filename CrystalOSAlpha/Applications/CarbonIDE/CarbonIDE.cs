@@ -502,7 +502,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     {
                         comment = false;
                     }
-                    if (c == '.' || c == '\n' || c == ' ' || c == '=' || c == '{' || c == '}')
+                    if (c == '.' || c == '\n' || c == ' ' || c == '=' || c == '{' || c == '}' || c == '+' || c == '-' || c == ',')
                     {
                         if(comment == false)
                         {
@@ -511,44 +511,19 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     }
                     else
                     {
-                        if (was_String == true)
+                        Extra += c;
+                        if (c == '\"')
                         {
-                            was_String = false;
-                        }
-                        else
-                        {
-                            Extra += c;
-                            if(c == '\"')
-                            {
-                                state = "Started";
-                            }
-                            if(c == ',')
-                            {
-                                Extra = "";
-                            }
+                            state = "Started";
                         }
                     }
                 }
                 else if(state == "Started")
                 {
-                    if (c == '.' || c == '\n' || c == '=')
+                    Extra += c;
+                    if (c == '\"')
                     {
-
-                    }
-                    else
-                    {
-                        if (was_String == true)
-                        {
-                            was_String = false;
-                        }
-                        else
-                        {
-                            Extra += c;
-                            if (c == '\"')
-                            {
-                                state = "Ended";
-                            }
-                        }
+                        state = "Ended";
                     }
                 }
                 
