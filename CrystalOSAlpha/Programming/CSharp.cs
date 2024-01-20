@@ -11,6 +11,7 @@ using CrystalOSAlpha.UI_Elements;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -141,6 +142,7 @@ namespace CrystalOSAlpha.Programming
                 }
                 if (Count == 0)//statements[^1] == true
                 {
+                    #region variables
                     if (line.StartsWith("string"))
                     {
                         string temp = line.Replace("string", "");
@@ -269,10 +271,8 @@ namespace CrystalOSAlpha.Programming
                         string[] values = temp.Split("=");
                         if (bool.TryParse(values[1], out bool s) == true)
                         {
-                            //Variables.Add(new Programming.Variables(values[0], s));
                             Variables.RemoveAll(d => d.B_Name == values[0]);
                             Variables.Add(new Variables(values[0], s));
-                            Clipboard += Variables[^1].B_Value.ToString() + "\n" + Variables[^1].B_Name;
                         }
                         else
                         {
@@ -358,6 +358,9 @@ namespace CrystalOSAlpha.Programming
                         }
                         Returning_Value = null;
                     }
+                    #endregion variables
+
+                    #region Console out
                     if (line.StartsWith("Console"))
                     {
                         WaitForResponse = false;
@@ -517,7 +520,9 @@ namespace CrystalOSAlpha.Programming
                             WaitForResponse = true;
                         }
                     }
+                    #endregion Console out
 
+                    #region Conditionals
                     if (line.StartsWith("if"))
                     {
                         WasIf = true;
@@ -1208,7 +1213,9 @@ namespace CrystalOSAlpha.Programming
                             Checker = true;
                         }
                     }
+                    #endregion Conditionals
 
+                    #region Loops
                     if (line.StartsWith("for"))
                     {
 
@@ -1233,7 +1240,9 @@ namespace CrystalOSAlpha.Programming
                         looping = false;
                         Cycles = 0;
                     }
+                    #endregion Loops
 
+                    #region Allert window
                     if (line.StartsWith("MsgBox.New("))
                     {
                         string trimmed = line.Replace("MsgBox.New(", "").Replace(")", "");
@@ -1251,25 +1260,65 @@ namespace CrystalOSAlpha.Programming
                             TaskScheduler.Apps.Add(new MsgBox(999, int.Parse(data[0]), int.Parse(data[1]), int.Parse(data[2]), int.Parse(data[3]), "Alert!", data[4].Replace("\"", ""), ImprovedVBE.ScaleImageStock(ImageViewer.Nr1, 56, 56)));
                         }
                     }
-                    if (line.StartsWith("//")) { }
+                    #endregion Allert window
 
-                    /*
-                    foreach (var v in Variables)
+                    #region Accessories, comments
+                    if (line.StartsWith("//")) { }
+                    #endregion Accessories, comments
+
+                    #region System IO
+                    if (line.StartsWith("File"))
                     {
-                        if (line.StartsWith(v.S_Name))
+                        if (line.Contains("Create"))
                         {
-                            string[] data = line.Split("=");
-                            v.S_Value = data[1].Replace("\"", "");
+                            string temp = line.Replace("File.Create(", "").Replace(")", "");
+                            string[] args = temp.Split(",");
+
+                            if (!File.Exists(args[0].Replace("\"", "") + args[1].Replace("\"", "")))
+                            {
+                                try
+                                {
+                                    File.Create(args[0].Replace("\"", "") + args[1].Replace("\"", ""));
+                                }
+                                catch (Exception e)
+                                {
+                                    Clipboard += e.Message;
+                                }
+                            }
                         }
-                        if (line.Contains(v.B_Name))
+                        if (line.Contains("WriteAllText"))
                         {
-                            string[] data = line.Split("=");
-                            v.B_Value = bool.Parse(data[1]);
+                            string temp = input.Replace("File.WriteAllText(", "");
+                            temp = temp.Remove(temp.Length - 3);
+
+                            string[] args = temp.Split(",\"");
+
+                            if (File.Exists(args[0].Replace("\"", "")))
+                            {
+                                try
+                                {
+                                    string CleanUp = args[1];
+                                    
+                                    Clipboard += CleanUp + "\n";
+                                    
+                                    //CleanUp = CleanUp.Remove(CleanUp.Length - 1);
+                                    
+                                    //Clipboard += CleanUp + "\n";
+                                    
+                                    CleanUp = CleanUp.Replace("\\\"", "\"");
+                                    
+                                    Clipboard += CleanUp;
+
+                                    File.WriteAllText(args[0].Replace("\"", ""), CleanUp);
+                                }
+                                catch (Exception e)
+                                {
+                                    Clipboard += e.Message;
+                                }
+                            }
                         }
-                        Clipboard += "\nHello from b_Name\nValue of v.B_Value: " + v.B_Value.ToString() + "\nThe name of variable: " + v.B_Name;
                     }
-                    Clipboard += "\nLength of Variables: " + Variables.Count;
-                    */
+                    #endregion System IO
                 }
                 else
                 {

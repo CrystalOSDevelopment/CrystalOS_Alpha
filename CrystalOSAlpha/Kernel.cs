@@ -66,16 +66,19 @@ namespace CrystalOS_Alpha
             Rendering.widgets.Add(f);
 
             ImageViewer i = new ImageViewer();
-            i.X = 600;
-            i.Y = 200;
-            i.Z = 1;
-            Rendering.widgets.Add(i);
+            i.x = 600;
+            i.y = 200;
+            i.z = 999;
+            i.minimised = false;
+            i.icon = ImprovedVBE.ScaleImageStock(Resources.Web, 56, 56);
+            TaskScheduler.Apps.Add(i);
 
             Note n = new Note();
             n.x = 900;
             n.y = 200;
-            n.z = 1;
+            n.z = 999;
             n.name = null;
+            i.minimised = false;
             n.icon = ImprovedVBE.ScaleImageStock(Resources.Web, 56, 56);
             TaskScheduler.Apps.Add(n);
 

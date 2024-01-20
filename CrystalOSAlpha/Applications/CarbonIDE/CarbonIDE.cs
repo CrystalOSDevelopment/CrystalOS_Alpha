@@ -53,9 +53,12 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public Bitmap window;
         public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
 
-        //public string content = "string name = Console.ReadLine();\nif(name == \"John\")\n{\n    Console.WriteLine(\"Hi\");\n}\nelse if(name == \"Doe\")\n{\n    Console.WriteLine(\"Hello\");\n}\nelse if(name == \"Carol\")\n{\n    Console.WriteLine(\"Who even are you?\");\n}\nelse\n{\n    Console.WriteLine(\"No message for you!\");\n}\nfor(int i = 5; i < 15; i++)\n{\n    Console.WriteLine(i + \". Cycle\");\n}\nConsole.WriteLine(\"End of Program\");\nfor(int i = 0; i < 10; i++)\n{\n    Console.WriteLine(i + \". Cycle\");\n}\nConsole.WriteLine(\"End of Program\");";
+        public string TestCode = "string name = Console.ReadLine();\nif(name == \"John\")\n{\n    Console.WriteLine(\"Hi\");\n}\nelse if(name == \"Doe\")\n{\n    Console.WriteLine(\"Hello\");\n}\nelse if(name == \"Carol\")\n{\n    Console.WriteLine(\"Who even are you?\");\n}\nelse\n{\n    Console.WriteLine(\"No message for you!\");\n}\nfor(int i = 5; i < 15; i++)\n{\n    Console.WriteLine(i + \". Cycle\");\n}\nConsole.WriteLine(\"End of Program\");\nfor(int i = 0; i < 10; i++)\n{\n    Console.WriteLine(i + \". Cycle\");\n}\nConsole.WriteLine(\"End of Program\");";
         //public string content = "Console.WriteLine(\"Guess a number game!\");\nint num = Random.Next(0, 11);\nConsole.WriteLine(num);";
-        public string content = "Console.WriteLine(\"Guess a number game!\");\nbool match = false;\nint num = Random.Next(0, 11);\nConsole.WriteLine(\"You have 3 guesses!\");\nfor(int i = 0; i < 3; i++)\n{\n    Console.Write(i + \". Guess\");\n    int guessed = Console.ReadLine();\n    if(guessed == num)\n    {\n        Console.WriteLine(\"That's Correct\");\n        bool match = true;\n    }\n    else if(guessed > num)\n    {\n        Console.WriteLine(\"Guessed is bigger\");\n    }\n    else\n    {\n        Console.WriteLine(\"Guessed is smaller\");\n    }\n}\nConsole.WriteLine(\"The correct number was: \" + num);";
+        public string Game = "Console.WriteLine(\"Guess a number game!\");\nbool match = false;\nint num = Random.Next(0, 11);\nConsole.WriteLine(\"You have 3 guesses!\");\nfor(int i = 0; i < 3; i++)\n{\n    Console.Write(i + \". Guess\");\n    int guessed = Console.ReadLine();\n    if(guessed == num)\n    {\n        Console.WriteLine(\"That's Correct\");\n        bool match = true;\n    }\n    else if(guessed > num)\n    {\n        Console.WriteLine(\"Guessed is bigger\");\n    }\n    else\n    {\n        Console.WriteLine(\"Guessed is smaller\");\n    }\n}\nConsole.WriteLine(\"The correct number was: \" + num);";
+        public string content = "";
+        //public string content = "File.Create(\"0:\\\", \"Sample.app\");\nFile.WriteAllText(\"0:\\Sample.app\", \"Console.WriteLine(\\\"Hello, World!\\\");\");";
+        //public string content = "";
         public string source = "";
 
         public bool temp = true;
@@ -68,7 +71,11 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public List<Dropdown> dropdowns = new List<Dropdown>();
         public List<values> value = new List<values>();
 
+        public List<CSharpFile> FileTree = new List<CSharpFile>();
+
         public int memory = 0;
+
+        public string lineCount = "";
 
         public void App()
         {
@@ -92,6 +99,26 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 Scroll.Add(new Scrollbar_Values(width - 347, 30, 20, height - 60, 0));
 
                 Scroll.Add(new Scrollbar_Values(width - 25, 30, 20, height - 267, 0));
+
+                //Starting to init line counting
+                for(int i = 0; i < 113; i++)
+                {
+                    if (i.ToString().Length == 1)
+                    {
+                        lineCount += (i + 1) + "  \n";
+                    }
+                    else if(i.ToString().Length == 2)
+                    {
+                        lineCount += (i + 1) + " \n";
+                    }
+                    else
+                    {
+                        lineCount += (i + 1) + "\n";
+                    }
+                }
+
+                FileTree.Add(new CSharpFile("Tests.cs", TestCode));
+                FileTree.Add(new CSharpFile("Game.cs", Game));
 
                 initial = false;
             }
@@ -229,12 +256,40 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
             if (temp == true)
             {
-                string end = "";
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
+                
+                #region Code container
                 Array.Fill(Container.RawData, ImprovedVBE.colourToNumber(36, 36, 36));
                 ImprovedVBE.DrawFilledRectangle(Container, ImprovedVBE.colourToNumber(50, 50, 50), 2, 2, (int)Container.Width - 4, (int)Container.Height - 4, false);
+                ImprovedVBE.DrawFilledRectangle(Container, ImprovedVBE.colourToNumber(69, 69, 69), 2, 2, 35, (int)Container.Height - 4, false);
+                #endregion Code container
+
+                #region FileTree
                 Array.Fill(Strucrure.RawData, ImprovedVBE.colourToNumber(36, 36, 36));
                 ImprovedVBE.DrawFilledRectangle(Strucrure, ImprovedVBE.colourToNumber(50, 50, 50), 2, 2, (int)Strucrure.Width - 4, (int)Strucrure.Height - 4, false);
+
+                int top = 15;
+                int left = 15;
+
+                BitFont.DrawBitFontString(Strucrure, "ArialCustomCharset16", Color.White, "Solution explorer", 15, top - 4);//The title
+                ImprovedVBE.DrawFilledRectangle(Strucrure, ImprovedVBE.colourToNumber(90, 90, 90), 7, top + 20, (int)Strucrure.Width - 34, 2, false);
+
+                top += 28;
+
+                foreach(var v in FileTree)
+                {
+                    v.List_Y = top;
+                    v.List_X = left;
+                    if (v.selected)
+                    {
+                        ImprovedVBE.DrawFilledRectangle(Strucrure, ImprovedVBE.colourToNumber(20, 20, 20), left - 10, top - 3, (int)(Strucrure.Width - 28), 23, false);
+                        ImprovedVBE.DrawFilledRectangle(Strucrure, ImprovedVBE.colourToNumber(90, 90, 90), left - 8, top - 1, (int)(Strucrure.Width - 32), 19, false);
+                    }
+                    BitFont.DrawBitFontString(Strucrure, "ArialCustomCharset16", Color.White, v.Name, left, top - Scroll[1].Pos);//Filename
+                    top += 25;
+                }
+
+                #endregion FileTree
 
                 foreach (var button in Buttons)
                 {
@@ -251,7 +306,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                 //BitFont.DrawBitFontString(window, "ArialCustomCharset16", Color.White, CSharp.Executor(content), 500, 500);
                                 if (value[0].Highlighted == true)
                                 {
-                                    end = CSharp.Executor(content);
+                                    CSharp.Executor(content);
                                 }
                                 if (value[1].Highlighted == true)
                                 {
@@ -304,25 +359,9 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     }
                 }
 
-                //string output = "";
+                BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.Black, lineCount, 7, 7 - Scroll[0].Pos);//The line counter
 
-                /*
-                output = content;
-                if (output.Split('\n').Length > 23)
-                {
-                    int h = Scroll[0].Pos / 8;
-                    for (int i = 0; i < h; i++)
-                    {
-                        int index = output.IndexOf('\n');
-                        output = output.Remove(0, index + 1);
-                    }
-                }
-                if (output.Split('\n').Length > 23)
-                {
-                    output = output.Remove(Get_index_of_char(output, '\n', 23));
-                }
-                */
-                BitFont.DrawBitFontString(Container, "ArialCustomCharset16", HighLight(content), content, 7, 7 - Scroll[0].Pos);
+                BitFont.DrawBitFontString(Container, "ArialCustomCharset16", HighLight(content), content, 42, 7 - Scroll[0].Pos);//The actual code
 
                 ImprovedVBE.DrawImageAlpha(Container, 5, 52, window);
                 ImprovedVBE.DrawImageAlpha(Strucrure, width - 319, 52, window);
@@ -330,9 +369,27 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 window = Scrollbar.Render(window, Scroll[0]);
                 window = Scrollbar.Render(window, Scroll[1]);
 
-                BitFont.DrawBitFontString(window, "ArialCustomCharset16", Color.White, end, 500, 500);
-
                 temp = false;
+            }
+
+            if(MouseManager.MouseState == MouseState.Left)
+            {
+                foreach(var v in FileTree)
+                {
+                    if(MouseManager.X > x + width - 319 + v.List_X && MouseManager.X < x + width - 10)
+                    {
+                        if (MouseManager.Y > y + 52 + v.List_Y && MouseManager.Y < y + 52 + v.List_Y + 22)
+                        {
+                            foreach(var v2 in FileTree)
+                            {
+                                v2.selected = false;
+                            }
+                            content = v.Content;
+                            v.selected = true;
+                            temp = true;
+                        }
+                    }
+                }
             }
             //ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
             Array.Copy(window.RawData, 0, ImprovedVBE.cover.RawData, 0, window.RawData.Length);
@@ -521,7 +578,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 else if(state == "Started")
                 {
                     Extra += c;
-                    if (c == '\"')
+                    if (c == '\"' && !Extra.EndsWith("\\\"") && Extra.Count(t => t == '\"') % 2 == 0)
                     {
                         state = "Ended";
                     }
@@ -678,7 +735,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 }
                 if(Extra.Length > 2)
                 {
-                    if (Extra.EndsWith("("))
+                    if (Extra.EndsWith("(") && state == "Ended")
                     {
                         for (int i = index - Extra.Length + 1; i < index; i++)
                         {
@@ -720,6 +777,21 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 }
             }
             return colors;
+        }
+    }
+
+    class CSharpFile
+    {
+        public string Name { get; set; }
+        public string Content { get; set; }
+        public int List_X { get; set; }
+        public int List_Y { get; set; }
+        public bool selected { get; set; }
+
+        public CSharpFile(string name, string content)
+        {
+            Name = name;
+            Content = content;
         }
     }
 }

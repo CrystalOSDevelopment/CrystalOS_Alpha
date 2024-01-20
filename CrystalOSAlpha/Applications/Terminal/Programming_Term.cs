@@ -248,7 +248,7 @@ namespace CrystalOSAlpha.Applications.Terminal
                 }
                 else
                 {
-                    if (lines[pos].StartsWith("for"))
+                    if (lines[pos].Trim().StartsWith("for"))
                     {
                         string cutIT = lines[pos].Remove(0, 4).Replace(")", "").Replace(" ", "");
                         string[] parts = cutIT.Split(";");
@@ -272,6 +272,10 @@ namespace CrystalOSAlpha.Applications.Terminal
 
                         CSharp.Bookmark = pos;
                     }
+                    if (lines[pos].Contains("Console.Clear();"))
+                    {
+                        content = "";
+                    }
                     if ((CSharp.Bracket == 1 && lines[pos] == "}" && CSharp.Cycles < CSharp.MaxCycle && CSharp.looping == true) || pos == lines.Length - 1 && lines[pos] == "}" && CSharp.Cycles < CSharp.MaxCycle && CSharp.looping == true)//CSharp.Bracket == 0 && lines[pos] != "{" && CSharp.Cycles < 9 && CSharp.looping == true
                     {
                         pos = CSharp.Bookmark;
@@ -279,6 +283,7 @@ namespace CrystalOSAlpha.Applications.Terminal
                         CSharp.Variables.Find(d => d.I_Name == varname).I_Value = CSharp.Cycles;
                         CSharp.Bracket = 0;
                     }
+
                     content += CSharp.Returning_methods(lines[pos]);
                     //CSharp.Clipboard += lines[pos] + "\n";
                 }

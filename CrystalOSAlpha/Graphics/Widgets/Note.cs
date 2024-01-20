@@ -359,7 +359,6 @@ namespace CrystalOSAlpha.Graphics.Widgets
             {
                 if (((MouseManager.X > x && MouseManager.X < x + Back.Width) && (MouseManager.Y > y && MouseManager.Y < y + Back.Height)) || mem == false)
                 {
-                    z = 999;
                     if (mem == true)
                     {
                         x_dif = (int)MouseManager.X - x;

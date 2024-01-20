@@ -304,6 +304,11 @@ namespace CrystalOSAlpha.Applications.FileSys
                         }
                     }
                     x_off += 70;
+                    if(x_off / 70 >= 6)
+                    {
+                        y_off += 85;
+                        x_off = 5;
+                    }
                 }
                 ImprovedVBE.DrawImageAlpha(Main, 154, 65, window);
 

@@ -155,7 +155,7 @@ namespace CrystalOSAlpha.Graphics
                     {
                         if(MouseManager.Y > y_offset && MouseManager.Y < y_offset + app.icon.Height + 15)
                         {
-                            if(Clicked == false)
+                            if(Clicked == false && app.name != null)
                             {
                                 if(app.minimised == true)
                                 {
