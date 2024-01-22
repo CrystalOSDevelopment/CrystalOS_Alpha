@@ -46,6 +46,10 @@ namespace CrystalOSAlpha.Programming
         public static int Bookmark = 0;
         public static int Cycles = 0;
         public static int MaxCycle = 0;
+
+        public static bool WhileLoop = false;
+        public static int WhileBracket = 0;
+        public static int StartPoint = 0;
         public static string Executor(string input)
         {
             string output = "";
@@ -368,7 +372,8 @@ namespace CrystalOSAlpha.Programming
                         if (temp.StartsWith("WriteLine("))
                         {
                             temp = temp.Replace("WriteLine(", "");
-                            temp = temp.Replace(")", "");
+                            //temp = temp.Replace(")", "");
+                            temp = temp.Remove(temp.Length - 1);
                             if (!temp.Contains("\""))
                             {
                                 if (temp.Contains("+"))
@@ -1218,8 +1223,333 @@ namespace CrystalOSAlpha.Programming
                     #region Loops
                     if (line.StartsWith("for"))
                     {
-
                         looping = true;
+                    }
+                    if (line.StartsWith("while"))
+                    {
+                        string temp = line.Replace("while(", "");
+                        temp = temp.Replace(")", "");
+
+                        if (temp.Contains("=="))
+                        {
+                            //Checking the left-side
+                            string[] sides = temp.Split("==");
+                            if (sides[0].Contains("\""))
+                            {
+                                sides[0] = sides[0].Replace("\"", "");
+                            }
+                            else
+                            {
+                                if (bool.TryParse(sides[0], out bool s))
+                                {
+                                    sides[0] = s.ToString();
+                                }
+                                else
+                                {
+                                    foreach (var Item in Variables)
+                                    {
+                                        if (sides[0] == Item.S_Name)
+                                        {
+                                            sides[0] = Item.S_Value;
+                                        }
+                                        if (sides[0] == Item.I_Name)
+                                        {
+                                            sides[0] = Item.I_Value.ToString();
+                                        }
+                                        if (sides[0] == Item.B_Name)
+                                        {
+                                            sides[0] = Item.B_Value.ToString();
+                                        }
+                                        if (sides[0] == Item.F_Name)
+                                        {
+                                            sides[0] = Item.F_Value.ToString();
+                                        }
+                                        if (sides[0] == Item.D_Name)
+                                        {
+                                            sides[0] = Item.D_Value.ToString();
+                                        }
+                                    }
+                                }
+                            }
+                            //Checking the right side
+                            if (sides[1].Contains("\""))
+                            {
+                                sides[1] = sides[1].Replace("\"", "");
+                            }
+                            else
+                            {
+                                if (bool.TryParse(sides[1], out bool s))
+                                {
+                                    sides[1] = s.ToString();
+                                }
+                                else
+                                {
+                                    foreach (var Item in Variables)
+                                    {
+                                        if (sides[1] == Item.S_Name)
+                                        {
+                                            sides[1] = Item.S_Value;
+                                        }
+                                        if (sides[1] == Item.I_Name)
+                                        {
+                                            sides[1] = Item.I_Value.ToString();
+                                        }
+                                        if (sides[1] == Item.B_Name)
+                                        {
+                                            sides[1] = Item.B_Value.ToString();
+                                        }
+                                        if (sides[1] == Item.F_Name)
+                                        {
+                                            sides[1] = Item.F_Value.ToString();
+                                        }
+                                        if (sides[1] == Item.D_Name)
+                                        {
+                                            sides[1] = Item.D_Value.ToString();
+                                        }
+                                    }
+                                }
+                            }
+                            if (sides[0] == sides[1])
+                            {
+                                WhileLoop = true;
+                                blank = true;
+                            }
+                            else
+                            {
+                                Count++;
+                                Checker = true;
+                                blank = false;
+                                WhileLoop = false;
+                            }
+                        }
+                        if (temp.Contains("!="))
+                        {
+                            //Checking the left-side
+                            string[] sides = temp.Split("!=");
+                            if (sides[0].Contains("\""))
+                            {
+                                sides[0] = sides[0].Replace("\"", "");
+                            }
+                            else
+                            {
+                                foreach (var Item in Variables)
+                                {
+                                    if (sides[0] == Item.S_Name)
+                                    {
+                                        sides[0] = Item.S_Value;
+                                    }
+                                    if (sides[0] == Item.I_Name)
+                                    {
+                                        sides[0] = Item.I_Value.ToString();
+                                    }
+                                    if (sides[0] == Item.B_Name)
+                                    {
+                                        sides[0] = Item.B_Value.ToString();
+                                    }
+                                    if (sides[0] == Item.F_Name)
+                                    {
+                                        sides[0] = Item.F_Value.ToString();
+                                    }
+                                    if (sides[0] == Item.D_Name)
+                                    {
+                                        sides[0] = Item.D_Value.ToString();
+                                    }
+                                }
+                            }
+                            //Checking the right side
+                            if (sides[1].Contains("\""))
+                            {
+                                sides[1] = sides[1].Replace("\"", "");
+                            }
+                            else
+                            {
+                                foreach (var Item in Variables)
+                                {
+                                    if (sides[1] == Item.S_Name)
+                                    {
+                                        sides[1] = Item.S_Value;
+                                    }
+                                    if (sides[1] == Item.I_Name)
+                                    {
+                                        sides[1] = Item.I_Value.ToString();
+                                    }
+                                    if (sides[1] == Item.B_Name)
+                                    {
+                                        sides[1] = Item.B_Value.ToString();
+                                    }
+                                    if (sides[1] == Item.F_Name)
+                                    {
+                                        sides[1] = Item.F_Value.ToString();
+                                    }
+                                    if (sides[1] == Item.D_Name)
+                                    {
+                                        sides[1] = Item.D_Value.ToString();
+                                    }
+                                }
+                            }
+                            if (sides[0] != sides[1])
+                            {
+                                blank = true;
+                            }
+                            else
+                            {
+                                Count++;
+                                Checker = true;
+                                blank = false;
+                            }
+                        }
+                        if (temp.Contains(">"))
+                        {
+                            //Checking the left-side
+                            string[] sides = temp.Split(">");
+                            if (sides[0].Contains("\""))
+                            {
+                                sides[0] = sides[0].Replace("\"", "");
+                            }
+                            else
+                            {
+                                foreach (var Item in Variables)
+                                {
+                                    if (sides[0] == Item.S_Name)
+                                    {
+                                        sides[0] = Item.S_Value;
+                                    }
+                                    if (sides[0] == Item.I_Name)
+                                    {
+                                        sides[0] = Item.I_Value.ToString();
+                                    }
+                                    if (sides[0] == Item.B_Name)
+                                    {
+                                        sides[0] = Item.B_Value.ToString();
+                                    }
+                                    if (sides[0] == Item.F_Name)
+                                    {
+                                        sides[0] = Item.F_Value.ToString();
+                                    }
+                                    if (sides[0] == Item.D_Name)
+                                    {
+                                        sides[0] = Item.D_Value.ToString();
+                                    }
+                                }
+                            }
+                            //Checking the right side
+                            if (sides[1].Contains("\""))
+                            {
+                                sides[1] = sides[1].Replace("\"", "");
+                            }
+                            else
+                            {
+                                foreach (var Item in Variables)
+                                {
+                                    if (sides[1] == Item.S_Name)
+                                    {
+                                        sides[1] = Item.S_Value;
+                                    }
+                                    if (sides[1] == Item.I_Name)
+                                    {
+                                        sides[1] = Item.I_Value.ToString();
+                                    }
+                                    if (sides[1] == Item.B_Name)
+                                    {
+                                        sides[1] = Item.B_Value.ToString();
+                                    }
+                                    if (sides[1] == Item.F_Name)
+                                    {
+                                        sides[1] = Item.F_Value.ToString();
+                                    }
+                                    if (sides[1] == Item.D_Name)
+                                    {
+                                        sides[1] = Item.D_Value.ToString();
+                                    }
+                                }
+                            }
+                            if (int.Parse(sides[0]) > int.Parse(sides[1]))
+                            {
+                                blank = true;
+                            }
+                            else
+                            {
+                                Count++;
+                                Checker = true;
+                                blank = false;
+                            }
+                        }
+                        if (temp.Contains("<"))
+                        {
+                            //Checking the left-side
+                            string[] sides = temp.Split("<");
+                            if (sides[0].Contains("\""))
+                            {
+                                sides[0] = sides[0].Replace("\"", "");
+                            }
+                            else
+                            {
+                                foreach (var Item in Variables)
+                                {
+                                    if (sides[0] == Item.S_Name)
+                                    {
+                                        sides[0] = Item.S_Value;
+                                    }
+                                    if (sides[0] == Item.I_Name)
+                                    {
+                                        sides[0] = Item.I_Value.ToString();
+                                    }
+                                    if (sides[0] == Item.B_Name)
+                                    {
+                                        sides[0] = Item.B_Value.ToString();
+                                    }
+                                    if (sides[0] == Item.F_Name)
+                                    {
+                                        sides[0] = Item.F_Value.ToString();
+                                    }
+                                    if (sides[0] == Item.D_Name)
+                                    {
+                                        sides[0] = Item.D_Value.ToString();
+                                    }
+                                }
+                            }
+                            //Checking the right side
+                            if (sides[1].Contains("\""))
+                            {
+                                sides[1] = sides[1].Replace("\"", "");
+                            }
+                            else
+                            {
+                                foreach (var Item in Variables)
+                                {
+                                    if (sides[1] == Item.S_Name)
+                                    {
+                                        sides[1] = Item.S_Value;
+                                    }
+                                    if (sides[1] == Item.I_Name)
+                                    {
+                                        sides[1] = Item.I_Value.ToString();
+                                    }
+                                    if (sides[1] == Item.B_Name)
+                                    {
+                                        sides[1] = Item.B_Value.ToString();
+                                    }
+                                    if (sides[1] == Item.F_Name)
+                                    {
+                                        sides[1] = Item.F_Value.ToString();
+                                    }
+                                    if (sides[1] == Item.D_Name)
+                                    {
+                                        sides[1] = Item.D_Value.ToString();
+                                    }
+                                }
+                            }
+                            if (int.Parse(sides[0]) < int.Parse(sides[1]))
+                            {
+                                blank = true;
+                            }
+                            else
+                            {
+                                Count++;
+                                Checker = true;
+                                blank = false;
+                            }
+                        }
                     }
                     if (line.StartsWith("{"))
                     {
@@ -1227,12 +1557,20 @@ namespace CrystalOSAlpha.Programming
                         {
                             Bracket++;
                         }
+                        if (WhileLoop == true)
+                        {
+                            WhileBracket++;
+                        }
                     }
                     else if (line.Trim().StartsWith("}"))
                     {
                         if (looping == true)
                         {
                             Bracket--;
+                        }
+                        if (WhileLoop == true)
+                        {
+                            WhileBracket--;
                         }
                     }
                     if(Bracket == 0 && Cycles >= MaxCycle)

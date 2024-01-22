@@ -33,7 +33,7 @@ namespace CrystalOSAlpha.UI_Elements
                         Kernel.Is_KeyboardMouse = true;
                         break;
                     default:
-                        input += key.KeyChar;//Keyboard_HU(key);//key.KeyChar
+                        input += Keyboard_HU(key);//key.KeyChar;
                         break;
                 }
             }
@@ -75,12 +75,18 @@ namespace CrystalOSAlpha.UI_Elements
                         return ')';
                     case ConsoleKeyEx.D8:
                         return '(';
+                    case ConsoleKeyEx.D7:
+                        return '=';
+                    case ConsoleKeyEx.D6:
+                        return '/';
+                    case ConsoleKeyEx.D5:
+                        return '%';
                     case ConsoleKeyEx.D4:
                         return '!';
-                    case ConsoleKeyEx.D1:
-                        return '\'';
                     case ConsoleKeyEx.D2:
                         return '\"';
+                    case ConsoleKeyEx.D1:
+                        return '\'';
                     case ConsoleKeyEx.Z:
                         return 'Y';
                     case ConsoleKeyEx.Y:

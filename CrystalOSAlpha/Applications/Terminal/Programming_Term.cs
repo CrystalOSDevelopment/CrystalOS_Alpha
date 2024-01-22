@@ -83,14 +83,12 @@ namespace CrystalOSAlpha.Applications.Terminal
                 CSharp.WasTrue = false;
                 CSharp.Checker = false;
                 CSharp.firstline = true;
-
-                CSharp.Variables.Clear();
-
-                CSharp.Clipboard = "";
-
                 CSharp.WaitForResponse = false;
-
+                CSharp.Variables.Clear();
+                CSharp.Clipboard = "";
                 CSharp.Cycles = 0;
+                CSharp.StartPoint = 0;
+                CSharp.WhileBracket = 0;
 
                 //CSharp.Clipboard = "";
 
@@ -276,6 +274,10 @@ namespace CrystalOSAlpha.Applications.Terminal
                     {
                         content = "";
                     }
+                    if (lines[pos].Contains("while"))
+                    {
+                        CSharp.StartPoint = pos;
+                    }
                     if ((CSharp.Bracket == 1 && lines[pos] == "}" && CSharp.Cycles < CSharp.MaxCycle && CSharp.looping == true) || pos == lines.Length - 1 && lines[pos] == "}" && CSharp.Cycles < CSharp.MaxCycle && CSharp.looping == true)//CSharp.Bracket == 0 && lines[pos] != "{" && CSharp.Cycles < 9 && CSharp.looping == true
                     {
                         pos = CSharp.Bookmark;
@@ -283,8 +285,14 @@ namespace CrystalOSAlpha.Applications.Terminal
                         CSharp.Variables.Find(d => d.I_Name == varname).I_Value = CSharp.Cycles;
                         CSharp.Bracket = 0;
                     }
-
+                    
                     content += CSharp.Returning_methods(lines[pos]);
+
+                    if(CSharp.WhileBracket == 0 && lines[pos] == "}" && CSharp.WhileLoop == true && lines[pos].Contains("while") == false)
+                    {
+                        pos = CSharp.StartPoint;
+                        CSharp.WhileLoop = false;
+                    }
                     //CSharp.Clipboard += lines[pos] + "\n";
                 }
                 resp = CSharp.WaitForResponse;

@@ -56,6 +56,9 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public string TestCode = "string name = Console.ReadLine();\nif(name == \"John\")\n{\n    Console.WriteLine(\"Hi\");\n}\nelse if(name == \"Doe\")\n{\n    Console.WriteLine(\"Hello\");\n}\nelse if(name == \"Carol\")\n{\n    Console.WriteLine(\"Who even are you?\");\n}\nelse\n{\n    Console.WriteLine(\"No message for you!\");\n}\nfor(int i = 5; i < 15; i++)\n{\n    Console.WriteLine(i + \". Cycle\");\n}\nConsole.WriteLine(\"End of Program\");\nfor(int i = 0; i < 10; i++)\n{\n    Console.WriteLine(i + \". Cycle\");\n}\nConsole.WriteLine(\"End of Program\");";
         //public string content = "Console.WriteLine(\"Guess a number game!\");\nint num = Random.Next(0, 11);\nConsole.WriteLine(num);";
         public string Game = "Console.WriteLine(\"Guess a number game!\");\nbool match = false;\nint num = Random.Next(0, 11);\nConsole.WriteLine(\"You have 3 guesses!\");\nfor(int i = 0; i < 3; i++)\n{\n    Console.Write(i + \". Guess\");\n    int guessed = Console.ReadLine();\n    if(guessed == num)\n    {\n        Console.WriteLine(\"That's Correct\");\n        bool match = true;\n    }\n    else if(guessed > num)\n    {\n        Console.WriteLine(\"Guessed is bigger\");\n    }\n    else\n    {\n        Console.WriteLine(\"Guessed is smaller\");\n    }\n}\nConsole.WriteLine(\"The correct number was: \" + num);";
+        public string TestWhile = "string input = Console.ReadLine();\nwhile(input == \"y\")\n{\n    for(int i = 0; i < 3; i++)\n    {\n        Console.WriteLine(\"Test\");\n    }\n    Console.WriteLine(\"end of cycle, continue?(y, n): \");\n\n}";
+        
+        public string Back_content = "";
         public string content = "";
         //public string content = "File.Create(\"0:\\\", \"Sample.app\");\nFile.WriteAllText(\"0:\\Sample.app\", \"Console.WriteLine(\\\"Hello, World!\\\");\");";
         //public string content = "";
@@ -76,6 +79,9 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public int memory = 0;
 
         public string lineCount = "";
+
+        public int CurTop = 0;
+        public int CurLeft = 0;
 
         public void App()
         {
@@ -119,6 +125,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
                 FileTree.Add(new CSharpFile("Tests.cs", TestCode));
                 FileTree.Add(new CSharpFile("Game.cs", Game));
+                FileTree.Add(new CSharpFile("WhileLoops.cs", TestWhile));
 
                 initial = false;
             }
@@ -245,9 +252,113 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 KeyEvent key;
                 if (KeyboardManager.TryReadKey(out key))
                 {
-                    int length = content.Length;
-                    content = Keyboard.HandleKeyboard(content, key);
-                    int length2 = content.Length;
+                    Back_content = content;
+                    string[] lines = Back_content.Split("\n");
+                    if(key.Key == ConsoleKeyEx.DownArrow)
+                    {
+                        if(CurTop < lines.Length - 1)
+                        {
+                            CurTop++;
+                            lines[CurTop] = lines[CurTop] + "|";
+
+                            Back_content = "";
+
+                            for(int i = 0; i < lines.Length; i++)
+                            {
+                                if(i == lines.Length - 1)
+                                {
+                                    Back_content += lines[i];
+                                }
+                                else
+                                {
+                                    Back_content += lines[i] + "\n";
+                                }
+                            }
+                        }
+                        else
+                        {
+                            lines[CurTop] = lines[CurTop] + "|";
+
+                            Back_content = "";
+
+                            for (int i = 0; i < lines.Length; i++)
+                            {
+                                if (i == lines.Length - 1)
+                                {
+                                    Back_content += lines[i];
+                                }
+                                else
+                                {
+                                    Back_content += lines[i] + "\n";
+                                }
+                            }
+                        }
+                    }
+                    else if (key.Key == ConsoleKeyEx.UpArrow)
+                    {
+                        if (CurTop >= 1)
+                        {
+                            CurTop--;
+                            lines[CurTop] = lines[CurTop] + "|";
+
+                            Back_content = "";
+
+                            for (int i = 0; i < lines.Length; i++)
+                            {
+                                if (i == lines.Length - 1)
+                                {
+                                    Back_content += lines[i];
+                                }
+                                else
+                                {
+                                    Back_content += lines[i] + "\n";
+                                }
+                            }
+                        }
+                        else
+                        {
+                            lines[CurTop] = lines[CurTop] + "|";
+
+                            Back_content = "";
+
+                            for (int i = 0; i < lines.Length; i++)
+                            {
+                                if (i == lines.Length - 1)
+                                {
+                                    Back_content += lines[i];
+                                }
+                                else
+                                {
+                                    Back_content += lines[i] + "\n";
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        int length = content.Length;
+                        content = Keyboard.HandleKeyboard(content, key);
+                        int length2 = content.Length;
+                        Back_content = content;
+
+                        lines = Back_content.Split("\n");
+
+                        lines[CurTop] = lines[CurTop] + "|";
+
+                        Back_content = "";
+
+                        for (int i = 0; i < lines.Length; i++)
+                        {
+                            if (i == lines.Length - 1)
+                            {
+                                Back_content += lines[i];
+                            }
+                            else
+                            {
+                                Back_content += lines[i] + "\n";
+                            }
+                        }
+                    }
 
                     Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
                     temp = true;
@@ -361,7 +472,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
                 BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.Black, lineCount, 7, 7 - Scroll[0].Pos);//The line counter
 
-                BitFont.DrawBitFontString(Container, "ArialCustomCharset16", HighLight(content), content, 42, 7 - Scroll[0].Pos);//The actual code
+                BitFont.DrawBitFontString(Container, "ArialCustomCharset16", HighLight(Back_content), Back_content, 42, 7 - Scroll[0].Pos);//The actual code
 
                 ImprovedVBE.DrawImageAlpha(Container, 5, 52, window);
                 ImprovedVBE.DrawImageAlpha(Strucrure, width - 319, 52, window);
@@ -385,6 +496,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                 v2.selected = false;
                             }
                             content = v.Content;
+                            Back_content = v.Content;
                             v.selected = true;
                             temp = true;
                         }
@@ -559,7 +671,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     {
                         comment = false;
                     }
-                    if (c == '.' || c == '\n' || c == ' ' || c == '=' || c == '{' || c == '}' || c == '+' || c == '-' || c == ',')
+                    if (c == '.' || c == '\n' || c == ' ' || c == '=' || c == '{' || c == '}' || c == '+' || c == '-' || c == ',' || c == '|')
                     {
                         if(comment == false)
                         {
@@ -713,6 +825,13 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                         Extra = "";
                         break;
                     case "for(":
+                        for (int i = index - Extra.Length + 1; i < index; i++)
+                        {
+                            colors[i] = Color.DeepPink;
+                        }
+                        Extra = "";
+                        break;
+                    case "while(":
                         for (int i = index - Extra.Length + 1; i < index; i++)
                         {
                             colors[i] = Color.DeepPink;
