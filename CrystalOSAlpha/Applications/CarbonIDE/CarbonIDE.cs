@@ -56,7 +56,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public string TestCode = "string name = Console.ReadLine();\nif(name == \"John\")\n{\n    Console.WriteLine(\"Hi\");\n}\nelse if(name == \"Doe\")\n{\n    Console.WriteLine(\"Hello\");\n}\nelse if(name == \"Carol\")\n{\n    Console.WriteLine(\"Who even are you?\");\n}\nelse\n{\n    Console.WriteLine(\"No message for you!\");\n}\nfor(int i = 5; i < 15; i++)\n{\n    Console.WriteLine(i + \". Cycle\");\n}\nConsole.WriteLine(\"End of Program\");\nfor(int i = 0; i < 10; i++)\n{\n    Console.WriteLine(i + \". Cycle\");\n}\nConsole.WriteLine(\"End of Program\");";
         //public string content = "Console.WriteLine(\"Guess a number game!\");\nint num = Random.Next(0, 11);\nConsole.WriteLine(num);";
         public string Game = "Console.WriteLine(\"Guess a number game!\");\nbool match = false;\nint num = Random.Next(0, 11);\nConsole.WriteLine(\"You have 3 guesses!\");\nfor(int i = 0; i < 3; i++)\n{\n    Console.Write(i + \". Guess\");\n    int guessed = Console.ReadLine();\n    if(guessed == num)\n    {\n        Console.WriteLine(\"That's Correct\");\n        bool match = true;\n    }\n    else if(guessed > num)\n    {\n        Console.WriteLine(\"Guessed is bigger\");\n    }\n    else\n    {\n        Console.WriteLine(\"Guessed is smaller\");\n    }\n}\nConsole.WriteLine(\"The correct number was: \" + num);";
-        public string TestWhile = "string input = Console.ReadLine();\nwhile(input == \"y\")\n{\n    for(int i = 0; i < 3; i++)\n    {\n        Console.WriteLine(\"Test\");\n    }\n    Console.WriteLine(\"end of cycle, continue?(y, n): \");\n\n}";
+        public string TestWhile = "Console.Write(\"Start while loop? (y, n): \");\nstring input = Console.ReadLine();\nwhile(input == \"y\")\n{\n    for(int i = 0; i < 3; i++)\n    {\n        Console.WriteLine(\"Test\");\n    }\n    Console.Write(\"end of cycle, continue?(y, n): \");\n    string input = Console.ReadLine();\n}";
         
         public string Back_content = "";
         public string content = "";
@@ -294,6 +294,20 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                             }
                         }
                     }
+                    else if (key.Key == ConsoleKeyEx.F5)
+                    {
+                        if (value[0].Highlighted == true)
+                        {
+                            CSharp.Executor(content);
+                        }
+                    }
+                    else if(KeyboardManager.ControlPressed == true)
+                    {
+                        if (key.Key == ConsoleKeyEx.S)
+                        {
+                            //save file
+                        }
+                    }
                     else if (key.Key == ConsoleKeyEx.UpArrow)
                     {
                         if (CurTop >= 1)
@@ -359,7 +373,6 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                             }
                         }
                     }
-
                     Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
                     temp = true;
                 }

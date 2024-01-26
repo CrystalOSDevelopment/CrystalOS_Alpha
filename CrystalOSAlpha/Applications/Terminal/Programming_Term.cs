@@ -84,6 +84,8 @@ namespace CrystalOSAlpha.Applications.Terminal
                 CSharp.Checker = false;
                 CSharp.firstline = true;
                 CSharp.WaitForResponse = false;
+                CSharp.looping = false;
+                CSharp.WhileLoop = false;
                 CSharp.Variables.Clear();
                 CSharp.Clipboard = "";
                 CSharp.Cycles = 0;
@@ -278,22 +280,30 @@ namespace CrystalOSAlpha.Applications.Terminal
                     {
                         CSharp.StartPoint = pos;
                     }
-                    if ((CSharp.Bracket == 1 && lines[pos] == "}" && CSharp.Cycles < CSharp.MaxCycle && CSharp.looping == true) || pos == lines.Length - 1 && lines[pos] == "}" && CSharp.Cycles < CSharp.MaxCycle && CSharp.looping == true)//CSharp.Bracket == 0 && lines[pos] != "{" && CSharp.Cycles < 9 && CSharp.looping == true
+
+                    //original(good) code from here
+
+                    if ((CSharp.Bracket == 1 && lines[pos].Trim() == "}" && CSharp.Variables.Find(d => d.I_Name == varname).I_Value <= CSharp.MaxCycle && CSharp.looping == true) && (CSharp.WasIf == false || CSharp.Count == 0) || pos == lines.Length - 1 && lines[pos].Trim() == "}" && CSharp.Cycles < CSharp.MaxCycle && CSharp.looping == true && (CSharp.WasIf == false || CSharp.Count == 0))//CSharp.Bracket == 0 && lines[pos] != "{" && CSharp.Cycles < 9 && CSharp.looping == true
                     {
                         pos = CSharp.Bookmark;
                         CSharp.Cycles++;
                         CSharp.Variables.Find(d => d.I_Name == varname).I_Value = CSharp.Cycles;
                         CSharp.Bracket = 0;
+                        CSharp.WhileBracket--;
                     }
-                    
-                    content += CSharp.Returning_methods(lines[pos]);
 
-                    if(CSharp.WhileBracket == 0 && lines[pos] == "}" && CSharp.WhileLoop == true && lines[pos].Contains("while") == false)
+                    if (CSharp.WhileBracket == 1 && lines[pos].Trim() == "}" && CSharp.WhileLoop == true && (CSharp.WasIf == false && CSharp.Count == 0 && CSharp.WasElse == false))// && CSharp.looping == true
                     {
                         pos = CSharp.StartPoint;
+                        CSharp.WhileBracket = 0;
                         CSharp.WhileLoop = false;
+                        CSharp.Cycles = 0;
                     }
-                    //CSharp.Clipboard += lines[pos] + "\n";
+
+                    content += CSharp.Returning_methods(lines[pos]);
+
+                    //CSharp.Clipboard += lines[pos] + "    " + CSharp.Bracket + "\n";
+
                 }
                 resp = CSharp.WaitForResponse;
                 if (resp == false)

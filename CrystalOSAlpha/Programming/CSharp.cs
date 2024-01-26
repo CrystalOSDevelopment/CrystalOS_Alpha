@@ -50,6 +50,7 @@ namespace CrystalOSAlpha.Programming
         public static bool WhileLoop = false;
         public static int WhileBracket = 0;
         public static int StartPoint = 0;
+        public static bool WasElse = false;
         public static string Executor(string input)
         {
             string output = "";
@@ -139,12 +140,11 @@ namespace CrystalOSAlpha.Programming
             string[] functions = input.Split(';');
             foreach (string line in functions)
             {
-                if (Count < 0)//statements.Count == 0
+                if (Count < 0)
                 {
                     Count = 0;
-                    //statements.Add(true);
                 }
-                if (Count == 0)//statements[^1] == true
+                if (Count == 0)
                 {
                     #region variables
                     if (line.StartsWith("string"))
@@ -154,6 +154,8 @@ namespace CrystalOSAlpha.Programming
                         string[] values = temp.Split("=");
                         if (values[1].Contains("\""))
                         {
+                            name = values[0];
+                            Variables.RemoveAll(d => d.S_Name == name);
                             Variables.Add(new Programming.Variables(values[0], values[1].Replace("\"", "")));
                         }
                         else
@@ -173,6 +175,8 @@ namespace CrystalOSAlpha.Programming
                         string[] values = temp.Split("=");
                         if (int.TryParse(values[1], out int s) == true)
                         {
+                            name = values[0];
+                            Variables.RemoveAll(d => d.I_Name == name);
                             Variables.Add(new Programming.Variables(values[0], s));
                         }
                         else if (values[1] == "DateTime.UtcNow.Minute")
@@ -330,12 +334,14 @@ namespace CrystalOSAlpha.Programming
                     {
                         if(format == "string")
                         {
+                            Variables.RemoveAll(d => d.S_Name == name);
                             Variables.Add(new Programming.Variables(name, Returning_Value));
                         }
                         else if(format == "int")
                         {
                             if(int.TryParse(Returning_Value, out int num))
                             {
+                                Variables.RemoveAll(d => d.I_Name == name);
                                 Variables.Add(new Programming.Variables(name, num));
                             }
                         }
@@ -386,23 +392,23 @@ namespace CrystalOSAlpha.Programming
                                         {
                                             if (item.S_Name == temp)
                                             {
-                                                output = item.S_Value;
+                                                output += item.S_Value;
                                             }
                                             if (item.I_Name == temp)
                                             {
-                                                output = item.I_Value.ToString();
+                                                output += item.I_Value.ToString();
                                             }
                                             if (item.B_Name == temp)
                                             {
-                                                output = item.B_Value.ToString();
+                                                output += item.B_Value.ToString();
                                             }
                                             if (item.F_Name == temp)
                                             {
-                                                output = item.F_Value.ToString();
+                                                output += item.F_Value.ToString();
                                             }
                                             if (item.D_Name == temp)
                                             {
-                                                output = item.D_Value.ToString();
+                                                output += item.D_Value.ToString();
                                             }
                                         }
                                     }
@@ -482,16 +488,6 @@ namespace CrystalOSAlpha.Programming
                                 }
                                 else
                                 {
-                                    /*
-                                    if(firstline == true)
-                                    {
-                                        output += temp.Replace("\"", "");
-                                    }
-                                    else
-                                    {
-                                        output += "\n" + temp.Replace("\"", "");
-                                    }
-                                    */
                                     output += temp.Replace("\"", "");
                                 }
                             }
@@ -500,10 +496,66 @@ namespace CrystalOSAlpha.Programming
                         else if (temp.StartsWith("Write("))
                         {
                             temp = temp.Replace("Write(", "");
-                            temp = temp.Replace(")", "");
+                            temp = temp.Remove(temp.Length - 1);
                             if (!temp.Contains("\""))
                             {
-
+                                if (temp.Contains("+"))
+                                {
+                                    string[] container = temp.Split("+");
+                                    string outing = "";
+                                    foreach (string s in container)
+                                    {
+                                        foreach (var item in Variables)
+                                        {
+                                            if (item.S_Name == temp)
+                                            {
+                                                output += item.S_Value;
+                                            }
+                                            if (item.I_Name == temp)
+                                            {
+                                                output += item.I_Value.ToString();
+                                            }
+                                            if (item.B_Name == temp)
+                                            {
+                                                output += item.B_Value.ToString();
+                                            }
+                                            if (item.F_Name == temp)
+                                            {
+                                                output += item.F_Value.ToString();
+                                            }
+                                            if (item.D_Name == temp)
+                                            {
+                                                output += item.D_Value.ToString();
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    foreach (var item in Variables)
+                                    {
+                                        if (item.S_Name == temp)
+                                        {
+                                            output += item.S_Value;
+                                        }
+                                        if (item.I_Name == temp)
+                                        {
+                                            output += item.I_Value.ToString();
+                                        }
+                                        if (item.B_Name == temp)
+                                        {
+                                            output += item.B_Value.ToString();
+                                        }
+                                        if (item.F_Name == temp)
+                                        {
+                                            output += item.F_Value.ToString();
+                                        }
+                                        if (item.D_Name == temp)
+                                        {
+                                            output += item.D_Value.ToString();
+                                        }
+                                    }
+                                }
                             }
                             else
                             {
@@ -511,7 +563,36 @@ namespace CrystalOSAlpha.Programming
                                 {
                                     foreach (string s in temp.Split('+'))
                                     {
-                                        output += s.Replace("\"", "");
+                                        if (s.Contains("\""))
+                                        {
+                                            output += s.Replace("\"", "");
+                                        }
+                                        else
+                                        {
+                                            foreach (var item in Variables)
+                                            {
+                                                if (item.S_Name == s)
+                                                {
+                                                    output += item.S_Value;
+                                                }
+                                                if (item.I_Name == s)
+                                                {
+                                                    output += item.I_Value.ToString();
+                                                }
+                                                if (item.B_Name == s)
+                                                {
+                                                    output += item.B_Value.ToString();
+                                                }
+                                                if (item.F_Name == s)
+                                                {
+                                                    output += item.F_Value.ToString();
+                                                }
+                                                if (item.D_Name == s)
+                                                {
+                                                    output += item.D_Value.ToString();
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                                 else
@@ -1216,6 +1297,7 @@ namespace CrystalOSAlpha.Programming
                             WasIf = false;
                             blank = false;
                             Checker = true;
+                            WasElse = true;
                         }
                     }
                     #endregion Conditionals
@@ -1551,7 +1633,7 @@ namespace CrystalOSAlpha.Programming
                             }
                         }
                     }
-                    if (line.StartsWith("{"))
+                    if (line.StartsWith("{") && WasIf == false)
                     {
                         if(looping == true)
                         {
@@ -1562,18 +1644,19 @@ namespace CrystalOSAlpha.Programming
                             WhileBracket++;
                         }
                     }
-                    else if (line.Trim().StartsWith("}"))
+                    else if (line.StartsWith("}") && WasIf == false)
                     {
-                        if (looping == true)
+                        if (looping == true && Bracket > 0)
                         {
                             Bracket--;
                         }
-                        if (WhileLoop == true)
+                        if (WhileLoop == true && WhileBracket > 0)
                         {
                             WhileBracket--;
                         }
+                        WasElse = false;
                     }
-                    if(Bracket == 0 && Cycles >= MaxCycle)
+                    if (Bracket == 0 && Cycles >= MaxCycle)
                     {
                         looping = false;
                         Cycles = 0;
