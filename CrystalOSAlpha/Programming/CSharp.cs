@@ -1,4 +1,5 @@
 ﻿using Cosmos.Core_Asm;
+using Cosmos.System;
 using Cosmos.System.Graphics.Fonts;
 using CrystalOSAlpha.Applications;
 using CrystalOSAlpha.Applications.Terminal;
@@ -51,6 +52,9 @@ namespace CrystalOSAlpha.Programming
         public static int WhileBracket = 0;
         public static int StartPoint = 0;
         public static bool WasElse = false;
+
+        public static bool KeyOnly = false;
+        public static ConsoleKeyEx key = ConsoleKeyEx.NoName;
         public static string Executor(string input)
         {
             string output = "";
@@ -377,6 +381,7 @@ namespace CrystalOSAlpha.Programming
                         string temp = line.Replace("Console.", "");
                         if (temp.StartsWith("WriteLine("))
                         {
+                            output += "\n";
                             temp = temp.Replace("WriteLine(", "");
                             //temp = temp.Replace(")", "");
                             temp = temp.Remove(temp.Length - 1);
@@ -491,7 +496,6 @@ namespace CrystalOSAlpha.Programming
                                     output += temp.Replace("\"", "");
                                 }
                             }
-                            output += "\n";
                         }
                         else if (temp.StartsWith("Write("))
                         {
@@ -613,6 +617,8 @@ namespace CrystalOSAlpha.Programming
                     {
                         WasIf = true;
                         WasTrue = false;
+                        ConsoleKeyEx left = ConsoleKeyEx.NoName;
+                        ConsoleKeyEx right = ConsoleKeyEx.E;
                         try
                         {
                             string temp = line.Replace("if(", "").Replace(")", "");
@@ -623,6 +629,10 @@ namespace CrystalOSAlpha.Programming
                                 if (sides[0].Contains("\""))
                                 {
                                     sides[0] = sides[0].Replace("\"", "");
+                                }
+                                else if (Keys.StringToKey(sides[0]) != ConsoleKeyEx.NoName)
+                                {
+                                    left = Keys.StringToKey(sides[0]);
                                 }
                                 else
                                 {
@@ -654,6 +664,10 @@ namespace CrystalOSAlpha.Programming
                                             {
                                                 sides[0] = Item.D_Value.ToString();
                                             }
+                                            if (sides[0] == Item.K_Name)
+                                            {
+                                                left = Item.K_Value;
+                                            }
                                         }
                                     }
                                 }
@@ -661,6 +675,10 @@ namespace CrystalOSAlpha.Programming
                                 if (sides[1].Contains("\""))
                                 {
                                     sides[1] = sides[1].Replace("\"", "");
+                                }
+                                else if (Keys.StringToKey(sides[1]) != ConsoleKeyEx.NoName)
+                                {
+                                    right = Keys.StringToKey(sides[1]);
                                 }
                                 else
                                 {
@@ -692,10 +710,14 @@ namespace CrystalOSAlpha.Programming
                                             {
                                                 sides[1] = Item.D_Value.ToString();
                                             }
+                                            if (sides[1] == Item.K_Name)
+                                            {
+                                                right = Item.K_Value;
+                                            }
                                         }
                                     }
                                 }
-                                if (sides[0] == sides[1])
+                                if (sides[0] == sides[1] || left == right)
                                 {
                                     blank = true;
                                 }
@@ -943,6 +965,8 @@ namespace CrystalOSAlpha.Programming
                     }
                     else if (line.StartsWith("elseif"))
                     {
+                        ConsoleKeyEx left = ConsoleKeyEx.NoName;
+                        ConsoleKeyEx right = ConsoleKeyEx.E;
                         try
                         {
                             string temp = line.Replace("elseif(", "").Replace(")", "");
@@ -978,6 +1002,10 @@ namespace CrystalOSAlpha.Programming
                                         {
                                             sides[0] = Item.D_Value.ToString();
                                         }
+                                        if (sides[0] == Item.K_Name)
+                                        {
+                                            left = Item.K_Value;
+                                        }
                                     }
                                 }
                                 //Checking the right side
@@ -1009,9 +1037,13 @@ namespace CrystalOSAlpha.Programming
                                         {
                                             sides[1] = Item.D_Value.ToString();
                                         }
+                                        if (sides[1] == Item.K_Name)
+                                        {
+                                            right = Item.K_Value;
+                                        }
                                     }
                                 }
-                                if (sides[0] == sides[1])
+                                if (sides[0] == sides[1] || left == right)
                                 {
                                     if(blank == false)
                                     {
@@ -1740,6 +1772,26 @@ namespace CrystalOSAlpha.Programming
                         }
                     }
                     #endregion System IO
+
+                    #region Keyboard
+                    if (line.StartsWith("ReadKey"))
+                    {
+                        string temp = line.Replace("ReadKey", "");
+                        WaitForResponse = true;
+                        KeyOnly = true;
+                        if(key != ConsoleKeyEx.NoName)
+                        {
+                            Variables.Add(new Programming.Variables(temp, key));
+                            //if (key == ConsoleKeyEx.E)
+                            //{
+                            //    Clipboard += temp + "\nEEEEEEEEEEEEEEE";
+                            //}
+                            key = ConsoleKeyEx.NoName;
+                            WaitForResponse = false;
+                            KeyOnly = false;
+                        }
+                    }
+                    #endregion Keyboard
                 }
                 else
                 {
@@ -1781,6 +1833,9 @@ namespace CrystalOSAlpha.Programming
         public string D_Name { get; set; }
         public double D_Value { get; set; }
 
+        public string K_Name { get; set; }
+        public ConsoleKeyEx K_Value { get; set; }
+
         public Variables(string name, string value)
         {
             this.S_Name = name;
@@ -1805,6 +1860,11 @@ namespace CrystalOSAlpha.Programming
         {
             this.D_Name = name;
             this.D_Value = value;
+        }
+        public Variables(string name, ConsoleKeyEx value)
+        {
+            this.K_Name = name;
+            this.K_Value = value;
         }
         public string GetString()
         {

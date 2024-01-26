@@ -332,6 +332,17 @@ namespace CrystalOSAlpha.Applications.Terminal
                     }
                     if (KeyboardManager.TryReadKey(out key))
                     {
+                        if(CSharp.KeyOnly == true)
+                        {
+                            CSharp.key = key.Key;
+                            CSharp.WaitForResponse = false;
+                            CSharp.KeyOnly = false;
+                            content += CSharp.Returning_methods(lines[pos]);
+                            pos++;
+                            command = "";
+                            content += "\n";
+                            resp = false;
+                        }
                         if (key.Key == ConsoleKeyEx.Enter)
                         {
                             temp = true;

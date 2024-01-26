@@ -57,7 +57,8 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         //public string content = "Console.WriteLine(\"Guess a number game!\");\nint num = Random.Next(0, 11);\nConsole.WriteLine(num);";
         public string Game = "Console.WriteLine(\"Guess a number game!\");\nbool match = false;\nint num = Random.Next(0, 11);\nConsole.WriteLine(\"You have 3 guesses!\");\nfor(int i = 0; i < 3; i++)\n{\n    Console.Write(i + \". Guess\");\n    int guessed = Console.ReadLine();\n    if(guessed == num)\n    {\n        Console.WriteLine(\"That's Correct\");\n        bool match = true;\n    }\n    else if(guessed > num)\n    {\n        Console.WriteLine(\"Guessed is bigger\");\n    }\n    else\n    {\n        Console.WriteLine(\"Guessed is smaller\");\n    }\n}\nConsole.WriteLine(\"The correct number was: \" + num);";
         public string TestWhile = "Console.Write(\"Start while loop? (y, n): \");\nstring input = Console.ReadLine();\nwhile(input == \"y\")\n{\n    for(int i = 0; i < 3; i++)\n    {\n        Console.WriteLine(\"Test\");\n    }\n    Console.Write(\"end of cycle, continue?(y, n): \");\n    string input = Console.ReadLine();\n}";
-        
+        public string Keyboard_Test = "ReadKey key;\nReadKey key2;\nif(key == key2)\n{\n    Console.WriteLine(\"Two keys are matching!\");\n}\nif(key == ConsoleKeyEx.U)\n{\n    Console.WriteLine(\"You pressed the Escape key!\");\n}";
+
         public string Back_content = "";
         public string content = "";
         //public string content = "File.Create(\"0:\\\", \"Sample.app\");\nFile.WriteAllText(\"0:\\Sample.app\", \"Console.WriteLine(\\\"Hello, World!\\\");\");";
@@ -126,6 +127,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 FileTree.Add(new CSharpFile("Tests.cs", TestCode));
                 FileTree.Add(new CSharpFile("Game.cs", Game));
                 FileTree.Add(new CSharpFile("WhileLoops.cs", TestWhile));
+                FileTree.Add(new CSharpFile("Keyboard.cs", Keyboard_Test));
 
                 initial = false;
             }
@@ -676,6 +678,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
             int qCount = 0;
 
             bool comment = false;
+            int sepCounter = 0;
             foreach(char c in source)
             {
                 if(state == "Ended")
@@ -716,7 +719,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                         {
                             colors[i] = Color.Green;
                         }
-                        Extra = "";
+                        //Extra = "";
                         break;
                     case "Math":
                         for (int i = index - Extra.Length + 1; i <= index; i++)
@@ -736,6 +739,20 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                         for (int i = index - Extra.Length + 1; i <= index; i++)
                         {
                             colors[i] = Color.Green;
+                        }
+                        Extra = "";
+                        break;
+                    case "ReadKey":
+                        for (int i = index - Extra.Length + 1; i <= index; i++)
+                        {
+                            colors[i] = Color.LightGreen;
+                        }
+                        Extra = "";
+                        break;
+                    case "ConsoleKeyEx":
+                        for (int i = index - Extra.Length + 1; i <= index; i++)
+                        {
+                            colors[i] = Color.LightGreen;
                         }
                         Extra = "";
                         break;
@@ -907,6 +924,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 {
                     index++;
                 }
+                sepCounter++;
             }
             return colors;
         }
