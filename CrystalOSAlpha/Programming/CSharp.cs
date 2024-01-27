@@ -381,7 +381,6 @@ namespace CrystalOSAlpha.Programming
                         string temp = line.Replace("Console.", "");
                         if (temp.StartsWith("WriteLine("))
                         {
-                            output += "\n";
                             temp = temp.Replace("WriteLine(", "");
                             //temp = temp.Replace(")", "");
                             temp = temp.Remove(temp.Length - 1);
@@ -496,6 +495,7 @@ namespace CrystalOSAlpha.Programming
                                     output += temp.Replace("\"", "");
                                 }
                             }
+                            output += "\n";
                         }
                         else if (temp.StartsWith("Write("))
                         {

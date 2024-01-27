@@ -324,13 +324,19 @@ namespace CrystalOSAlpha.Applications.Terminal
                             CSharp.key = key.Key;
                             CSharp.WaitForResponse = false;
                             CSharp.KeyOnly = false;
+
+                            int length = command.Length;
+                            command = Keyboard.HandleKeyboard(command, key);
+                            content = content.Remove(content.Length - length);
+                            content += command;
+
                             content += CSharp.Returning_methods(lines[pos]);
                             pos++;
                             command = "";
                             content += "\n";
                             resp = false;
                         }
-                        if (key.Key == ConsoleKeyEx.Enter)
+                        else if (key.Key == ConsoleKeyEx.Enter)
                         {
                             temp = true;
                             CSharp.WaitForResponse = false;
