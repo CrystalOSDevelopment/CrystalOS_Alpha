@@ -149,6 +149,14 @@ namespace CrystalOSAlpha.Programming
                     return ConsoleKeyEx.Comma;
                 case "ConsoleKeyEx.Spacebar":
                     return ConsoleKeyEx.Spacebar;
+                case "ConsoleKeyEx.Enter":
+                    return ConsoleKeyEx.Enter;
+                case "ConsoleKeyEx.NumEnter":
+                    return ConsoleKeyEx.NumEnter;
+                case "ConsoleKeyEx.NumPlus":
+                    return ConsoleKeyEx.NumPlus;
+                case "ConsoleKeyEx.NumPeriod":
+                    return ConsoleKeyEx.NumPeriod;
                 default:
                     return ConsoleKeyEx.NoName;
             }

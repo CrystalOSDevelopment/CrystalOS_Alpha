@@ -22,40 +22,40 @@ namespace CrystalOSAlpha.Programming
 {
     class CSharp
     {
-        public static List<Variables> Variables = new List<Variables>();
-        public static bool firstline = true;
-        public static bool WaitForResponse = false;
+        public List<Variables> Variables = new List<Variables>();
+        public bool firstline = true;
+        public bool WaitForResponse = false;
 
-        public static string Returning_Value = null;
-        public static string name = null;
-        public static List<bool> statements = new List<bool>() { true };
+        public string Returning_Value = null;
+        public string name = null;
+        public List<bool> statements = new List<bool>() { true };
 
-        public static string format = "string";
+        public string format = "string";
 
-        public static bool WasIf = false;
-        public static bool WasTrue = false;
-        public static bool Checker = false;
+        public bool WasIf = false;
+        public bool WasTrue = false;
+        public bool Checker = false;
 
-        public static bool blank = false;
+        public bool blank = false;
 
-        public static string Clipboard = "";
+        public string Clipboard = "";
 
-        public static int Count = 0;
+        public int Count = 0;
 
-        public static bool looping = false;
-        public static int Bracket = 0;
-        public static int Bookmark = 0;
-        public static int Cycles = 0;
-        public static int MaxCycle = 0;
+        public bool looping = false;
+        public int Bracket = 0;
+        public int Bookmark = 0;
+        public int Cycles = 0;
+        public int MaxCycle = 0;
 
-        public static bool WhileLoop = false;
-        public static int WhileBracket = 0;
-        public static int StartPoint = 0;
-        public static bool WasElse = false;
+        public bool WhileLoop = false;
+        public int WhileBracket = 0;
+        public int StartPoint = 0;
+        public bool WasElse = false;
 
-        public static bool KeyOnly = false;
-        public static ConsoleKeyEx key = ConsoleKeyEx.NoName;
-        public static string Executor(string input)
+        public bool KeyOnly = false;
+        public ConsoleKeyEx key = ConsoleKeyEx.NoName;
+        public string Executor(string input)
         {
             string output = "";
             /*
@@ -80,7 +80,7 @@ namespace CrystalOSAlpha.Programming
             return output;
         }
 
-        public static string Returning_methods(string input)
+        public string Returning_methods(string input)
         {
             int i = 0;
             string output = "";
@@ -138,7 +138,7 @@ namespace CrystalOSAlpha.Programming
             return output;
         }
 
-        public static string Interpreting(string input, string directory)
+        public string Interpreting(string input, string directory)
         {
             string output = "";
             string[] functions = input.Split(';');

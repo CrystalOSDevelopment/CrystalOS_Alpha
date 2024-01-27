@@ -75,25 +75,12 @@ namespace CrystalOSAlpha.Applications.Terminal
 
         public string varname = "";
 
+        CSharp CSharp = new CSharp();
+
         public void App()
         {
             if (initial == true)
             {
-                CSharp.WasIf = false;
-                CSharp.WasTrue = false;
-                CSharp.Checker = false;
-                CSharp.firstline = true;
-                CSharp.WaitForResponse = false;
-                CSharp.looping = false;
-                CSharp.WhileLoop = false;
-                CSharp.Variables.Clear();
-                CSharp.Clipboard = "";
-                CSharp.Cycles = 0;
-                CSharp.StartPoint = 0;
-                CSharp.WhileBracket = 0;
-
-                //CSharp.Clipboard = "";
-
                 CSharp.Count = 0;
 
                 Buttons.Add(new Button_prop(5, 27, 90, 20, "Clear", 1));

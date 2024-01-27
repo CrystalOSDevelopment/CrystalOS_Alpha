@@ -300,7 +300,8 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     {
                         if (value[0].Highlighted == true)
                         {
-                            CSharp.Executor(content);
+                            CSharp c = new CSharp();
+                            c.Executor(content);
                         }
                     }
                     else if(KeyboardManager.ControlPressed == true)
@@ -432,7 +433,8 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                 //BitFont.DrawBitFontString(window, "ArialCustomCharset16", Color.White, CSharp.Executor(content), 500, 500);
                                 if (value[0].Highlighted == true)
                                 {
-                                    CSharp.Executor(content);
+                                    CSharp c = new CSharp();
+                                    c.Executor(content);
                                 }
                                 if (value[1].Highlighted == true)
                                 {

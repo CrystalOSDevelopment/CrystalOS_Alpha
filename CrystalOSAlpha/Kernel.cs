@@ -121,7 +121,7 @@ namespace CrystalOS_Alpha
 
             TaskManager.Main();
 
-            BitFont.DrawBitFontString(ImprovedVBE.cover, "ArialCustomCharset16", System.Drawing.Color.White, CSharp.Clipboard, 500, 40);
+            //BitFont.DrawBitFontString(ImprovedVBE.cover, "ArialCustomCharset16", System.Drawing.Color.White, CSharp.Clipboard, 500, 40);
 
             ImprovedVBE.DrawImageAlpha3(C, (int)MouseManager.X, (int)MouseManager.Y);
 
