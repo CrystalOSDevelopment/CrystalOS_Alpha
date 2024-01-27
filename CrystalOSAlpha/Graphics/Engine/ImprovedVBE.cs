@@ -329,8 +329,6 @@ namespace CrystalOSAlpha
             output = Blur(output, 5);
             return output;
         }
-
-        //Don't use this!
         public static Bitmap DrawImageAlpha(Bitmap image, int x, int y, Bitmap into)
         {
             int[] line = new int[image.Width];

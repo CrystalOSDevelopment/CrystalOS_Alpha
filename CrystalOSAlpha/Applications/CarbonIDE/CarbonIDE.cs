@@ -3,7 +3,9 @@ using Cosmos.System;
 using Cosmos.System.Graphics;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
+using CrystalOSAlpha.Graphics.TaskBar;
 using CrystalOSAlpha.Programming;
+using CrystalOSAlpha.SystemApps;
 using CrystalOSAlpha.UI_Elements;
 using System;
 using System.Collections.Generic;
@@ -58,6 +60,20 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public string Game = "Console.WriteLine(\"Guess a number game!\");\nbool match = false;\nint num = Random.Next(0, 11);\nConsole.WriteLine(\"You have 3 guesses!\");\nfor(int i = 0; i < 3; i++)\n{\n    Console.Write(i + \". Guess\");\n    int guessed = Console.ReadLine();\n    if(guessed == num)\n    {\n        Console.WriteLine(\"That's Correct\");\n        bool match = true;\n    }\n    else if(guessed > num)\n    {\n        Console.WriteLine(\"Guessed is bigger\");\n    }\n    else\n    {\n        Console.WriteLine(\"Guessed is smaller\");\n    }\n}\nConsole.WriteLine(\"The correct number was: \" + num);";
         public string TestWhile = "Console.Write(\"Start while loop? (y, n): \");\nstring input = Console.ReadLine();\nwhile(input == \"y\")\n{\n    for(int i = 0; i < 3; i++)\n    {\n        Console.WriteLine(\"Test\");\n    }\n    Console.Write(\"end of cycle, continue?(y, n): \");\n    string input = Console.ReadLine();\n}";
         public string Keyboard_Test = "ReadKey key;\nReadKey key2;\nif(key == key2)\n{\n    Console.WriteLine(\"Two keys are matching!\");\n}\nif(key == ConsoleKeyEx.U)\n{\n    Console.WriteLine(\"You pressed the Escape key!\");\n}";
+        public string Window1 =
+            "#Define Window_Main\n" +
+            "{\n" +
+            "    this.RGB = 255, 52, 126;\n" +
+            "    this.Title = \"Demo title\";\n" +
+            "    this.Width = 400;\n" +
+            "    this.Height = 300;\n" +
+            "    this.Titlebar = true;\n" +
+            "    this.X = 500;\n" +
+            "    this.Y = 500;\n" +
+            "    this.AlwaysOnTop = true;\n" +
+            "    Label test = new Label(10, 10, \"Hello World\", 255, 255, 255);\n" +
+            "    Button btn = new Button(10, 30, 110, 25, \"Hello World\", 1, 1, 1);\n" +
+            "}";
 
         public string Back_content = "";
         public string content = "";
@@ -99,7 +115,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 dropdowns.Add(d);
 
                 value.Add(new values(true, "C# console", "Type"));
-                value.Add(new values(true, "C# GUI", "Type"));
+                value.Add(new values(false, "C# GUI", "Type"));
 
                 Buttons.Add(new Button_prop(195, 27, 60, 20, "Run", 1));
 
@@ -108,7 +124,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 Scroll.Add(new Scrollbar_Values(width - 25, 30, 20, height - 267, 0));
 
                 //Starting to init line counting
-                for(int i = 0; i < 113; i++)
+                for(int i = 0; i < 278; i++)
                 {
                     if (i.ToString().Length == 1)
                     {
@@ -128,6 +144,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 FileTree.Add(new CSharpFile("Game.cs", Game));
                 FileTree.Add(new CSharpFile("WhileLoops.cs", TestWhile));
                 FileTree.Add(new CSharpFile("Keyboard.cs", Keyboard_Test));
+                FileTree.Add(new CSharpFile("Window_Demo.cs", Window1));
 
                 initial = false;
             }
@@ -303,6 +320,10 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                             CSharp c = new CSharp();
                             c.Executor(content);
                         }
+                        if (value[1].Highlighted == true)
+                        {
+                            TaskScheduler.Apps.Add(new Window(100, 100, 999, 350, 200, 0, "Later", false, icon, content));
+                        }
                     }
                     else if(KeyboardManager.ControlPressed == true)
                     {
@@ -438,7 +459,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                 }
                                 if (value[1].Highlighted == true)
                                 {
-                                    //end = CSharp.Executor(content);
+                                    TaskScheduler.Apps.Add(new Window(100, 100, 999, 350, 200, 0, "Later", false, icon, content));
                                 }
                                 break;
                         }
@@ -487,9 +508,9 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     }
                 }
 
-                BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.Black, lineCount, 7, 7 - Scroll[0].Pos);//The line counter
+                BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.Black, lineCount, 7, 7 - (Scroll[0].Pos * 4));//The line counter
 
-                BitFont.DrawBitFontString(Container, "ArialCustomCharset16", HighLight(Back_content), Back_content, 42, 7 - Scroll[0].Pos);//The actual code
+                BitFont.DrawBitFontString(Container, "ArialCustomCharset16", HighLight(Back_content), Back_content, 42, 7 - (Scroll[0].Pos * 4));//The actual code
 
                 ImprovedVBE.DrawImageAlpha(Container, 5, 52, window);
                 ImprovedVBE.DrawImageAlpha(Strucrure, width - 319, 52, window);
@@ -546,6 +567,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                 }
                                 clicked = true;
                             }
+                            temp = true;
                         }
                     }
                 }
@@ -598,6 +620,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                             if (MouseManager.MouseState == MouseState.Left)
                             {
                                 Dropd.Clicked = false;
+                                temp = true;
                             }
                         }
                     }
@@ -849,6 +872,13 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                         }
                         Extra = "";
                         break;
+                    case "this":
+                        for (int i = index - Extra.Length + 1; i <= index; i++)
+                        {
+                            colors[i] = Color.Blue;
+                        }
+                        Extra = "";
+                        break;
                     case "if(":
                         for (int i = index - Extra.Length + 1; i < index; i++)
                         {
@@ -874,6 +904,21 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                         for (int i = index - Extra.Length + 1; i <= index; i++)
                         {
                             colors[i] = Color.DeepPink;
+                        }
+                        Extra = "";
+                        break;
+                    //For UI Elements
+                    case "Label":
+                        for (int i = index - Extra.Length + 1; i <= index; i++)
+                        {
+                            colors[i] = Color.DarkSalmon;
+                        }
+                        Extra = "";
+                        break;
+                    case "Button":
+                        for (int i = index - Extra.Length + 1; i <= index; i++)
+                        {
+                            colors[i] = Color.DarkSalmon;
                         }
                         Extra = "";
                         break;

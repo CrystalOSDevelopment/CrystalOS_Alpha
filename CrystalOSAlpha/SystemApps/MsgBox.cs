@@ -68,7 +68,7 @@ namespace CrystalOSAlpha.SystemApps
         {
             if (initial == true)
             {
-                Buttons.Add(new Button_prop(width / 2, height - 25, 70, 20, "OK", 1));
+                Buttons.Add(new Button_prop(width / 2 - 35, height - 45, 70, 20, "OK", 1));
 
                 initial = false;
             }
@@ -125,9 +125,9 @@ namespace CrystalOSAlpha.SystemApps
                     }
                 }
 
-                ImprovedVBE.DrawImageAlpha(Resources.Celebration, 20, (int)(height / 2 - Resources.Celebration.Height / 2) + 12, canvas);
+                ImprovedVBE.DrawImageAlpha(Resources.Celebration, 20, (int)(height / 2 - Resources.Celebration.Height / 2), canvas);
 
-                BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, message, (int)(Resources.Celebration.Width + 40), (int)(height / 2 - Resources.Celebration.Height / 2 + 10));
+                BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, message, (int)(Resources.Celebration.Width + 60), (int)(height / 2 - Resources.Celebration.Height / 2 + 10));
 
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
                 //window.RawData = canvas.RawData;

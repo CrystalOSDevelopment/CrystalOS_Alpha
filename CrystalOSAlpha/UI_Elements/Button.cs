@@ -45,6 +45,7 @@ namespace CrystalOSAlpha.UI_Elements
         public int Color {get; set;}
         public bool Clickable { get; set;}
         public bool Clicked = false;
+        public string ID { get; set; }
         public Button_prop(int X, int Y, int Width, int Height, string Text, int Color)
         {
             this.X = X;
@@ -53,6 +54,16 @@ namespace CrystalOSAlpha.UI_Elements
             this.Height = Height;
             this.Text = Text;
             this.Color = Color;
+        }
+        public Button_prop(int X, int Y, int Width, int Height, string Text, int Color, string ID)
+        {
+            this.X = X;
+            this.Y = Y + 22;
+            this.Width = Width;
+            this.Height = Height;
+            this.Text = Text;
+            this.Color = Color;
+            this.ID = ID;
         }
     }
 }

@@ -183,7 +183,6 @@ namespace CrystalOSAlpha.Applications.Terminal
             {
                 if (MouseManager.MouseState == MouseState.Left)
                 {
-
                     if (MouseManager.Y > y + scv.y + 42 + scv.Pos && MouseManager.Y < y + scv.y + scv.Pos + 62)
                     {
                         if (MouseManager.X > x + scv.x + 2 && MouseManager.X < x + scv.x + scv.Width)
