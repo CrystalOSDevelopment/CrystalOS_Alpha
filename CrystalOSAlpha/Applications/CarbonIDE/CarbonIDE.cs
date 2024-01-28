@@ -74,6 +74,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
             "    Label test = new Label(10, 10, \"Hello World\", 255, 255, 255);\n" +
             "    Button btn = new Button(10, 30, 110, 25, \"Hello World\", 1, 1, 1);\n" +
             "    Slider slider = new Slider(10, 80, 255, 20);\n" +
+            "    TextBox tbox = new TextBox(10, 110, 110, 25, 60, 60, 60, \"\", \"Dummy text\");\n" +
             "}" +
             "\n" +
             "#OnClick btn\n" +
@@ -937,6 +938,13 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                         Extra = "";
                         break;
                     case "Slider":
+                        for (int i = index - Extra.Length + 1; i <= index; i++)
+                        {
+                            colors[i] = Color.DarkSalmon;
+                        }
+                        Extra = "";
+                        break;
+                    case "TextBox":
                         for (int i = index - Extra.Length + 1; i <= index; i++)
                         {
                             colors[i] = Color.DarkSalmon;

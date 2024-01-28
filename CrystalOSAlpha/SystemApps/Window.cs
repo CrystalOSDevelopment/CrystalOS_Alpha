@@ -199,7 +199,8 @@ namespace CrystalOSAlpha.SystemApps
                                 //Read data from new()
                                 string[] values = parts[1].Replace("new(", "").Split(",");
 
-                                TextBox.Add(new UI_Elements.TextBox(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]), ImprovedVBE.colourToNumber(int.Parse(values[4]), int.Parse(values[5]), int.Parse(values[6])), values[7], values[8], UI_Elements.TextBox.Options.left, values[9]));
+                                TextBox.Add(new UI_Elements.TextBox(int.Parse(values[0]), int.Parse(values[1]) + 22, int.Parse(values[2]), int.Parse(values[3]), ImprovedVBE.colourToNumber(int.Parse(values[4]), int.Parse(values[5]), int.Parse(values[6])), values[7].Remove(values[7].Length - 1).Remove(0, 1), values[8].Remove(values[8].Length - 1).Remove(0, 1), UI_Elements.TextBox.Options.left, name));
+                                //TextBox.Add(new UI_Elements.TextBox(10, 100, 110, 25, ImprovedVBE.colourToNumber(60, 60, 60), "", "Dummy Text", UI_Elements.TextBox.Options.left, "Demo"));
                             }
                         }
                     }
@@ -303,7 +304,7 @@ namespace CrystalOSAlpha.SystemApps
 
                 foreach (var Box in TextBox)
                 {
-                    Box.Box(window, x, y);
+                    Box.Box(window, Box.X, Box.Y);
                 }
                 //window.RawData = canvas.RawData;
                 back_canvas = canvas;
@@ -354,6 +355,11 @@ namespace CrystalOSAlpha.SystemApps
                         slid.Clicked = false;
                     }
                 }
+            }
+
+            foreach (var Box in TextBox)
+            {
+                Box.Box(window, Box.X, Box.Y);
             }
             ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
         }
