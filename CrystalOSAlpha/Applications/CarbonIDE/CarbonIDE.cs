@@ -73,6 +73,20 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
             "    this.AlwaysOnTop = true;\n" +
             "    Label test = new Label(10, 10, \"Hello World\", 255, 255, 255);\n" +
             "    Button btn = new Button(10, 30, 110, 25, \"Hello World\", 1, 1, 1);\n" +
+            "    Slider slider = new Slider(10, 80, 255, 20);\n" +
+            "}" +
+            "\n" +
+            "#OnClick btn\n" +
+            "{\n" +
+            "    if(10 == 10)\n" +
+            "    {\n" +
+            "        test.Content = \"New message\";\n" +
+            "        test.Color = 1, 1, 1;\n" +
+            "        test.X = 110;\n" +
+            "        test.Y = 60;\n" +
+            "        \n" +
+            "        btn.Width = 90;\n" +
+            "    }\n" +
             "}";
 
         public string Back_content = "";
@@ -114,8 +128,8 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 d.ID = "Type";
                 dropdowns.Add(d);
 
-                value.Add(new values(true, "C# console", "Type"));
-                value.Add(new values(false, "C# GUI", "Type"));
+                value.Add(new values(false, "C# console", "Type"));
+                value.Add(new values(true, "C# GUI", "Type"));
 
                 Buttons.Add(new Button_prop(195, 27, 60, 20, "Run", 1));
 
@@ -916,6 +930,13 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                         Extra = "";
                         break;
                     case "Button":
+                        for (int i = index - Extra.Length + 1; i <= index; i++)
+                        {
+                            colors[i] = Color.DarkSalmon;
+                        }
+                        Extra = "";
+                        break;
+                    case "Slider":
                         for (int i = index - Extra.Length + 1; i <= index; i++)
                         {
                             colors[i] = Color.DarkSalmon;

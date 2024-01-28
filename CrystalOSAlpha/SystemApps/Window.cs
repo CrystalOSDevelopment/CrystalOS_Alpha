@@ -10,6 +10,7 @@ using CrystalOSAlpha.UI_Elements;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 using TaskScheduler = CrystalOSAlpha.Graphics.TaskScheduler;
 
 namespace CrystalOSAlpha.SystemApps
@@ -160,7 +161,6 @@ namespace CrystalOSAlpha.SystemApps
                                 //Label.Add(new label(int.Parse(values[0]), int.Parse(values[1]), values[2].Remove(values[2].Length - 1).Remove(0, 1), ImprovedVBE.colourToNumber(int.Parse(values[3]), int.Parse(values[4]), int.Parse(values[5])), name));
                                 Label.Add(new label(int.Parse(values[0]), int.Parse(values[1]), values[2].Remove(values[2].Length - 1).Remove(0, 1), ImprovedVBE.colourToNumber(int.Parse(values[3]), int.Parse(values[4]), int.Parse(values[5])), name));
                             }
-
                             else if (trimmed.StartsWith("Button"))
                             {
                                 trimmed = trimmed.Replace("Button", "");
@@ -174,6 +174,32 @@ namespace CrystalOSAlpha.SystemApps
                                 //Store the values
                                 //Label.Add(new label(int.Parse(values[0]), int.Parse(values[1]), values[2].Remove(values[2].Length - 1).Remove(0, 1), ImprovedVBE.colourToNumber(int.Parse(values[3]), int.Parse(values[4]), int.Parse(values[5])), name));
                                 Button.Add(new Button_prop(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]), values[4].Remove(values[4].Length - 1).Remove(0, 1), ImprovedVBE.colourToNumber(int.Parse(values[5]), int.Parse(values[6]), int.Parse(values[7])), name));
+                            }
+                            else if (trimmed.StartsWith("Slider"))
+                            {
+                                trimmed = trimmed.Replace("Slider", "");
+                                trimmed = trimmed.Remove(trimmed.Length - 2);
+                                //separate by =
+                                string[] parts = trimmed.Split('=');
+                                //Store the name
+                                string name = parts[0];
+                                //Read data from new()
+                                string[] values = parts[1].Replace("new(", "").Split(",");
+
+                                Slider.Add(new UI_Elements.Slider(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3])));
+                            }
+                            else if (trimmed.StartsWith("TextBox"))
+                            {
+                                trimmed = trimmed.Replace("TextBox", "");
+                                trimmed = trimmed.Remove(trimmed.Length - 2);
+                                //separate by =
+                                string[] parts = trimmed.Split('=');
+                                //Store the name
+                                string name = parts[0];
+                                //Read data from new()
+                                string[] values = parts[1].Replace("new(", "").Split(",");
+
+                                TextBox.Add(new UI_Elements.TextBox(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]), ImprovedVBE.colourToNumber(int.Parse(values[4]), int.Parse(values[5]), int.Parse(values[6])), values[7], values[8], UI_Elements.TextBox.Options.left, values[9]));
                             }
                         }
                     }
@@ -216,11 +242,41 @@ namespace CrystalOSAlpha.SystemApps
                     {
                         UI_Elements.Button.Button_render(canvas, button.X, button.Y, button.Width, button.Height, Color.White.ToArgb(), button.Text);
 
-                        switch (button.ID)
+                        //Need to think about this one for a bit...
+                        foreach(var p in Parts)
                         {
-                            case "OK":
-                                Graphics.TaskScheduler.Apps.Remove(this);
-                                break;
+                            if(p.Contains("OnClick " + button.ID))
+                            {
+                                //Proof that it works to this point!
+                                //Label.RemoveAll(d => d.ID == "Debug");
+                                //Label.Add(new label(10, 60, Parts[1], ImprovedVBE.colourToNumber(255, 255, 255), "Debug"));
+
+                                string LineResult = "";
+
+                                CSharp exec = new CSharp();
+                                exec.Button = Button;
+                                exec.Slider = Slider;
+                                exec.Label = Label;
+                                exec.Scroll = Scroll;
+                                exec.CheckBox = CheckBox;
+                                exec.TextBox = TextBox;
+                                exec.Dropdown = Dropdown;
+
+                                Label.RemoveAll(d => d.ID == "Debug");
+                                string[] lines = p.Split('\n');
+                                for(int i = 2; i < lines.Length - 1; i++)
+                                {
+                                    //Label.Add(new label(10, 60, exec.Returning_methods(lines[i]), ImprovedVBE.colourToNumber(255, 255, 255), "Debug"));
+                                    exec.Returning_methods(lines[i]);
+                                }
+                                Button = exec.Button;
+                                Slider = exec.Slider;
+                                Label = exec.Label;
+                                Scroll = exec.Scroll;
+                                CheckBox = exec.CheckBox;
+                                TextBox = exec.TextBox;
+                                Dropdown = exec.Dropdown;
+                            }
                         }
                     }
                     else
@@ -240,6 +296,15 @@ namespace CrystalOSAlpha.SystemApps
                     l.Label(window);
                 }
 
+                foreach(Slider s in Slider)
+                {
+                    s.Render(window);
+                }
+
+                foreach (var Box in TextBox)
+                {
+                    Box.Box(window, x, y);
+                }
                 //window.RawData = canvas.RawData;
                 back_canvas = canvas;
                 once = false;
@@ -270,6 +335,26 @@ namespace CrystalOSAlpha.SystemApps
                 }
             }
 
+            foreach (var slid in Slider)
+            {
+                int val = slid.Value;
+                if (slid.CheckForClick(x, y))
+                {
+                    slid.Clicked = true;
+                }
+                if (slid.Clicked == true)
+                {
+                    slid.UpdateValue(x);
+                    if (val != slid.Value)
+                    {
+                        once = true;
+                    }
+                    if (MouseManager.MouseState == MouseState.None)
+                    {
+                        slid.Clicked = false;
+                    }
+                }
+            }
             ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
         }
 

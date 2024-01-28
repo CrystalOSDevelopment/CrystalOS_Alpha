@@ -55,6 +55,18 @@ namespace CrystalOSAlpha.Programming
 
         public bool KeyOnly = false;
         public ConsoleKeyEx key = ConsoleKeyEx.NoName;
+
+        //For graphical use:
+        #region UI_Elements
+        public List<Button_prop> Button = new List<Button_prop>();
+        public List<Slider> Slider = new List<Slider>();
+        public List<CheckBox> CheckBox = new List<CheckBox>();
+        public List<Dropdown> Dropdown = new List<Dropdown>();
+        public List<Scrollbar_Values> Scroll = new List<Scrollbar_Values>();
+        public List<TextBox> TextBox = new List<TextBox>();
+        public List<label> Label = new List<label>();
+        #endregion UI_Elements
+
         public string Executor(string input)
         {
             string output = "";
@@ -1792,6 +1804,65 @@ namespace CrystalOSAlpha.Programming
                         }
                     }
                     #endregion Keyboard
+
+                    #region Graphical
+                    foreach(var item in Label)
+                    {
+                        string[] split = line.Split('=');
+                        if (split[0].Split('.')[0] == item.ID)
+                        {
+                            if(split[0].Split('.')[1] == "Content")
+                            {
+                                item.Text = split[1].Remove(split[1].Length - 1).Remove(0, 1);
+                            }
+                            else if (split[0].Split('.')[1] == "Color")
+                            {
+                                string[] rgbValue = split[1].Split(',');
+                                item.TextColor = ImprovedVBE.colourToNumber(int.Parse(rgbValue[0]), int.Parse(rgbValue[1]), int.Parse(rgbValue[2]));
+                            }
+                            else if (split[0].Split('.')[1] == "X")
+                            {
+                                item.X = int.Parse(split[1]);
+                            }
+                            else if (split[0].Split('.')[1] == "Y")
+                            {
+                                item.Y = int.Parse(split[1]);
+                            }
+                        }
+                    }
+                    foreach (var item in Button)
+                    {
+                        string[] split = line.Split('=');
+                        if (split[0].Split('.')[0] == item.ID)
+                        {
+                            if (split[0].Split('.')[1] == "Content")
+                            {
+                                item.Text = split[1].Remove(split[1].Length - 1).Remove(0, 1);
+                            }
+                            else if (split[0].Split('.')[1] == "Color")
+                            {
+                                string[] rgbValue = split[1].Split(',');
+                                item.Color = ImprovedVBE.colourToNumber(int.Parse(rgbValue[0]), int.Parse(rgbValue[1]), int.Parse(rgbValue[2]));
+                            }
+                            else if (split[0].Split('.')[1] == "X")
+                            {
+                                item.X = int.Parse(split[1]);
+                            }
+                            else if (split[0].Split('.')[1] == "Y")
+                            {
+                                item.Y = int.Parse(split[1]);
+                            }
+                            else if (split[0].Split('.')[1] == "Width")
+                            {
+                                item.Width = int.Parse(split[1]);
+                            }
+                            else if (split[0].Split('.')[1] == "Height")
+                            {
+                                item.Height = int.Parse(split[1]);
+                            }
+                        }
+                    }
+                    #endregion Graphical
                 }
                 else
                 {
