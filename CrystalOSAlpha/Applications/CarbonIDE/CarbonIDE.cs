@@ -112,8 +112,8 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
         public string lineCount = "";
 
-        public int CurTop = 0;
-        public int CurLeft = 0;
+        public int cursorIndex = 0;
+        public int lineIndex = 0;
 
         public void App()
         {
@@ -286,49 +286,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 KeyEvent key;
                 if (KeyboardManager.TryReadKey(out key))
                 {
-                    Back_content = content;
-                    string[] lines = Back_content.Split("\n");
-                    if(key.Key == ConsoleKeyEx.DownArrow)
-                    {
-                        if(CurTop < lines.Length - 1)
-                        {
-                            CurTop++;
-                            lines[CurTop] = lines[CurTop] + "|";
-
-                            Back_content = "";
-
-                            for(int i = 0; i < lines.Length; i++)
-                            {
-                                if(i == lines.Length - 1)
-                                {
-                                    Back_content += lines[i];
-                                }
-                                else
-                                {
-                                    Back_content += lines[i] + "\n";
-                                }
-                            }
-                        }
-                        else
-                        {
-                            lines[CurTop] = lines[CurTop] + "|";
-
-                            Back_content = "";
-
-                            for (int i = 0; i < lines.Length; i++)
-                            {
-                                if (i == lines.Length - 1)
-                                {
-                                    Back_content += lines[i];
-                                }
-                                else
-                                {
-                                    Back_content += lines[i] + "\n";
-                                }
-                            }
-                        }
-                    }
-                    else if (key.Key == ConsoleKeyEx.F5)
+                    if (key.Key == ConsoleKeyEx.F5)
                     {
                         if (value[0].Highlighted == true)
                         {
@@ -347,70 +305,9 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                             //save file
                         }
                     }
-                    else if (key.Key == ConsoleKeyEx.UpArrow)
-                    {
-                        if (CurTop >= 1)
-                        {
-                            CurTop--;
-                            lines[CurTop] = lines[CurTop] + "|";
-
-                            Back_content = "";
-
-                            for (int i = 0; i < lines.Length; i++)
-                            {
-                                if (i == lines.Length - 1)
-                                {
-                                    Back_content += lines[i];
-                                }
-                                else
-                                {
-                                    Back_content += lines[i] + "\n";
-                                }
-                            }
-                        }
-                        else
-                        {
-                            lines[CurTop] = lines[CurTop] + "|";
-
-                            Back_content = "";
-
-                            for (int i = 0; i < lines.Length; i++)
-                            {
-                                if (i == lines.Length - 1)
-                                {
-                                    Back_content += lines[i];
-                                }
-                                else
-                                {
-                                    Back_content += lines[i] + "\n";
-                                }
-                            }
-                        }
-                    }
                     else
                     {
-                        int length = content.Length;
-                        content = Keyboard.HandleKeyboard(content, key);
-                        int length2 = content.Length;
-                        Back_content = content;
-
-                        lines = Back_content.Split("\n");
-
-                        lines[CurTop] = lines[CurTop] + "|";
-
-                        Back_content = "";
-
-                        for (int i = 0; i < lines.Length; i++)
-                        {
-                            if (i == lines.Length - 1)
-                            {
-                                Back_content += lines[i];
-                            }
-                            else
-                            {
-                                Back_content += lines[i] + "\n";
-                            }
-                        }
+                        (content, Back_content, cursorIndex, lineIndex) = CoreEditor.Editor(content, Back_content, cursorIndex, lineIndex, key);
                     }
                     Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
                     temp = true;
