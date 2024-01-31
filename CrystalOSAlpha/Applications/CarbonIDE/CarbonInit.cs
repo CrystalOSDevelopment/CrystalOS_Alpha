@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -64,7 +65,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public string typeOf = "Opening";
 
         public string namedProject = "";
-        public string SourceofProject = "";
+        public string SourceofProject = "0:\\User\\Source";
 
         public string activeTextbox = "name";
 
@@ -196,6 +197,11 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                 once = true;
                                 break;
                             case "Create":
+                                //Create the file structure
+                                if(VMTools.IsVMWare == true)
+                                {
+                                    Directory.CreateDirectory(SourceofProject + "\\" + namedProject);
+                                }
                                 CarbonIDE ide = new CarbonIDE();
                                 ide.x = 0;
                                 ide.y = 0;
@@ -204,6 +210,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                 ide.z = 999;
                                 ide.icon = ImprovedVBE.ScaleImageStock(Resources.IDE, 56, 56);
                                 ide.name = "CarbonIDE";
+                                ide.Path = SourceofProject + "\\" + namedProject;
 
                                 TaskScheduler.Apps.Add(ide);
 

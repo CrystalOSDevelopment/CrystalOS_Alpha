@@ -2,6 +2,7 @@
 using Cosmos.HAL;
 using Cosmos.System;
 using Cosmos.System.FileSystem;
+using Cosmos.System.FileSystem.Listing;
 using Cosmos.System.FileSystem.VFS;
 using Cosmos.System.Graphics;
 using Cosmos.System.Network.Config;
@@ -11,6 +12,7 @@ using Cosmos.System.Network.IPv4.UDP.DHCP;
 using Cosmos.System.Network.IPv4.UDP.DNS;
 using CrystalOS_Alpha.Graphics.Widgets;
 using CrystalOSAlpha;
+using CrystalOSAlpha.Applications.FileSys;
 using CrystalOSAlpha.Applications.Minecraft;
 using CrystalOSAlpha.Applications.Video_Player;
 using CrystalOSAlpha.Graphics;
@@ -25,6 +27,7 @@ using ProjectDMG;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
+using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Net;
@@ -57,6 +60,7 @@ namespace CrystalOS_Alpha
                     File.Create("0:\\index.html");
                 }
                 File.WriteAllText("0:\\index.html", Network("example.com/index.html"));
+                Directory.CreateDirectory("0:\\User");
             }
 
             FPS_Counter f = new FPS_Counter();
@@ -95,6 +99,8 @@ namespace CrystalOS_Alpha
 
         public static int collect = 0;
 
+        public static Bitmap temp = new Bitmap(40, 40, ColorDepth.ColorDepth32);
+
         public static void Update()
         {
             if (LastS == -1)
@@ -121,6 +127,7 @@ namespace CrystalOS_Alpha
 
             TaskManager.Main();
 
+            ImprovedVBE.DrawImageAlpha(temp, 10, 10, ImprovedVBE.cover);
             //BitFont.DrawBitFontString(ImprovedVBE.cover, "ArialCustomCharset16", System.Drawing.Color.White, CSharp.Clipboard, 500, 40);
 
             ImprovedVBE.DrawImageAlpha3(C, (int)MouseManager.X, (int)MouseManager.Y);

@@ -7,6 +7,8 @@ using CrystalOSAlpha.Applications.Terminal;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics.Icons;
+using CrystalOSAlpha.Programming;
+using CrystalOSAlpha.SystemApps;
 using CrystalOSAlpha.UI_Elements;
 using System;
 using System.Collections.Generic;
@@ -343,6 +345,24 @@ namespace CrystalOSAlpha.Applications.FileSys
                                         wn.name = "Webs... - " + entry.name;
 
                                         TaskScheduler.Apps.Add(wn);
+                                    }
+                                    else if (entry.name.EndsWith(".cmd"))
+                                    {
+                                        CSharp c = new CSharp();
+                                        c.Executor(File.ReadAllText(entry.fullPath));
+                                    }
+                                    else if (entry.name.EndsWith(".app"))
+                                    {
+                                        TaskScheduler.Apps.Add(new Window(100, 100, 999, 350, 200, 0, "Untitled", false, icon, File.ReadAllText(entry.fullPath)));
+                                    }
+                                    else if (entry.name.EndsWith(".bin"))
+                                    {
+
+                                    }
+                                    else if (entry.name.EndsWith(".bmp"))
+                                    {
+                                        //Time to write an image viewer app!
+                                        Kernel.temp = new Bitmap(entry.fullPath);
                                     }
                                     else
                                     {

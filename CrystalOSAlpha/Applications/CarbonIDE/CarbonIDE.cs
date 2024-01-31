@@ -1,6 +1,9 @@
 ﻿using Cosmos.HAL.Drivers.Video.SVGAII;
 using Cosmos.System;
+using Cosmos.System.FileSystem.Listing;
 using Cosmos.System.Graphics;
+using CrystalOS_Alpha;
+using CrystalOSAlpha.Applications.FileSys;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics.TaskBar;
@@ -12,11 +15,13 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.SymbolStore;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Kernel = CrystalOS_Alpha.Kernel;
 using TaskScheduler = CrystalOSAlpha.Graphics.TaskScheduler;
 
 namespace CrystalOSAlpha.Applications.CarbonIDE
@@ -115,11 +120,12 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public int cursorIndex = 0;
         public int lineIndex = 0;
 
+        public string Path = "";
         public void App()
         {
             if (initial == true)
             {
-                Buttons.Add(new Button_prop(5, 27, 60, 20, "File", 1));
+                Buttons.Add(new Button_prop(5, 27, 60, 20, "New", 1));
 
                 Dropdown d = new Dropdown();
                 d.X = 72;
@@ -133,6 +139,8 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 value.Add(new values(true, "C# GUI", "Type"));
 
                 Buttons.Add(new Button_prop(195, 27, 60, 20, "Run", 1));
+
+                Buttons.Add(new Button_prop(270, 27, 60, 20, "Save", 1));
 
                 Scroll.Add(new Scrollbar_Values(width - 347, 30, 20, height - 60, 0));
 
@@ -155,12 +163,23 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     }
                 }
 
-                FileTree.Add(new CSharpFile("Tests.cs", TestCode));
-                FileTree.Add(new CSharpFile("Game.cs", Game));
-                FileTree.Add(new CSharpFile("WhileLoops.cs", TestWhile));
-                FileTree.Add(new CSharpFile("Keyboard.cs", Keyboard_Test));
-                FileTree.Add(new CSharpFile("Window_Demo.cs", Window1));
+                //FileTree.Add(new CSharpFile("Tests.cs", TestCode));
+                //FileTree.Add(new CSharpFile("Game.cs", Game));
+                //FileTree.Add(new CSharpFile("WhileLoops.cs", TestWhile));
+                //FileTree.Add(new CSharpFile("Keyboard.cs", Keyboard_Test));
+                //FileTree.Add(new CSharpFile("Window_Demo.cs", Window1));
 
+                //foreach(CSharpFile c in FileTree)
+                //{
+                //    File.WriteAllText(Path + "\\" + c.Name.Replace(".cs", ".app"), c.Content);
+                //}
+                foreach (DirectoryEntry dir in Kernel.fs.GetDirectoryListing(Path))//"0:\\User\\Source\\Demo"
+                {
+                    if (dir.mEntryType == DirectoryEntryTypeEnum.File)
+                    {
+                        FileTree.Add(new CSharpFile(dir.mName, File.ReadAllText(dir.mFullPath)));
+                    }
+                }
                 initial = false;
             }
             if (once == true)
@@ -359,8 +378,9 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
                         switch (button.Text)
                         {
-                            case "File":
-                                
+                            case "New":
+                                //Create a popup window, that will give the user an option to create a new file
+                                TaskScheduler.Apps.Add(new DialogBox(100, 100, 999, 400, 400, 0, "Create new", false, icon));
                                 break;
                             case "Run":
                                 //BitFont.DrawBitFontString(window, "ArialCustomCharset16", Color.White, CSharp.Executor(content), 500, 500);
@@ -371,7 +391,29 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                 }
                                 if (value[1].Highlighted == true)
                                 {
-                                    TaskScheduler.Apps.Add(new Window(100, 100, 999, 350, 200, 0, "Later", false, icon, content));
+                                    TaskScheduler.Apps.Add(new Window(100, 100, 999, 350, 200, 0, "Untitled", false, icon, content));
+                                }
+                                break;
+                            case "Save":
+                                //BitFont.DrawBitFontString(window, "ArialCustomCharset16", Color.White, CSharp.Executor(content), 500, 500);
+
+                                foreach (DirectoryEntry d in Kernel.fs.GetDirectoryListing("0:\\User\\Source\\Demo"))
+                                {
+                                    if (d.mEntryType == DirectoryEntryTypeEnum.File)
+                                    {
+                                        File.Delete(d.mFullPath);
+                                    }
+                                }
+                                foreach (CSharpFile c in FileTree)
+                                {
+                                    if (c.Content.Contains("#Define Window_Main"))
+                                    {
+                                        File.WriteAllText(Path + "\\" + c.Name.Replace(".cs", ".app"), c.Content);
+                                    }
+                                    else
+                                    {
+                                        File.WriteAllText(Path + "\\" + c.Name.Replace(".cs", ".cmd"), c.Content);
+                                    }
                                 }
                                 break;
                         }
@@ -453,6 +495,15 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     }
                 }
             }
+
+            foreach (var v in FileTree)
+            {
+                if(v.selected == true)
+                {
+                    v.Content = content;
+                }
+            }
+
             //ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
             Array.Copy(window.RawData, 0, ImprovedVBE.cover.RawData, 0, window.RawData.Length);
             foreach (var Dropd in dropdowns)

@@ -24,12 +24,12 @@ namespace CrystalOSAlpha.UI_Elements
             {
                 //BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Global_integers.c, Text, X + (Width / 2) - (Text.Length), Y + Height / 2 - 9);
                 offset = BitFont.DrawBitFontString(canvas_Blank, "ArialCustomCharset16", System.Drawing.Color.Black, Text, Width - (Text.Length * 6) - 3, Height / 2 - 8);
-                BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", System.Drawing.Color.Black, Text, X + (Width / 2) - (offset / 2), Y + Height / 2 - 9);
+                BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", ComplimentaryColor.Generate(Color), Text, X + (Width / 2) - (offset / 2), Y + Height / 2 - 9);
             }
             else
             {
                 offset = BitFont.DrawBitFontString(canvas_Blank, "ArialCustomCharset16", System.Drawing.Color.White, Text, Width - (Text.Length * 6) - 3, Height / 2 - 8);
-                BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", System.Drawing.Color.White, Text, X + (Width / 2) - (offset / 2), Y + Height / 2 - 9);
+                BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", ComplimentaryColor.Generate(Color), Text, X + (Width / 2) - (offset / 2), Y + Height / 2 - 9);
             }
             return canvas;
         }
@@ -64,6 +64,35 @@ namespace CrystalOSAlpha.UI_Elements
             this.Text = Text;
             this.Color = Color;
             this.ID = ID;
+        }
+    }
+
+    class ComplimentaryColor
+    {
+        public static Color Generate(int rgbInteger)
+        {
+            int r = (rgbInteger >> 16) & 255;
+            int g = (rgbInteger >> 8) & 255;
+            int b = rgbInteger & 255;
+
+            // calculate the opposite color
+            int rOpp = 255 - r;
+            int gOpp = 255 - g;
+            int bOpp = 255 - b;
+
+            if (rOpp == 0)
+            {
+                rOpp = 1;
+            }
+            if (gOpp == 0)
+            {
+                gOpp = 1;
+            }
+            if (bOpp == 0)
+            {
+                bOpp = 1;
+            }
+            return Color.FromArgb(rOpp, gOpp, bOpp);
         }
     }
 }

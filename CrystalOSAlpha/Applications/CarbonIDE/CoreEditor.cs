@@ -1,4 +1,5 @@
 ﻿using Cosmos.System;
+using CrystalOSAlpha.UI_Elements;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -66,11 +67,10 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     cursorIndex = 0;
                     break;
                 default:
-                    if (keyInfo.KeyChar != '\0')
-                    {
-                        lines[lineIndex] = lines[lineIndex].Insert(cursorIndex, keyInfo.KeyChar.ToString());
-                        cursorIndex++;
-                    }
+                    string temp = Keyboard.HandleKeyboard("", keyInfo);
+                    lines[lineIndex] = lines[lineIndex].Insert(cursorIndex, temp); //keyInfo.KeyChar.ToString()
+                    //cursorIndex++;
+                    cursorIndex += temp.Length;
                     break;
             }
 

@@ -68,7 +68,7 @@ namespace CrystalOSAlpha.SystemApps
             if (initial == true)
             {
                 //Separate the code into 3 segments:
-                //1. Initial window UI element layout
+                //1. Initial window UI element layout **Done! All implemented**
                 //2. Loop of the window
                 //3. UI element actions
                 Parts = Separate(Code);
@@ -241,18 +241,16 @@ namespace CrystalOSAlpha.SystemApps
                 {
                     if (button.Clicked == true)
                     {
-                        UI_Elements.Button.Button_render(canvas, button.X, button.Y, button.Width, button.Height, Color.White.ToArgb(), button.Text);
+                        UI_Elements.Button.Button_render(canvas, button.X, button.Y, button.Width, button.Height, ComplimentaryColor.Generate(button.Color).ToArgb(), button.Text);
 
                         //Need to think about this one for a bit...
                         foreach(var p in Parts)
                         {
-                            if(p.Contains("OnClick " + button.ID))
+                            if(p.Contains("OnClick " + button.ID + "\n"))
                             {
                                 //Proof that it works to this point!
                                 //Label.RemoveAll(d => d.ID == "Debug");
                                 //Label.Add(new label(10, 60, Parts[1], ImprovedVBE.colourToNumber(255, 255, 255), "Debug"));
-
-                                string LineResult = "";
 
                                 CSharp exec = new CSharp();
                                 exec.Button = Button;
@@ -328,7 +326,7 @@ namespace CrystalOSAlpha.SystemApps
                         }
                     }
                 }
-                if (clicked == true && MouseManager.MouseState == MouseState.None)
+                if (button.Clicked == true && MouseManager.MouseState == MouseState.None)
                 {
                     once = true;
                     button.Clicked = false;

@@ -13,27 +13,28 @@ namespace CrystalOSAlpha.UI_Elements
     {
         public static string HandleKeyboard(string input, KeyEvent key)
         {
+            string temp = input;
             if(Kernel.Is_KeyboardMouse == false)
             {
                 switch (key.Key)
                 {
                     case ConsoleKeyEx.Enter:
-                        input += "\n";
+                        temp += "\n";
                         break;
                     case ConsoleKeyEx.Backspace:
-                        if (input.Length != 0)
+                        if (temp.Length != 0)
                         {
-                            input = input.Remove(input.Length - 1);
+                            temp = temp.Remove(temp.Length - 1);
                         }
                         break;
                     case ConsoleKeyEx.Tab:
-                        input += "    ";
+                        temp += "    ";
                         break;
                     case ConsoleKeyEx.F1:
                         Kernel.Is_KeyboardMouse = true;
                         break;
                     default:
-                        input += Keyboard_HU(key);//key.KeyChar;
+                        temp += Keyboard_HU(key);//key.KeyChar;
                         break;
                 }
             }
@@ -58,7 +59,7 @@ namespace CrystalOSAlpha.UI_Elements
                         break;
                 }
             }
-            return input;
+            return temp;
         }
 
         public static char Keyboard_HU(KeyEvent key)
