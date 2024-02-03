@@ -42,16 +42,16 @@ namespace CrystalOSAlpha.UI_Elements
             {
                 switch(key.Key)
                 {
-                    case ConsoleKeyEx.Num8:
+                    case ConsoleKeyEx.W:
                         MouseManager.Y -= 4;
                         break;
-                    case ConsoleKeyEx.Num2:
+                    case ConsoleKeyEx.S:
                         MouseManager.Y += 4;
                         break;
-                    case ConsoleKeyEx.Num4:
+                    case ConsoleKeyEx.A:
                         MouseManager.X -= 4;
                         break;
-                    case ConsoleKeyEx.Num6:
+                    case ConsoleKeyEx.D:
                         MouseManager.X += 4;
                         break;
                     case ConsoleKeyEx.F1:

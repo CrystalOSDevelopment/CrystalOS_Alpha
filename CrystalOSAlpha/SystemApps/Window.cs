@@ -1,5 +1,6 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
+using CrystalOS_Alpha;
 using CrystalOSAlpha.Applications;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
@@ -11,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.CompilerServices;
+using Kernel = CrystalOS_Alpha.Kernel;
 using TaskScheduler = CrystalOSAlpha.Graphics.TaskScheduler;
 
 namespace CrystalOSAlpha.SystemApps
@@ -58,6 +60,8 @@ namespace CrystalOSAlpha.SystemApps
 
         public string Code = "";
         public List<string> Parts;
+
+        public int CycleCount = 0;
 
         public void App()
         {
@@ -260,6 +264,7 @@ namespace CrystalOSAlpha.SystemApps
                                 exec.CheckBox = CheckBox;
                                 exec.TextBox = TextBox;
                                 exec.Dropdown = Dropdown;
+                                exec.window = canvas;
 
                                 Label.RemoveAll(d => d.ID == "Debug");
                                 string[] lines = p.Split('\n');
@@ -275,16 +280,13 @@ namespace CrystalOSAlpha.SystemApps
                                 CheckBox = exec.CheckBox;
                                 TextBox = exec.TextBox;
                                 Dropdown = exec.Dropdown;
+                                Array.Copy(exec.window.RawData, 0, window.RawData, 0, exec.window.RawData.Length);
                             }
                         }
                     }
                     else
                     {
                         UI_Elements.Button.Button_render(canvas, button.X, button.Y, button.Width, button.Height, button.Color, button.Text);
-                    }
-                    if (MouseManager.MouseState == MouseState.None)
-                    {
-                        button.Clicked = false;
                     }
                 }
 
@@ -304,6 +306,7 @@ namespace CrystalOSAlpha.SystemApps
                 {
                     Box.Box(window, Box.X, Box.Y);
                 }
+
                 //window.RawData = canvas.RawData;
                 back_canvas = canvas;
                 once = false;
@@ -358,6 +361,72 @@ namespace CrystalOSAlpha.SystemApps
             foreach (var Box in TextBox)
             {
                 Box.Box(window, Box.X, Box.Y);
+                if (Box.Clciked(x + Box.X, y + Box.Y) == true)
+                {
+                    foreach (var box2 in TextBox)
+                    {
+                        box2.Selected = false;
+                    }
+                    Box.Selected = true;
+                }
+            }
+
+            int part = 0;
+            for(int i = 0; i < Parts.Count && part == 0; i++)
+            {
+                if (Parts[i].Contains("#void Looping\n"))
+                {
+                    part = i;
+                }
+            }
+
+            Kernel.Clipboard = part.ToString();
+
+            if(part != 0 && CycleCount > 5)
+            {
+                CSharp execLoop = new CSharp();
+                execLoop.Button = Button;
+                execLoop.Slider = Slider;
+                execLoop.Label = Label;
+                execLoop.Scroll = Scroll;
+                execLoop.CheckBox = CheckBox;
+                execLoop.TextBox = TextBox;
+                execLoop.Dropdown = Dropdown;
+                execLoop.window = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
+                Array.Copy(window.RawData, 0, execLoop.window.RawData, 0, window.RawData.Length);
+                string[] lines2 = Parts[part].Split('\n');
+                for (int i = 2; i < lines2.Length; i++)
+                {
+                    execLoop.Returning_methods(lines2[i]);
+                }
+                Button = execLoop.Button;
+                Slider = execLoop.Slider;
+                Label = execLoop.Label;
+                Scroll = execLoop.Scroll;
+                CheckBox = execLoop.CheckBox;
+                TextBox = execLoop.TextBox;
+                Dropdown = execLoop.Dropdown;
+                Array.Copy(execLoop.window.RawData, 0, window.RawData, 0, execLoop.window.RawData.Length);
+                CycleCount = 0;
+            }
+            else
+            {
+                CycleCount++;
+            }
+
+            if (TaskScheduler.Apps[^1] == this)
+            {
+                KeyEvent key;
+                if (KeyboardManager.TryReadKey(out key))
+                {
+                    foreach(var box in TextBox)
+                    {
+                        if(box.Selected == true)
+                        {
+                            box.Text = Keyboard.HandleKeyboard(box.Text, key);
+                        }
+                    }
+                }
             }
             ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
         }

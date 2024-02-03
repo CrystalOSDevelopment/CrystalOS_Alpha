@@ -281,6 +281,10 @@ namespace CrystalOSAlpha.Applications.FileSys
                 {
                     entry.X = x_off;
                     entry.Y = y_off;
+                    if(entry.Selected == true)
+                    {
+                        ImprovedVBE.DrawFilledRectangle(Main, ImprovedVBE.colourToNumber(69, 69, 69), x_off - 5, y_off - 5, 65, 65, false);
+                    }
                     if(entry.type == Opt.Folder)
                     {
                         ImprovedVBE.DrawImageAlpha(Resources.Folder, x_off, y_off, Main);
@@ -329,6 +333,10 @@ namespace CrystalOSAlpha.Applications.FileSys
                         {
                             if(clicked == false)
                             {
+                                foreach(var v in Items)
+                                {
+                                    v.Selected = false;
+                                }
                                 if(entry.type == Opt.File)
                                 {
                                     if (entry.name.EndsWith(".html"))
@@ -362,7 +370,7 @@ namespace CrystalOSAlpha.Applications.FileSys
                                     else if (entry.name.EndsWith(".bmp"))
                                     {
                                         //Time to write an image viewer app!
-                                        Kernel.temp = new Bitmap(entry.fullPath);
+                                        //Kernel.temp = new Bitmap(entry.fullPath);
                                     }
                                     else
                                     {
@@ -385,7 +393,9 @@ namespace CrystalOSAlpha.Applications.FileSys
                                     Route = entry.fullPath;
                                     temp = true;
                                 }
+                                entry.Selected = true;
                                 clicked = true;
+                                temp = true;
                             }
                         }
                     }
@@ -452,6 +462,7 @@ namespace CrystalOSAlpha.Applications.FileSys
         public Opt type { get; set; }
         public int X { get; set;}
         public int Y { get; set;}
+        public bool Selected { get; set;}
         public Structure(string name, string fullPath, Opt type)
         {
             this.name = name;

@@ -93,6 +93,11 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
             "        \n" +
             "        btn.Width = 90;\n" +
             "    }\n" +
+            "}" +
+            "#void Looping\n" +
+            "{\n" +
+            "    Graphics.FilledRectangle(10, 180, 150, 40, 0, 0, 255);\n" +
+            "    Graphics.FilledCircle(85, 200, 20, 20, 0, 128, 255);\n" +
             "}";
 
         public string Back_content = "";
@@ -163,16 +168,32 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     }
                 }
 
-                //FileTree.Add(new CSharpFile("Tests.cs", TestCode));
-                //FileTree.Add(new CSharpFile("Game.cs", Game));
-                //FileTree.Add(new CSharpFile("WhileLoops.cs", TestWhile));
-                //FileTree.Add(new CSharpFile("Keyboard.cs", Keyboard_Test));
-                //FileTree.Add(new CSharpFile("Window_Demo.cs", Window1));
+                FileTree.Add(new CSharpFile("Tests.cs", TestCode));
+                FileTree.Add(new CSharpFile("Game.cs", Game));
+                FileTree.Add(new CSharpFile("WhileLoops.cs", TestWhile));
+                FileTree.Add(new CSharpFile("Keyboard.cs", Keyboard_Test));
+                FileTree.Add(new CSharpFile("Window_Demo.cs", Window1));
 
-                //foreach(CSharpFile c in FileTree)
+                //foreach (DirectoryEntry dir in Kernel.fs.GetDirectoryListing(Path))
                 //{
-                //    File.WriteAllText(Path + "\\" + c.Name.Replace(".cs", ".app"), c.Content);
+                //    if (dir.mEntryType == DirectoryEntryTypeEnum.File)
+                //    {
+                //        File.Delete(dir.mFullPath);
+                //    }
                 //}
+                foreach (CSharpFile c in FileTree)
+                {
+                    if (c.Content.Contains("#Define Window_Main"))
+                    {
+                        File.WriteAllText(Path + "\\" + c.Name.Replace(".cs", ".app"), c.Content);
+                    }
+                    else
+                    {
+                        File.WriteAllText(Path + "\\" + c.Name.Replace(".cs", ".cmd"), c.Content);
+                    }
+                }
+                FileTree.Clear();
+
                 foreach (DirectoryEntry dir in Kernel.fs.GetDirectoryListing(Path))//"0:\\User\\Source\\Demo"
                 {
                     if (dir.mEntryType == DirectoryEntryTypeEnum.File)
@@ -380,7 +401,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                         {
                             case "New":
                                 //Create a popup window, that will give the user an option to create a new file
-                                TaskScheduler.Apps.Add(new DialogBox(100, 100, 999, 400, 400, 0, "Create new", false, icon));
+                                TaskScheduler.Apps.Add(new DialogBox(100, 100, 999, 900, 540, 0, "Create new", false, icon));
                                 break;
                             case "Run":
                                 //BitFont.DrawBitFontString(window, "ArialCustomCharset16", Color.White, CSharp.Executor(content), 500, 500);
@@ -502,6 +523,19 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 {
                     v.Content = content;
                 }
+            }
+
+            //Recieve data from window
+            WindowMessage message = WindowMessenger.Recieve("Create new", "CarbonIDE");
+            if(message != null)
+            {
+                if (!File.Exists(message.Message))
+                {
+                    File.Create(message.Message);
+                }
+                FileTree.Add(new CSharpFile(message.Message.Remove(0, message.Message.LastIndexOf('\\') + 1), File.ReadAllText(message.Message)));
+                WindowMessenger.Message.Remove(message);
+                temp = true;
             }
 
             //ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);

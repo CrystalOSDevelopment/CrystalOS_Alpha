@@ -114,7 +114,7 @@ namespace CrystalOSAlpha.Applications.WebscapeNavigator
                         switch (button.Text)
                         {
                             case "Go":
-                                content = Kernel.Network(source.Replace("www.", ""));
+                                //content = Kernel.Network(source.Replace("www.", ""));
                                 if(content == "")
                                 {
                                     content = "<html>\n  <head></head>\n  <body>\n\n    <h1>Connection error.</h1>\n    <p>the page that you were searching was not found.<br>plese try to reload the page</p>\n    \n  </body>\n</html>";

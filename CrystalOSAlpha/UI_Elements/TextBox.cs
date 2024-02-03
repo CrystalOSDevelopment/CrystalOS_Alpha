@@ -1,4 +1,5 @@
 ﻿
+using Cosmos.System;
 using Cosmos.System.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
 using System;
@@ -44,6 +45,7 @@ namespace CrystalOSAlpha.UI_Elements
         public int Y { get; set; }
         public int X { get; set; }
         public string ID { get; set; }
+        public bool Selected { get; set; }
         public static Bitmap Box(Bitmap Canvas, int X, int Y, int Width, int Height, int Color, string Text, string PlaceHolder, Options opt)
         {
             canvas = new Bitmap((uint)Width, (uint)Height, ColorDepth.ColorDepth32);
@@ -101,6 +103,7 @@ namespace CrystalOSAlpha.UI_Elements
 
             ImprovedVBE.DrawFilledRectangle(canvas, Color, 2, 2, Width - 4, Height - 4, false);
 
+            string temp = Text;
             switch (opt)
             {
                 case Options.left:
@@ -116,11 +119,11 @@ namespace CrystalOSAlpha.UI_Elements
                             offset += BitFont.DrawBitFontString(canvas_Blank, "ArialCustomCharset16", System.Drawing.Color.Black, Text[i].ToString(), 0, 0);
                             if (offset > Width - 15)
                             {
-                                Text = Text.Remove(0, i);
+                                temp = Text.Remove(0, i);
                                 break;
                             }
                         }
-                        BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", System.Drawing.Color.White, Text, 5, Height / 2 - 8);
+                        BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", System.Drawing.Color.White, temp, 5, Height / 2 - 8);
                     }
                     break;
                 case Options.right:
@@ -132,15 +135,31 @@ namespace CrystalOSAlpha.UI_Elements
                     {
                         if (Text.Length > 30)
                         {
-                            Text = Text.Remove(0, Text.Length - 30);
+                            temp = Text.Remove(0, Text.Length - 30);
                         }
                         offset = BitFont.DrawBitFontString(canvas_Blank, "ArialCustomCharset16", System.Drawing.Color.White, Text, Width - (Text.Length * 6) - 3, Height / 2 - 8);
-                        BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", System.Drawing.Color.White, Text, Width - offset - 3, Height / 2 - 8);
+                        BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", System.Drawing.Color.White, temp, Width - offset - 3, Height / 2 - 8);
                     }
                     break;
             }
 
             return ImprovedVBE.DrawImageAlpha(canvas, X, Y, Canvas);
+        }
+
+        public bool Clciked(int X, int Y)
+        {
+            if(MouseManager.MouseState == MouseState.Left)
+            {
+                if(MouseManager.X > X && MouseManager.X < X + Width)
+                {
+                    if(MouseManager.Y > Y && MouseManager.Y < Y + Height)
+                    {
+                        Selected = true;
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
     }
 }

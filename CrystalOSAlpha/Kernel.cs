@@ -39,7 +39,7 @@ namespace CrystalOS_Alpha
 {
     public class Kernel : Sys.Kernel
     {
-        public VBECanvas vbe = new VBECanvas(new Mode(1920, 1080, ColorDepth.ColorDepth32));
+        public VBECanvas vbe = new VBECanvas(new Mode(1024, 768, ColorDepth.ColorDepth32));
         [ManifestResourceStream(ResourceName = "CrystalOSAlpha.Graphics.Engine.Cursor.bmp")] public static byte[] Cursor;
         public static Bitmap C = new Bitmap(Cursor);
         public static CosmosVFS fs = new CosmosVFS();
@@ -59,7 +59,7 @@ namespace CrystalOS_Alpha
                 {
                     File.Create("0:\\index.html");
                 }
-                File.WriteAllText("0:\\index.html", Network("example.com/index.html"));
+                //File.WriteAllText("0:\\index.html", Network("example.com/index.html"));
                 Directory.CreateDirectory("0:\\User");
             }
 
@@ -99,7 +99,9 @@ namespace CrystalOS_Alpha
 
         public static int collect = 0;
 
-        public static Bitmap temp = new Bitmap(40, 40, ColorDepth.ColorDepth32);
+        //public static Bitmap temp = new Bitmap(40, 40, ColorDepth.ColorDepth32);
+
+        public static string Clipboard = "";
 
         public static void Update()
         {
@@ -127,8 +129,8 @@ namespace CrystalOS_Alpha
 
             TaskManager.Main();
 
-            ImprovedVBE.DrawImageAlpha(temp, 10, 10, ImprovedVBE.cover);
-            //BitFont.DrawBitFontString(ImprovedVBE.cover, "ArialCustomCharset16", System.Drawing.Color.White, CSharp.Clipboard, 500, 40);
+            //ImprovedVBE.DrawImageAlpha(temp, 10, 10, ImprovedVBE.cover);
+            //BitFont.DrawBitFontString(ImprovedVBE.cover, "ArialCustomCharset16", System.Drawing.Color.White, Clipboard, 500, 40);
 
             ImprovedVBE.DrawImageAlpha3(C, (int)MouseManager.X, (int)MouseManager.Y);
 
@@ -145,58 +147,60 @@ namespace CrystalOS_Alpha
             }
         }
 
-        public static string Network(string url)
-        {
-            try
-            {
-                var dnsClient = new DnsClient();
-                var tcpClient = new TcpClient();
+        //public static string Network(string url)
+        //{
 
-                // DNS
-                dnsClient.Connect(DNSConfig.DNSNameservers[0]);
-                dnsClient.SendAsk(url.Remove(url.IndexOf("/")));//Working: dpgraph.com, cgi-resources.com, rdrop.com, digitalresearch.biz
+        //    try
+        //    {
+        //        var dnsClient = new DnsClient();
+        //        var tcpClient = new TcpClient();
 
-                // Address from ip
-                Address address = dnsClient.Receive();
-                dnsClient.Close();
+        //        // DNS
+        //        dnsClient.Connect(DNSConfig.DNSNameservers[0]);
+        //        dnsClient.SendAsk(url.Remove(url.IndexOf("/")));//Working: dpgraph.com, cgi-resources.com, rdrop.com, digitalresearch.biz
 
-                // tcp
-                tcpClient.Connect(address, 80);
+        //        // Address from ip
+        //        Address address = dnsClient.Receive();
+        //        dnsClient.Close();
 
-                // httpget
-                string httpget = "GET /" + url.Remove(0, url.IndexOf("/") + 1) + "HTTP/1.1\r\n" +
-                                 "User-Agent: CrystalOSAlpha\r\n" +
-                                 "Accept: */*\r\n" +
-                                 "Accept-Encoding: identity\r\n" +
-                                 "Host: " + url.Remove(url.IndexOf("/")) + "\r\n" +
-                                 "Connection: Keep-Alive\r\n\r\n";
+        //        // tcp
+        //        tcpClient.Connect(address, 80);
 
-                tcpClient.Send(Encoding.ASCII.GetBytes(httpget));
+        //        // httpget
+        //        string httpget = "GET /" + url.Remove(0, url.IndexOf("/") + 1) + "HTTP/1.1\r\n" +
+        //                         "User-Agent: CrystalOSAlpha\r\n" +
+        //                         "Accept: */*\r\n" +
+        //                         "Accept-Encoding: identity\r\n" +
+        //                         "Host: " + url.Remove(url.IndexOf("/")) + "\r\n" +
+        //                         "Connection: Keep-Alive\r\n\r\n";
 
-                // get http response
-                var ep = new EndPoint(Address.Zero, 0);
-                var data = tcpClient.Receive(ref ep);
-                tcpClient.Close();
+        //        tcpClient.Send(Encoding.ASCII.GetBytes(httpget));
 
-
-                string httpresponse = Encoding.ASCII.GetString(data);
+        //        // get http response
+        //        var ep = new EndPoint(Address.Zero, 0);
+        //        var data = tcpClient.Receive(ref ep);
+        //        tcpClient.Close();
 
 
-                string[] responseParts = httpresponse.Split(new[] { "\r\n\r\n" }, 2, StringSplitOptions.None);
+        //        string httpresponse = Encoding.ASCII.GetString(data);
 
-                if (responseParts.Length == 2)
-                {
-                    string headers = responseParts[0];
-                    string content = responseParts[1];
-                    //BitFont.DrawBitFontString(ImprovedVBE.cover, "ArialCustomCharset16", Color.Black, content, 10, 10);
-                    return content;
-                }
-            }
-            catch (Exception ex)
-            {
+
+        //        string[] responseParts = httpresponse.Split(new[] { "\r\n\r\n" }, 2, StringSplitOptions.None);
+
+        //        if (responseParts.Length == 2)
+        //        {
+        //            string headers = responseParts[0];
+        //            string content = responseParts[1];
+        //            //BitFont.DrawBitFontString(ImprovedVBE.cover, "ArialCustomCharset16", Color.Black, content, 10, 10);
+        //            return content;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
                 
-            }
-            return "";
-        }
+        //    }
+        //    return "";
+        //    */
+        //}
     }
 }

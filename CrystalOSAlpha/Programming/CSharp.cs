@@ -1,5 +1,6 @@
 ﻿using Cosmos.Core_Asm;
 using Cosmos.System;
+using Cosmos.System.Graphics;
 using Cosmos.System.Graphics.Fonts;
 using CrystalOSAlpha.Applications;
 using CrystalOSAlpha.Applications.Terminal;
@@ -55,6 +56,7 @@ namespace CrystalOSAlpha.Programming
 
         public bool KeyOnly = false;
         public ConsoleKeyEx key = ConsoleKeyEx.NoName;
+        public Bitmap window;
 
         //For graphical use:
         #region UI_Elements
@@ -1806,6 +1808,30 @@ namespace CrystalOSAlpha.Programming
                     #endregion Keyboard
 
                     #region Graphical
+                    if (line.StartsWith("Graphics."))
+                    {
+                        if (line.Contains("SetPixel"))
+                        {
+                            string cleaned = line.Replace("Graphics.SetPixel", "");
+                            cleaned = cleaned.Remove(cleaned.Length - 1).Remove(0, 1);
+                            string[] values = cleaned.Split(',');
+                            window.RawData[window.Width * (int.Parse(values[1]) + 22) + int.Parse(values[0])] = ImprovedVBE.colourToNumber(int.Parse(values[2]), int.Parse(values[3]), int.Parse(values[4]));
+                        }
+                        if (line.Contains("FilledRectangle"))
+                        {
+                            string cleaned = line.Replace("Graphics.FilledRectangle", "");
+                            cleaned = cleaned.Remove(cleaned.Length - 1).Remove(0, 1);
+                            string[] values = cleaned.Split(',');
+                            ImprovedVBE.DrawFilledRectangle(window, ImprovedVBE.colourToNumber(int.Parse(values[4]), int.Parse(values[5]), int.Parse(values[6])), int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]), false);
+                        }
+                        if (line.Contains("FilledCircle"))
+                        {
+                            string cleaned = line.Replace("Graphics.FilledCircle", "");
+                            cleaned = cleaned.Remove(cleaned.Length - 1).Remove(0, 1);
+                            string[] values = cleaned.Split(',');
+                            ImprovedVBE.DrawFilledEllipse(window, int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]), ImprovedVBE.colourToNumber(int.Parse(values[4]), int.Parse(values[5]), int.Parse(values[6])));
+                        }
+                    }
                     foreach(var item in Label)
                     {
                         string[] split = line.Split('=');
