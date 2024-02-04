@@ -1,5 +1,7 @@
 ﻿using Cosmos.System;
+using Cosmos.System.FileSystem.Listing;
 using Cosmos.System.Graphics;
+using CrystalOS_Alpha;
 using CrystalOSAlpha.Applications.FileSys;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
@@ -13,6 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Kernel = CrystalOS_Alpha.Kernel;
 using TaskScheduler = CrystalOSAlpha.Graphics.TaskScheduler;
 
 namespace CrystalOSAlpha.Applications.CarbonIDE
@@ -69,6 +72,8 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
         public string activeTextbox = "name";
 
+        public List<Structure> CSharpFiles = new List<Structure>();
+
         public void App()
         {
             if (initial == true)
@@ -84,6 +89,18 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     Buttons.Add(new Button_prop(537, 381, 70, 25, "Back", 1));
                     Buttons.Add(new Button_prop(620, 381, 70, 25, "Create", 1));
                 }
+
+                foreach (DirectoryEntry dir in Kernel.fs.GetDirectoryListing("0:\\User\\Source"))//"0:\\User\\Source\\Demo"
+                {
+                    if (dir.mEntryType == DirectoryEntryTypeEnum.Directory)
+                    {
+                        if(!CSharpFiles.Contains(new Structure(dir.mName, dir.mFullPath, Opt.Folder)))
+                        {
+                            CSharpFiles.Add(new Structure(dir.mName, dir.mFullPath, Opt.Folder));
+                        }
+                    }
+                }
+
                 initial = false;
             }
             if (once == true)
@@ -148,6 +165,14 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 clicked = false;
             }
 
+            if (TaskScheduler.Apps[^1] == this)
+            {
+                if (MouseManager.MouseState == MouseState.Left)
+                {
+                    temp = true;
+                }
+            }
+
             if (temp == true)
             {
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
@@ -159,6 +184,52 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     BitFont.DrawBitFontString(window, "VerdanaCustomCharset24", Color.White, s, (width / 2) - (BitFont.DrawBitFontString(back_canvas, "VerdanaCustomCharset24", Color.White, s, 0, 0) / 2), 30);
 
                     BitFont.DrawBitFontString(window, "VerdanaCustomCharset24", Color.White, "Recently Opened", 10, 65);
+
+                    //View all folders in Source folder
+                    int top = 105;
+                    int left = 15;
+                    foreach (var v in CSharpFiles)
+                    {
+                        BitFont.DrawBitFontString(window, "VerdanaCustomCharset24", Color.White,v.name, left, top);
+
+                        BitFont.DrawBitFontString(window, "ArialCustomCharset16", Color.LightGray, v.fullPath, left + 10, top + 25);
+
+                        if(MouseManager.MouseState == MouseState.Left)
+                        {
+                            if(MouseManager.X > x + left && MouseManager.X < x + left + 200)
+                            {
+                                if (MouseManager.Y > y + top && MouseManager.Y < y + top + 50)
+                                {
+                                    /*
+                                    CarbonIDE ide = new CarbonIDE();
+                                    ide.x = 0;
+                                    ide.y = 0;
+                                    ide.width = ImprovedVBE.width;
+                                    ide.height = ImprovedVBE.height - 75;
+                                    ide.z = 999;
+                                    ide.icon = ImprovedVBE.ScaleImageStock(Resources.IDE, 56, 56);
+                                    ide.name = "CarbonIDE";
+                                    ide.Path = v.fullPath;
+                                    */
+
+                                    GraphicalProgramming ide = new GraphicalProgramming();
+                                    ide.x = 0;
+                                    ide.y = 0;
+                                    ide.width = ImprovedVBE.width;
+                                    ide.height = ImprovedVBE.height - 75;
+                                    ide.z = 999;
+                                    ide.icon = ImprovedVBE.ScaleImageStock(Resources.IDE, 56, 56);
+                                    ide.name = "CarbonIDE";
+
+                                    TaskScheduler.Apps.Add(ide);
+
+                                    TaskScheduler.Apps.Remove(this);
+                                }
+                            }
+                        }
+
+                        top += 50;
+                    }
                 }
                 if (typeOf == "New Project")
                 {

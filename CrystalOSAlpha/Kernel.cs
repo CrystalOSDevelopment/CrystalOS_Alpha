@@ -12,6 +12,7 @@ using Cosmos.System.Network.IPv4.UDP.DHCP;
 using Cosmos.System.Network.IPv4.UDP.DNS;
 using CrystalOS_Alpha.Graphics.Widgets;
 using CrystalOSAlpha;
+using CrystalOSAlpha.Applications.CarbonIDE;
 using CrystalOSAlpha.Applications.FileSys;
 using CrystalOSAlpha.Applications.Minecraft;
 using CrystalOSAlpha.Applications.Video_Player;

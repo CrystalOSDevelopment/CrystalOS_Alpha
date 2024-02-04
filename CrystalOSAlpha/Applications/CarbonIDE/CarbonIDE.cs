@@ -168,11 +168,11 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     }
                 }
 
-                FileTree.Add(new CSharpFile("Tests.cs", TestCode));
-                FileTree.Add(new CSharpFile("Game.cs", Game));
-                FileTree.Add(new CSharpFile("WhileLoops.cs", TestWhile));
-                FileTree.Add(new CSharpFile("Keyboard.cs", Keyboard_Test));
-                FileTree.Add(new CSharpFile("Window_Demo.cs", Window1));
+                //FileTree.Add(new CSharpFile("Tests.cs", TestCode));
+                //FileTree.Add(new CSharpFile("Game.cs", Game));
+                //FileTree.Add(new CSharpFile("WhileLoops.cs", TestWhile));
+                //FileTree.Add(new CSharpFile("Keyboard.cs", Keyboard_Test));
+                //FileTree.Add(new CSharpFile("Window_Demo.cs", Window1));
 
                 //foreach (DirectoryEntry dir in Kernel.fs.GetDirectoryListing(Path))
                 //{
@@ -181,18 +181,18 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 //        File.Delete(dir.mFullPath);
                 //    }
                 //}
-                foreach (CSharpFile c in FileTree)
-                {
-                    if (c.Content.Contains("#Define Window_Main"))
-                    {
-                        File.WriteAllText(Path + "\\" + c.Name.Replace(".cs", ".app"), c.Content);
-                    }
-                    else
-                    {
-                        File.WriteAllText(Path + "\\" + c.Name.Replace(".cs", ".cmd"), c.Content);
-                    }
-                }
-                FileTree.Clear();
+                //foreach (CSharpFile c in FileTree)
+                //{
+                //    if (c.Content.Contains("#Define Window_Main"))
+                //    {
+                //        File.WriteAllText(Path + "\\" + c.Name.Replace(".cs", ".app"), c.Content);
+                //    }
+                //    else
+                //    {
+                //        File.WriteAllText(Path + "\\" + c.Name.Replace(".cs", ".cmd"), c.Content);
+                //    }
+                //}
+                //FileTree.Clear();
 
                 foreach (DirectoryEntry dir in Kernel.fs.GetDirectoryListing(Path))//"0:\\User\\Source\\Demo"
                 {

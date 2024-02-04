@@ -87,7 +87,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                 Extension_Dock = ImprovedVBE.DrawImageAlpha2(Extension_Dock, (int)(Left - X_offset) - 175, Top, Extension_Dock);
 
                 Search_Box = Base.Widget_Back(210, 36, ImprovedVBE.colourToNumber(255, 255, 255));
-                Search_Box = ImprovedVBE.DrawImageAlpha2(Search_Box, (int)(Left + X_offset - 200), Top - 460, Search_Box, 30, 30, 30);
+                Search_Box = ImprovedVBE.DrawImageAlpha2(Search_Box, (int)(Left + X_offset - 200), Top - 460, Search_Box, 30, 30, 30, ImprovedVBE.cover);
 
                 switch (DateTime.Now.DayOfWeek)
                 {
@@ -361,7 +361,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                 Back = ImprovedVBE.DrawImageAlpha2(Back, (int)(Left + X_offset - 300), Top - 480, Back);
 
                 Search_Box = Base.Widget_Back(210, 36, ImprovedVBE.colourToNumber(255, 255, 255));
-                Search_Box = ImprovedVBE.DrawImageAlpha2(Search_Box, (int)(Left + X_offset - 200), Top - 460, Search_Box, 30, 30, 30);
+                Search_Box = ImprovedVBE.DrawImageAlpha2(Search_Box, (int)(Left + X_offset - 200), Top - 460, Search_Box, 30, 30, 30, ImprovedVBE.cover);
                 if (Text_Search != "")
                 {
                     BitFont.DrawBitFontString(Search_Box, "ArialCustomCharset16", Global_integers.c, Text_Search, 5, 9);

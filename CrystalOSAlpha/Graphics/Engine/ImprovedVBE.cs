@@ -276,7 +276,7 @@ namespace CrystalOSAlpha
             return output;
         }
 
-        public static Bitmap DrawImageAlpha2(Bitmap image, int x, int y, Bitmap output, int R, int G, int B)
+        public static Bitmap DrawImageAlpha2(Bitmap image, int x, int y, Bitmap output, int R, int G, int B, Bitmap back)
         {
             int r = R;
             int g = G;
@@ -301,9 +301,9 @@ namespace CrystalOSAlpha
                             }
                             else
                             {
-                                int r3 = (cover.RawData[_y * width + _x] & 0xff0000) >> 16;
-                                int g3 = (cover.RawData[_y * width + _x] & 0x00ff00) >> 8;
-                                int b3 = (cover.RawData[_y * width + _x] & 0x0000ff);
+                                int r3 = (back.RawData[_y * width + _x] & 0xff0000) >> 16;
+                                int g3 = (back.RawData[_y * width + _x] & 0x00ff00) >> 8;
+                                int b3 = (back.RawData[_y * width + _x] & 0x0000ff);
                                 //Color c = Color.FromArgb(cover.RawData[j * width + i]);
 
                                 int r2 = (int)(inverseBlendFactor * r3 + blendFactor * r);
