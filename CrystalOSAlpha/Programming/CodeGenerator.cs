@@ -21,6 +21,7 @@ namespace CrystalOSAlpha.Programming
                                 "    this.Width = 500;\n" +
                                 "    this.Height = 300;\n" +
                                 "    this.Titlebar = true;\n" +
+                                "    this.RGB = 255, 255, 255;\n" +
                                 "}";
             }
             if (newComponent != "")
@@ -29,7 +30,76 @@ namespace CrystalOSAlpha.Programming
                 string temp = "";
                 //Kernel.Clipboard = Code[0];
                 string[] block = Code[0].Split('\n');
-                if (newComponent.StartsWith("Button"))
+                if (newComponent.StartsWith("this."))
+                {
+                    if (newComponent.Trim().StartsWith("this.Width"))
+                    {
+                        //Kernel.Clipboard = "It comes here just fine";
+                        for (int i = 0; i < block.Length; i++)
+                        {
+                            if (block[i].Trim().StartsWith("this.Width"))
+                            {
+                                string[] clean = newComponent.Split("=");
+                                if (int.TryParse(clean[1].Trim().Replace(";", ""), out int t))
+                                {
+                                    if(t >= 50)
+                                    {
+                                        block[i] = "    this.Width = " + clean[1].Trim();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else if (newComponent.StartsWith("this.Height"))
+                    {
+                        for (int i = 0; i < block.Length; i++)
+                        {
+                            if (block[i].Trim().StartsWith("this.Height"))
+                            {
+                                string[] clean = newComponent.Split("=");
+                                if (int.TryParse(clean[1].Trim().Replace(";", ""), out int t))
+                                {
+                                    if (t >= 50)
+                                    {
+                                        block[i] = "    this.Height = " + clean[1].Trim();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else if (newComponent.StartsWith("this.RGB"))
+                    {
+                        for (int i = 0; i < block.Length; i++)
+                        {
+                            if (block[i].Trim().StartsWith("this.RGB"))
+                            {
+                                string[] clean = newComponent.Split("=");
+                                //Kernel.Clipboard = clean[1];
+                                string[] miert = clean[1].Split(", ");
+                                if (miert.Length == 3)
+                                {
+                                    if (int.TryParse(miert[^1].Replace(";", ""), out int num))
+                                    {
+                                        block[i] = "    this.RGB = " + clean[1].Trim();
+                                    }
+                                }
+                                //block[i] = "    this.RGB = 60, 60, 60;";
+                            }
+                        }
+                    }
+                    else if (newComponent.StartsWith("this.Titlebar"))
+                    {
+                        for (int i = 0; i < block.Length; i++)
+                        {
+                            if (block[i].Trim().StartsWith("this.Titlebar"))
+                            {
+                                string[] clean = newComponent.Split("=");
+                                block[i] = "    this.Titlebar = " + clean[1].Trim();
+                            }
+                        }
+                    }
+                }
+                else if (newComponent.StartsWith("Button"))
                 {
                     for(int i = 0; i < block.Length; i++)
                     {
@@ -44,7 +114,21 @@ namespace CrystalOSAlpha.Programming
                         }
                     }
                 }
-                //Kernel.Clipboard += "\n" + temp;
+                if(temp.Length == 0)
+                {
+                    for (int i = 0; i < block.Length; i++)
+                    {
+                        if (i < block.Length - 1)
+                        {
+                            temp += block[i] + "\n";
+                        }
+                        else
+                        {
+                            temp += block[i];
+                        }
+                    }
+                }
+                //Kernel.Clipboard = "\n" + temp;
                 Modified_Code = temp;
             }
             return Modified_Code;

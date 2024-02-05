@@ -266,14 +266,18 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 KeyEvent k;
                 if(KeyboardManager.TryReadKey(out k))
                 {
+                    int counter = 0;
                     foreach(var v in t.Cells)
                     {
                         if(v.Selected == true && v.WriteProtected == false)
                         {
                             v.Content = Keyboard.HandleKeyboard(v.Content, k);
-                            code = CodeGenerator.Generate(code, "Button btn = new Button(10, 30, 110, 25, \"Hello World\", 1, 1, 1);");
+                            //code = CodeGenerator.Generate(code, "Button btn = new Button(10, 30, 110, 25, \"Hello World\", 1, 1, 1);");
+                            code = CodeGenerator.Generate(code, "this." + t.Cells[counter - 1].Content.Replace("Window.", "") + " = " + v.Content + ";");
+                            //Kernel.Clipboard = "this." + t.Cells[counter - 1].Content.Replace("Window.", "") + " = " + v.Content + ";";
                             temp = true;
                         }
+                        counter++;
                     }
                 }
             }
