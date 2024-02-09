@@ -21,14 +21,17 @@ namespace CrystalOSAlpha.Programming
                                 "    this.Width = 500;\n" +
                                 "    this.Height = 300;\n" +
                                 "    this.Titlebar = true;\n" +
-                                "    this.RGB = 255, 255, 255;\n" +
+                                "    this.RGB = 60, 60, 60;\n" +
+                                "}\n" +
+                                "#void Looping\n" + 
+                                "{\n" +
+                                "    \n" +
                                 "}";
             }
             if (newComponent != "")
             {
                 List<string> Code = Separate(Modified_Code);
                 string temp = "";
-                //Kernel.Clipboard = Code[0];
                 string[] block = Code[0].Split('\n');
                 if (newComponent.StartsWith("this."))
                 {
@@ -99,8 +102,18 @@ namespace CrystalOSAlpha.Programming
                         }
                     }
                 }
-                else if (newComponent.StartsWith("Button"))
+                else if (newComponent.StartsWith("Button") || newComponent.StartsWith("Label") || newComponent.StartsWith("TextBox") || newComponent.StartsWith("Slider"))
                 {
+                    string[] parts = newComponent.Split('=');
+                    bool found = false;
+                    for(int j = 0; j < block.Length; j++)
+                    {
+                        if (block[j].Trim().StartsWith(parts[0]))
+                        {
+                            block[j] = "    " + newComponent;
+                            found = true;
+                        }
+                    }
                     for(int i = 0; i < block.Length; i++)
                     {
                         if(i < block.Length - 1)
@@ -109,26 +122,27 @@ namespace CrystalOSAlpha.Programming
                         }
                         else
                         {
-                            temp += "    " + newComponent + "\n";
+                            if(found == false)
+                            {
+                                temp += "    " + newComponent + "\n";
+                            }
                             temp += block[i] + "\n";
                         }
                     }
                 }
-                if(temp.Length == 0)
+                for(int i = 1; i < Code.Count; i++)
                 {
-                    for (int i = 0; i < block.Length; i++)
+                    temp += Code[i] + "\n";
+                }
+                string[] CleanUp = temp.Split('\n');
+                temp = "";
+                foreach(string s in CleanUp)
+                {
+                    if(s != "")
                     {
-                        if (i < block.Length - 1)
-                        {
-                            temp += block[i] + "\n";
-                        }
-                        else
-                        {
-                            temp += block[i];
-                        }
+                        temp += s + "\n";
                     }
                 }
-                //Kernel.Clipboard = "\n" + temp;
                 Modified_Code = temp;
             }
             return Modified_Code;

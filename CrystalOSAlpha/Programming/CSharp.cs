@@ -2,6 +2,7 @@
 using Cosmos.System;
 using Cosmos.System.Graphics;
 using Cosmos.System.Graphics.Fonts;
+using CrystalOS_Alpha;
 using CrystalOSAlpha.Applications;
 using CrystalOSAlpha.Applications.Terminal;
 using CrystalOSAlpha.Graphics;
@@ -17,6 +18,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Kernel = CrystalOS_Alpha.Kernel;
 using TaskScheduler = CrystalOSAlpha.Graphics.TaskScheduler;
 
 namespace CrystalOSAlpha.Programming
@@ -57,6 +59,7 @@ namespace CrystalOSAlpha.Programming
         public bool KeyOnly = false;
         public ConsoleKeyEx key = ConsoleKeyEx.NoName;
         public Bitmap window;
+        public int CurrentColor = 0;
 
         //For graphical use:
         #region UI_Elements
@@ -178,11 +181,35 @@ namespace CrystalOSAlpha.Programming
                         }
                         else
                         {
-                            name = values[0];
-                            if(Returning_Value == null)
+                            if (!values[1].Contains("Console"))
                             {
-                                format = "string";
-                                WaitForResponse = true;
+                                if (values[1].EndsWith(".Content"))
+                                {
+                                    values[1] = values[1].Replace(".Content", "");
+                                    foreach (var v in Button)
+                                    {
+                                        if (v.ID == values[1])
+                                        {
+                                            Variables.Add(new Programming.Variables(values[0], v.Text));
+                                        }
+                                    }
+                                    foreach (var v in Label)
+                                    {
+                                        if (v.ID == values[1])
+                                        {
+                                            Variables.Add(new Programming.Variables(values[0], v.Text));
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                name = values[0];
+                                if(Returning_Value == null)
+                                {
+                                    format = "string";
+                                    WaitForResponse = true;
+                                }
                             }
                         }
                     }
@@ -262,25 +289,112 @@ namespace CrystalOSAlpha.Programming
                             
                             //Clipboard = generated.ToString();
                         }
+                        else if (!values[1].StartsWith("Console"))
+                        {
+                            bool gotit = false;
+                            if (values[1].EndsWith(".X"))
+                            {
+                                values[1] = values[1].Replace(".X", "");
+                                if(gotit == false)
+                                {
+                                    foreach(var v in Button)
+                                    {
+                                        if(v.ID == values[1])
+                                        {
+                                            Variables.Add(new Programming.Variables(values[0], v.X));
+                                            gotit = true;
+                                        }
+                                    }
+                                    foreach (var v in Slider)
+                                    {
+                                        if (v.ID == values[1])
+                                        {
+                                            Variables.Add(new Programming.Variables(values[0], v.X));
+                                            gotit = true;
+                                        }
+                                    }
+                                    foreach (var v in Label)
+                                    {
+                                        if (v.ID == values[1])
+                                        {
+                                            Variables.Add(new Programming.Variables(values[0], v.X));
+                                            gotit = true;
+                                        }
+                                    }
+                                }
+                            }
+                            else if (values[1].EndsWith(".Y"))
+                            {
+                                values[1] = values[1].Replace(".Y", "");
+                                foreach (var v in Button)
+                                {
+                                    if (v.ID == values[1])
+                                    {
+                                        Variables.Add(new Programming.Variables(values[0], v.Y));
+                                    }
+                                }
+                                foreach (var v in Slider)
+                                {
+                                    if (v.ID == values[1])
+                                    {
+                                        Variables.Add(new Programming.Variables(values[0], v.Y));
+                                        gotit = true;
+                                    }
+                                }
+                                foreach (var v in Label)
+                                {
+                                    if (v.ID == values[1])
+                                    {
+                                        Variables.Add(new Programming.Variables(values[0], v.Y));
+                                        gotit = true;
+                                    }
+                                }
+                            }
+                            else if (values[1].EndsWith(".Width"))
+                            {
+                                values[1] = values[1].Replace(".Width", "");
+                                foreach (var v in Button)
+                                {
+                                    if (v.ID == values[1])
+                                    {
+                                        Variables.Add(new Programming.Variables(values[0], v.Width));
+                                    }
+                                }
+                                foreach (var v in Slider)
+                                {
+                                    if (v.ID == values[1])
+                                    {
+                                        Variables.Add(new Programming.Variables(values[0], v.Width));
+                                        gotit = true;
+                                    }
+                                }
+                            }
+                            else if (values[1].EndsWith(".Height"))
+                            {
+                                values[1] = values[1].Replace(".Y", "");
+                                foreach (var v in Button)
+                                {
+                                    if (v.ID == values[1])
+                                    {
+                                        Variables.Add(new Programming.Variables(values[0], v.Height));
+                                    }
+                                }
+                            }
+                            else if (values[1].EndsWith(".Value"))
+                            {
+                                values[1] = values[1].Replace(".Value", "");
+                                foreach (var v in Slider)
+                                {
+                                    if (v.ID == values[1])
+                                    {
+                                        Variables.Add(new Programming.Variables(values[0], v.Value));
+                                    }
+                                }
+                            }
+                            
+                        }
                         else
                         {
-                            //bool found = false;
-                            //foreach(var v in Variables)
-                            //{
-                            //    if(v.I_Name == values[0])
-                            //    {
-                            //        found = true;
-                            //    }
-                            //}
-                            //if(found == false)
-                            //{
-                            //    name = values[0];
-                            //    if (Returning_Value == null)
-                            //    {
-                            //        format = "int";
-                            //        WaitForResponse = true;
-                            //    }
-                            //}
                             name = values[0];
                             Variables.RemoveAll(d => d.I_Name == name);
                             if (Returning_Value == null)
@@ -1817,19 +1931,26 @@ namespace CrystalOSAlpha.Programming
                             string[] values = cleaned.Split(',');
                             window.RawData[window.Width * (int.Parse(values[1]) + 22) + int.Parse(values[0])] = ImprovedVBE.colourToNumber(int.Parse(values[2]), int.Parse(values[3]), int.Parse(values[4]));
                         }
-                        if (line.Contains("FilledRectangle"))
+                        else if (line.Contains("FilledRectangle"))
                         {
                             string cleaned = line.Replace("Graphics.FilledRectangle", "");
                             cleaned = cleaned.Remove(cleaned.Length - 1).Remove(0, 1);
                             string[] values = cleaned.Split(',');
                             ImprovedVBE.DrawFilledRectangle(window, ImprovedVBE.colourToNumber(int.Parse(values[4]), int.Parse(values[5]), int.Parse(values[6])), int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]), false);
                         }
-                        if (line.Contains("FilledCircle"))
+                        else if (line.Contains("FilledCircle"))
                         {
                             string cleaned = line.Replace("Graphics.FilledCircle", "");
                             cleaned = cleaned.Remove(cleaned.Length - 1).Remove(0, 1);
                             string[] values = cleaned.Split(',');
                             ImprovedVBE.DrawFilledEllipse(window, int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]), ImprovedVBE.colourToNumber(int.Parse(values[4]), int.Parse(values[5]), int.Parse(values[6])));
+                        }
+                        else if (line.Contains("RGB"))
+                        {
+                            string cleaned = line.Replace("Graphics.RGB=", "");
+                            string[] values = cleaned.Split(',');
+                            //Kernel.Clipboard = ImprovedVBE.colourToNumber(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2])).ToString();
+                            CurrentColor = ImprovedVBE.colourToNumber(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]));
                         }
                     }
                     foreach(var item in Label)
@@ -1839,7 +1960,36 @@ namespace CrystalOSAlpha.Programming
                         {
                             if(split[0].Split('.')[1] == "Content")
                             {
-                                item.Text = split[1].Remove(split[1].Length - 1).Remove(0, 1);
+                                if (!split[1].Contains("\""))
+                                {
+                                    foreach (var Item in Variables)
+                                    {
+                                        if (split[1] == Item.S_Name)
+                                        {
+                                            item.Text = Item.S_Value;
+                                        }
+                                        else if (split[1] == Item.I_Name)
+                                        {
+                                            item.Text = Item.I_Value.ToString();
+                                        }
+                                        else if (split[1] == Item.B_Name)
+                                        {
+                                            item.Text = Item.B_Value.ToString();
+                                        }
+                                        else if (split[1] == Item.F_Name)
+                                        {
+                                            item.Text = Item.F_Value.ToString();
+                                        }
+                                        else if (split[1] == Item.D_Name)
+                                        {
+                                            item.Text = Item.D_Value.ToString();
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    item.Text = split[1].Remove(split[1].Length - 1).Remove(0, 1);
+                                }
                             }
                             else if (split[0].Split('.')[1] == "Color")
                             {

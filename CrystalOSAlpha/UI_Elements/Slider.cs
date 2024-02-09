@@ -18,14 +18,16 @@ namespace CrystalOSAlpha.UI_Elements
         public int Value { get; set; }
         public int MinValue { get; set; }
         public int MaxValue { get; set; }
+        public string ID { get; set; }
         public bool Clicked = false;
 
-        public Slider(int x, int y, int width, int value)
+        public Slider(int x, int y, int width, int value, string ID)
         {
             X = x;
             Y = y + 22;
             Width = width;
             Value = value;
+            this.ID = ID;
         }
 
         public void Render(Bitmap Canvas)

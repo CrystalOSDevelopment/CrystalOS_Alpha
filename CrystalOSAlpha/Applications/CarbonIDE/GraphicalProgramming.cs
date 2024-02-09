@@ -15,6 +15,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using Kernel = CrystalOS_Alpha.Kernel;
@@ -70,10 +71,20 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
         string code = "";
 
-        List<string> Elements = new List<string> { "Label", "Button", "TextBox", "Slider", "Scrollbar", "PictureBox", "CheckBox", "Radio button", "Progressbar", "Menutab", "Table" };
+        public List<string> Elements = new List<string> { "Label", "Button", "TextBox", "Slider", "Scrollbar", "PictureBox", "CheckBox", "Radio button", "Progressbar", "Menutab", "Table" };
+        public List<Elements> Full = new List<Elements>();
+        public List<Elements> Used = new List<Elements>();
 
         public Table t = new Table(2, 7, 412, 600);
         public Window preview;
+
+        public string Selected = "";
+
+        public int StoredX = 0;
+        public int StoredY = 0;
+
+        public string ThatID = "";
+        public static string Typo = "";
         #endregion Core variables
 
         public void App()
@@ -110,6 +121,11 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 t.SetValue(6, 0, "Window.Titlebar", true);
                 t.SetValue(6, 1, "true", false);
                 #endregion Table Magic
+
+                foreach(string s in Elements)
+                {
+                    Full.Add(new Applications.CarbonIDE.Elements(s, false));
+                }
 
                 initial = false;
             }
@@ -254,11 +270,58 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
             {
                 temp = true;
                 clicked = true;
+                StoredX = (int)MouseManager.X;
+                StoredY = (int)MouseManager.Y;
             }
             if (MouseManager.MouseState == MouseState.None && clicked == true)
             {
                 temp = true;
                 clicked = false;
+                if(StoredX > 10 + preview.x && StoredX < 30 + preview.x + preview.width)
+                {
+                    if(StoredY > 32 + preview.y && StoredY < 82 + preview.y + preview.height)
+                    {
+                        if(Selected == "Button")
+                        {
+                            //code = CodeGenerator.Generate(code, "Button btn = new Button(10, 30, 110, 25, \"Hello World\", 1, 1, 1);");
+                            int ex = StoredX - 10 - preview.x;
+                            int epsz = StoredY - 54 - preview.y;
+                            int W = (int)MouseManager.X - ex - 10 - preview.x;
+                            int H = (int)MouseManager.Y - epsz - 54 - preview.y;
+                            code = CodeGenerator.Generate(code, $"Button btn{preview.Button.Count + 1} = new Button({ex}, {epsz}, {W}, {H}, \"Hello World\", 1, 1, 1);");
+                        }
+                        else if (Selected == "Label")
+                        {
+                            //code = CodeGenerator.Generate(code, "Button btn = new Button(10, 30, 110, 25, \"Hello World\", 1, 1, 1);");
+                            int ex = StoredX - 10 - preview.x;
+                            int epsz = StoredY - 54 - preview.y;
+                            int W = (int)MouseManager.X - ex - 10 - preview.x;
+                            int H = (int)MouseManager.Y - epsz - 54 - preview.y;
+                            code = CodeGenerator.Generate(code, $"Label lbl{preview.Label.Count + 1} = new Label({ex}, {epsz}, \"This is a label!\", 1, 1, 1);");
+                        }
+                        else if (Selected == "TextBox")
+                        {
+                            //code = CodeGenerator.Generate(code, "Button btn = new Button(10, 30, 110, 25, \"Hello World\", 1, 1, 1);");
+                            int ex = StoredX - 10 - preview.x;
+                            int epsz = StoredY - 54 - preview.y;
+                            int W = (int)MouseManager.X - ex - 10 - preview.x;
+                            int H = (int)MouseManager.Y - epsz - 54 - preview.y;
+                            code = CodeGenerator.Generate(code, $"TextBox tBox{preview.TextBox.Count + 1} = new TextBox({ex}, {epsz}, {W}, {H}, 60, 60, 60, \"\", \"Textbox\");");
+                        }
+                        else if (Selected == "Slider")
+                        {
+                            //code = CodeGenerator.Generate(code, "Button btn = new Button(10, 30, 110, 25, \"Hello World\", 1, 1, 1);");
+                            int ex = StoredX - 10 - preview.x;
+                            int epsz = StoredY - 54 - preview.y;
+                            int W = (int)MouseManager.X - ex - 10 - preview.x;
+                            int H = (int)MouseManager.Y - epsz - 54 - preview.y;
+                            code = CodeGenerator.Generate(code, $"Slider slider{preview.Slider.Count + 1} = new Slider({ex}, {epsz}, {W}, 255, 0);");
+                        }
+                        Selected = "";
+                        StoredX = 0;
+                        StoredY = 0;
+                    }
+                }
             }
 
             if(TaskScheduler.Apps[^1] == this)
@@ -266,18 +329,42 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 KeyEvent k;
                 if(KeyboardManager.TryReadKey(out k))
                 {
-                    int counter = 0;
-                    foreach(var v in t.Cells)
+                    if (k.Key == ConsoleKeyEx.F5)
                     {
-                        if(v.Selected == true && v.WriteProtected == false)
+                        TaskScheduler.Apps.Add(new Window(100, 100, 999, 350, 200, 0, "Later", false, icon, code));
+                    }
+                    else
+                    {
+                        int counter = 0;
+                        foreach(var v in t.Cells)
                         {
-                            v.Content = Keyboard.HandleKeyboard(v.Content, k);
-                            //code = CodeGenerator.Generate(code, "Button btn = new Button(10, 30, 110, 25, \"Hello World\", 1, 1, 1);");
-                            code = CodeGenerator.Generate(code, "this." + t.Cells[counter - 1].Content.Replace("Window.", "") + " = " + v.Content + ";");
-                            //Kernel.Clipboard = "this." + t.Cells[counter - 1].Content.Replace("Window.", "") + " = " + v.Content + ";";
-                            temp = true;
+                            if(v.Selected == true && v.WriteProtected == false)
+                            {
+                                v.Content = Keyboard.HandleKeyboard(v.Content, k);
+                                //code = CodeGenerator.Generate(code, "Button btn = new Button(10, 30, 110, 25, \"Hello World\", 1, 1, 1);");
+                                if(t.Cells[counter - 1].Content.Contains("Window."))
+                                {
+                                    code = CodeGenerator.Generate(code, "this." + t.Cells[counter - 1].Content.Replace("Window.", "") + " = " + v.Content + ";");
+                                }
+                                else
+                                {
+                                    if(Typo == "Button")
+                                    {
+                                        if(int.Parse(t.GetValue(1, 2)) > 10)
+                                        {
+                                            code = CodeGenerator.Generate(code, $"Button {ThatID} = new Button({t.GetValue(1, 0)}, {t.GetValue(1, 1)}, {t.GetValue(1, 2)}, {t.GetValue(1, 3)}, \"{t.GetValue(1, 4)}\", 1, 1, 1);");
+                                        }
+                                    }
+                                    else if(Typo == "Label")
+                                    {
+                                        code = CodeGenerator.Generate(code, $"Label {ThatID} = new Label({t.GetValue(1, 0)}, {t.GetValue(1, 1)}, \"{t.GetValue(1, 2)}\", 1, 1, 1);");
+                                    }
+                                }
+                                //Kernel.Clipboard = code;
+                                temp = true;
+                            }
+                            counter++;
                         }
-                        counter++;
                     }
                 }
             }
@@ -320,10 +407,127 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
                 int Top = 50;
                 int Left = 10;
-                foreach(string s in Elements)
+                for(int i = 0; i < Full.Count; i++)
                 {
-                    BitFont.DrawBitFontString(UIContainer, "ArialCustomCharset16", Color.White, s, Left, Top);
+                    if(MouseManager.MouseState == MouseState.Left)
+                    {
+                        if(MouseManager.X > 10 + Left && MouseManager.X < 10 + Left + 100)
+                        {
+                            if(MouseManager.Y > 721 + Top && MouseManager.Y < 721 + Top + 30)
+                            {
+                                foreach(var d in Full)
+                                {
+                                    d.Selected = false;
+                                    Selected = Full[i].Name;
+                                }
+                                Full[i].Selected = true;
+                                i = 0;
+                                Top = 50;
+                                Left = 10;
+                            }
+                        }
+                    }
+                    if (Full[i].Name != Selected)
+                    {
+                        Full[i].Selected = false;
+                    }
+                    if(Full[i].Selected == false)
+                    {
+                        BitFont.DrawBitFontString(UIContainer, "ArialCustomCharset16", Color.White, Full[i].Name, Left, Top);
+                    }
+                    else
+                    {
+                        BitFont.DrawBitFontString(UIContainer, "ArialCustomCharset16", Color.Black, Full[i].Name, Left, Top);
+                    }
                     if(Top > 200)
+                    {
+                        Top = 50;
+                        Left += 100;
+                    }
+                    else
+                    {
+                        Top += 30;
+                    }
+                }
+                #endregion Labeling
+
+                preview.App(WindowCanvas);
+
+                Top = 50;
+                Left = 900;
+                foreach(var v in preview.Button)
+                {
+                    if(Used.Where(d => d.Name == v.ID).Count() == 0)
+                    {
+                        Used.Add(new Applications.CarbonIDE.Elements(v.ID, false, Applications.CarbonIDE.Elements.Types.Button));
+                    }
+                }
+                foreach (var v in preview.Label)
+                {
+                    if (Used.Where(d => d.Name == v.ID).Count() == 0)
+                    {
+                        Used.Add(new Applications.CarbonIDE.Elements(v.ID, false, Applications.CarbonIDE.Elements.Types.Label));
+                    }
+                }
+                for (int i = 0; i < Used.Count; i++)
+                {
+                    if (MouseManager.MouseState == MouseState.Left)
+                    {
+                        if (MouseManager.X > 10 + Left && MouseManager.X < 10 + Left + 100)
+                        {
+                            if (MouseManager.Y > 721 + Top && MouseManager.Y < 721 + Top + 30)
+                            {
+                                foreach (var d in Used)
+                                {
+                                    d.Selected = false;
+                                    ThatID = Used[i].Name;
+                                }
+                                Used[i].Selected = true;
+
+                                if (Used[i].T == Applications.CarbonIDE.Elements.Types.Button)
+                                {
+                                    t = new Table(2, 5, 412, 600);
+                                    t.Initialize();
+                                    t.SetValue(0, 0, "Button.X", true);
+                                    t.SetValue(0, 1, preview.Button.Find(d => d.ID == Used[i].Name).X.ToString(), false);
+                                    t.SetValue(1, 0, "Button.Y", true);
+                                    t.SetValue(1, 1, preview.Button.Find(d => d.ID == Used[i].Name).Y.ToString(), false);
+                                    t.SetValue(2, 0, "Button.Width", true);
+                                    t.SetValue(2, 1, preview.Button.Find(d => d.ID == Used[i].Name).Width.ToString(), false);
+                                    t.SetValue(3, 0, "Button.Height", true);
+                                    t.SetValue(3, 1, preview.Button.Find(d => d.ID == Used[i].Name).Height.ToString(), false);
+                                    t.SetValue(4, 0, "Button.Text", true);
+                                    t.SetValue(4, 1, preview.Button.Find(d => d.ID == Used[i].Name).Text.ToString(), false);
+                                    Typo = "Button";
+                                }
+                                else if (Used[i].T == Applications.CarbonIDE.Elements.Types.Label)
+                                {
+                                    t = new Table(2, 3, 412, 600);
+                                    t.Initialize();
+                                    t.SetValue(0, 0, "Label.X", true);
+                                    t.SetValue(0, 1, preview.Label.Find(d => d.ID == Used[i].Name).X.ToString(), false);
+                                    t.SetValue(1, 0, "Label.Y", true);
+                                    t.SetValue(1, 1, preview.Label.Find(d => d.ID == Used[i].Name).Y.ToString(), false);
+                                    t.SetValue(2, 0, "Label.Text", true);
+                                    t.SetValue(2, 1, preview.Label.Find(d => d.ID == Used[i].Name).Text.ToString(), false);
+                                    Typo = "Label";
+                                }
+
+                                i = 0;
+                                Top = 50;
+                                Left = 900;
+                            }
+                        }
+                    }
+                    if (Used[i].Selected == false)
+                    {
+                        BitFont.DrawBitFontString(UIContainer, "ArialCustomCharset16", Color.White, Used[i].Name, Left, Top);
+                    }
+                    else
+                    {
+                        BitFont.DrawBitFontString(UIContainer, "ArialCustomCharset16", Color.Black, Used[i].Name, Left, Top);
+                    }
+                    if (Top > 200)
                     {
                         Top = 50;
                         Left += 100;
@@ -335,11 +539,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 }
 
                 //Rendering Propeties table
-
                 t.Render(Propeties, 10, 50);
-                #endregion Labeling
-
-                preview.App(WindowCanvas);
 
                 #region Rendering
                 ImprovedVBE.DrawImageAlpha(WindowCanvas, 10, 32, window);
@@ -396,6 +596,28 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 }
             }
             x_1 = 0;
+        }
+    }
+
+    class Elements
+    {
+        public string Name { get; set; }
+        public bool Selected { get; set; }
+        public Types T {get; set; }
+        public Elements(string Name, bool Selected)
+        {
+            this.Name = Name;
+            this.Selected = Selected;
+        }
+        public Elements(string Name, bool Selected, Types t)
+        {
+            this.Name = Name;
+            this.Selected = Selected;
+            this.T = t;
+        }
+        public enum Types{
+            Button,
+            Label
         }
     }
 }

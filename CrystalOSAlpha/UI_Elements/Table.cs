@@ -53,7 +53,7 @@ namespace CrystalOSAlpha.UI_Elements
         }
         public string GetValue(int X, int Y)
         {
-            return Cells.Find(d => d.X == Y && d.Y == X).Content;
+            return Cells.Find(d => d.X == X && d.Y == Y).Content;
         }
         public void Render(Bitmap OnTo, int X, int Y)
         {

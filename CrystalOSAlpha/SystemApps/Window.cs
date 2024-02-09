@@ -190,7 +190,7 @@ namespace CrystalOSAlpha.SystemApps
                                 //Read data from new()
                                 string[] values = parts[1].Replace("new(", "").Split(",");
 
-                                Slider.Add(new UI_Elements.Slider(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3])));
+                                Slider.Add(new UI_Elements.Slider(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]), name));
                             }
                             else if (trimmed.StartsWith("TextBox"))
                             {
@@ -392,6 +392,7 @@ namespace CrystalOSAlpha.SystemApps
                 execLoop.CheckBox = CheckBox;
                 execLoop.TextBox = TextBox;
                 execLoop.Dropdown = Dropdown;
+                execLoop.CurrentColor = CurrentColor;
                 execLoop.window = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
                 Array.Copy(window.RawData, 0, execLoop.window.RawData, 0, window.RawData.Length);
                 string[] lines2 = Parts[part].Split('\n');
@@ -406,6 +407,11 @@ namespace CrystalOSAlpha.SystemApps
                 CheckBox = execLoop.CheckBox;
                 TextBox = execLoop.TextBox;
                 Dropdown = execLoop.Dropdown;
+                if(CurrentColor != execLoop.CurrentColor)
+                {
+                    once = true;
+                }
+                CurrentColor = execLoop.CurrentColor;
                 Array.Copy(execLoop.window.RawData, 0, window.RawData, 0, execLoop.window.RawData.Length);
                 CycleCount = 0;
             }
@@ -558,7 +564,7 @@ namespace CrystalOSAlpha.SystemApps
                                 //Read data from new()
                                 string[] values = parts[1].Replace("new(", "").Split(",");
 
-                                Slider.Add(new UI_Elements.Slider(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3])));
+                                Slider.Add(new UI_Elements.Slider(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]), name));
                             }
                             else if (trimmed.StartsWith("TextBox"))
                             {
@@ -749,7 +755,7 @@ namespace CrystalOSAlpha.SystemApps
             }
 
             //Kernel.Clipboard = part.ToString();
-
+            
             if (part != 0 && CycleCount > 5)
             {
                 CSharp execLoop = new CSharp();

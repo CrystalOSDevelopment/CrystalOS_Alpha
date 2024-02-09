@@ -61,11 +61,11 @@ namespace CrystalOSAlpha.Applications.Artistic_Stuff.ColorView
             {
                 initial = false;
 
-                Sliders.Add(new Slider(320, 177 - 22, 127, 127));//Blue
+                Sliders.Add(new Slider(320, 177 - 22, 127, 127, "Blue"));//Blue
 
-                Sliders.Add(new Slider(320, 138 - 22, 127, 127));//Green
+                Sliders.Add(new Slider(320, 138 - 22, 127, 127, "Red"));//Green
 
-                Sliders.Add(new Slider(320, 100 - 22, 127, 68));//Red
+                Sliders.Add(new Slider(320, 100 - 22, 127, 68, "Green"));//Red
 
                 //CheckBox.Add(new UI_Elements.CheckBox(320, 20, 20, 20, false));
 

@@ -290,9 +290,9 @@ namespace CrystalOSAlpha
             {
                 for (int _x = x; _x < x + image.Width; _x++)
                 {
-                    if (_y <= height - 1)
+                    if (_y < back.Height)
                     {
-                        if (_x <= width)
+                        if (_x < back.Width)
                         {
                             if (image.RawData[counter] == 0)
                             {
@@ -301,9 +301,9 @@ namespace CrystalOSAlpha
                             }
                             else
                             {
-                                int r3 = (back.RawData[_y * width + _x] & 0xff0000) >> 16;
-                                int g3 = (back.RawData[_y * width + _x] & 0x00ff00) >> 8;
-                                int b3 = (back.RawData[_y * width + _x] & 0x0000ff);
+                                int r3 = (back.RawData[_y * back.Width + _x] & 0xff0000) >> 16;
+                                int g3 = (back.RawData[_y * back.Width + _x] & 0x00ff00) >> 8;
+                                int b3 = (back.RawData[_y * back.Width + _x] & 0x0000ff);
                                 //Color c = Color.FromArgb(cover.RawData[j * width + i]);
 
                                 int r2 = (int)(inverseBlendFactor * r3 + blendFactor * r);
@@ -326,7 +326,10 @@ namespace CrystalOSAlpha
                     }
                 }
             }
-            output = Blur(output, 5);
+            if (y + output.Height < back.Height)
+            {
+                output = Blur(output, 5);
+            }
             return output;
         }
         public static Bitmap DrawImageAlpha(Bitmap image, int x, int y, Bitmap into)
