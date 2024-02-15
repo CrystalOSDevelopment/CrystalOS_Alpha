@@ -63,7 +63,7 @@ namespace CrystalOSAlpha.Applications.Artistic_Stuff.ColorView
 
                 //CheckBox.Add(new UI_Elements.CheckBox(320, 20, 20, 20, false));
 
-                CheckBox.Add(new UI_Elements.CheckBox(38, 20, 20, 20, true));
+                //CheckBox.Add(new UI_Elements.CheckBox(38, 20, 20, 20, true));
                 
                 #region Render
                 //for (int x = 0; x < Canvas.Width; x++)

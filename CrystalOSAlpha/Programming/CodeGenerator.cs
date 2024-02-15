@@ -102,7 +102,7 @@ namespace CrystalOSAlpha.Programming
                         }
                     }
                 }
-                else if (newComponent.StartsWith("Button") || newComponent.StartsWith("Label") || newComponent.StartsWith("TextBox") || newComponent.StartsWith("Slider"))
+                else if (newComponent.StartsWith("Button") || newComponent.StartsWith("Label") || newComponent.StartsWith("TextBox") || newComponent.StartsWith("Slider") || newComponent.StartsWith("CheckBox"))
                 {
                     string[] parts = newComponent.Split('=');
                     bool found = false;

@@ -70,6 +70,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
             "    Button btn = new Button(10, 30, 110, 25, \"Hello World\", 1, 1, 1);\n" +
             "    Slider slider = new Slider(10, 80, 255, 20);\n" +
             "    TextBox tbox = new TextBox(10, 110, 110, 25, 60, 60, 60, \"\", \"Dummy text\");\n" +
+            "    CheckBox.NewCheckBox(15, 60, 20, 20, true, \"Choices\", \"Office Document\");\n" +
             "}" +
             "\n" +
             "#OnClick btn\n" +

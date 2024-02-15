@@ -344,6 +344,15 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                             int H = (int)MouseManager.Y - epsz - 54 - preview.y;
                             code = CodeGenerator.Generate(code, $"Slider slider{preview.Slider.Count + 1} = new Slider({ex}, {epsz}, {W}, 255, 0);");
                         }
+                        else if (Selected == "CheckBox")
+                        {
+                            //code = CodeGenerator.Generate(code, "Button btn = new Button(10, 30, 110, 25, \"Hello World\", 1, 1, 1);");
+                            int ex = StoredX - 10 - preview.x;
+                            int epsz = StoredY - 54 - preview.y;
+                            int W = (int)MouseManager.X - ex - 10 - preview.x;
+                            int H = (int)MouseManager.Y - epsz - 54 - preview.y;
+                            code = CodeGenerator.Generate(code, $"CheckBox.NewCheckBox({ex}, {epsz}, {W}, {H}, false, \"\", \"\");");
+                        }
                         Selected = "";
                         StoredX = 0;
                         StoredY = 0;
@@ -371,12 +380,9 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                         {
                             if(v.Selected == true && v.WriteProtected == false)
                             {
-                                if (Fonts.CustomCharset.Contains(k.KeyChar))
-                                {
-                                    v.Content = Keyboard.HandleKeyboard(v.Content, k);
-                                }
+                                v.Content = Keyboard.HandleKeyboard(v.Content, k);
                                 //code = CodeGenerator.Generate(code, "Button btn = new Button(10, 30, 110, 25, \"Hello World\", 1, 1, 1);");
-                                if(t.Cells[counter - 1].Content.Contains("Window."))
+                                if (t.Cells[counter - 1].Content.Contains("Window."))
                                 {
                                     code = CodeGenerator.Generate(code, "this." + t.Cells[counter - 1].Content.Replace("Window.", "") + " = " + v.Content + ";");
                                     editing = true;
@@ -546,6 +552,13 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     if (Used.Where(d => d.Name == v.ID).Count() == 0)
                     {
                         Used.Add(new Applications.CarbonIDE.Elements(v.ID, false, Applications.CarbonIDE.Elements.Types.Slider));
+                    }
+                }
+                foreach (var v in preview.CheckBox)
+                {
+                    if (Used.Where(d => d.Name == v.ID).Count() == 0)
+                    {
+                        Used.Add(new Applications.CarbonIDE.Elements(v.ID, false, Applications.CarbonIDE.Elements.Types.CheckBox));
                     }
                 }
                 for (int i = 0; i < Used.Count; i++)
@@ -751,7 +764,8 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public enum Types{
             Button,
             Label,
-            Slider
+            Slider,
+            CheckBox
         }
     }
 }

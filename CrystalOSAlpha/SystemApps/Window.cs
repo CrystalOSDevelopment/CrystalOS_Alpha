@@ -207,6 +207,19 @@ namespace CrystalOSAlpha.SystemApps
                                 TextBox.Add(new UI_Elements.TextBox(int.Parse(values[0]), int.Parse(values[1]) + 22, int.Parse(values[2]), int.Parse(values[3]), ImprovedVBE.colourToNumber(int.Parse(values[4]), int.Parse(values[5]), int.Parse(values[6])), values[7].Remove(values[7].Length - 1).Remove(0, 1), values[8].Remove(values[8].Length - 1).Remove(0, 1), UI_Elements.TextBox.Options.left, name));
                                 //TextBox.Add(new UI_Elements.TextBox(10, 100, 110, 25, ImprovedVBE.colourToNumber(60, 60, 60), "", "Dummy Text", UI_Elements.TextBox.Options.left, "Demo"));
                             }
+                            else if (trimmed.StartsWith("CheckBox"))
+                            {
+                                trimmed = trimmed.Replace("CheckBox.NewCheckBox(", "");
+                                trimmed = trimmed.Remove(trimmed.Length - 2);
+                                //separate by =
+                                //string[] parts = trimmed.Split('=');
+                                //Store the name
+                                //string name = parts[0];
+                                //Read data from new()
+                                string[] values = trimmed.Split(",");
+
+                                CheckBox.Add(new UI_Elements.CheckBox(int.Parse(values[0]), int.Parse(values[1]) + 22, int.Parse(values[2]), int.Parse(values[3]), bool.Parse(values[4]), values[5].Replace("\"", ""), values[6].Remove(values[6].Length - 1).Remove(0, 1)));
+                            }
                         }
                     }
                 }
@@ -316,6 +329,11 @@ namespace CrystalOSAlpha.SystemApps
                     Box.Box(window, Box.X, Box.Y);
                 }
 
+                foreach (var Checkbox in CheckBox)
+                {
+                    Checkbox.Render(window);
+                }
+
                 //window.RawData = canvas.RawData;
                 back_canvas = canvas;
                 once = false;
@@ -422,6 +440,28 @@ namespace CrystalOSAlpha.SystemApps
                         box2.Selected = false;
                     }
                     Box.Selected = true;
+                }
+            }
+
+            foreach (var slid in CheckBox)
+            {
+                bool val = slid.Value;
+                if (slid.CheckForClick(x, y))
+                {
+                    slid.Clicked = true;
+                }
+                if (slid.Clicked == true && MouseManager.MouseState == MouseState.None)
+                {
+                    if (slid.Value == false)
+                    {
+                        slid.Value = true;
+                    }
+                    else
+                    {
+                        slid.Value = false;
+                    }
+                    once = true;
+                    slid.Clicked = false;
                 }
             }
 
@@ -643,6 +683,19 @@ namespace CrystalOSAlpha.SystemApps
                                 TextBox.Add(new UI_Elements.TextBox(int.Parse(values[0]), int.Parse(values[1]) + 22, int.Parse(values[2]), int.Parse(values[3]), ImprovedVBE.colourToNumber(int.Parse(values[4]), int.Parse(values[5]), int.Parse(values[6])), values[7].Remove(values[7].Length - 1).Remove(0, 1), values[8].Remove(values[8].Length - 1).Remove(0, 1), UI_Elements.TextBox.Options.left, name));
                                 //TextBox.Add(new UI_Elements.TextBox(10, 100, 110, 25, ImprovedVBE.colourToNumber(60, 60, 60), "", "Dummy Text", UI_Elements.TextBox.Options.left, "Demo"));
                             }
+                            else if (trimmed.StartsWith("CheckBox"))
+                            {
+                                trimmed = trimmed.Replace("CheckBox.NewCheckBox(", "");
+                                trimmed = trimmed.Remove(trimmed.Length - 2);
+                                //separate by =
+                                //string[] parts = trimmed.Split('=');
+                                //Store the name
+                                //string name = parts[0];
+                                //Read data from new()
+                                string[] values = trimmed.Split(",");
+
+                                CheckBox.Add(new UI_Elements.CheckBox(int.Parse(values[0]), int.Parse(values[1]) + 22, int.Parse(values[2]), int.Parse(values[3]), bool.Parse(values[4]), values[5].Replace("\"", ""), values[6].Remove(values[6].Length - 1).Remove(0, 1)));
+                            }
                         }
                     }
                 }
@@ -742,6 +795,11 @@ namespace CrystalOSAlpha.SystemApps
                 foreach (var Box in TextBox)
                 {
                     Box.Box(window, Box.X, Box.Y);
+                }
+
+                foreach (var Checkbox in CheckBox)
+                {
+                    Checkbox.Render(window);
                 }
 
                 //window.RawData = canvas.RawData;
