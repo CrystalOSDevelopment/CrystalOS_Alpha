@@ -34,7 +34,6 @@ namespace CrystalOSAlpha.Applications.Gameboy
         public bool movable { get; set; }
         public Bitmap icon { get; set; }
         public Bitmap canvas;
-        public Bitmap back_canvas;
         public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
 
         public List<Button_prop> Buttons = new List<Button_prop>();
@@ -63,7 +62,6 @@ namespace CrystalOSAlpha.Applications.Gameboy
             if(once == true)
             {
                 canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32); //new int[width * height];
-                back_canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32); //new int[width * height];
 
                 #region corners
                 ImprovedVBE.DrawFilledEllipse(canvas, 10, 10, 10, 10, CurrentColor);

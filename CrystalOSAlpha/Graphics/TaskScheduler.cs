@@ -1,7 +1,7 @@
 ﻿using Cosmos.System;
 using CrystalOSAlpha.Applications;
 using CrystalOSAlpha.Applications.Calculator;
-using CrystalOSAlpha.Applications.Minecraft;
+//using CrystalOSAlpha.Applications.Minecraft;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics.TaskBar;
 using System;

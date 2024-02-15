@@ -1,9 +1,6 @@
 ﻿using Cosmos.System;
 using Cosmos.System.FileSystem.Listing;
 using Cosmos.System.Graphics;
-using CrystalOS_Alpha;
-using CrystalOSAlpha.Applications.Notepad;
-using CrystalOSAlpha.Applications.Terminal;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics.Icons;
@@ -14,9 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Kernel = CrystalOS_Alpha.Kernel;
 using TaskScheduler = CrystalOSAlpha.Graphics.TaskScheduler;
 
@@ -55,7 +49,6 @@ namespace CrystalOSAlpha.Applications.FileSys
         public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
 
         public Bitmap canvas;
-        public Bitmap back_canvas;
         public Bitmap window;
         public Bitmap Container;
 
@@ -90,7 +83,6 @@ namespace CrystalOSAlpha.Applications.FileSys
             if (once == true)
             {
                 canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
-                back_canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
                 window = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
                 Container = new Bitmap((uint)(width - 29), (uint)(height - 60), ColorDepth.ColorDepth32);
 
@@ -162,7 +154,6 @@ namespace CrystalOSAlpha.Applications.FileSys
 
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
                 //window.RawData = canvas.RawData;
-                back_canvas = canvas;
                 once = false;
                 temp = true;
             }

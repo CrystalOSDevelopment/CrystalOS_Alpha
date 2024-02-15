@@ -1,18 +1,11 @@
-﻿using Cosmos.Core;
-using Cosmos.System;
+﻿using Cosmos.System;
 using Cosmos.System.Graphics;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.UI_Elements;
-using Microsoft.VisualBasic.FileIO;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CrystalOSAlpha.Applications.Calculator
 {
@@ -46,8 +39,6 @@ namespace CrystalOSAlpha.Applications.Calculator
 
         public bool initial = true;
         public bool clicked = false;
-        public string[] numbers;
-
         public void App()
         {
             if(initial == true)

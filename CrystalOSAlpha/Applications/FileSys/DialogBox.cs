@@ -8,15 +8,9 @@ using CrystalOSAlpha.SystemApps;
 using CrystalOSAlpha.UI_Elements;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TaskScheduler = CrystalOSAlpha.Graphics.TaskScheduler;
 using Kernel = CrystalOS_Alpha.Kernel;
-using CrystalOSAlpha.Programming;
-using System.IO;
 
 namespace CrystalOSAlpha.Applications.FileSys
 {
@@ -55,7 +49,6 @@ namespace CrystalOSAlpha.Applications.FileSys
         public bool temp = false;
 
         public Bitmap canvas;
-        public Bitmap back_canvas;
         public Bitmap window;
 
         public Bitmap Container;
@@ -108,7 +101,6 @@ namespace CrystalOSAlpha.Applications.FileSys
             if (once == true)
             {
                 canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
-                back_canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
                 window = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
                 QuickAccess = new Bitmap(187, 440, ColorDepth.ColorDepth32);
                 Container = new Bitmap(648, 400, ColorDepth.ColorDepth32);
@@ -142,7 +134,6 @@ namespace CrystalOSAlpha.Applications.FileSys
 
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
                 //window.RawData = canvas.RawData;
-                back_canvas = canvas;
                 once = false;
                 temp = true;
             }

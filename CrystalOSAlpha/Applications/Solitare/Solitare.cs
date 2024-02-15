@@ -33,7 +33,6 @@ namespace CrystalOSAlpha.Applications.Solitare
         #endregion core_values
 
         public Bitmap canvas;
-        public Bitmap back_canvas;
         public bool once = true;
         public Bitmap window;
         public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
@@ -58,7 +57,6 @@ namespace CrystalOSAlpha.Applications.Solitare
             if (once == true)
             {
                 canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32); //new int[width * height];
-                back_canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32); //new int[width * height];
                 window = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
 
                 #region corners
@@ -101,7 +99,6 @@ namespace CrystalOSAlpha.Applications.Solitare
                 }
 
                 window.RawData = canvas.RawData;
-                back_canvas = canvas;
                 once = false;
             }
 

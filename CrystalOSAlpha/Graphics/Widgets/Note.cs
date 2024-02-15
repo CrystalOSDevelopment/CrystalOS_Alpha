@@ -62,20 +62,10 @@ namespace CrystalOSAlpha.Graphics.Widgets
             if(initial == true)
             {
                 Buttons.Add(new Button_prop((200 - sizeDec) / 2 - 40, 130, 80, 20, "Convert", 1));
-                Dropdown d = new Dropdown();
-                d.X = 58;
-                d.Y = 30;
-                d.Width = 100;
-                d.Height = 20;
-                d.ID = "First";
+                Dropdown d = new Dropdown(58, 30, 100, 20, "First");
                 dropdowns.Add(d);
 
-                Dropdown c = new Dropdown();
-                c.X = 58;
-                c.Y = 80;
-                c.Width = 100;
-                c.ID = "Second";
-                c.Height = 20;
+                Dropdown c = new Dropdown(58, 80, 100, 20, "Second");
                 dropdowns.Add(c);
 
                 value.Add(new values(false, "Mile", "First"));

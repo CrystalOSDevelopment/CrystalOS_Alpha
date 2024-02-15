@@ -34,7 +34,6 @@ namespace CrystalOSAlpha.Applications.Minecraft
 
         public Bitmap icon { get; set; }
         public Bitmap canvas;
-        public Bitmap back_canvas;
         public bool once = true;
         public Bitmap window;
 
@@ -303,7 +302,6 @@ namespace CrystalOSAlpha.Applications.Minecraft
                 {
                     //This is the part where we set the values of the windows (propeties)
                     canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32); //new int[width * height];
-                    back_canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32); //new int[width * height];
                     window = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
 
                     #region corners
@@ -321,7 +319,6 @@ namespace CrystalOSAlpha.Applications.Minecraft
                     else
                     {
                         Array.Fill(canvas.RawData, CurrentColor);
-                        Array.Fill(back_canvas.RawData, CurrentColor);
                     }
                     #endregion corners
 
@@ -561,7 +558,6 @@ namespace CrystalOSAlpha.Applications.Minecraft
                 }
 
                 window.RawData = canvas.RawData;
-                back_canvas = canvas;
                 if (dist_x < width / 2 || dist_y < height / 2)
                 {
                     x_offset += width / 2 - dist_x;

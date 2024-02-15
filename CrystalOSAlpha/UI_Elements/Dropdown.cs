@@ -47,7 +47,7 @@ namespace CrystalOSAlpha.UI_Elements
                     goto a;
                 }
             }
-            if (temp.Length > 7)
+            if (temp.Length > 7 && Width - 20 < temp.Length * 8)
             {
                 temp = temp.Remove(7);
             }
@@ -112,6 +112,15 @@ namespace CrystalOSAlpha.UI_Elements
                 }
             }
             return false;
+        }
+
+        public Dropdown(int x, int y, int width, int height, string iD)
+        {
+            X = x;
+            Y = y;
+            Width = width;
+            Height = height;
+            ID = iD;
         }
     }
 

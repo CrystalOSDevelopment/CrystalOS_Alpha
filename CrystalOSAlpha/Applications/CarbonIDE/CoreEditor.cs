@@ -1,10 +1,8 @@
 ﻿using Cosmos.System;
 using CrystalOSAlpha.UI_Elements;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace CrystalOSAlpha.Applications.CarbonIDE
 {

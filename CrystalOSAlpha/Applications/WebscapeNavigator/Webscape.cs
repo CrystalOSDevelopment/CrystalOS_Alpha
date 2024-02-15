@@ -49,7 +49,6 @@ namespace CrystalOSAlpha.Applications.WebscapeNavigator
         public int y_1 = 0;
 
         public Bitmap canvas;
-        public Bitmap back_canvas;
         public bool once = true;
         public Bitmap window;
         public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
@@ -76,7 +75,6 @@ namespace CrystalOSAlpha.Applications.WebscapeNavigator
             if (once == true)
             {
                 canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32); //new int[width * height];
-                back_canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32); //new int[width * height];
                 window = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
                 Container = new Bitmap((uint)(width - 29), (uint)(height - 60), ColorDepth.ColorDepth32);
 
@@ -138,7 +136,6 @@ namespace CrystalOSAlpha.Applications.WebscapeNavigator
 
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
                 //window.RawData = canvas.RawData;
-                back_canvas = canvas;
                 once = false;
                 temp = true;
             }

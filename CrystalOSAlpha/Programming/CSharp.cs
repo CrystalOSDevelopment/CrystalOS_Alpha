@@ -4,6 +4,7 @@ using Cosmos.System.Graphics;
 using Cosmos.System.Graphics.Fonts;
 using CrystalOS_Alpha;
 using CrystalOSAlpha.Applications;
+using CrystalOSAlpha.Applications.Gameboy;
 using CrystalOSAlpha.Applications.Terminal;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
@@ -16,6 +17,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using Kernel = CrystalOS_Alpha.Kernel;
@@ -1951,6 +1953,34 @@ namespace CrystalOSAlpha.Programming
                             string[] values = cleaned.Split(',');
                             //Kernel.Clipboard = ImprovedVBE.colourToNumber(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2])).ToString();
                             CurrentColor = ImprovedVBE.colourToNumber(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]));
+                        }
+                    }
+                    if (line.StartsWith("Process."))
+                    {
+                        if (line.Contains("Start"))
+                        {
+                            string cleaned = line.Replace("Process.Start(", "");
+                            cleaned = cleaned.Remove(cleaned.Length - 1);
+                            cleaned = cleaned.Replace("\"", "");
+
+                            if (File.Exists(cleaned))
+                            {
+                                if (cleaned.EndsWith(".app"))
+                                {
+                                    TaskScheduler.Apps.Add(new Window(100, 100, 999, 350, 200, 0, "Later", false, Resources.IDE, File.ReadAllText(cleaned)));
+                                }
+                                else if (cleaned.EndsWith(".cmd"))
+                                {
+                                    CSharp c = new CSharp();
+                                    c.Executor(File.ReadAllText(cleaned));
+                                }
+                            }
+                        }
+                        else if (line.Contains("Terminate"))
+                        {
+                            string cleaned = line.Replace("Process.Terminate(", "");
+                            cleaned = cleaned.Remove(cleaned.Length - 1);
+                            Clipboard = "Terminate";
                         }
                     }
                     foreach(var item in Label)

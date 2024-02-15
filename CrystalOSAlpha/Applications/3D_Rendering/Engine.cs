@@ -1,5 +1,4 @@
-﻿using Cosmos.System;
-using Cosmos.System.Graphics;
+﻿using Cosmos.System.Graphics;
 using CrystalOSAlpha;
 using System;
 using System.Drawing;
@@ -9,9 +8,6 @@ namespace _3DRendering
 {
     public class Simple3DRendering
     {
-        private Bitmap canvas;
-        private int width = 512;
-        private int height = 512;
         public static float rotationAngleZ = 0;
         public static float rotationAngleY = 0;
         public static float rotationAngleX = 0;

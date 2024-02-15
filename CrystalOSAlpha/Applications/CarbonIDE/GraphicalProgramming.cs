@@ -1,23 +1,17 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
-using Cosmos.System.Graphics.Fonts;
-using CrystalOSAlpha.Applications.FileSys;
-using CrystalOSAlpha.Applications.Gameboy;
+using CrystalOS_Alpha;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
-using CrystalOSAlpha.Graphics.Widgets;
 using CrystalOSAlpha.Programming;
 using CrystalOSAlpha.SystemApps;
 using CrystalOSAlpha.UI_Elements;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
 using Kernel = CrystalOS_Alpha.Kernel;
 using TaskScheduler = CrystalOSAlpha.Graphics.TaskScheduler;
 
@@ -35,13 +29,14 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public int desk_ID { get; set; }
 
         public string name { get; set; }
+        public string Path { get; set; }
+        public string namedProject { get; set; }
 
         public bool minimised { get; set; }
         public bool movable { get; set; }
         public Bitmap icon { get; set; }
 
         public Bitmap canvas;
-        public Bitmap back_canvas;
         public Bitmap window;
 
         public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
@@ -66,6 +61,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public Bitmap WindowCanvas;
         public Bitmap UIContainer;
         public Bitmap Propeties;
+        public Bitmap Container;
 
         bool temp = true;
 
@@ -85,6 +81,12 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
         public string ThatID = "";
         public static string Typo = "";
+
+        public string lineCount = "";
+
+        public string Back_content = "";
+        public int cursorIndex = 0;
+        public int lineIndex = 0;
         #endregion Core variables
 
         public void App()
@@ -97,7 +99,15 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 //2. Loop of the window
                 //3. UI element actions
 
-                code = CodeGenerator.Generate(code, "");
+                if(File.Exists(Path + ".app"))
+                {
+                    code = File.ReadAllText(Path + ".app");
+                }
+                else
+                {
+                    code = CodeGenerator.Generate(code, "");
+                }
+
 
                 preview = new Window(20, 50, 999, 400, 300, 1, "New Window", false, icon, code);
 
@@ -127,18 +137,37 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     Full.Add(new Applications.CarbonIDE.Elements(s, false));
                 }
 
+                for (int i = 0; i < 278; i++)
+                {
+                    if (i.ToString().Length == 1)
+                    {
+                        lineCount += (i + 1) + "  \n";
+                    }
+                    else if (i.ToString().Length == 2)
+                    {
+                        lineCount += (i + 1) + " \n";
+                    }
+                    else
+                    {
+                        lineCount += (i + 1) + "\n";
+                    }
+                }
+
+                Button.Add(new Button_prop(1609, 632, 180, 40, "OnClick", 1, "onclick"));
+
+                Back_content = code;
                 initial = false;
             }
 
             if (once == true)
             {
                 canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
-                back_canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
                 window = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
 
-                WindowCanvas = new Bitmap(1459, 670, ColorDepth.ColorDepth32);
+                WindowCanvas = new Bitmap(1459, 674, ColorDepth.ColorDepth32);
                 UIContainer = new Bitmap(1900, 269, ColorDepth.ColorDepth32);
                 Propeties = new Bitmap(422, 674, ColorDepth.ColorDepth32);
+                Container = new Bitmap(540, 674, ColorDepth.ColorDepth32);
 
                 #region corners
                 ImprovedVBE.DrawFilledEllipse(canvas, 10, 10, 10, 10, CurrentColor);
@@ -201,8 +230,6 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     Box.Box(window, Box.X, Box.Y);
                 }
 
-                //window.RawData = canvas.RawData;
-                back_canvas = canvas;
                 once = false;
                 temp = true;
             }
@@ -218,7 +245,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                             if (button.Clicked == false)
                             {
                                 button.Clicked = true;
-                                once = true;
+                                temp = true;
                                 clicked = true;
                             }
                         }
@@ -226,7 +253,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 }
                 if (button.Clicked == true && MouseManager.MouseState == MouseState.None)
                 {
-                    once = true;
+                    temp = true;
                     button.Clicked = false;
                     clicked = false;
                 }
@@ -322,6 +349,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                         StoredY = 0;
                     }
                 }
+                Back_content = code;
             }
 
             if(TaskScheduler.Apps[^1] == this)
@@ -332,19 +360,26 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     if (k.Key == ConsoleKeyEx.F5)
                     {
                         TaskScheduler.Apps.Add(new Window(100, 100, 999, 350, 200, 0, "Later", false, icon, code));
+                        File.WriteAllText(Path + ".app", code);
+                        //Kernel.Clipboard = Path + "\\" + namedProject + ".app";
                     }
                     else
                     {
                         int counter = 0;
+                        bool editing = false;
                         foreach(var v in t.Cells)
                         {
                             if(v.Selected == true && v.WriteProtected == false)
                             {
-                                v.Content = Keyboard.HandleKeyboard(v.Content, k);
+                                if (Fonts.CustomCharset.Contains(k.KeyChar))
+                                {
+                                    v.Content = Keyboard.HandleKeyboard(v.Content, k);
+                                }
                                 //code = CodeGenerator.Generate(code, "Button btn = new Button(10, 30, 110, 25, \"Hello World\", 1, 1, 1);");
                                 if(t.Cells[counter - 1].Content.Contains("Window."))
                                 {
                                     code = CodeGenerator.Generate(code, "this." + t.Cells[counter - 1].Content.Replace("Window.", "") + " = " + v.Content + ";");
+                                    editing = true;
                                 }
                                 else
                                 {
@@ -352,18 +387,50 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                     {
                                         if(int.Parse(t.GetValue(1, 2)) > 10)
                                         {
-                                            code = CodeGenerator.Generate(code, $"Button {ThatID} = new Button({t.GetValue(1, 0)}, {t.GetValue(1, 1)}, {t.GetValue(1, 2)}, {t.GetValue(1, 3)}, \"{t.GetValue(1, 4)}\", 1, 1, 1);");
+                                            if(t.GetValue(1, 5).Split(',').Length == 3)
+                                            {
+                                                if(int.TryParse(t.GetValue(1, 5).Split(',')[2].Trim(), out int i))
+                                                {
+                                                    if(int.Parse(t.GetValue(1, 1)) >= 22)
+                                                    {
+                                                        code = CodeGenerator.Generate(code, $"Button {ThatID} = new Button({t.GetValue(1, 0)}, {int.Parse(t.GetValue(1, 1)) - 22}, {t.GetValue(1, 2)}, {t.GetValue(1, 3)}, \"{t.GetValue(1, 4)}\", {t.GetValue(1, 5)});");
+                                                    }
+                                                    else
+                                                    {
+                                                        code = CodeGenerator.Generate(code, $"Button {ThatID} = new Button({t.GetValue(1, 0)}, {t.GetValue(1, 1)}, {t.GetValue(1, 2)}, {t.GetValue(1, 3)}, \"{t.GetValue(1, 4)}\", {t.GetValue(1, 5)});");
+                                                    }
+                                                }
+                                            }
                                         }
+                                        editing = true;
                                     }
                                     else if(Typo == "Label")
                                     {
-                                        code = CodeGenerator.Generate(code, $"Label {ThatID} = new Label({t.GetValue(1, 0)}, {t.GetValue(1, 1)}, \"{t.GetValue(1, 2)}\", 1, 1, 1);");
+                                        if(t.GetValue(1, 3).Split(',').Length == 3)
+                                        {
+                                            if(int.TryParse(t.GetValue(1, 3).Split(',')[2].Trim(), out int i))
+                                            {
+                                                code = CodeGenerator.Generate(code, $"Label {ThatID} = new Label({t.GetValue(1, 0)}, {t.GetValue(1, 1)}, \"{t.GetValue(1, 2)}\", {t.GetValue(1, 3)});");
+                                            }
+                                        }
+                                        editing = true;
+                                    }
+                                    else if (Typo == "Slider")
+                                    {
+                                        code = CodeGenerator.Generate(code, $"Slider {ThatID} = new Slider({t.GetValue(1, 0)}, {t.GetValue(1, 1)}, {t.GetValue(1, 2)}, {t.GetValue(1, 3)});");
+                                        editing = true;
                                     }
                                 }
                                 //Kernel.Clipboard = code;
                                 temp = true;
                             }
                             counter++;
+                        }
+                        Back_content = code;
+                        if(editing == false)
+                        {
+                            (code, Back_content, cursorIndex, lineIndex) = CoreEditor.Editor(code, Back_content, cursorIndex, lineIndex, k);
+                            temp = true;
                         }
                     }
                 }
@@ -391,9 +458,13 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
                 Array.Fill(Propeties.RawData, ImprovedVBE.colourToNumber(36, 36, 36));
                 ImprovedVBE.DrawFilledRectangle(Propeties, ImprovedVBE.colourToNumber(50, 50, 50), 2, 2, (int)Propeties.Width - 4, (int)Propeties.Height - 4, false);
+
+                Array.Fill(Container.RawData, ImprovedVBE.colourToNumber(36, 36, 36));
+                ImprovedVBE.DrawFilledRectangle(Container, ImprovedVBE.colourToNumber(50, 50, 50), 2, 2, (int)Container.Width - 4, (int)Container.Height - 4, false);
+                ImprovedVBE.DrawFilledRectangle(Container, ImprovedVBE.colourToNumber(69, 69, 69), 2, 2, 35, (int)Container.Height - 4, false);
                 #endregion Border
 
-                if(MouseManager.MouseState == MouseState.Left)
+                if (MouseManager.MouseState == MouseState.Left)
                 {
                     t.Select((int)(MouseManager.X - 1488), (int)(MouseManager.Y - 82));
                 }
@@ -402,6 +473,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 BitFont.DrawBitFontString(WindowCanvas, "VerdanaCustomCharset24", Color.White, "Canvas:", 7, 10);
                 BitFont.DrawBitFontString(UIContainer, "VerdanaCustomCharset24", Color.White, "UI Elements:", 7, 10);
                 BitFont.DrawBitFontString(Propeties, "VerdanaCustomCharset24", Color.White, "Propeties:", 7, 10);
+                //BitFont.DrawBitFontString(Container, "VerdanaCustomCharset24", Color.White, "Code:", 7, 10);
 
                 //Showing options to different UI elements
 
@@ -469,6 +541,13 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                         Used.Add(new Applications.CarbonIDE.Elements(v.ID, false, Applications.CarbonIDE.Elements.Types.Label));
                     }
                 }
+                foreach (var v in preview.Slider)
+                {
+                    if (Used.Where(d => d.Name == v.ID).Count() == 0)
+                    {
+                        Used.Add(new Applications.CarbonIDE.Elements(v.ID, false, Applications.CarbonIDE.Elements.Types.Slider));
+                    }
+                }
                 for (int i = 0; i < Used.Count; i++)
                 {
                     if (MouseManager.MouseState == MouseState.Left)
@@ -486,7 +565,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
                                 if (Used[i].T == Applications.CarbonIDE.Elements.Types.Button)
                                 {
-                                    t = new Table(2, 5, 412, 600);
+                                    t = new Table(2, 6, 412, 600);
                                     t.Initialize();
                                     t.SetValue(0, 0, "Button.X", true);
                                     t.SetValue(0, 1, preview.Button.Find(d => d.ID == Used[i].Name).X.ToString(), false);
@@ -498,11 +577,14 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                     t.SetValue(3, 1, preview.Button.Find(d => d.ID == Used[i].Name).Height.ToString(), false);
                                     t.SetValue(4, 0, "Button.Text", true);
                                     t.SetValue(4, 1, preview.Button.Find(d => d.ID == Used[i].Name).Text.ToString(), false);
+                                    t.SetValue(5, 0, "Button.Color", true);
+                                    int color = preview.Button.Find(d => d.ID == Used[i].Name).Color;
+                                    t.SetValue(5, 1, Color.FromArgb(color).R + ", " + Color.FromArgb(color).G + ", " + Color.FromArgb(color).B, false);
                                     Typo = "Button";
                                 }
                                 else if (Used[i].T == Applications.CarbonIDE.Elements.Types.Label)
                                 {
-                                    t = new Table(2, 3, 412, 600);
+                                    t = new Table(2, 4, 412, 600);
                                     t.Initialize();
                                     t.SetValue(0, 0, "Label.X", true);
                                     t.SetValue(0, 1, preview.Label.Find(d => d.ID == Used[i].Name).X.ToString(), false);
@@ -510,7 +592,24 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                     t.SetValue(1, 1, preview.Label.Find(d => d.ID == Used[i].Name).Y.ToString(), false);
                                     t.SetValue(2, 0, "Label.Text", true);
                                     t.SetValue(2, 1, preview.Label.Find(d => d.ID == Used[i].Name).Text.ToString(), false);
+                                    t.SetValue(3, 0, "Label.Color", true);
+                                    int color = preview.Label.Find(d => d.ID == Used[i].Name).TextColor;
+                                    t.SetValue(3, 1, Color.FromArgb(color).R + ", " + Color.FromArgb(color).G + ", " + Color.FromArgb(color).B, false);
                                     Typo = "Label";
+                                }
+                                else if (Used[i].T == Applications.CarbonIDE.Elements.Types.Slider)
+                                {
+                                    t = new Table(2, 4, 412, 600);
+                                    t.Initialize();
+                                    t.SetValue(0, 0, "Slider.X", true);
+                                    t.SetValue(0, 1, preview.Slider.Find(d => d.ID == Used[i].Name).X.ToString(), false);
+                                    t.SetValue(1, 0, "Slider.Y", true);
+                                    t.SetValue(1, 1, preview.Slider.Find(d => d.ID == Used[i].Name).Y.ToString(), false);
+                                    t.SetValue(2, 0, "Slieder.Width", true);
+                                    t.SetValue(2, 1, preview.Slider.Find(d => d.ID == Used[i].Name).Width.ToString(), false);
+                                    t.SetValue(3, 0, "Slider.Value", true);
+                                    t.SetValue(3, 1, preview.Slider.Find(d => d.ID == Used[i].Name).Value.ToString(), false);
+                                    Typo = "Slider";
                                 }
 
                                 i = 0;
@@ -541,11 +640,45 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 //Rendering Propeties table
                 t.Render(Propeties, 10, 50);
 
+
+                BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.Black, lineCount, 7, 7 - (0 * 4));//The line counter
+
+                foreach (var button in Button)
+                {
+                    if (button.Clicked == true)
+                    {
+                        if (button.ID == "onclick")
+                        {
+                            if (!code.Contains("#OnClick " + ThatID))
+                            {
+                                code += "\n#OnClick " + ThatID + "\n{\n    \n}";
+                            }
+                        }
+                        Back_content = code;
+                    }
+                }
+                
+                BitFont.DrawBitFontString(Container, "ArialCustomCharset16", new CarbonIDE().HighLight(Back_content), Back_content, 42, 7 - (0 * 4));//The actual code
+
                 #region Rendering
                 ImprovedVBE.DrawImageAlpha(WindowCanvas, 10, 32, window);
+                ImprovedVBE.DrawImageAlpha(Container, 933, 32, window);
                 ImprovedVBE.DrawImageAlpha(UIContainer, 10, 721, window);
                 ImprovedVBE.DrawImageAlpha(Propeties, 1488, 32, window);
                 #endregion Rendering
+
+                foreach (var button in Button)
+                {
+                    if (button.Clicked == true)
+                    {
+                        UI_Elements.Button.Button_render(window, button.X, button.Y, button.Width, button.Height, ComplimentaryColor.Generate(button.Color).ToArgb(), button.Text);
+                    }
+                    else
+                    {
+                        UI_Elements.Button.Button_render(window, button.X, button.Y, button.Width, button.Height, button.Color, button.Text);
+                    }
+                }
+
                 temp = false;
             }
 
@@ -617,7 +750,8 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         }
         public enum Types{
             Button,
-            Label
+            Label,
+            Slider
         }
     }
 }

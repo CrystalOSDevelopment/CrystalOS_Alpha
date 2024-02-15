@@ -1,7 +1,7 @@
-﻿using Cosmos.System;
+﻿using Cosmos.HAL.Drivers.Video.SVGAII;
+using Cosmos.System;
 using Cosmos.System.FileSystem.Listing;
 using Cosmos.System.Graphics;
-using CrystalOS_Alpha;
 using CrystalOSAlpha.Applications.FileSys;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
@@ -12,9 +12,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Kernel = CrystalOS_Alpha.Kernel;
 using TaskScheduler = CrystalOSAlpha.Graphics.TaskScheduler;
 
@@ -88,15 +85,23 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 {
                     Buttons.Add(new Button_prop(537, 381, 70, 25, "Back", 1));
                     Buttons.Add(new Button_prop(620, 381, 70, 25, "Create", 1));
+
+                    dropdowns.Add(new Dropdown(10, 167, 325, 25, "Options"));
+
+                    value.Add(new values(true, "Program mode: Terminal", "Options"));
+                    value.Add(new values(false, "Program mode: Graphical", "Options"));
                 }
 
                 foreach (DirectoryEntry dir in Kernel.fs.GetDirectoryListing("0:\\User\\Source"))//"0:\\User\\Source\\Demo"
                 {
                     if (dir.mEntryType == DirectoryEntryTypeEnum.Directory)
                     {
-                        if(!CSharpFiles.Contains(new Structure(dir.mName, dir.mFullPath, Opt.Folder)))
+                        if (File.Exists(dir.mFullPath + "\\" + dir.mName + ".sln"))
                         {
-                            CSharpFiles.Add(new Structure(dir.mName, dir.mFullPath, Opt.Folder));
+                            if(!CSharpFiles.Contains(new Structure(dir.mName, dir.mFullPath, Opt.Folder)))
+                            {
+                                CSharpFiles.Add(new Structure(dir.mName, dir.mFullPath, Opt.Folder));
+                            }
                         }
                     }
                 }
@@ -200,6 +205,44 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                             {
                                 if (MouseManager.Y > y + top && MouseManager.Y < y + top + 50)
                                 {
+                                    string[] content = File.ReadAllLines(v.fullPath + "\\" + v.name + ".sln");
+                                    if(content.Length > 0)
+                                    {
+                                        if (content[0] == "Program_mode = Terminal")
+                                        {
+                                            CarbonIDE ide = new CarbonIDE();
+                                            ide.x = 0;
+                                            ide.y = 0;
+                                            ide.width = ImprovedVBE.width;
+                                            ide.height = ImprovedVBE.height - 75;
+                                            ide.z = 999;
+                                            ide.icon = ImprovedVBE.ScaleImageStock(Resources.IDE, 56, 56);
+                                            ide.name = "CarbonIDE";
+                                            ide.Path = v.fullPath + "\\" + v.name;
+                                            ide.namedProject = v.name;
+
+                                            TaskScheduler.Apps.Add(ide);
+
+                                            TaskScheduler.Apps.Remove(this);
+                                        }
+                                        else if (content[0] == "Program_mode = Graphical")
+                                        {
+                                            GraphicalProgramming ide = new GraphicalProgramming();
+                                            ide.x = 0;
+                                            ide.y = 0;
+                                            ide.width = ImprovedVBE.width;
+                                            ide.height = ImprovedVBE.height - 75;
+                                            ide.z = 999;
+                                            ide.icon = ImprovedVBE.ScaleImageStock(Resources.IDE, 56, 56);
+                                            ide.name = "CarbonIDE";
+                                            ide.Path = v.fullPath + "\\" + v.name;
+                                            ide.namedProject = v.name;
+
+                                            TaskScheduler.Apps.Add(ide);
+
+                                            TaskScheduler.Apps.Remove(this);
+                                        }
+                                    }
                                     /*
                                     CarbonIDE ide = new CarbonIDE();
                                     ide.x = 0;
@@ -211,19 +254,6 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                     ide.name = "CarbonIDE";
                                     ide.Path = v.fullPath;
                                     */
-
-                                    GraphicalProgramming ide = new GraphicalProgramming();
-                                    ide.x = 0;
-                                    ide.y = 0;
-                                    ide.width = ImprovedVBE.width;
-                                    ide.height = ImprovedVBE.height - 75;
-                                    ide.z = 999;
-                                    ide.icon = ImprovedVBE.ScaleImageStock(Resources.IDE, 56, 56);
-                                    ide.name = "CarbonIDE";
-
-                                    TaskScheduler.Apps.Add(ide);
-
-                                    TaskScheduler.Apps.Remove(this);
                                 }
                             }
                         }
@@ -272,20 +302,44 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                 if(VMTools.IsVMWare == true)
                                 {
                                     Directory.CreateDirectory(SourceofProject + "\\" + namedProject);
+                                    File.Create(SourceofProject + "\\" + namedProject + "\\" + namedProject + ".sln");
+                                    if (value[0].Highlighted == true)
+                                    {
+                                        File.WriteAllText(SourceofProject + "\\" + namedProject + "\\" + namedProject + ".sln", "Program_mode = Terminal");
+
+                                        CarbonIDE ide = new CarbonIDE();
+                                        ide.x = 0;
+                                        ide.y = 0;
+                                        ide.width = ImprovedVBE.width;
+                                        ide.height = ImprovedVBE.height - 75;
+                                        ide.z = 999;
+                                        ide.icon = ImprovedVBE.ScaleImageStock(Resources.IDE, 56, 56);
+                                        ide.name = "CarbonIDE";
+                                        ide.Path = SourceofProject + "\\" + namedProject;
+
+                                        TaskScheduler.Apps.Add(ide);
+
+                                        TaskScheduler.Apps.Remove(this);
+                                    }
+                                    else if (value[1].Highlighted == true)
+                                    {
+                                        File.WriteAllText(SourceofProject + "\\" + namedProject + "\\" + namedProject + ".sln", "Program_mode = Graphical");
+                                        GraphicalProgramming ide = new GraphicalProgramming();
+                                        ide.x = 0;
+                                        ide.y = 0;
+                                        ide.width = ImprovedVBE.width;
+                                        ide.height = ImprovedVBE.height - 75;
+                                        ide.z = 999;
+                                        ide.icon = ImprovedVBE.ScaleImageStock(Resources.IDE, 56, 56);
+                                        ide.name = "CarbonIDE";
+                                        ide.Path = SourceofProject + "\\" + namedProject;
+                                        ide.namedProject = namedProject;
+
+                                        TaskScheduler.Apps.Add(ide);
+
+                                        TaskScheduler.Apps.Remove(this);
+                                    }
                                 }
-                                CarbonIDE ide = new CarbonIDE();
-                                ide.x = 0;
-                                ide.y = 0;
-                                ide.width = ImprovedVBE.width;
-                                ide.height = ImprovedVBE.height - 75;
-                                ide.z = 999;
-                                ide.icon = ImprovedVBE.ScaleImageStock(Resources.IDE, 56, 56);
-                                ide.name = "CarbonIDE";
-                                ide.Path = SourceofProject + "\\" + namedProject;
-
-                                TaskScheduler.Apps.Add(ide);
-
-                                TaskScheduler.Apps.Remove(this);
                                 break;
                         }
                     }
@@ -299,6 +353,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     }
                 }
 
+                int ind = 0;
                 foreach (var Dropd in dropdowns)
                 {
                     bool render = true;
@@ -309,7 +364,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                             if (MouseManager.Y > y + Dropd.Y && MouseManager.Y < y + Dropd.Y + Dropd.Height)
                             {
                                 Dropdown d = Dropd;
-                                dropdowns.Remove(d);
+                                dropdowns.RemoveAt(ind);
                                 dropdowns.Add(d);
                                 if (clicked == false)
                                 {
@@ -321,6 +376,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                     {
                                         Dropd.Clicked = true;
                                         render = false;
+
                                     }
                                     clicked = true;
                                 }
@@ -331,6 +387,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     {
                         Dropd.Draw(window, value);
                     }
+                    ind++;
                 }
 
                 temp = false;
@@ -374,6 +431,89 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                         }
                         temp = true;
                     }
+                }
+
+                foreach (var Dropd in dropdowns)
+                {
+                    if (MouseManager.MouseState == MouseState.Left)
+                    {
+                        if (MouseManager.X > x + Dropd.X + (Dropd.canv.Width - 30) && MouseManager.X < x + Dropd.X + Dropd.canv.Width)
+                        {
+                            if (MouseManager.Y > y + Dropd.Y && MouseManager.Y < y + Dropd.Y + Dropd.Height)
+                            {
+                                Dropdown d = Dropd;
+                                dropdowns.Remove(Dropd);
+                                dropdowns.Add(d);
+                                if (clicked == false)
+                                {
+                                    if (Dropd.Clicked == true)
+                                    {
+                                        Dropd.Clicked = false;
+                                    }
+                                    else
+                                    {
+                                        Dropd.Clicked = true;
+
+                                    }
+                                    clicked = true;
+                                }
+                            }
+                        }
+                    }
+                    if (Dropd.Clicked != false)
+                    {
+                        if (MouseManager.X > x + Dropd.X && MouseManager.X < x + Dropd.X + Dropd.canv.Width - 30)
+                        {
+                            if (MouseManager.Y > y + Dropd.Y + Dropd.Height && MouseManager.Y < y + Dropd.Y + Dropd.Height + 100)
+                            {
+                                int top = (int)(MouseManager.Y - y - Dropd.Y - Dropd.Height);
+                                int discardable = 0;
+                                int select = 1;
+                                if (top < 20)
+                                {
+                                    select = 1;
+                                }
+                                else if (top > 20 && top < 40)
+                                {
+                                    select = 2;
+                                }
+                                else if (top > 40 && top < 60)
+                                {
+                                    select = 3;
+                                }
+                                else if (top > 60 && top < 80)
+                                {
+                                    select = 4;
+                                }
+                                if (select != memory)
+                                {
+                                    foreach (var val in value)
+                                    {
+                                        if (val.ID == Dropd.ID)
+                                        {
+                                            val.Highlighted = false;
+                                            discardable++;
+                                        }
+                                        if (discardable == select && val.ID == Dropd.ID)
+                                        {
+                                            if (val.Highlighted == false)
+                                            {
+                                                val.Highlighted = true;
+                                                temp = true;
+                                            }
+                                        }
+                                    }
+                                    memory = select;
+                                }
+
+                                if (MouseManager.MouseState == MouseState.Left)
+                                {
+                                    Dropd.Clicked = false;
+                                }
+                            }
+                        }
+                    }
+                    Dropd.Render(x, y);
                 }
             }
             #endregion Mechanical

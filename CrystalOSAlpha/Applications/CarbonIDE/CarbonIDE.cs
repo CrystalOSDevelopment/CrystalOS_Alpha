@@ -1,26 +1,17 @@
-﻿using Cosmos.HAL.Drivers.Video.SVGAII;
-using Cosmos.System;
+﻿using Cosmos.System;
 using Cosmos.System.FileSystem.Listing;
 using Cosmos.System.Graphics;
-using CrystalOS_Alpha;
 using CrystalOSAlpha.Applications.FileSys;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
-using CrystalOSAlpha.Graphics.TaskBar;
 using CrystalOSAlpha.Programming;
 using CrystalOSAlpha.SystemApps;
 using CrystalOSAlpha.UI_Elements;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics.SymbolStore;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Kernel = CrystalOS_Alpha.Kernel;
 using TaskScheduler = CrystalOSAlpha.Graphics.TaskScheduler;
 
@@ -55,7 +46,6 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public int y_1 = 0;
 
         public Bitmap canvas;
-        public Bitmap back_canvas;
         public bool once = true;
         public Bitmap window;
         public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
@@ -126,18 +116,14 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public int lineIndex = 0;
 
         public string Path = "";
+        public string namedProject = "";
         public void App()
         {
             if (initial == true)
             {
                 Buttons.Add(new Button_prop(5, 27, 60, 20, "New", 1));
 
-                Dropdown d = new Dropdown();
-                d.X = 72;
-                d.Y = 27;
-                d.Width = 115;
-                d.Height = 20;
-                d.ID = "Type";
+                Dropdown d = new Dropdown(72, 27, 115, 20, "Type");
                 dropdowns.Add(d);
 
                 value.Add(new values(false, "C# console", "Type"));
@@ -206,7 +192,6 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
             if (once == true)
             {
                 canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32); //new int[width * height];
-                back_canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32); //new int[width * height];
                 window = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
                 Container = new Bitmap((uint)(width - 332), (uint)(height - 60), ColorDepth.ColorDepth32);//(width - 356), (uint)(height - 60)
                 Strucrure = new Bitmap((uint)(314), (uint)height - 267, ColorDepth.ColorDepth32);
@@ -242,7 +227,6 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
                 //window.RawData = canvas.RawData;
-                back_canvas = canvas;
                 once = false;
                 temp = true;
             }
@@ -332,6 +316,8 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                         {
                             CSharp c = new CSharp();
                             c.Executor(content);
+
+                            Kernel.Clipboard = Path + "\\" + namedProject + ".app";
                         }
                         if (value[1].Highlighted == true)
                         {

@@ -14,7 +14,7 @@ using CrystalOS_Alpha.Graphics.Widgets;
 using CrystalOSAlpha;
 using CrystalOSAlpha.Applications.CarbonIDE;
 using CrystalOSAlpha.Applications.FileSys;
-using CrystalOSAlpha.Applications.Minecraft;
+//using CrystalOSAlpha.Applications.Minecraft;
 using CrystalOSAlpha.Applications.Video_Player;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
@@ -47,6 +47,7 @@ namespace CrystalOS_Alpha
         public static bool Is_KeyboardMouse = false;
         protected override void BeforeRun()
         {
+            ImprovedVBE.display(vbe);
             if(VMTools.IsVMWare == true)
             {
                 Sys.FileSystem.VFS.VFSManager.RegisterVFS(fs);

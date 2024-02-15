@@ -46,7 +46,6 @@ namespace CrystalOSAlpha.Applications.Terminal
         public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
 
         public Bitmap canvas;
-        public Bitmap back_canvas;
         public Bitmap window;
         public Bitmap Container;
 
@@ -76,7 +75,6 @@ namespace CrystalOSAlpha.Applications.Terminal
             if (once == true)
             {
                 canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
-                back_canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
                 window = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
                 Container = new Bitmap((uint)(width - 29), (uint)(height - 60), ColorDepth.ColorDepth32);
 
@@ -133,7 +131,6 @@ namespace CrystalOSAlpha.Applications.Terminal
 
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
                 //window.RawData = canvas.RawData;
-                back_canvas = canvas;
                 once = false;
                 temp = true;
             }

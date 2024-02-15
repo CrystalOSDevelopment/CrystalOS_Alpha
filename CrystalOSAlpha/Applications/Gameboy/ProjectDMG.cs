@@ -1,10 +1,6 @@
 ﻿using Cosmos.System;
 using IL2CPU.API.Attribs;
 using ProjectDMG.Utils;
-using System;
-using System.Diagnostics;
-using System.IO;
-using System.Threading.Tasks;
 
 namespace ProjectDMG {
     public class ProjectDMG {
@@ -13,7 +9,6 @@ namespace ProjectDMG {
         [ManifestResourceStream(ResourceName = "CrystalOSAlpha.Applications.Gameboy.Tetris.gb")] public static byte[] game1;
         [ManifestResourceStream(ResourceName = "CrystalOSAlpha.Applications.Gameboy.Caesars_Palace.gb")] public static byte[] game2;
         [ManifestResourceStream(ResourceName = "CrystalOSAlpha.Applications.Gameboy.Zelda.gb")] public static byte[] game3;
-        [ManifestResourceStream(ResourceName = "CrystalOSAlpha.Applications.Gameboy.Smurfs_Nightmare.gb")] public static byte[] game4;
 
         private CPU cpu;
         private MMU mmu;
@@ -46,10 +41,6 @@ namespace ProjectDMG {
             else if (gamenum == 3)
             {
                 mmu.loadGamePak(game3);
-            }
-            else if (gamenum == 4)
-            {
-                mmu.loadGamePak(game4);
             }
 
             power_switch = true;
