@@ -87,6 +87,8 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public string Back_content = "";
         public int cursorIndex = 0;
         public int lineIndex = 0;
+
+        public int Sel = 0;
         #endregion Core variables
 
         public void App()
@@ -380,6 +382,10 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                         {
                             if(v.Selected == true && v.WriteProtected == false)
                             {
+                                if(Typo == "CheckBox")
+                                {
+                                    code = CodeGenerator.RemoveLineByID(code, t.GetValue(1, 6));
+                                }
                                 v.Content = Keyboard.HandleKeyboard(v.Content, k);
                                 //code = CodeGenerator.Generate(code, "Button btn = new Button(10, 30, 110, 25, \"Hello World\", 1, 1, 1);");
                                 if (t.Cells[counter - 1].Content.Contains("Window."))
@@ -424,6 +430,14 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                     else if (Typo == "Slider")
                                     {
                                         code = CodeGenerator.Generate(code, $"Slider {ThatID} = new Slider({t.GetValue(1, 0)}, {t.GetValue(1, 1)}, {t.GetValue(1, 2)}, {t.GetValue(1, 3)});");
+                                        editing = true;
+                                    }
+                                    else if (Typo == "CheckBox")
+                                    {
+                                        if(int.Parse(t.GetValue(1, 2)) > 10)
+                                        {
+                                            code = CodeGenerator.Generate(code, $"CheckBox.NewCheckBox({t.GetValue(1, 0)}, {int.Parse(t.GetValue(1, 1)) - 44}, {t.GetValue(1, 2)}, {t.GetValue(1, 3)}, {t.GetValue(1, 5).ToLower()}, \"{t.GetValue(1, 6)}\", \"{t.GetValue(1, 4)}\");");
+                                        }
                                         editing = true;
                                     }
                                 }
@@ -533,6 +547,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
                 Top = 50;
                 Left = 900;
+                Used.Clear();
                 foreach(var v in preview.Button)
                 {
                     if(Used.Where(d => d.Name == v.ID).Count() == 0)
@@ -575,6 +590,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                     ThatID = Used[i].Name;
                                 }
                                 Used[i].Selected = true;
+                                Sel = i;
 
                                 if (Used[i].T == Applications.CarbonIDE.Elements.Types.Button)
                                 {
@@ -624,6 +640,26 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                     t.SetValue(3, 1, preview.Slider.Find(d => d.ID == Used[i].Name).Value.ToString(), false);
                                     Typo = "Slider";
                                 }
+                                else if (Used[i].T == Applications.CarbonIDE.Elements.Types.CheckBox)
+                                {
+                                    t = new Table(2, 7, 412, 600);
+                                    t.Initialize();
+                                    t.SetValue(0, 0, "CheckBox.X", true);
+                                    t.SetValue(0, 1, preview.CheckBox.Find(d => d.ID == Used[i].Name).X.ToString(), false);
+                                    t.SetValue(1, 0, "CheckBox.Y", true);
+                                    t.SetValue(1, 1, preview.CheckBox.Find(d => d.ID == Used[i].Name).Y.ToString(), false);
+                                    t.SetValue(2, 0, "CheckBox.Width", true);
+                                    t.SetValue(2, 1, preview.CheckBox.Find(d => d.ID == Used[i].Name).Width.ToString(), false);
+                                    t.SetValue(3, 0, "CheckBox.Height", true);
+                                    t.SetValue(3, 1, preview.CheckBox.Find(d => d.ID == Used[i].Name).Height.ToString(), false);
+                                    t.SetValue(4, 0, "CheckBox.Value", true);
+                                    t.SetValue(4, 1, preview.CheckBox.Find(d => d.ID == Used[i].Name).Content.ToString(), false);
+                                    t.SetValue(5, 0, "CheckBox.State", true);
+                                    t.SetValue(5, 1, preview.CheckBox.Find(d => d.ID == Used[i].Name).Value.ToString(), false);
+                                    t.SetValue(6, 0, "CheckBox.ID", true);
+                                    t.SetValue(6, 1, preview.CheckBox.Find(d => d.ID == Used[i].Name).ID.ToString(), false);
+                                    Typo = "CheckBox";
+                                }
 
                                 i = 0;
                                 Top = 50;
@@ -631,7 +667,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                             }
                         }
                     }
-                    if (Used[i].Selected == false)
+                    if (Sel != i)//Used[i].Selected == false
                     {
                         BitFont.DrawBitFontString(UIContainer, "ArialCustomCharset16", Color.White, Used[i].Name, Left, Top);
                     }

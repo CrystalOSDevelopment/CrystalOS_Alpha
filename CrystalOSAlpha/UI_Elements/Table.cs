@@ -19,6 +19,9 @@ namespace CrystalOSAlpha.UI_Elements
         public int Height { get; set; } 
         public int TableWidth { get; set; } 
         public int TableHeight { get; set; } 
+        public int X { get; set; } 
+        public int Y { get; set; } 
+        public string ID { get; set; } 
 
         public List<Cell> Cells = new List<Cell>();
         public Table(int Width, int Height, int TWidth, int THeight)
@@ -27,6 +30,16 @@ namespace CrystalOSAlpha.UI_Elements
             this.Height = Height;
             this.TableWidth = TWidth;
             this.TableHeight = THeight;
+        }
+        public Table(int X, int Y, int Width, int Height, int TWidth, int THeight, string ID)
+        {
+            this.Width = Width;
+            this.Height = Height;
+            this.TableWidth = TWidth;
+            this.TableHeight = THeight;
+            this.X = X;
+            this.Y = Y;
+            this.ID = ID;
         }
         public void Initialize()
         {
@@ -61,6 +74,23 @@ namespace CrystalOSAlpha.UI_Elements
             {
                 ImprovedVBE.DrawFilledRectangle(OnTo, ImprovedVBE.colourToNumber(69, 69, 69), X + c.X * TableWidth / Width - 5, Y + c.Y * 25 - 5, TableWidth / Width, 25, false);
                 if(c.Selected == true)
+                {
+                    ImprovedVBE.DrawFilledRectangle(OnTo, ImprovedVBE.colourToNumber(255, 255, 255), X + c.X * TableWidth / Width + 2 - 5, Y + c.Y * 25 + 2 - 5, TableWidth / Width - 4, 22, false);
+                    BitFont.DrawBitFontString(OnTo, "ArialCustomCharset16", Color.Black, c.Content, X + c.X * TableWidth / Width, Y + c.Y * 25);
+                }
+                else
+                {
+                    ImprovedVBE.DrawFilledRectangle(OnTo, ImprovedVBE.colourToNumber(50, 50, 50), X + c.X * TableWidth / Width + 2 - 5, Y + c.Y * 25 + 2 - 5, TableWidth / Width - 4, 22, false);
+                    BitFont.DrawBitFontString(OnTo, "ArialCustomCharset16", Color.White, c.Content, X + c.X * TableWidth / Width, Y + c.Y * 25);
+                }
+            }
+        }
+        public void Render(Bitmap OnTo)
+        {
+            foreach (Cell c in Cells)
+            {
+                ImprovedVBE.DrawFilledRectangle(OnTo, ImprovedVBE.colourToNumber(69, 69, 69), X + c.X * TableWidth / Width - 5, Y + c.Y * 25 - 5, TableWidth / Width, 25, false);
+                if (c.Selected == true)
                 {
                     ImprovedVBE.DrawFilledRectangle(OnTo, ImprovedVBE.colourToNumber(255, 255, 255), X + c.X * TableWidth / Width + 2 - 5, Y + c.Y * 25 + 2 - 5, TableWidth / Width - 4, 22, false);
                     BitFont.DrawBitFontString(OnTo, "ArialCustomCharset16", Color.Black, c.Content, X + c.X * TableWidth / Width, Y + c.Y * 25);

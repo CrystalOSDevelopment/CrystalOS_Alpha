@@ -772,31 +772,48 @@ namespace CrystalOSAlpha.Programming
                                     }
                                     else
                                     {
+                                        bool Found = false;
                                         foreach (var Item in Variables)
                                         {
                                             if (sides[0] == Item.S_Name)
                                             {
                                                 sides[0] = Item.S_Value;
+                                                Found = true;
                                             }
-                                            if (sides[0] == Item.I_Name)
+                                            else if (sides[0] == Item.I_Name)
                                             {
                                                 sides[0] = Item.I_Value.ToString();
+                                                Found = true;
                                             }
-                                            if (sides[0] == Item.B_Name)
+                                            else if (sides[0] == Item.B_Name)
                                             {
                                                 sides[0] = Item.B_Value.ToString();
+                                                Found = true;
                                             }
-                                            if (sides[0] == Item.F_Name)
+                                            else if (sides[0] == Item.F_Name)
                                             {
                                                 sides[0] = Item.F_Value.ToString();
+                                                Found = true;
                                             }
-                                            if (sides[0] == Item.D_Name)
+                                            else if (sides[0] == Item.D_Name)
                                             {
                                                 sides[0] = Item.D_Value.ToString();
+                                                Found = true;
                                             }
-                                            if (sides[0] == Item.K_Name)
+                                            else if (sides[0] == Item.K_Name)
                                             {
                                                 left = Item.K_Value;
+                                                Found = true;
+                                            }
+                                        }
+                                        if(Found == false)
+                                        {
+                                            foreach(var v in CheckBox)
+                                            {
+                                                if(v.ID == sides[0])
+                                                {
+                                                    sides[0] = v.Value.ToString();
+                                                }
                                             }
                                         }
                                     }
@@ -818,31 +835,48 @@ namespace CrystalOSAlpha.Programming
                                     }
                                     else
                                     {
+                                        bool Found = false;
                                         foreach (var Item in Variables)
                                         {
                                             if (sides[1] == Item.S_Name)
                                             {
                                                 sides[1] = Item.S_Value;
+                                                Found = true;
                                             }
-                                            if (sides[1] == Item.I_Name)
+                                            else if (sides[1] == Item.I_Name)
                                             {
                                                 sides[1] = Item.I_Value.ToString();
+                                                Found = true;
                                             }
-                                            if (sides[1] == Item.B_Name)
+                                            else if (sides[1] == Item.B_Name)
                                             {
                                                 sides[1] = Item.B_Value.ToString();
+                                                Found = true;
                                             }
-                                            if (sides[1] == Item.F_Name)
+                                            else if (sides[1] == Item.F_Name)
                                             {
                                                 sides[1] = Item.F_Value.ToString();
+                                                Found = true;
                                             }
-                                            if (sides[1] == Item.D_Name)
+                                            else if (sides[1] == Item.D_Name)
                                             {
                                                 sides[1] = Item.D_Value.ToString();
+                                                Found = true;
                                             }
-                                            if (sides[1] == Item.K_Name)
+                                            else if (sides[1] == Item.K_Name)
                                             {
-                                                right = Item.K_Value;
+                                                left = Item.K_Value;
+                                                Found = true;
+                                            }
+                                        }
+                                        if (Found == false)
+                                        {
+                                            foreach (var v in CheckBox)
+                                            {
+                                                if (v.ID == sides[1])
+                                                {
+                                                    sides[1] = v.Value.ToString();
+                                                }
                                             }
                                         }
                                     }

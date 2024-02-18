@@ -56,6 +56,7 @@ namespace CrystalOSAlpha.SystemApps
         public List<Scrollbar_Values> Scroll = new List<Scrollbar_Values>();
         public List<TextBox> TextBox = new List<TextBox>();
         public List<label> Label = new List<label>();
+        public List<Table> Tables = new List<Table>();
         #endregion UI_Elements
 
         public string Code = "";
@@ -220,6 +221,24 @@ namespace CrystalOSAlpha.SystemApps
 
                                 CheckBox.Add(new UI_Elements.CheckBox(int.Parse(values[0]), int.Parse(values[1]) + 22, int.Parse(values[2]), int.Parse(values[3]), bool.Parse(values[4]), values[5].Replace("\"", ""), values[6].Remove(values[6].Length - 1).Remove(0, 1)));
                             }
+                            else if (trimmed.StartsWith("Table"))
+                            {
+                                trimmed = trimmed.Replace("Table", "");
+                                trimmed = trimmed.Remove(trimmed.Length - 2);
+                                //separate by =
+                                string[] parts = trimmed.Split('=');
+                                //Store the name
+                                string name = parts[0];
+                                //Read data from new()
+                                string[] values = parts[1].Replace("new(", "").Split(",");
+                                //foreach(string s in values)
+                                //{
+                                //    Kernel.Clipboard += s + "\n";
+                                //}
+
+                                Tables.Add(new Table(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]), int.Parse(values[4]), int.Parse(values[5]), name));
+                                Tables[^1].Initialize();
+                            }
                         }
                     }
                 }
@@ -263,48 +282,46 @@ namespace CrystalOSAlpha.SystemApps
                         UI_Elements.Button.Button_render(canvas, button.X, button.Y, button.Width, button.Height, ComplimentaryColor.Generate(button.Color).ToArgb(), button.Text);
 
                         //Need to think about this one for a bit...
-                        //foreach(var p in Parts)
-                        //{
-                        //    if(p.Contains("OnClick " + button.ID + "\n"))
-                        //    {
-                        //        //Proof that it works to this point!
-                        //        //Label.RemoveAll(d => d.ID == "Debug");
-                        //        //Label.Add(new label(10, 60, Parts[1], ImprovedVBE.colourToNumber(255, 255, 255), "Debug"));
+                        foreach (var p in Parts)
+                        {
+                            if (p.StartsWith("\n#OnClick " + button.ID + "\n"))
+                            {
+                                CSharp exec = new CSharp();
+                                exec.Button = Button;
+                                exec.Slider = Slider;
+                                exec.Label = Label;
+                                exec.Scroll = Scroll;
+                                exec.CheckBox = CheckBox;
+                                exec.TextBox = TextBox;
+                                exec.Dropdown = Dropdown;
+                                exec.window = canvas;
+                                exec.CurrentColor = CurrentColor;
 
-                        //        CSharp exec = new CSharp();
-                        //        exec.Button = Button;
-                        //        exec.Slider = Slider;
-                        //        exec.Label = Label;
-                        //        exec.Scroll = Scroll;
-                        //        exec.CheckBox = CheckBox;
-                        //        exec.TextBox = TextBox;
-                        //        exec.Dropdown = Dropdown;
-                        //        exec.window = canvas;
-                        //        exec.CurrentColor = CurrentColor;
-
-                        //        Label.RemoveAll(d => d.ID == "Debug");
-                        //        string[] lines = p.Split('\n');
-                        //        for(int i = 2; i < lines.Length - 1; i++)
-                        //        {
-                        //            //Label.Add(new label(10, 60, exec.Returning_methods(lines[i]), ImprovedVBE.colourToNumber(255, 255, 255), "Debug"));
-                        //            exec.Returning_methods(lines[i]);
-                        //        }
-                        //        Button = exec.Button;
-                        //        Slider = exec.Slider;
-                        //        Label = exec.Label;
-                        //        Scroll = exec.Scroll;
-                        //        CheckBox = exec.CheckBox;
-                        //        TextBox = exec.TextBox;
-                        //        Dropdown = exec.Dropdown;
-                        //        if (CurrentColor != exec.CurrentColor)
-                        //        {
-                        //            once = true;
-                        //            CurrentColor = exec.CurrentColor;
-                        //            goto top;
-                        //        }
-                        //        Array.Copy(exec.window.RawData, 0, window.RawData, 0, exec.window.RawData.Length);
-                        //    }
-                        //}
+                                Label.RemoveAll(d => d.ID == "Debug");
+                                string[] lines = p.Split('\n');
+                                for (int i = 2; i < lines.Length - 1; i++)
+                                {
+                                    exec.Returning_methods(lines[i]);
+                                }
+                                Button = exec.Button;
+                                Slider = exec.Slider;
+                                Label = exec.Label;
+                                Scroll = exec.Scroll;
+                                CheckBox = exec.CheckBox;
+                                TextBox = exec.TextBox;
+                                Dropdown = exec.Dropdown;
+                                if (CurrentColor != exec.CurrentColor)
+                                {
+                                    once = true;
+                                }
+                                if (exec.Clipboard == "Terminate")
+                                {
+                                    TaskScheduler.Apps.Remove(this);
+                                }
+                                CurrentColor = exec.CurrentColor;
+                                Array.Copy(exec.window.RawData, 0, window.RawData, 0, exec.window.RawData.Length);
+                            }
+                        }
                     }
                     else
                     {
@@ -334,6 +351,11 @@ namespace CrystalOSAlpha.SystemApps
                     Checkbox.Render(window);
                 }
 
+                foreach (var T in Tables)
+                {
+                    T.Render(window);
+                }
+
                 //window.RawData = canvas.RawData;
                 back_canvas = canvas;
                 once = false;
@@ -352,51 +374,6 @@ namespace CrystalOSAlpha.SystemApps
                                 button.Clicked = true;
                                 once = true;
                                 clicked = true;
-                                foreach (var p in Parts)
-                                {
-                                    if (p.Contains("OnClick " + button.ID + "\n"))
-                                    {
-                                        //Proof that it works to this point!
-                                        //Label.RemoveAll(d => d.ID == "Debug");
-                                        //Label.Add(new label(10, 60, Parts[1], ImprovedVBE.colourToNumber(255, 255, 255), "Debug"));
-
-                                        CSharp exec = new CSharp();
-                                        exec.Button = Button;
-                                        exec.Slider = Slider;
-                                        exec.Label = Label;
-                                        exec.Scroll = Scroll;
-                                        exec.CheckBox = CheckBox;
-                                        exec.TextBox = TextBox;
-                                        exec.Dropdown = Dropdown;
-                                        exec.window = canvas;
-                                        exec.CurrentColor = CurrentColor;
-
-                                        Label.RemoveAll(d => d.ID == "Debug");
-                                        string[] lines = p.Split('\n');
-                                        for (int i = 2; i < lines.Length - 1; i++)
-                                        {
-                                            //Label.Add(new label(10, 60, exec.Returning_methods(lines[i]), ImprovedVBE.colourToNumber(255, 255, 255), "Debug"));
-                                            exec.Returning_methods(lines[i]);
-                                        }
-                                        Button = exec.Button;
-                                        Slider = exec.Slider;
-                                        Label = exec.Label;
-                                        Scroll = exec.Scroll;
-                                        CheckBox = exec.CheckBox;
-                                        TextBox = exec.TextBox;
-                                        Dropdown = exec.Dropdown;
-                                        if (CurrentColor != exec.CurrentColor)
-                                        {
-                                            once = true;
-                                        }
-                                        if (exec.Clipboard == "Terminate")
-                                        {
-                                            TaskScheduler.Apps.Remove(this);
-                                        }
-                                        CurrentColor = exec.CurrentColor;
-                                        Array.Copy(exec.window.RawData, 0, window.RawData, 0, exec.window.RawData.Length);
-                                    }
-                                }
                             }
                         }
                     }
@@ -532,7 +509,14 @@ namespace CrystalOSAlpha.SystemApps
                     }
                 }
             }
-            ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
+            if (x == 0 && window.Width == ImprovedVBE.width)
+            {
+                Array.Copy(window.RawData, 0, ImprovedVBE.cover.RawData, y * ImprovedVBE.width, window.RawData.Length);
+            }
+            else
+            {
+                //ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
+            }
         }
 
         public void App(Bitmap RenderTo)
@@ -584,13 +568,25 @@ namespace CrystalOSAlpha.SystemApps
                             {
                                 trimmed = trimmed.Replace("this.Width=", "");
                                 trimmed = trimmed.Remove(trimmed.Length - 1);
-                                this.width = int.Parse(trimmed);
+                                if(int.TryParse(trimmed, out int s))
+                                {
+                                    if(s > 50)
+                                    {
+                                        this.width = s;
+                                    }
+                                }
                             }
                             else if (trimmed.StartsWith("this.Height"))
                             {
                                 trimmed = trimmed.Replace("this.Height=", "");
                                 trimmed = trimmed.Remove(trimmed.Length - 1);
-                                this.height = int.Parse(trimmed);
+                                if(int.TryParse(trimmed, out int s))
+                                {
+                                    if(s > 50)
+                                    {
+                                        this.height = s;
+                                    }
+                                }
                             }
                             else if (trimmed.StartsWith("this.RGB"))
                             {
@@ -598,18 +594,6 @@ namespace CrystalOSAlpha.SystemApps
                                 trimmed = trimmed.Remove(trimmed.Length - 1);
                                 string[] values = trimmed.Split(',');
                                 this.CurrentColor = ImprovedVBE.colourToNumber(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]));
-                            }
-                            else if (trimmed.StartsWith("this.X"))
-                            {
-                                trimmed = trimmed.Replace("this.X=", "");
-                                trimmed = trimmed.Remove(trimmed.Length - 1);
-                                this.x = int.Parse(trimmed);
-                            }
-                            else if (trimmed.StartsWith("this.Y"))
-                            {
-                                trimmed = trimmed.Replace("this.Y=", "");
-                                trimmed = trimmed.Remove(trimmed.Length - 1);
-                                this.y = int.Parse(trimmed);
                             }
                             else if (trimmed.StartsWith("this.Z"))
                             {
@@ -696,6 +680,24 @@ namespace CrystalOSAlpha.SystemApps
 
                                 CheckBox.Add(new UI_Elements.CheckBox(int.Parse(values[0]), int.Parse(values[1]) + 22, int.Parse(values[2]), int.Parse(values[3]), bool.Parse(values[4]), values[5].Replace("\"", ""), values[6].Remove(values[6].Length - 1).Remove(0, 1)));
                             }
+                            else if (trimmed.StartsWith("Table"))
+                            {
+                                trimmed = trimmed.Replace("Table", "");
+                                trimmed = trimmed.Remove(trimmed.Length - 2);
+                                //separate by =
+                                string[] parts = trimmed.Split('=');
+                                //Store the name
+                                string name = parts[0];
+                                //Read data from new()
+                                string[] values = parts[1].Replace("new(", "").Split(",");
+                                //foreach(string s in values)
+                                //{
+                                //    Kernel.Clipboard += s + "\n";
+                                //}
+
+                                Tables.Add(new Table(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]), int.Parse(values[4]), int.Parse(values[5]), name));
+                                Tables[^1].Initialize();
+                            }
                         }
                     }
                 }
@@ -740,12 +742,8 @@ namespace CrystalOSAlpha.SystemApps
                         //Need to think about this one for a bit...
                         foreach (var p in Parts)
                         {
-                            if (p.Contains("OnClick " + button.ID + "\n"))
+                            if (p.StartsWith("#OnClick " + button.ID + "\n"))
                             {
-                                //Proof that it works to this point!
-                                //Label.RemoveAll(d => d.ID == "Debug");
-                                //Label.Add(new label(10, 60, Parts[1], ImprovedVBE.colourToNumber(255, 255, 255), "Debug"));
-
                                 CSharp exec = new CSharp();
                                 exec.Button = Button;
                                 exec.Slider = Slider;
@@ -756,11 +754,9 @@ namespace CrystalOSAlpha.SystemApps
                                 exec.Dropdown = Dropdown;
                                 exec.window = canvas;
 
-                                Label.RemoveAll(d => d.ID == "Debug");
                                 string[] lines = p.Split('\n');
                                 for (int i = 2; i < lines.Length - 1; i++)
                                 {
-                                    //Label.Add(new label(10, 60, exec.Returning_methods(lines[i]), ImprovedVBE.colourToNumber(255, 255, 255), "Debug"));
                                     exec.Returning_methods(lines[i]);
                                 }
                                 Button = exec.Button;
@@ -800,6 +796,11 @@ namespace CrystalOSAlpha.SystemApps
                 foreach (var Checkbox in CheckBox)
                 {
                     Checkbox.Render(window);
+                }
+
+                foreach (var T in Tables)
+                {
+                    T.Render(window);
                 }
 
                 //window.RawData = canvas.RawData;
@@ -981,21 +982,29 @@ namespace CrystalOSAlpha.SystemApps
             bool Started = false;
             for(int i = 0; i < In.Length; i++)
             {
-                current += In[i];
-                if (In[i] == '{')
+                //current += In[i];
+                //if (In[i] == '{')
+                //{
+                //    openedRemainingBrackets++;
+                //    Started = true;
+                //}
+                //else if (In[i] == '}')
+                //{
+                //    openedRemainingBrackets--;
+                //}
+                //if(i != 0 && openedRemainingBrackets == 0 && Started == true)
+                //{
+                //    parts.Add(current);
+                //    Started = false;
+                //    current = "";
+                //}
+            }
+            parts = CodeGenerator.ToList(In.Split("\n#"));
+            for(int i = 0; i < parts.Count; i++)
+            {
+                if(i != 0)
                 {
-                    openedRemainingBrackets++;
-                    Started = true;
-                }
-                else if (In[i] == '}')
-                {
-                    openedRemainingBrackets--;
-                }
-                if(i != 0 && openedRemainingBrackets == 0 && Started == true)
-                {
-                    parts.Add(current);
-                    Started = false;
-                    current = "";
+                    parts[i] = parts[i].Insert(0, "\n#");
                 }
             }
             return parts;

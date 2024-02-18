@@ -22,6 +22,7 @@ namespace CrystalOSAlpha.Programming
                                 "    this.Height = 300;\n" +
                                 "    this.Titlebar = true;\n" +
                                 "    this.RGB = 60, 60, 60;\n" +
+                                "    Table table = new Table(10, 50, 10, 10, 480, 200);\n" +
                                 "}\n" +
                                 "#void Looping\n" + 
                                 "{\n" +
@@ -147,6 +148,50 @@ namespace CrystalOSAlpha.Programming
             }
             return Modified_Code;
         }
+        public static string RemoveLine(string input, string LineToRemove)
+        {
+            string[] ls = input.Split('\n');
+            List<string> lines = ToList(ls);
+            foreach(string line in lines)
+            {
+                if(line.Trim() == LineToRemove)
+                {
+                    lines.Remove(line);
+                }
+            }
+            string result = "";
+            for (int i = 0; i < lines.Count; i++)
+            {
+                result += lines[i];
+                if (i < lines.Count - 1)
+                {
+                    result += "\n";
+                }
+            }
+            return result; //string.Join("\n", lines);
+        }
+        public static string RemoveLineByID(string input, string ID)
+        {
+            string[] ls = input.Split('\n');
+            List<string> lines = ToList(ls);
+            for (int i = 0; i < lines.Count; i++)
+            {
+                if (lines[i].Trim().Contains("\"" + ID + "\","))
+                {
+                    lines.RemoveAt(i);
+                }
+            }
+            string result = "";
+            for (int i = 0; i < lines.Count; i++)
+            {
+                result += lines[i];
+                if (i < lines.Count - 1)
+                {
+                    result += "\n";
+                }
+            }
+            return result; //string.Join("\n", lines);
+        }
         public static List<string> Separate(string In)
         {
             List<string> parts = new List<string>();
@@ -172,6 +217,15 @@ namespace CrystalOSAlpha.Programming
                     Started = false;
                     current = "";
                 }
+            }
+            return parts;
+        }
+        public static List<string> ToList(string[] content)
+        {
+            List<string> parts = new List<string>();
+            foreach(string s in content)
+            {
+                parts.Add(s);
             }
             return parts;
         }
