@@ -71,6 +71,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
             "    Slider slider = new Slider(10, 80, 255, 20);\n" +
             "    TextBox tbox = new TextBox(10, 110, 110, 25, 60, 60, 60, \"\", \"Dummy text\");\n" +
             "    CheckBox.NewCheckBox(15, 60, 20, 20, true, \"Choices\", \"Office Document\");\n" +
+            "    Table table = new Table(10, 10, 100, 25, 1920, 900, 1900, 900);\n" +
             "}" +
             "\n" +
             "#OnClick btn\n" +

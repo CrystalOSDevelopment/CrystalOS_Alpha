@@ -40,7 +40,7 @@ namespace CrystalOS_Alpha
 {
     public class Kernel : Sys.Kernel
     {
-        public VBECanvas vbe = new VBECanvas(new Mode(1024, 768, ColorDepth.ColorDepth32));
+        public VBECanvas vbe = new VBECanvas(new Mode(1920, 1080, ColorDepth.ColorDepth32));
         [ManifestResourceStream(ResourceName = "CrystalOSAlpha.Graphics.Engine.Cursor.bmp")] public static byte[] Cursor;
         public static Bitmap C = new Bitmap(Cursor);
         public static CosmosVFS fs = new CosmosVFS();
@@ -94,34 +94,9 @@ namespace CrystalOS_Alpha
             Fonts.RegisterFonts();
         }
 
-        public static int FPS = 0;
-
-        public static int LastS = -1;
-        public static int Ticken = 0;
-
         public static int collect = 0;
 
-        //public static Bitmap temp = new Bitmap(40, 40, ColorDepth.ColorDepth32);
-
         public static string Clipboard = "";
-
-        public static void Update()
-        {
-            if (LastS == -1)
-            {
-                LastS = DateTime.UtcNow.Second;
-            }
-            if (DateTime.UtcNow.Second - LastS != 0)
-            {
-                if (DateTime.UtcNow.Second > LastS)
-                {
-                    FPS = Ticken / (DateTime.UtcNow.Second - LastS);
-                }
-                LastS = DateTime.UtcNow.Second;
-                Ticken = 0;
-            }
-            Ticken++;
-        }
 
         protected override void Run()
         {
@@ -131,7 +106,6 @@ namespace CrystalOS_Alpha
 
             TaskManager.Main();
 
-            //ImprovedVBE.DrawImageAlpha(temp, 10, 10, ImprovedVBE.cover);
             BitFont.DrawBitFontString(ImprovedVBE.cover, "ArialCustomCharset16", System.Drawing.Color.White, Clipboard, 500, 40);
 
             ImprovedVBE.DrawImageAlpha3(C, (int)MouseManager.X, (int)MouseManager.Y);

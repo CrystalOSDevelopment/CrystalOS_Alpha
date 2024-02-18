@@ -2,6 +2,7 @@
 using Cosmos.System.Graphics;
 using CrystalOS_Alpha;
 using CrystalOSAlpha.Applications;
+using CrystalOSAlpha.Applications.Gameboy;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics.Icons;
@@ -10,8 +11,10 @@ using CrystalOSAlpha.Programming;
 using CrystalOSAlpha.UI_Elements;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Drawing;
 using System.Runtime.CompilerServices;
+using static IL2CPU.API.Attribs.AsmMarker;
 using Kernel = CrystalOS_Alpha.Kernel;
 using TaskScheduler = CrystalOSAlpha.Graphics.TaskScheduler;
 
@@ -33,6 +36,7 @@ namespace CrystalOSAlpha.SystemApps
         public bool minimised { get; set; }
         public bool movable { get; set; }
         public Bitmap icon { get; set; }
+        public bool temp = true;
 
         public Bitmap canvas;
         public Bitmap back_canvas;
@@ -236,7 +240,7 @@ namespace CrystalOSAlpha.SystemApps
                                 //    Kernel.Clipboard += s + "\n";
                                 //}
 
-                                Tables.Add(new Table(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]), int.Parse(values[4]), int.Parse(values[5]), name));
+                                Tables.Add(new Table(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]), int.Parse(values[4]), int.Parse(values[5]), name, int.Parse(values[6]), int.Parse(values[7])));
                                 Tables[^1].Initialize();
                             }
                         }
@@ -351,11 +355,6 @@ namespace CrystalOSAlpha.SystemApps
                     Checkbox.Render(window);
                 }
 
-                foreach (var T in Tables)
-                {
-                    T.Render(window);
-                }
-
                 //window.RawData = canvas.RawData;
                 back_canvas = canvas;
                 once = false;
@@ -451,8 +450,6 @@ namespace CrystalOSAlpha.SystemApps
                 }
             }
 
-            //Kernel.Clipboard = part.ToString();
-
             if(part != 0 && CycleCount > 5)
             {
                 CSharp execLoop = new CSharp();
@@ -500,22 +497,53 @@ namespace CrystalOSAlpha.SystemApps
                 KeyEvent key;
                 if (KeyboardManager.TryReadKey(out key))
                 {
-                    foreach(var box in TextBox)
+                    foreach (var box in TextBox)
                     {
-                        if(box.Selected == true)
+                        if (box.Selected == true)
                         {
                             box.Text = Keyboard.HandleKeyboard(box.Text, key);
                         }
                     }
+                    foreach (var c in Tables)//For would be more efficient
+                    {
+                        foreach (var v in c.Cells)
+                        {
+                            if (v.Selected == true && v.WriteProtected == false)
+                            {
+                                v.Content = Keyboard.HandleKeyboard(v.Content, key);
+                                temp = true;
+                            }
+                        }
+                    }
+                }
+                if (MouseManager.MouseState == MouseState.Left)
+                {
+                    foreach (var v in Tables)
+                    {
+                        if (v.Select2((int)MouseManager.X - x - v.X, (int)MouseManager.Y - y - v.Y))
+                        {
+                            temp = true;
+                        }
+                    }
                 }
             }
+
+            if(temp == true)
+            {
+                foreach (var T in Tables)
+                {
+                    T.Render(window);
+                }
+                temp = false;
+            }
+
             if (x == 0 && window.Width == ImprovedVBE.width)
             {
                 Array.Copy(window.RawData, 0, ImprovedVBE.cover.RawData, y * ImprovedVBE.width, window.RawData.Length);
             }
             else
             {
-                //ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
+                ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
             }
         }
 
@@ -695,7 +723,7 @@ namespace CrystalOSAlpha.SystemApps
                                 //    Kernel.Clipboard += s + "\n";
                                 //}
 
-                                Tables.Add(new Table(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]), int.Parse(values[4]), int.Parse(values[5]), name));
+                                Tables.Add(new Table(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]), int.Parse(values[4]), int.Parse(values[5]), name, int.Parse(values[6]), int.Parse(values[7])));
                                 Tables[^1].Initialize();
                             }
                         }
@@ -875,8 +903,6 @@ namespace CrystalOSAlpha.SystemApps
                     part = i;
                 }
             }
-
-            //Kernel.Clipboard = part.ToString();
             
             if (part != 0 && CycleCount > 5)
             {
@@ -921,6 +947,23 @@ namespace CrystalOSAlpha.SystemApps
                         {
                             box.Text = Keyboard.HandleKeyboard(box.Text, key);
                         }
+                    }
+                    foreach(var c in Tables)//For would be more efficient
+                    {
+                        foreach (var v in c.Cells)
+                        {
+                            if (v.Selected == true && v.WriteProtected == false)
+                            {
+                                v.Content = Keyboard.HandleKeyboard(v.Content, key);
+                            }
+                        }
+                    }
+                }
+                if(MouseManager.MouseState == MouseState.Left)
+                {
+                    foreach(var v in Tables)
+                    {
+                        v.Select2((int)MouseManager.X - x - v.X, (int)MouseManager.Y - y - v.Y);
                     }
                 }
             }
@@ -976,29 +1019,6 @@ namespace CrystalOSAlpha.SystemApps
         public List<string> Separate(string In)
         {
             List<string> parts = new List<string>();
-
-            string current = "";
-            int openedRemainingBrackets = 0;
-            bool Started = false;
-            for(int i = 0; i < In.Length; i++)
-            {
-                //current += In[i];
-                //if (In[i] == '{')
-                //{
-                //    openedRemainingBrackets++;
-                //    Started = true;
-                //}
-                //else if (In[i] == '}')
-                //{
-                //    openedRemainingBrackets--;
-                //}
-                //if(i != 0 && openedRemainingBrackets == 0 && Started == true)
-                //{
-                //    parts.Add(current);
-                //    Started = false;
-                //    current = "";
-                //}
-            }
             parts = CodeGenerator.ToList(In.Split("\n#"));
             for(int i = 0; i < parts.Count; i++)
             {

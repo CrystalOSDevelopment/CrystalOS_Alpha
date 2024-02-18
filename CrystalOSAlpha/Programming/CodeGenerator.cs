@@ -102,8 +102,12 @@ namespace CrystalOSAlpha.Programming
                             }
                         }
                     }
+                    for (int i = 0; i < block.Length; i++)
+                    {
+                        temp += block[i] + "\n";
+                    }
                 }
-                else if (newComponent.StartsWith("Button") || newComponent.StartsWith("Label") || newComponent.StartsWith("TextBox") || newComponent.StartsWith("Slider") || newComponent.StartsWith("CheckBox"))
+                else if (newComponent.StartsWith("Button") || newComponent.StartsWith("Label") || newComponent.StartsWith("TextBox") || newComponent.StartsWith("Slider") || newComponent.StartsWith("CheckBox") || newComponent.StartsWith("Table"))
                 {
                     string[] parts = newComponent.Split('=');
                     bool found = false;
@@ -196,30 +200,38 @@ namespace CrystalOSAlpha.Programming
         {
             List<string> parts = new List<string>();
 
-            string current = "";
-            int openedRemainingBrackets = 0;
-            bool Started = false;
-            for (int i = 0; i < In.Length; i++)
+            //string current = "";
+            //int openedRemainingBrackets = 0;
+            //bool Started = false;
+            //bool wasWhiteSpace = false;
+            //for (int i = 0; i < In.Length; i++)
+            //{
+            //    current += In[i];
+            //    if (In[i] == '{')
+            //    {
+            //        openedRemainingBrackets++;
+            //        Started = true;
+            //    }
+            //    else if (In[i] == '}')
+            //    {
+            //        openedRemainingBrackets--;
+            //    }
+            //    if (i != 0 && openedRemainingBrackets == 0 && Started == true)
+            //    {
+            //        parts.Add(current);
+            //        Started = false;
+            //        current = "";
+            //    }
+            //}
+            parts = CodeGenerator.ToList(In.Split("\n#"));
+            for (int i = 0; i < parts.Count; i++)
             {
-                current += In[i];
-                if (In[i] == '{')
+                if (i != 0)
                 {
-                    openedRemainingBrackets++;
-                    Started = true;
-                }
-                else if (In[i] == '}')
-                {
-                    openedRemainingBrackets--;
-                }
-                if (i != 0 && openedRemainingBrackets == 0 && Started == true)
-                {
-                    parts.Add(current);
-                    Started = false;
-                    current = "";
+                    parts[i] = parts[i].Insert(0, "\n#");
                 }
             }
-            return parts;
-        }
+            return parts;        }
         public static List<string> ToList(string[] content)
         {
             List<string> parts = new List<string>();
