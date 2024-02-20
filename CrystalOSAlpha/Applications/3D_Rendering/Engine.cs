@@ -40,26 +40,52 @@ namespace _3DRendering
             RotateScene(cubePoints, cameraPosition, rotationAngleZ, rotationAngleY, rotationAngleX);
 
             // Render the rotated scene
-            //RenderScene(bitmap, cubePoints, Color.Red);
+            RenderScene(bitmap, cubePoints, Color.Red);
 
             // Rendering the wireframe
             RenderScene_Wireframe(bitmap, cubePoints, Color.Green);
         }
 
-        public static void DrawLineDDA(int x1, int y1, int x2, int y2)
+        //public static void DrawLineDDA(int x1, int y1, int x2, int y2)
+        //{
+        //    int dx = x2 - x1;
+        //    int dy = y2 - y1;
+        //    int steps = Math.Max(Math.Abs(dx), Math.Abs(dy));
+        //    float xIncrement = (float)dx / steps;
+        //    float yIncrement = (float)dy / steps;
+        //    float x = x1;
+        //    float y = y1;
+        //    for (int i = 0; i <= steps; i++)
+        //    {
+        //        ImprovedVBE.DrawPixelfortext(ImprovedVBE.cover, (int)x, (int)y, Color.Red.ToArgb());
+        //        x += xIncrement;
+        //        y += yIncrement;
+        //    }
+        //}
+        public static void DrawLineBresenham(int x1, int y1, int x2, int y2)
         {
-            int dx = x2 - x1;
-            int dy = y2 - y1;
-            int steps = Math.Max(Math.Abs(dx), Math.Abs(dy));
-            float xIncrement = (float)dx / steps;
-            float yIncrement = (float)dy / steps;
-            float x = x1;
-            float y = y1;
-            for (int i = 0; i <= steps; i++)
+            int dx = Math.Abs(x2 - x1);
+            int dy = Math.Abs(y2 - y1);
+            int sx = (x1 < x2) ? 1 : -1;
+            int sy = (y1 < y2) ? 1 : -1;
+            int err = dx - dy;
+
+            while (true)
             {
-                ImprovedVBE.DrawPixelfortext(ImprovedVBE.cover, (int)x, (int)y, Color.Red.ToArgb());
-                x += xIncrement;
-                y += yIncrement;
+                ImprovedVBE.DrawPixelfortext(ImprovedVBE.cover, x1, y1, Color.Red.ToArgb());
+
+                if (x1 == x2 && y1 == y2) break;
+                int e2 = 2 * err;
+                if (e2 > -dy)
+                {
+                    err -= dy;
+                    x1 += sx;
+                }
+                if (e2 < dx)
+                {
+                    err += dx;
+                    y1 += sy;
+                }
             }
         }
 
@@ -96,7 +122,7 @@ namespace _3DRendering
                 Point nextPoint = ConvertTo2D(points[nextPointIndex], (int)bitmap.Width, (int)bitmap.Height);
 
                 // Connect current point to next point
-                DrawLineDDA(currentPoint.X + 200, currentPoint.Y + 200, nextPoint.X + 200, nextPoint.Y + 200);
+                DrawLineBresenham(currentPoint.X + 200, currentPoint.Y + 200, nextPoint.X + 200, nextPoint.Y + 200);
             }
         }
 
@@ -155,8 +181,8 @@ namespace _3DRendering
             int start_x = 0;
             int end_x = 0;
 
-            int[] line = new int[1024];
-            Array.Fill(line, color);
+            Bitmap line = new Bitmap(512, 2, ColorDepth.ColorDepth32);
+            Array.Fill(line.RawData, color);
 
             // Iterate through each pixel within the bounding rectangle
             for (int y = minY; y < maxY; y++)
@@ -179,7 +205,7 @@ namespace _3DRendering
                 }
                 if (end_x > start_x)
                 {
-                    Array.Copy(line, 0, ImprovedVBE.cover.RawData, (y * ImprovedVBE.width) + start_x, end_x - start_x);
+                    Array.Copy(line.RawData, 0, ImprovedVBE.cover.RawData, (y * ImprovedVBE.width) + start_x, end_x - start_x);
                 }
             }
         }

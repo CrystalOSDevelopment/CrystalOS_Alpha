@@ -72,6 +72,7 @@ namespace CrystalOSAlpha.Programming
         public List<Scrollbar_Values> Scroll = new List<Scrollbar_Values>();
         public List<TextBox> TextBox = new List<TextBox>();
         public List<label> Label = new List<label>();
+        public List<Table> Tables = new List<Table>();
         #endregion UI_Elements
 
         public string Executor(string input)
@@ -185,23 +186,90 @@ namespace CrystalOSAlpha.Programming
                         {
                             if (!values[1].Contains("Console"))
                             {
-                                if (values[1].EndsWith(".Content"))
+                                try
                                 {
-                                    values[1] = values[1].Replace(".Content", "");
-                                    foreach (var v in Button)
+                                    if (values[1].EndsWith(".Content"))
                                     {
-                                        if (v.ID == values[1])
+                                        values[1] = values[1].Replace(".Content", "");
+                                        foreach (var v in Button)
                                         {
-                                            Variables.Add(new Programming.Variables(values[0], v.Text));
+                                            if (v.ID == values[1])
+                                            {
+                                                Variables.Add(new Programming.Variables(values[0], v.Text));
+                                            }
+                                        }
+                                        foreach (var v in Label)
+                                        {
+                                            if (v.ID == values[1])
+                                            {
+                                                Variables.Add(new Programming.Variables(values[0], v.Text));
+                                            }
+                                        }
+                                        foreach (var v in TextBox)
+                                        {
+                                            if (v.ID == values[1])
+                                            {
+                                                Variables.Add(new Programming.Variables(values[0], v.Text));
+                                            }
                                         }
                                     }
-                                    foreach (var v in Label)
+                                    else if (values[1].Contains(".GetValue"))
                                     {
-                                        if (v.ID == values[1])
+                                        foreach (var item in Tables)
                                         {
-                                            Variables.Add(new Programming.Variables(values[0], v.Text));
+                                            if (values[1].StartsWith(item.ID))
+                                            {
+                                                string cleaned = values[1].Remove(0, item.ID.Length + 1);
+                                                if (cleaned.StartsWith("GetValue("))
+                                                {
+                                                    cleaned = cleaned.Replace("GetValue(", "");
+                                                    cleaned = cleaned.Remove(cleaned.Length - 1);
+                                                    if (cleaned.Split(',').Length == 2)
+                                                    {
+                                                        Variables.Add(new Programming.Variables(values[0], item.GetValue(int.Parse(cleaned.Split(',')[0]), int.Parse(cleaned.Split(',')[1]))));
+                                                    }
+                                                    else
+                                                    {
+                                                        cleaned = Variables.Find(d => d.S_Name == cleaned).S_Value.Replace(" ", "");
+                                                        if(cleaned.Split(',').Length >= 2)
+                                                        {
+                                                            if (cleaned.Split(',')[1].Length > 0)
+                                                            {
+                                                                Variables.Add(new Programming.Variables(values[0], item.GetValue(int.Parse(cleaned.Split(',')[0]) - 1, int.Parse(cleaned.Split(',')[1]) - 1)));
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
+                                    else if (values[1].Contains(".GetActive"))
+                                    {
+                                        foreach (var item in Tables)
+                                        {
+                                            if (values[1].StartsWith(item.ID))
+                                            {
+                                                string cleaned = values[1].Remove(0, item.ID.Length + 1);
+                                                if (cleaned.StartsWith("GetActive("))
+                                                {
+                                                    cleaned = cleaned.Replace("GetActive(", "");
+                                                    cleaned = cleaned.Remove(cleaned.Length - 1);
+                                                    foreach (var v in item.Cells)
+                                                    {
+                                                        if (v.Selected == true)
+                                                        {
+                                                            Variables.Add(new Programming.Variables(values[0], $"{v.X + 1},{v.Y + 1}"));
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                catch(Exception e)
+                                {
+
                                 }
                             }
                             else
@@ -813,6 +881,17 @@ namespace CrystalOSAlpha.Programming
                                                 if(v.ID == sides[0])
                                                 {
                                                     sides[0] = v.Value.ToString();
+                                                    Found = true;
+                                                }
+                                            }
+                                        }
+                                        if (Found == false)
+                                        {
+                                            foreach (var v in TextBox)
+                                            {
+                                                if (sides[0].Contains(v.ID))
+                                                {
+                                                    sides[0] = v.Text;
                                                 }
                                             }
                                         }
@@ -876,6 +955,16 @@ namespace CrystalOSAlpha.Programming
                                                 if (v.ID == sides[1])
                                                 {
                                                     sides[1] = v.Value.ToString();
+                                                }
+                                            }
+                                        }
+                                        if (Found == false)
+                                        {
+                                            foreach (var v in TextBox)
+                                            {
+                                                if (sides[1].Contains(v.ID))
+                                                {
+                                                    sides[1] = v.Text;
                                                 }
                                             }
                                         }
@@ -2100,6 +2189,120 @@ namespace CrystalOSAlpha.Programming
                             {
                                 item.Height = int.Parse(split[1]);
                             }
+                        }
+                    }
+                    foreach (var item in TextBox)
+                    {
+                        string[] split = line.Split('=');
+                        if (split[0].Split('.')[0] == item.ID)
+                        {
+                            if (split[0].Split('.')[1] == "Content")
+                            {
+                                if (!split[1].Contains("\""))
+                                {
+                                    foreach (var Item in Variables)
+                                    {
+                                        if (split[1] == Item.S_Name)
+                                        {
+                                            item.Text = Item.S_Value;
+                                        }
+                                        else if (split[1] == Item.I_Name)
+                                        {
+                                            item.Text = Item.I_Value.ToString();
+                                        }
+                                        else if (split[1] == Item.B_Name)
+                                        {
+                                            item.Text = Item.B_Value.ToString();
+                                        }
+                                        else if (split[1] == Item.F_Name)
+                                        {
+                                            item.Text = Item.F_Value.ToString();
+                                        }
+                                        else if (split[1] == Item.D_Name)
+                                        {
+                                            item.Text = Item.D_Value.ToString();
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    item.Text = split[1].Remove(split[1].Length - 1).Remove(0, 1);
+                                }
+                            }
+                            else if (split[0].Split('.')[1] == "X")
+                            {
+                                item.X = int.Parse(split[1]);
+                            }
+                            else if (split[0].Split('.')[1] == "Y")
+                            {
+                                item.Y = int.Parse(split[1]);
+                            }
+                        }
+                    }
+                    foreach (var item in Tables)
+                    {
+                        if (line.StartsWith(item.ID))
+                        {
+                            string cleaned = line.Remove(0, item.ID.Length + 1);
+                            if (cleaned.StartsWith("SetValue("))
+                            {
+                                cleaned = cleaned.Replace("SetValue(", "");
+                                cleaned = cleaned.Remove(cleaned.Length - 1);
+                                if (cleaned.Split(',').Length == 3)
+                                {
+                                    item.SetValue(int.Parse(cleaned.Split(',')[1]) - 1, int.Parse(cleaned.Split(',')[0]) - 1, cleaned.Split(',')[2].Remove(cleaned.Split(',')[2].Length - 1).Remove(0, 1), false);
+                                }
+                                else
+                                {
+                                    string[] parts = cleaned.Split(",");
+                                    parts[0] = Variables.Find(d => d.S_Name == parts[0]).S_Value.Replace(" ", "");
+                                    if (parts[0].Split(',')[1].Length > 0)
+                                    {
+                                        item.SetValue(int.Parse(parts[0].Split(',')[1]) - 1, int.Parse(parts[0].Split(',')[0]) - 1, cleaned.Split(',')[1].Remove(cleaned.Split(',')[1].Length - 1).Remove(0, 1), false);
+                                    }
+                                }
+                            }
+                            //if (split[0].Split('.')[1] == "Content")
+                            //{
+                            //    if (!split[1].Contains("\""))
+                            //    {
+                            //        foreach (var Item in Variables)
+                            //        {
+                            //            if (split[1] == Item.S_Name)
+                            //            {
+                            //                item.SetValue() = Item.S_Value;
+                            //            }
+                            //            else if (split[1] == Item.I_Name)
+                            //            {
+                            //                item.Text = Item.I_Value.ToString();
+                            //            }
+                            //            else if (split[1] == Item.B_Name)
+                            //            {
+                            //                item.Text = Item.B_Value.ToString();
+                            //            }
+                            //            else if (split[1] == Item.F_Name)
+                            //            {
+                            //                item.Text = Item.F_Value.ToString();
+                            //            }
+                            //            else if (split[1] == Item.D_Name)
+                            //            {
+                            //                item.Text = Item.D_Value.ToString();
+                            //            }
+                            //        }
+                            //    }
+                            //    else
+                            //    {
+                            //        item.Text = split[1].Remove(split[1].Length - 1).Remove(0, 1);
+                            //    }
+                            //}
+                            //else if (split[0].Split('.')[1] == "X")
+                            //{
+                            //    item.X = int.Parse(split[1]);
+                            //}
+                            //else if (split[0].Split('.')[1] == "Y")
+                            //{
+                            //    item.Y = int.Parse(split[1]);
+                            //}
                         }
                     }
                     #endregion Graphical

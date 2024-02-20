@@ -27,6 +27,8 @@ namespace CrystalOSAlpha.UI_Elements
         public string ID { get; set; }
         public int XOffset = 0;
         public int YOffset = 0;
+        public bool Clicked = false;
+
         public Bitmap Canvas;
 
         public List<Cell> Cells = new List<Cell>();
@@ -141,7 +143,14 @@ namespace CrystalOSAlpha.UI_Elements
                 p.Selected = true;
                 return true;
             }
-            return false;
+            else
+            {
+                foreach (var v in Cells)
+                {
+                    v.Selected = false;
+                }
+                return true;
+            }
         }
         public void Select(int X, int Y)
         {

@@ -1,4 +1,5 @@
-﻿using Cosmos.Core.Memory;
+﻿using _3DRendering;
+using Cosmos.Core.Memory;
 using Cosmos.HAL;
 using Cosmos.System;
 using Cosmos.System.FileSystem;
@@ -97,7 +98,6 @@ namespace CrystalOS_Alpha
         public static int collect = 0;
 
         public static string Clipboard = "";
-
         protected override void Run()
         {
             SideNav.Core();
@@ -112,7 +112,7 @@ namespace CrystalOS_Alpha
 
             ImprovedVBE.display(vbe);
             vbe.Display();
-            if (collect >= 6)
+            if (collect >= 3)
             {
                 Heap.Collect();
                 collect = 0;

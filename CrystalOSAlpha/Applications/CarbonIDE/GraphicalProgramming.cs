@@ -300,6 +300,13 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     }
                     Box.Selected = true;
                 }
+                else
+                {
+                    if(MouseManager.MouseState == MouseState.Left)
+                    {
+                        Box.Selected = false;
+                    }
+                }
             }
 
             if (HZS[0].CheckClick((int)MouseManager.X - 933, (int)MouseManager.Y - 32))
@@ -462,6 +469,21 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                         }
                                         editing = true;
                                     }
+                                    else if (Typo == "TextBox")
+                                    {
+                                        if (int.Parse(t.GetValue(1, 2)) > 10)
+                                        {
+                                            if (int.Parse(t.GetValue(1, 1)) >= 22)
+                                            {
+                                                code = CodeGenerator.Generate(code, $"TextBox {ThatID} = new TextBox({t.GetValue(1, 0)}, {int.Parse(t.GetValue(1, 1)) - 22}, {t.GetValue(1, 2)}, {t.GetValue(1, 3)}, 60, 60, 60, \"{t.GetValue(1, 4)}\", \"{t.GetValue(1, 5)}\");");
+                                            }
+                                            else
+                                            {
+                                                code = CodeGenerator.Generate(code, $"TextBox {ThatID} = new TextBox({t.GetValue(1, 0)}, {int.Parse(t.GetValue(1, 1))}, {t.GetValue(1, 2)}, {t.GetValue(1, 3)}, 60, 60, 60, \"{t.GetValue(1, 4)}\", \"{t.GetValue(1, 5)}\");");
+                                            }
+                                        }
+                                        editing = true;
+                                    }
                                     else if (Typo == "Table")
                                     {
                                         if(int.TryParse(t.GetValue(1, 1), out int s) && int.TryParse(t.GetValue(1, 7), out int d) && int.TryParse(t.GetValue(1, 6), out int f))
@@ -492,7 +514,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
             if(preview.Code != code)
             {
                 //Kernel.Clipboard = code;
-                preview = new Window(20 - ((HZS[1].Pos - 20) * 2), 50, 999, 400, 300, 1, "New Window", false, icon, code);
+                preview = new Window(20, 50, 999, 400, 300, 1, "New Window", false, icon, code);
                 temp = true;
             }
 
@@ -613,6 +635,13 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                         Used.Add(new Applications.CarbonIDE.Elements(v.ID, false, Applications.CarbonIDE.Elements.Types.CheckBox));
                     }
                 }
+                foreach (var v in preview.TextBox)
+                {
+                    if (Used.Where(d => d.Name == v.ID).Count() == 0)
+                    {
+                        Used.Add(new Applications.CarbonIDE.Elements(v.ID, false, Applications.CarbonIDE.Elements.Types.TextBox));
+                    }
+                }
                 foreach (var v in preview.Tables)
                 {
                     if (Used.Where(d => d.Name == v.ID).Count() == 0)
@@ -684,6 +713,26 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                     t.SetValue(3, 0, "Slider.Value", true);
                                     t.SetValue(3, 1, preview.Slider.Find(d => d.ID == Used[i].Name).Value.ToString(), false);
                                     Typo = "Slider";
+                                }
+                                else if (Used[i].T == Applications.CarbonIDE.Elements.Types.TextBox)
+                                {
+                                    t = new Table(2, 7, 412, 600);
+                                    t.Initialize();
+                                    t.SetValue(0, 0, "TextBox.X", true);
+                                    t.SetValue(0, 1, preview.TextBox.Find(d => d.ID == Used[i].Name).X.ToString(), false);
+                                    t.SetValue(1, 0, "TextBox.Y", true);
+                                    t.SetValue(1, 1, preview.TextBox.Find(d => d.ID == Used[i].Name).Y.ToString(), false);
+                                    t.SetValue(2, 0, "TextBox.Width", true);
+                                    t.SetValue(2, 1, preview.TextBox.Find(d => d.ID == Used[i].Name).Width.ToString(), false);
+                                    t.SetValue(3, 0, "TextBox.Height", true);
+                                    t.SetValue(3, 1, preview.TextBox.Find(d => d.ID == Used[i].Name).Height.ToString(), false);
+                                    t.SetValue(4, 0, "TextBox.Content", true);
+                                    t.SetValue(4, 1, preview.TextBox.Find(d => d.ID == Used[i].Name).Text.ToString(), false);
+                                    t.SetValue(5, 0, "TextBox.Placeholder", true);
+                                    t.SetValue(5, 1, preview.TextBox.Find(d => d.ID == Used[i].Name).PlaceHolder.ToString(), false);
+                                    t.SetValue(6, 0, "TextBox.ID", true);
+                                    t.SetValue(6, 1, preview.TextBox.Find(d => d.ID == Used[i].Name).ID.ToString(), false);
+                                    Typo = "TextBox";
                                 }
                                 else if (Used[i].T == Applications.CarbonIDE.Elements.Types.CheckBox)
                                 {
@@ -870,6 +919,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
             Button,
             Label,
             Slider,
+            TextBox,
             CheckBox,
             Table
         }

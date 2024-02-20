@@ -409,12 +409,13 @@ namespace CrystalOSAlpha.SystemApps
             foreach (var Box in TextBox)
             {
                 Box.Box(window, Box.X, Box.Y);
-                if (Box.Clciked(x + Box.X, y + Box.Y) == true)
+                if (Box.Clciked(x + Box.X, y + Box.Y) == true && clicked == false)
                 {
                     foreach (var box2 in TextBox)
                     {
                         box2.Selected = false;
                     }
+                    clicked = true;
                     Box.Selected = true;
                 }
             }
@@ -460,6 +461,7 @@ namespace CrystalOSAlpha.SystemApps
                 execLoop.CheckBox = CheckBox;
                 execLoop.TextBox = TextBox;
                 execLoop.Dropdown = Dropdown;
+                execLoop.Tables = Tables;
                 execLoop.CurrentColor = CurrentColor;
                 execLoop.window = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
                 Array.Copy(window.RawData, 0, execLoop.window.RawData, 0, window.RawData.Length);
@@ -475,6 +477,11 @@ namespace CrystalOSAlpha.SystemApps
                 CheckBox = execLoop.CheckBox;
                 TextBox = execLoop.TextBox;
                 Dropdown = execLoop.Dropdown;
+                if(Tables != execLoop.Tables)
+                {
+                    temp = true;
+                }
+                Tables = execLoop.Tables;
                 if(CurrentColor != execLoop.CurrentColor)
                 {
                     once = true;
@@ -520,12 +527,28 @@ namespace CrystalOSAlpha.SystemApps
                 {
                     foreach (var v in Tables)
                     {
-                        if (v.Select2((int)MouseManager.X - x - v.X, (int)MouseManager.Y - y - v.Y))
+                        if(clicked == false)
                         {
-                            temp = true;
+                            if (v.Select2((int)MouseManager.X - x - v.X, (int)MouseManager.Y - y - v.Y))
+                            {
+                                foreach (var box in TextBox)
+                                {
+                                    if (box.Selected == true)
+                                    {
+                                        box.Selected = false;
+                                    }
+                                }
+                                temp = true;
+                                clicked = true;
+                            }
                         }
                     }
                 }
+            }
+
+            if (MouseManager.MouseState == MouseState.None)
+            {
+                clicked = false;
             }
 
             if(temp == true)
@@ -904,7 +927,7 @@ namespace CrystalOSAlpha.SystemApps
                 }
             }
             
-            if (part != 0 && CycleCount > 5)
+            if (part != 0 && CycleCount > 40)
             {
                 CSharp execLoop = new CSharp();
                 execLoop.Button = Button;
