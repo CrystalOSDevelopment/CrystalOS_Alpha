@@ -102,7 +102,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 //2. Loop of the window
                 //3. UI element actions
 
-                if(File.Exists(Path + ".app"))
+                if (File.Exists(Path + ".app"))
                 {
                     code = File.ReadAllText(Path + ".app");
                 }
@@ -111,7 +111,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     code = CodeGenerator.Generate(code, "");
                 }
 
-
+                code = CodeGenerator.Generate(code, "");
                 preview = new Window(20, 50, 999, 400, 300, 1, "New Window", false, icon, code);
 
                 #region Table Magic
@@ -334,11 +334,11 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 {
                     temp = true;
                     clicked = false;
-                    if(StoredX > 10 + preview.x && StoredX < 30 + preview.x + preview.width)
+                    if (StoredX > 10 + preview.x && StoredX < 30 + preview.x + preview.width)
                     {
-                        if(StoredY > 32 + preview.y && StoredY < 82 + preview.y + preview.height)
+                        if (StoredY > 32 + preview.y && StoredY < 82 + preview.y + preview.height)
                         {
-                            if(Selected == "Button")
+                            if (Selected == "Button")
                             {
                                 //code = CodeGenerator.Generate(code, "Button btn = new Button(10, 30, 110, 25, \"Hello World\", 1, 1, 1);");
                                 int ex = StoredX - 10 - preview.x;
@@ -511,14 +511,14 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 }
             }
 
-            if(preview.Code != code)
+            if (preview.Code != code)
             {
                 //Kernel.Clipboard = code;
                 preview = new Window(20, 50, 999, 400, 300, 1, "New Window", false, icon, code);
                 temp = true;
             }
 
-            if(temp == true)
+            if (temp == true)
             {
                 //Copying canvas to window
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
@@ -607,9 +607,9 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 Top = 50;
                 Left = 900;
                 Used.Clear();
-                foreach(var v in preview.Button)
+                foreach (var v in preview.Button)
                 {
-                    if(Used.Where(d => d.Name == v.ID).Count() == 0)
+                    if (Used.Where(d => d.Name == v.ID).Count() == 0)
                     {
                         Used.Add(new Applications.CarbonIDE.Elements(v.ID, false, Applications.CarbonIDE.Elements.Types.Button));
                     }

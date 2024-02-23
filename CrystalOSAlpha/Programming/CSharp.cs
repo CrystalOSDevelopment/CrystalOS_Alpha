@@ -2023,6 +2023,31 @@ namespace CrystalOSAlpha.Programming
                                 }
                             }
                         }
+                        if (line.Contains("Copy"))
+                        {
+                            string temp = input.Replace("File.Copy(", "");
+                            temp = temp.Remove(temp.Length - 2);
+
+
+                            string[] args = temp.Split(",");
+
+                            if (File.Exists(args[0].Replace("\"", "")))
+                            {
+                                try
+                                {
+                                    //File.Move(args[0].Replace("\"", ""), args[1].Replace("\"", ""));
+                                    string s = File.ReadAllText(args[0].Replace("\"", ""));
+                                    Kernel.Clipboard = s;
+                                    File.Delete(args[0].Replace("\"", ""));
+                                    File.Create(args[1].Replace("\"", ""));
+                                    File.WriteAllText(args[1].Replace("\"", ""), s);
+                                }
+                                catch (Exception e)
+                                {
+                                    Kernel.Clipboard = e.Message;
+                                }
+                            }
+                        }
                     }
                     #endregion System IO
 

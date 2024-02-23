@@ -23,6 +23,7 @@ using CrystalOSAlpha.Graphics.Icons;
 using CrystalOSAlpha.Graphics.TaskBar;
 using CrystalOSAlpha.Graphics.Widgets;
 using CrystalOSAlpha.Programming;
+using CrystalOSAlpha.SystemApps;
 using CrystalOSAlpha.UI_Elements;
 using IL2CPU.API.Attribs;
 using ProjectDMG;
@@ -32,6 +33,7 @@ using System.ComponentModel.Design;
 using System.Data;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using EndPoint = Cosmos.System.Network.IPv4.EndPoint;
@@ -63,7 +65,8 @@ namespace CrystalOS_Alpha
                     File.Create("0:\\index.html");
                 }
                 //File.WriteAllText("0:\\index.html", Network("example.com/index.html"));
-                Directory.CreateDirectory("0:\\User");
+                Directory.CreateDirectory("0:\\User\\Source");
+                Directory.CreateDirectory("0:\\Programs");
             }
 
             FPS_Counter f = new FPS_Counter();
@@ -112,14 +115,21 @@ namespace CrystalOS_Alpha
 
             ImprovedVBE.display(vbe);
             vbe.Display();
-            if (collect >= 3)
+            if(TaskScheduler.Apps.Where(d => d.width > 800).Count() > 1)
             {
                 Heap.Collect();
-                collect = 0;
             }
             else
             {
-                collect++;
+                if (collect >= 6)
+                {
+                    Heap.Collect();
+                    collect = 0;
+                }
+                else
+                {
+                    collect++;
+                }
             }
         }
 

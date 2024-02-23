@@ -6,6 +6,7 @@ using CrystalOSAlpha.Applications.FileSys;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics.Icons;
+using CrystalOSAlpha.Programming;
 using CrystalOSAlpha.UI_Elements;
 using System;
 using System.Collections.Generic;
@@ -306,6 +307,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                     if (value[0].Highlighted == true)
                                     {
                                         File.WriteAllText(SourceofProject + "\\" + namedProject + "\\" + namedProject + ".sln", "Program_mode = Terminal");
+                                        File.Create(SourceofProject + "\\" + namedProject + "\\" + namedProject + ".cmd");
 
                                         CarbonIDE ide = new CarbonIDE();
                                         ide.x = 0;
@@ -324,6 +326,9 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                     else if (value[1].Highlighted == true)
                                     {
                                         File.WriteAllText(SourceofProject + "\\" + namedProject + "\\" + namedProject + ".sln", "Program_mode = Graphical");
+                                        File.Create(SourceofProject + "\\" + namedProject + "\\" + namedProject + ".app");
+                                        File.WriteAllText(SourceofProject + "\\" + namedProject + "\\" + namedProject + ".app", CodeGenerator.Generate("", ""));
+                                        
                                         GraphicalProgramming ide = new GraphicalProgramming();
                                         ide.x = 0;
                                         ide.y = 0;

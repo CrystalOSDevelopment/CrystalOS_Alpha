@@ -22,7 +22,7 @@ namespace CrystalOSAlpha.Programming
                                 "    this.Height = 300;\n" +
                                 "    this.Titlebar = true;\n" +
                                 "    this.RGB = 60, 60, 60;\n" +
-                                "    Table table = new Table(10, 50, 10, 10, 480, 200);\n" +
+                                //"    Table table = new Table(10, 50, 10, 10, 480, 200, 480, 200);\n" +
                                 "}\n" +
                                 "#void Looping\n" + 
                                 "{\n" +

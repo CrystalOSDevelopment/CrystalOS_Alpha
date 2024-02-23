@@ -61,6 +61,43 @@ namespace CrystalOSAlpha.SystemApps
         public List<TextBox> TextBox = new List<TextBox>();
         public List<label> Label = new List<label>();
         public List<Table> Tables = new List<Table>();
+
+        //public Submenu sm = new Submenu("File",
+        //    new List<Items>
+        //    {
+        //        new Items("New", ""),
+        //        new Items("Open", ""),
+        //        new Items("Save", ""),
+        //        new Items("Close", ""),
+        //    });
+        public MenuBar mb = new MenuBar(
+            new List<string>
+            {
+                "File",
+                "Help",
+                "About"
+            },
+            new List<Submenu>
+            {
+                new Submenu("File",
+                    new List<Items>
+                    {
+                        new Items("New", ""),
+                        new Items("Open", ""),
+                        new Items("Save", ""),
+                        new Items("Close", ""),
+                    }),
+                new Submenu("Help",
+                    new List<Items>
+                    {
+                        new Items("Getting Started", ""),
+                    }),
+                new Submenu("About",
+                    new List<Items>
+                    {
+                        new Items("Version", ""),
+                    })
+            });
         #endregion UI_Elements
 
         public string Code = "";
@@ -355,6 +392,7 @@ namespace CrystalOSAlpha.SystemApps
                     Checkbox.Render(window);
                 }
 
+
                 //window.RawData = canvas.RawData;
                 back_canvas = canvas;
                 once = false;
@@ -551,14 +589,102 @@ namespace CrystalOSAlpha.SystemApps
                 clicked = false;
             }
 
-            if(temp == true)
+            if(temp == true || mb.Render(window) == true)
             {
+                Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
+
+                foreach (var button in Button)
+                {
+                    if (MouseManager.MouseState == MouseState.Left)
+                    {
+                        if (MouseManager.X > x + button.X && MouseManager.X < x + button.X + button.Width)
+                        {
+                            if (MouseManager.Y > y + button.Y && MouseManager.Y < y + button.Y + button.Height)
+                            {
+                                if (button.Clicked == false)
+                                {
+                                    button.Clicked = true;
+                                    once = true;
+                                    clicked = true;
+                                }
+                            }
+                        }
+                    }
+                    if (button.Clicked == true && MouseManager.MouseState == MouseState.None)
+                    {
+                        once = true;
+                        button.Clicked = false;
+                        clicked = false;
+                    }
+                }
+
+                foreach (var slid in Slider)
+                {
+                    int val = slid.Value;
+                    if (slid.CheckForClick(x, y))
+                    {
+                        slid.Clicked = true;
+                    }
+                    if (slid.Clicked == true)
+                    {
+                        slid.UpdateValue(x);
+                        if (val != slid.Value)
+                        {
+                            once = true;
+                        }
+                        if (MouseManager.MouseState == MouseState.None)
+                        {
+                            slid.Clicked = false;
+                        }
+                    }
+                }
+
+                foreach (var Box in TextBox)
+                {
+                    Box.Box(window, Box.X, Box.Y);
+                    if (Box.Clciked(x + Box.X, y + Box.Y) == true && clicked == false)
+                    {
+                        foreach (var box2 in TextBox)
+                        {
+                            box2.Selected = false;
+                        }
+                        clicked = true;
+                        Box.Selected = true;
+                    }
+                }
+
+                foreach (var slid in CheckBox)
+                {
+                    bool val = slid.Value;
+                    if (slid.CheckForClick(x, y))
+                    {
+                        slid.Clicked = true;
+                    }
+                    if (slid.Clicked == true && MouseManager.MouseState == MouseState.None)
+                    {
+                        if (slid.Value == false)
+                        {
+                            slid.Value = true;
+                        }
+                        else
+                        {
+                            slid.Value = false;
+                        }
+                        once = true;
+                        slid.Clicked = false;
+                    }
+                }
+
                 foreach (var T in Tables)
                 {
                     T.Render(window);
                 }
+
+                mb.Render(window);
                 temp = false;
             }
+
+            //sm.Render(window, 3, 57);
 
             if (x == 0 && window.Width == ImprovedVBE.width)
             {
@@ -619,9 +745,9 @@ namespace CrystalOSAlpha.SystemApps
                             {
                                 trimmed = trimmed.Replace("this.Width=", "");
                                 trimmed = trimmed.Remove(trimmed.Length - 1);
-                                if(int.TryParse(trimmed, out int s))
+                                if (int.TryParse(trimmed, out int s))
                                 {
-                                    if(s > 50)
+                                    if (s > 50)
                                     {
                                         this.width = s;
                                     }
@@ -631,9 +757,9 @@ namespace CrystalOSAlpha.SystemApps
                             {
                                 trimmed = trimmed.Replace("this.Height=", "");
                                 trimmed = trimmed.Remove(trimmed.Length - 1);
-                                if(int.TryParse(trimmed, out int s))
+                                if (int.TryParse(trimmed, out int s))
                                 {
-                                    if(s > 50)
+                                    if (s > 50)
                                     {
                                         this.height = s;
                                     }
@@ -670,7 +796,7 @@ namespace CrystalOSAlpha.SystemApps
                                 string[] values = parts[1].Replace("new(", "").Split(",");
                                 //Store the values
                                 //Label.Add(new label(int.Parse(values[0]), int.Parse(values[1]), values[2].Remove(values[2].Length - 1).Remove(0, 1), ImprovedVBE.colourToNumber(int.Parse(values[3]), int.Parse(values[4]), int.Parse(values[5])), name));
-                                
+
                                 //Kernel.Clipboard += int.Parse(values[0]) + int.Parse(values[1]) + values[2].Remove(values[2].Length - 1).Remove(0, 1) + ImprovedVBE.colourToNumber(int.Parse(values[^3]), int.Parse(values[^2]), int.Parse(values[^1])) + name;
                                 Label.Add(new label(int.Parse(values[0]), int.Parse(values[1]), parts[1].Substring(parts[1].IndexOf('\"') + 1, parts[1].LastIndexOf('\"') - parts[1].IndexOf('\"') - 1), ImprovedVBE.colourToNumber(int.Parse(values[^3]), int.Parse(values[^2]), int.Parse(values[^1])), name));
 
@@ -746,8 +872,11 @@ namespace CrystalOSAlpha.SystemApps
                                 //    Kernel.Clipboard += s + "\n";
                                 //}
 
-                                Tables.Add(new Table(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]), int.Parse(values[4]), int.Parse(values[5]), name, int.Parse(values[6]), int.Parse(values[7])));
-                                Tables[^1].Initialize();
+                                if(values.Length == 8)
+                                {
+                                    Tables.Add(new Table(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]), int.Parse(values[4]), int.Parse(values[5]), name, int.Parse(values[6]), int.Parse(values[7])));
+                                    Tables[^1].Initialize();
+                                }
                             }
                         }
                     }
