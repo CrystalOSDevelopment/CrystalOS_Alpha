@@ -3,6 +3,7 @@ using Cosmos.System.Graphics;
 using CrystalOS_Alpha;
 using CrystalOSAlpha.Applications;
 using CrystalOSAlpha.Applications.Gameboy;
+using CrystalOSAlpha.Applications.WebscapeNavigator;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics.Icons;
@@ -13,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Metrics;
 using System.Drawing;
+using System.IO;
 using System.Runtime.CompilerServices;
 using static IL2CPU.API.Attribs.AsmMarker;
 using Kernel = CrystalOS_Alpha.Kernel;
@@ -30,6 +32,7 @@ namespace CrystalOSAlpha.SystemApps
         public int height { get; set; }
 
         public int desk_ID { get; set; }
+        public int AppID { get; set; }
 
         public string name { get; set; }
 
@@ -61,6 +64,8 @@ namespace CrystalOSAlpha.SystemApps
         public List<TextBox> TextBox = new List<TextBox>();
         public List<label> Label = new List<label>();
         public List<Table> Tables = new List<Table>();
+        public List<Bitmap> Picturebox = new List<Bitmap>();
+        public List<Variables> Vars = new List<Variables>();
 
         //public Submenu sm = new Submenu("File",
         //    new List<Items>
@@ -70,34 +75,8 @@ namespace CrystalOSAlpha.SystemApps
         //        new Items("Save", ""),
         //        new Items("Close", ""),
         //    });
-        public MenuBar mb = new MenuBar(
-            new List<string>
-            {
-                "File",
-                "Help",
-                "About"
-            },
-            new List<Submenu>
-            {
-                new Submenu("File",
-                    new List<Items>
-                    {
-                        new Items("New", ""),
-                        new Items("Open", ""),
-                        new Items("Save", ""),
-                        new Items("Close", ""),
-                    }),
-                new Submenu("Help",
-                    new List<Items>
-                    {
-                        new Items("Getting Started", ""),
-                    }),
-                new Submenu("About",
-                    new List<Items>
-                    {
-                        new Items("Version", ""),
-                    })
-            });
+        public MenuBar mb;
+        public bool HasMB = false;
         #endregion UI_Elements
 
         public string Code = "";
@@ -125,6 +104,25 @@ namespace CrystalOSAlpha.SystemApps
                 }
                 else
                 {
+                    foreach (string s in Parts)
+                    {
+                        if (s.Contains("Menubar"))
+                        {
+                            mb = new GenerateMenubar().Generate(s);
+                            HasMB = true;
+                        }
+                        else if (s.Contains("Define Variables"))
+                        {
+                            CSharp cs = new CSharp();
+                            cs.Variables = Vars;
+                            string[] lines2 = s.Split('\n');
+                            for (int i = 2; i < lines2.Length; i++)
+                            {
+                                cs.Returning_methods(lines2[i]);
+                            }
+                            Vars = cs.Variables;
+                        }
+                    }
                     if (!Parts[0].Trim().StartsWith("#Define Window_Main"))
                     {
                         TaskScheduler.Apps.Add(new MsgBox(999, 100, 100, 400, 200, "Error!", "Failed to Initialize window!\nNo propeties were found!", ImprovedVBE.ScaleImageStock(ImageViewer.Nr1, 56, 56)));
@@ -204,9 +202,14 @@ namespace CrystalOSAlpha.SystemApps
                                 //Read data from new()
                                 string[] values = parts[1].Replace("new(", "").Split(",");
                                 //Store the values
-                                //Label.Add(new label(int.Parse(values[0]), int.Parse(values[1]), values[2].Remove(values[2].Length - 1).Remove(0, 1), ImprovedVBE.colourToNumber(int.Parse(values[3]), int.Parse(values[4]), int.Parse(values[5])), name));
-                                //Kernel.Clipboard += int.Parse(values[0]) + int.Parse(values[1]) + values[2].Remove(values[2].Length - 1).Remove(0, 1) + ImprovedVBE.colourToNumber(int.Parse(values[^3]), int.Parse(values[^2]), int.Parse(values[^1])) + name;
-                                Label.Add(new label(int.Parse(values[0]), int.Parse(values[1]), parts[1].Substring(parts[1].IndexOf('\"') + 1, parts[1].LastIndexOf('\"') - parts[1].IndexOf('\"') - 1), ImprovedVBE.colourToNumber(int.Parse(values[^3]), int.Parse(values[^2]), int.Parse(values[^1])), name));
+                                if (parts[1].Contains("\""))
+                                {
+                                    Label.Add(new label(int.Parse(values[0]), int.Parse(values[1]), parts[1].Substring(parts[1].IndexOf('\"') + 1, parts[1].LastIndexOf('\"') - parts[1].IndexOf('\"') - 1), ImprovedVBE.colourToNumber(int.Parse(values[^3]), int.Parse(values[^2]), int.Parse(values[^1])), name));
+                                }
+                                else
+                                {
+                                    Label.Add(new label(int.Parse(values[0]), int.Parse(values[1]), Vars.Find(var => var.S_Name == values[2]).S_Value, ImprovedVBE.colourToNumber(int.Parse(values[^3]), int.Parse(values[^2]), int.Parse(values[^1])), name));
+                                }
                             }
                             else if (trimmed.StartsWith("Button"))
                             {
@@ -272,13 +275,34 @@ namespace CrystalOSAlpha.SystemApps
                                 string name = parts[0];
                                 //Read data from new()
                                 string[] values = parts[1].Replace("new(", "").Split(",");
-                                //foreach(string s in values)
-                                //{
-                                //    Kernel.Clipboard += s + "\n";
-                                //}
 
                                 Tables.Add(new Table(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]), int.Parse(values[4]), int.Parse(values[5]), name, int.Parse(values[6]), int.Parse(values[7])));
                                 Tables[^1].Initialize();
+                            }
+                            else if (trimmed.StartsWith("PictureBox"))
+                            {
+                                trimmed = trimmed.Replace("PictureBox", "");
+                                trimmed = trimmed.Remove(trimmed.Length - 2);
+                                //separate by =
+                                string[] parts = trimmed.Split('=');
+                                //Store the name
+                                string name = parts[0];
+                                //Read data from new()
+                                string[] values = parts[1].Replace("new(", "").Split(",");
+
+                                //Tables.Add(new Table(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]), int.Parse(values[4]), int.Parse(values[5]), name, int.Parse(values[6]), int.Parse(values[7])));
+                                //Tables[^1].Initialize();
+                                if (int.TryParse(values[0], out int XAxis))
+                                {
+                                    if (XAxis == 0 && File.Exists(values[2].Replace("\"", "")))
+                                    {
+                                        Bitmap temp = new Bitmap(values[2].Replace("\"", ""));
+                                        if(temp.Width == width)
+                                        {
+                                            Picturebox.Add(temp);
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -316,11 +340,18 @@ namespace CrystalOSAlpha.SystemApps
                     BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, name, 2, 2);
                 }
 
+                Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
+
+                foreach(var img in Picturebox)
+                {
+                    Array.Copy(img.RawData, 0, window.RawData, window.Width * 22, img.RawData.Length);
+                }
+
                 foreach (var button in Button)
                 {
                     if (button.Clicked == true)
                     {
-                        UI_Elements.Button.Button_render(canvas, button.X, button.Y, button.Width, button.Height, ComplimentaryColor.Generate(button.Color).ToArgb(), button.Text);
+                        UI_Elements.Button.Button_render(window, button.X, button.Y, button.Width, button.Height, ComplimentaryColor.Generate(button.Color).ToArgb(), button.Text);
 
                         //Need to think about this one for a bit...
                         foreach (var p in Parts)
@@ -366,11 +397,9 @@ namespace CrystalOSAlpha.SystemApps
                     }
                     else
                     {
-                        UI_Elements.Button.Button_render(canvas, button.X, button.Y, button.Width, button.Height, button.Color, button.Text);
+                        UI_Elements.Button.Button_render(window, button.X, button.Y, button.Width, button.Height, button.Color, button.Text);
                     }
                 }
-
-                Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
 
                 foreach (label l in Label)
                 {
@@ -391,7 +420,6 @@ namespace CrystalOSAlpha.SystemApps
                 {
                     Checkbox.Render(window);
                 }
-
 
                 //window.RawData = canvas.RawData;
                 back_canvas = canvas;
@@ -501,12 +529,29 @@ namespace CrystalOSAlpha.SystemApps
                 execLoop.Dropdown = Dropdown;
                 execLoop.Tables = Tables;
                 execLoop.CurrentColor = CurrentColor;
+                execLoop.Variables = Vars;
                 execLoop.window = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
                 Array.Copy(window.RawData, 0, execLoop.window.RawData, 0, window.RawData.Length);
                 string[] lines2 = Parts[part].Split('\n');
                 for (int i = 2; i < lines2.Length && execLoop.Clipboard != "Terminate"; i++)
                 {
                     execLoop.Returning_methods(lines2[i]);
+                }
+                if (HasMB)
+                {
+                    var Message = WindowMessenger.Recieve("Submenu", AppID.ToString());
+                    if(Message != null)
+                    {
+                        WindowMessenger.Message.RemoveAll(d => d.From == Message.From && d.Message == Message.Message);
+                        if(Message.Message.Length != 0)
+                        {
+                            lines2 = Message.Message.Split('\n');
+                            for (int i = 0; i < lines2.Length && execLoop.Clipboard != "Terminate"; i++)
+                            {
+                                execLoop.Returning_methods(lines2[i]);
+                            }
+                        }
+                    }
                 }
                 Button = execLoop.Button;
                 Slider = execLoop.Slider;
@@ -515,6 +560,7 @@ namespace CrystalOSAlpha.SystemApps
                 CheckBox = execLoop.CheckBox;
                 TextBox = execLoop.TextBox;
                 Dropdown = execLoop.Dropdown;
+                Vars = execLoop.Variables;
                 if(Tables != execLoop.Tables)
                 {
                     temp = true;
@@ -589,102 +635,196 @@ namespace CrystalOSAlpha.SystemApps
                 clicked = false;
             }
 
-            if(temp == true || mb.Render(window) == true)
+            if (HasMB)
             {
-                Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
-
-                foreach (var button in Button)
+                if(temp == true || mb.Render(window, AppID) == true)
                 {
-                    if (MouseManager.MouseState == MouseState.Left)
+                    Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
+
+                    foreach (var button in Button)
                     {
-                        if (MouseManager.X > x + button.X && MouseManager.X < x + button.X + button.Width)
+                        if (MouseManager.MouseState == MouseState.Left)
                         {
-                            if (MouseManager.Y > y + button.Y && MouseManager.Y < y + button.Y + button.Height)
+                            if (MouseManager.X > x + button.X && MouseManager.X < x + button.X + button.Width)
                             {
-                                if (button.Clicked == false)
+                                if (MouseManager.Y > y + button.Y && MouseManager.Y < y + button.Y + button.Height)
                                 {
-                                    button.Clicked = true;
-                                    once = true;
-                                    clicked = true;
+                                    if (button.Clicked == false)
+                                    {
+                                        button.Clicked = true;
+                                        once = true;
+                                        clicked = true;
+                                    }
                                 }
                             }
                         }
-                    }
-                    if (button.Clicked == true && MouseManager.MouseState == MouseState.None)
-                    {
-                        once = true;
-                        button.Clicked = false;
-                        clicked = false;
-                    }
-                }
-
-                foreach (var slid in Slider)
-                {
-                    int val = slid.Value;
-                    if (slid.CheckForClick(x, y))
-                    {
-                        slid.Clicked = true;
-                    }
-                    if (slid.Clicked == true)
-                    {
-                        slid.UpdateValue(x);
-                        if (val != slid.Value)
+                        if (button.Clicked == true && MouseManager.MouseState == MouseState.None)
                         {
                             once = true;
+                            button.Clicked = false;
+                            clicked = false;
                         }
-                        if (MouseManager.MouseState == MouseState.None)
+                    }
+
+                    foreach (var slid in Slider)
+                    {
+                        int val = slid.Value;
+                        if (slid.CheckForClick(x, y))
                         {
+                            slid.Clicked = true;
+                        }
+                        if (slid.Clicked == true)
+                        {
+                            slid.UpdateValue(x);
+                            if (val != slid.Value)
+                            {
+                                once = true;
+                            }
+                            if (MouseManager.MouseState == MouseState.None)
+                            {
+                                slid.Clicked = false;
+                            }
+                        }
+                    }
+
+                    foreach (var Box in TextBox)
+                    {
+                        Box.Box(window, Box.X, Box.Y);
+                        if (Box.Clciked(x + Box.X, y + Box.Y) == true && clicked == false)
+                        {
+                            foreach (var box2 in TextBox)
+                            {
+                                box2.Selected = false;
+                            }
+                            clicked = true;
+                            Box.Selected = true;
+                        }
+                    }
+
+                    foreach (var slid in CheckBox)
+                    {
+                        bool val = slid.Value;
+                        if (slid.CheckForClick(x, y))
+                        {
+                            slid.Clicked = true;
+                        }
+                        if (slid.Clicked == true && MouseManager.MouseState == MouseState.None)
+                        {
+                            if (slid.Value == false)
+                            {
+                                slid.Value = true;
+                            }
+                            else
+                            {
+                                slid.Value = false;
+                            }
+                            once = true;
                             slid.Clicked = false;
                         }
                     }
-                }
 
-                foreach (var Box in TextBox)
-                {
-                    Box.Box(window, Box.X, Box.Y);
-                    if (Box.Clciked(x + Box.X, y + Box.Y) == true && clicked == false)
+                    foreach (var T in Tables)
                     {
-                        foreach (var box2 in TextBox)
-                        {
-                            box2.Selected = false;
-                        }
-                        clicked = true;
-                        Box.Selected = true;
+                        T.Render(window);
                     }
-                }
 
-                foreach (var slid in CheckBox)
-                {
-                    bool val = slid.Value;
-                    if (slid.CheckForClick(x, y))
-                    {
-                        slid.Clicked = true;
-                    }
-                    if (slid.Clicked == true && MouseManager.MouseState == MouseState.None)
-                    {
-                        if (slid.Value == false)
-                        {
-                            slid.Value = true;
-                        }
-                        else
-                        {
-                            slid.Value = false;
-                        }
-                        once = true;
-                        slid.Clicked = false;
-                    }
+                    mb.Render(window, AppID);
+                    temp = false;
                 }
-
-                foreach (var T in Tables)
-                {
-                    T.Render(window);
-                }
-
-                mb.Render(window);
-                temp = false;
             }
+            else
+            {
+                if (temp == true)
+                {
+                    foreach (var button in Button)
+                    {
+                        if (MouseManager.MouseState == MouseState.Left)
+                        {
+                            if (MouseManager.X > x + button.X && MouseManager.X < x + button.X + button.Width)
+                            {
+                                if (MouseManager.Y > y + button.Y && MouseManager.Y < y + button.Y + button.Height)
+                                {
+                                    if (button.Clicked == false)
+                                    {
+                                        button.Clicked = true;
+                                        once = true;
+                                        clicked = true;
+                                    }
+                                }
+                            }
+                        }
+                        if (button.Clicked == true && MouseManager.MouseState == MouseState.None)
+                        {
+                            once = true;
+                            button.Clicked = false;
+                            clicked = false;
+                        }
+                    }
 
-            //sm.Render(window, 3, 57);
+                    foreach (var slid in Slider)
+                    {
+                        int val = slid.Value;
+                        if (slid.CheckForClick(x, y))
+                        {
+                            slid.Clicked = true;
+                        }
+                        if (slid.Clicked == true)
+                        {
+                            slid.UpdateValue(x);
+                            if (val != slid.Value)
+                            {
+                                once = true;
+                            }
+                            if (MouseManager.MouseState == MouseState.None)
+                            {
+                                slid.Clicked = false;
+                            }
+                        }
+                    }
+
+                    foreach (var Box in TextBox)
+                    {
+                        Box.Box(window, Box.X, Box.Y);
+                        if (Box.Clciked(x + Box.X, y + Box.Y) == true && clicked == false)
+                        {
+                            foreach (var box2 in TextBox)
+                            {
+                                box2.Selected = false;
+                            }
+                            clicked = true;
+                            Box.Selected = true;
+                        }
+                    }
+
+                    foreach (var slid in CheckBox)
+                    {
+                        bool val = slid.Value;
+                        if (slid.CheckForClick(x, y))
+                        {
+                            slid.Clicked = true;
+                        }
+                        if (slid.Clicked == true && MouseManager.MouseState == MouseState.None)
+                        {
+                            if (slid.Value == false)
+                            {
+                                slid.Value = true;
+                            }
+                            else
+                            {
+                                slid.Value = false;
+                            }
+                            once = true;
+                            slid.Clicked = false;
+                        }
+                    }
+
+                    foreach (var T in Tables)
+                    {
+                        T.Render(window);
+                    }
+                    temp = false;
+                }
+            }
 
             if (x == 0 && window.Width == ImprovedVBE.width)
             {

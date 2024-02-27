@@ -21,7 +21,7 @@ namespace CrystalOSAlpha.Graphics.Widgets
         public int height { get; set; }
 
         public int desk_ID { get; set; }
-
+        public int AppID { get; set; }
         public string name { get; set; }
 
         public bool minimised { get; set; }

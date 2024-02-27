@@ -1,12 +1,15 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
+using CrystalOSAlpha.SystemApps;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using Kernel = CrystalOS_Alpha.Kernel;
 
 namespace CrystalOSAlpha.UI_Elements
 {
@@ -23,7 +26,7 @@ namespace CrystalOSAlpha.UI_Elements
             this.SubmenuList = SubmenuList;
             this.SubmenuNames = SubmenuNames;
         }
-        public bool Render(Bitmap Canvas)
+        public bool Render(Bitmap Canvas, int AppID)
         {
             ImprovedVBE.DrawFilledRectangle(Canvas, ImprovedVBE.colourToNumber(255, 255, 255), 0, 22, (int)Canvas.Width, 30, false);
             XOff = 5;
@@ -35,7 +38,7 @@ namespace CrystalOSAlpha.UI_Elements
                 {
                     if(MouseManager.Y > 22 && MouseManager.Y < 52)
                     {
-                        ImprovedVBE.DrawFilledRectangle(Canvas, Color.Aqua.ToArgb(), XOff, 22, temp, 30, false);
+                        ImprovedVBE.DrawFilledRectangle(Canvas, Color.LightBlue.ToArgb(), XOff, 22, temp, 30, false);
                     }
                 }
                 XOff += BitFont.DrawBitFontString(Canvas, "ArialCustomCharset16", Color.Black, s, XOff, 30) + 15;
@@ -102,7 +105,7 @@ namespace CrystalOSAlpha.UI_Elements
                 }
                 if(v.Clicked == true)
                 {
-                    v.Render(Canvas, 3, 55);
+                    v.Render(Canvas, 3, 55, AppID);
                 }
             }
             Coord.Clear();
@@ -124,7 +127,8 @@ namespace CrystalOSAlpha.UI_Elements
             this.ID = ID;
             this.items = items;
         }
-        public void Render(Bitmap Canvas, int X, int Y)
+        public bool sent = false;
+        public void Render(Bitmap Canvas, int X, int Y, int AppID)
         {
             if(Clicked)
             {
@@ -132,6 +136,26 @@ namespace CrystalOSAlpha.UI_Elements
                 int offsteY = 3;
                 for(int i = 0; i < items.Count; i++)
                 {
+                    if(MouseManager.Y > Y + offsteY && MouseManager.Y < Y + offsteY + 20)
+                    {
+                        if(MouseManager.X > X && MouseManager.X < X + 200)
+                        {
+                            if (MouseManager.MouseState == MouseState.Left)
+                            {
+                                if(sent == false)
+                                {
+                                    WindowMessenger.Send(new WindowMessage(items[i].Code, "Submenu", AppID.ToString()));
+                                    sent = true;
+                                }
+                                //Kernel.Clipboard = items[i].Code;
+                            }
+                            ImprovedVBE.DrawFilledRectangle(Canvas, Color.LightBlue.ToArgb(), X + 1, Y + offsteY - 2, 198, 20, false);
+                        }
+                    }
+                    if(MouseManager.MouseState == MouseState.None)
+                    {
+                        sent = false;
+                    }
                     BitFont.DrawBitFontString(Canvas, "ArialCustomCharset16", Color.Black, items[i].Name, X + 3, Y + offsteY);
                     offsteY += 20;
                 }

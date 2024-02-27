@@ -26,7 +26,7 @@ namespace CrystalOSAlpha.Applications.FileSys
         public int height { get; set; }
 
         public int desk_ID {get; set; }
-
+        public int AppID { get; set; }
         public string name {get; set;}
 
         public bool minimised { get; set; }
@@ -330,7 +330,7 @@ namespace CrystalOSAlpha.Applications.FileSys
                                 }
                                 if(entry.type == Opt.File)
                                 {
-                                    if (entry.name.EndsWith(".html"))
+                                    if (entry.name.ToLower().EndsWith(".html"))
                                     {
                                         WebscapeNavigator.Webscape wn = new WebscapeNavigator.Webscape();
                                         wn.content = File.ReadAllText(entry.fullPath);
@@ -345,23 +345,23 @@ namespace CrystalOSAlpha.Applications.FileSys
 
                                         TaskScheduler.Apps.Add(wn);
                                     }
-                                    else if (entry.name.EndsWith(".cmd"))
+                                    else if (entry.name.ToLower().EndsWith(".cmd"))
                                     {
                                         CSharp c = new CSharp();
                                         c.Executor(File.ReadAllText(entry.fullPath));
                                     }
-                                    else if (entry.name.EndsWith(".app"))
+                                    else if (entry.name.ToLower().EndsWith(".app"))
                                     {
                                         TaskScheduler.Apps.Add(new Window(100, 100, 999, 350, 200, 0, "Untitled", false, icon, File.ReadAllText(entry.fullPath)));
                                     }
-                                    else if (entry.name.EndsWith(".bin"))
+                                    else if (entry.name.ToLower().EndsWith(".bin"))
                                     {
 
                                     }
-                                    else if (entry.name.EndsWith(".bmp"))
+                                    else if (entry.name.ToLower().EndsWith(".bmp"))
                                     {
                                         //Time to write an image viewer app!
-                                        //Kernel.temp = new Bitmap(entry.fullPath);
+                                        //Kernel.image = new Bitmap(entry.fullPath);
                                     }
                                     else
                                     {

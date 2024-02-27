@@ -2037,8 +2037,7 @@ namespace CrystalOSAlpha.Programming
                                 {
                                     //File.Move(args[0].Replace("\"", ""), args[1].Replace("\"", ""));
                                     string s = File.ReadAllText(args[0].Replace("\"", ""));
-                                    Kernel.Clipboard = s;
-                                    File.Delete(args[0].Replace("\"", ""));
+                                    //File.Delete(args[0].Replace("\"", ""));
                                     File.Create(args[1].Replace("\"", ""));
                                     File.WriteAllText(args[1].Replace("\"", ""), s);
                                 }
@@ -2287,47 +2286,62 @@ namespace CrystalOSAlpha.Programming
                                     }
                                 }
                             }
-                            //if (split[0].Split('.')[1] == "Content")
-                            //{
-                            //    if (!split[1].Contains("\""))
-                            //    {
-                            //        foreach (var Item in Variables)
-                            //        {
-                            //            if (split[1] == Item.S_Name)
-                            //            {
-                            //                item.SetValue() = Item.S_Value;
-                            //            }
-                            //            else if (split[1] == Item.I_Name)
-                            //            {
-                            //                item.Text = Item.I_Value.ToString();
-                            //            }
-                            //            else if (split[1] == Item.B_Name)
-                            //            {
-                            //                item.Text = Item.B_Value.ToString();
-                            //            }
-                            //            else if (split[1] == Item.F_Name)
-                            //            {
-                            //                item.Text = Item.F_Value.ToString();
-                            //            }
-                            //            else if (split[1] == Item.D_Name)
-                            //            {
-                            //                item.Text = Item.D_Value.ToString();
-                            //            }
-                            //        }
-                            //    }
-                            //    else
-                            //    {
-                            //        item.Text = split[1].Remove(split[1].Length - 1).Remove(0, 1);
-                            //    }
-                            //}
-                            //else if (split[0].Split('.')[1] == "X")
-                            //{
-                            //    item.X = int.Parse(split[1]);
-                            //}
-                            //else if (split[0].Split('.')[1] == "Y")
-                            //{
-                            //    item.Y = int.Parse(split[1]);
-                            //}
+                            else if (cleaned.StartsWith("ExtractToFile("))
+                            {
+                                cleaned = cleaned.Replace("ExtractToFile(", "");
+                                if(cleaned.Length > 0)
+                                {
+                                    cleaned = cleaned.Remove(cleaned.Length - 1);
+                                }
+                                int X = 0;
+                                int Y = 0;
+                                string Content = "";//Cell data are separated by ';'
+                                for (int Cells = 0; Cells < item.Width * item.Height; Cells++)
+                                {
+                                    Content += item.GetValue(X, Y) + ";";
+                                    if (X < item.Width - 1)
+                                    {
+                                        X++;
+                                    }
+                                    else
+                                    {
+                                        Content += "\n";
+                                        Y++;
+                                        X = 0;
+                                    }
+                                }
+                                if (cleaned.EndsWith(".spr\""))
+                                {
+                                    File.Create(cleaned.Replace("\"", ""));
+                                    File.WriteAllText(cleaned.Replace("\"", ""), Content);
+                                }
+                            }
+                            else if (cleaned.StartsWith("ReadFromFile("))//Not fully implemented
+                            {
+                                cleaned = cleaned.Replace("ReadFromFile(", "");
+                                if (cleaned.Length > 0)
+                                {
+                                    cleaned = cleaned.Remove(cleaned.Length - 1);
+                                }
+                                int X = 0;
+                                int Y = 0;
+                                string[] cellLines = File.ReadAllText(cleaned.Replace("\"", "")).Split('\n');
+                                string[] OneLine = cellLines[0].Split(';');
+                                for (int Cells = 0; Cells < item.Width * item.Height; Cells++)
+                                {
+                                    OneLine = cellLines[Y].Split(';');
+                                    item.SetValue(Y, X, OneLine[X], false);
+                                    if (X < item.Width - 1)
+                                    {
+                                        X++;
+                                    }
+                                    else
+                                    {
+                                        Y++;
+                                        X = 0;
+                                    }
+                                }
+                            }
                         }
                     }
                     #endregion Graphical

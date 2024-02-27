@@ -16,6 +16,7 @@ namespace CrystalOSAlpha.Applications
         int width { get; set; }
         int height { get; set; }
         int desk_ID { get; }
+        int AppID { get; set; }
         string name { get; }
 
         bool minimised { get; set; }

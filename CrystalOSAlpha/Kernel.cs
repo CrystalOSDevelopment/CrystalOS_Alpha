@@ -11,11 +11,11 @@ using Cosmos.System.Network.IPv4;
 using Cosmos.System.Network.IPv4.TCP;
 using Cosmos.System.Network.IPv4.UDP.DHCP;
 using Cosmos.System.Network.IPv4.UDP.DNS;
+using CrystalOS_Alpha;
 using CrystalOS_Alpha.Graphics.Widgets;
 using CrystalOSAlpha;
 using CrystalOSAlpha.Applications.CarbonIDE;
 using CrystalOSAlpha.Applications.FileSys;
-//using CrystalOSAlpha.Applications.Minecraft;
 using CrystalOSAlpha.Applications.Video_Player;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
@@ -35,8 +35,10 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using EndPoint = Cosmos.System.Network.IPv4.EndPoint;
+using Kernel = CrystalOS_Alpha.Kernel;
 using Sys = Cosmos.System;
 
 namespace CrystalOS_Alpha
@@ -66,7 +68,9 @@ namespace CrystalOS_Alpha
                 }
                 //File.WriteAllText("0:\\index.html", Network("example.com/index.html"));
                 Directory.CreateDirectory("0:\\User\\Source");
+                Directory.CreateDirectory("0:\\User\\Documents");
                 Directory.CreateDirectory("0:\\Programs");
+                Directory.CreateDirectory("0:\\Programs\\Office");
             }
 
             FPS_Counter f = new FPS_Counter();
@@ -112,6 +116,7 @@ namespace CrystalOS_Alpha
             BitFont.DrawBitFontString(ImprovedVBE.cover, "ArialCustomCharset16", System.Drawing.Color.White, Clipboard, 500, 40);
 
             ImprovedVBE.DrawImageAlpha3(C, (int)MouseManager.X, (int)MouseManager.Y);
+
 
             ImprovedVBE.display(vbe);
             vbe.Display();
@@ -190,3 +195,4 @@ namespace CrystalOS_Alpha
         //}
     }
 }
+//https://discord.gg/5VYV4MjEAv

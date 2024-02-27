@@ -30,6 +30,7 @@ namespace CrystalOSAlpha.Applications.WebscapeNavigator
         public int height { get; set; }
 
         public int desk_ID { get; set; }
+        public int AppID { get; set; }
 
         public string name { get; set; }
 
@@ -112,7 +113,7 @@ namespace CrystalOSAlpha.Applications.WebscapeNavigator
                         switch (button.Text)
                         {
                             case "Go":
-                                //content = Kernel.Network(source.Replace("www.", ""));
+                                //content = Http.DownloadFile(source.Replace("www.", ""));
                                 if(content == "")
                                 {
                                     content = "<html>\n  <head></head>\n  <body>\n\n    <h1>Connection error.</h1>\n    <p>the page that you were searching was not found.<br>plese try to reload the page</p>\n    \n  </body>\n</html>";

@@ -29,6 +29,7 @@ namespace CrystalOSAlpha.Graphics
 
         public static void Exec()
         {
+            Random rnd = new Random();
             for (int i = 0; i < Apps.Count; i++)
             {
                 for (int j = 0; j < Apps.Count - i - 1; j++)
@@ -48,7 +49,11 @@ namespace CrystalOSAlpha.Graphics
             }
             foreach (var app in Apps)
             {
-                if(MouseManager.MouseState == MouseState.Left)
+                if (app.AppID.ToString().Length == 0)
+                {
+                    app.AppID = rnd.Next(1000, 10000);
+                }
+                if (MouseManager.MouseState == MouseState.Left)
                 {
                     if(MouseManager.X < app.x + app.width && MouseManager.X > app.x + app.width - 21)
                     {

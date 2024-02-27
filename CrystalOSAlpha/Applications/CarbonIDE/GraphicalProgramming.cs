@@ -27,7 +27,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public int height { get; set; }
 
         public int desk_ID { get; set; }
-
+        public int AppID { get; set; }
         public string name { get; set; }
         public string Path { get; set; }
         public string namedProject { get; set; }
@@ -56,6 +56,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public List<TextBox> TextBox = new List<TextBox>();
         public List<label> Label = new List<label>();
         public List<HorizontalScrollbar> HZS = new List<HorizontalScrollbar>();
+        public List<VerticalScrollbar> VSB = new List<VerticalScrollbar>();
         #endregion App UI
 
         #region Core variables
@@ -161,6 +162,8 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 HZS.Add(new HorizontalScrollbar(0, 674 - 20, 540, 20, 20));
                 HZS.Add(new HorizontalScrollbar(0, 674 - 20, 1459 - 540, 20, 20));
 
+                VSB.Add(new VerticalScrollbar(520, 0, 20, 672, 20, 4.0f));
+
                 Back_content = code;
                 initial = false;
             }
@@ -239,6 +242,8 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 HZS[0].Render(Container);
                 HZS[1].Render(WindowCanvas);
 
+                VSB[0].Render(Container);
+
                 once = false;
                 temp = true;
             }
@@ -314,6 +319,11 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 temp = true;
             }
             if (HZS[1].CheckClick((int)MouseManager.X - 10, (int)MouseManager.Y - 32))
+            {
+                temp = true;
+            }
+
+            if (VSB[0].CheckClick((int)MouseManager.X - 933, (int)MouseManager.Y - 32))
             {
                 temp = true;
             }
@@ -537,10 +547,10 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 Array.Fill(Container.RawData, ImprovedVBE.colourToNumber(36, 36, 36));//BAckground
                 ImprovedVBE.DrawFilledRectangle(Container, ImprovedVBE.colourToNumber(50, 50, 50), 2, 2, (int)Container.Width - 4, (int)Container.Height - 4, false);//Border
                 
-                BitFont.DrawBitFontString(Container, "ArialCustomCharset16", new CarbonIDE().HighLight(Back_content), Back_content, 42 - ((HZS[0].Pos - 20) * 4), 7);//The actual code
+                BitFont.DrawBitFontString(Container, "ArialCustomCharset16", new CarbonIDE().HighLight(Back_content), Back_content, 42 - ((HZS[0].Pos - 20) * 4), 7 - VSB[0].Value);//The actual code
                 
-                ImprovedVBE.DrawFilledRectangle(Container, ImprovedVBE.colourToNumber(69, 69, 69), 2, 2, 35, (int)Container.Height - 4, false);//The background for linecounter
-                BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.Black, lineCount, 7, 7 - (0 * 4));//The line counter
+                ImprovedVBE.DrawFilledRectangle(Container, ImprovedVBE.colourToNumber(69, 69, 69), 1, 2, 35, (int)Container.Height - 4, false);//The background for linecounter
+                BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.Black, lineCount, 7, 7 - VSB[0].Value);//The line counter
                 #endregion Border
 
                 if (MouseManager.MouseState == MouseState.Left)
@@ -825,6 +835,8 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
                 HZS[0].Render(Container);
                 HZS[1].Render(WindowCanvas);
+
+                VSB[0].Render(Container);
 
                 #region Rendering
                 ImprovedVBE.DrawImageAlpha(WindowCanvas, 10, 32, window);
