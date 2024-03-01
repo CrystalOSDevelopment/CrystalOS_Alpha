@@ -453,7 +453,7 @@ namespace CrystalOSAlpha.SystemApps
             int part = 0;
             for(int i = 0; i < Parts.Count && part == 0; i++)
             {
-                if (Parts[i].Contains("#void Looping\n"))
+                if (Parts[i].Contains("#void Looping"))
                 {
                     part = i;
                 }

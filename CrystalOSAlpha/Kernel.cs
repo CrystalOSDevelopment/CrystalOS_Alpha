@@ -1,7 +1,12 @@
 ﻿using _3DRendering;
 using Cosmos.Core.Memory;
 using Cosmos.HAL;
+using Cosmos.HAL.Audio;
+using Cosmos.HAL.BlockDevice.Registers;
+using Cosmos.HAL.Drivers.Audio;
 using Cosmos.System;
+using Cosmos.System.Audio.IO;
+using Cosmos.System.Audio;
 using Cosmos.System.FileSystem;
 using Cosmos.System.FileSystem.Listing;
 using Cosmos.System.FileSystem.VFS;

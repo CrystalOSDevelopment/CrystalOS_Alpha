@@ -1,5 +1,9 @@
 ﻿using Cosmos.Core_Asm;
+using Cosmos.HAL.Audio;
+using Cosmos.HAL.Drivers.Audio;
 using Cosmos.System;
+using Cosmos.System.Audio.IO;
+using Cosmos.System.Audio;
 using Cosmos.System.Graphics;
 using Cosmos.System.Graphics.Fonts;
 using CrystalOS_Alpha;
@@ -549,6 +553,17 @@ namespace CrystalOSAlpha.Programming
                             }
                         }
                     }
+                    else if (line.Contains("-="))
+                    {
+                        string[] Parts = line.Split("-=");
+                        foreach (var v in Variables)
+                        {
+                            if (v.I_Name == Parts[0])
+                            {
+                                v.I_Value -= int.Parse(Parts[1]);
+                            }
+                        }
+                    }
 
                     if (Returning_Value != null)
                     {
@@ -1085,27 +1100,66 @@ namespace CrystalOSAlpha.Programming
                                 }
                                 else
                                 {
-                                    foreach (var Item in Variables)
+                                    if (bool.TryParse(sides[0], out bool s))
                                     {
-                                        if (sides[0] == Item.S_Name)
+                                        sides[0] = s.ToString();
+                                    }
+                                    else
+                                    {
+                                        bool Found = false;
+                                        foreach (var Item in Variables)
                                         {
-                                            sides[0] = Item.S_Value;
+                                            if (sides[0] == Item.S_Name)
+                                            {
+                                                sides[0] = Item.S_Value;
+                                                Found = true;
+                                            }
+                                            else if (sides[0] == Item.I_Name)
+                                            {
+                                                sides[0] = Item.I_Value.ToString();
+                                                Found = true;
+                                            }
+                                            else if (sides[0] == Item.B_Name)
+                                            {
+                                                sides[0] = Item.B_Value.ToString();
+                                                Found = true;
+                                            }
+                                            else if (sides[0] == Item.F_Name)
+                                            {
+                                                sides[0] = Item.F_Value.ToString();
+                                                Found = true;
+                                            }
+                                            else if (sides[0] == Item.D_Name)
+                                            {
+                                                sides[0] = Item.D_Value.ToString();
+                                                Found = true;
+                                            }
+                                            else if (sides[0] == Item.K_Name)
+                                            {
+                                                left = Item.K_Value;
+                                                Found = true;
+                                            }
                                         }
-                                        if (sides[0] == Item.I_Name)
+                                        if (Found == false)
                                         {
-                                            sides[0] = Item.I_Value.ToString();
+                                            foreach (var v in CheckBox)
+                                            {
+                                                if (v.ID == sides[0])
+                                                {
+                                                    sides[0] = v.Value.ToString();
+                                                    Found = true;
+                                                }
+                                            }
                                         }
-                                        if (sides[0] == Item.B_Name)
+                                        if (Found == false)
                                         {
-                                            sides[0] = Item.B_Value.ToString();
-                                        }
-                                        if (sides[0] == Item.F_Name)
-                                        {
-                                            sides[0] = Item.F_Value.ToString();
-                                        }
-                                        if (sides[0] == Item.D_Name)
-                                        {
-                                            sides[0] = Item.D_Value.ToString();
+                                            foreach (var v in TextBox)
+                                            {
+                                                if (sides[0].Contains(v.ID))
+                                                {
+                                                    sides[0] = v.Text;
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -1116,33 +1170,89 @@ namespace CrystalOSAlpha.Programming
                                 }
                                 else
                                 {
-                                    foreach (var Item in Variables)
+                                    if (bool.TryParse(sides[1], out bool s))
                                     {
-                                        if (sides[1] == Item.S_Name)
+                                        sides[1] = s.ToString();
+                                    }
+                                    else
+                                    {
+                                        bool Found = false;
+                                        foreach (var Item in Variables)
                                         {
-                                            sides[1] = Item.S_Value;
+                                            if (sides[1] == Item.S_Name)
+                                            {
+                                                sides[1] = Item.S_Value;
+                                                Found = true;
+                                            }
+                                            else if (sides[1] == Item.I_Name)
+                                            {
+                                                sides[1] = Item.I_Value.ToString();
+                                                Found = true;
+                                            }
+                                            else if (sides[1] == Item.B_Name)
+                                            {
+                                                sides[1] = Item.B_Value.ToString();
+                                                Found = true;
+                                            }
+                                            else if (sides[1] == Item.F_Name)
+                                            {
+                                                sides[1] = Item.F_Value.ToString();
+                                                Found = true;
+                                            }
+                                            else if (sides[1] == Item.D_Name)
+                                            {
+                                                sides[1] = Item.D_Value.ToString();
+                                                Found = true;
+                                            }
+                                            else if (sides[1] == Item.K_Name)
+                                            {
+                                                left = Item.K_Value;
+                                                Found = true;
+                                            }
                                         }
-                                        if (sides[1] == Item.I_Name)
+                                        if (Found == false)
                                         {
-                                            sides[1] = Item.I_Value.ToString();
+                                            foreach (var v in CheckBox)
+                                            {
+                                                if (v.ID == sides[1])
+                                                {
+                                                    sides[1] = v.Value.ToString();
+                                                }
+                                            }
                                         }
-                                        if (sides[1] == Item.B_Name)
+                                        if (Found == false)
                                         {
-                                            sides[1] = Item.B_Value.ToString();
-                                        }
-                                        if (sides[1] == Item.F_Name)
-                                        {
-                                            sides[1] = Item.F_Value.ToString();
-                                        }
-                                        if (sides[1] == Item.D_Name)
-                                        {
-                                            sides[1] = Item.D_Value.ToString();
+                                            foreach (var v in TextBox)
+                                            {
+                                                if (sides[1].Contains(v.ID))
+                                                {
+                                                    sides[1] = v.Text;
+                                                }
+                                            }
                                         }
                                     }
                                 }
-                                if (int.Parse(sides[0]) > int.Parse(sides[1]))
+                                if (int.TryParse(sides[0], out int l))
                                 {
-                                    blank = true;
+                                    if (int.TryParse(sides[1], out int r))
+                                    {
+                                        if (l > r)
+                                        {
+                                            blank = true;
+                                        }
+                                        else
+                                        {
+                                            Count++;
+                                            Checker = true;
+                                            blank = false;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Count++;
+                                        Checker = true;
+                                        blank = false;
+                                    }
                                 }
                                 else
                                 {
@@ -1161,27 +1271,66 @@ namespace CrystalOSAlpha.Programming
                                 }
                                 else
                                 {
-                                    foreach (var Item in Variables)
+                                    if (bool.TryParse(sides[0], out bool s))
                                     {
-                                        if (sides[0] == Item.S_Name)
+                                        sides[0] = s.ToString();
+                                    }
+                                    else
+                                    {
+                                        bool Found = false;
+                                        foreach (var Item in Variables)
                                         {
-                                            sides[0] = Item.S_Value;
+                                            if (sides[0] == Item.S_Name)
+                                            {
+                                                sides[0] = Item.S_Value;
+                                                Found = true;
+                                            }
+                                            else if (sides[0] == Item.I_Name)
+                                            {
+                                                sides[0] = Item.I_Value.ToString();
+                                                Found = true;
+                                            }
+                                            else if (sides[0] == Item.B_Name)
+                                            {
+                                                sides[0] = Item.B_Value.ToString();
+                                                Found = true;
+                                            }
+                                            else if (sides[0] == Item.F_Name)
+                                            {
+                                                sides[0] = Item.F_Value.ToString();
+                                                Found = true;
+                                            }
+                                            else if (sides[0] == Item.D_Name)
+                                            {
+                                                sides[0] = Item.D_Value.ToString();
+                                                Found = true;
+                                            }
+                                            else if (sides[0] == Item.K_Name)
+                                            {
+                                                left = Item.K_Value;
+                                                Found = true;
+                                            }
                                         }
-                                        if (sides[0] == Item.I_Name)
+                                        if (Found == false)
                                         {
-                                            sides[0] = Item.I_Value.ToString();
+                                            foreach (var v in CheckBox)
+                                            {
+                                                if (v.ID == sides[0])
+                                                {
+                                                    sides[0] = v.Value.ToString();
+                                                    Found = true;
+                                                }
+                                            }
                                         }
-                                        if (sides[0] == Item.B_Name)
+                                        if (Found == false)
                                         {
-                                            sides[0] = Item.B_Value.ToString();
-                                        }
-                                        if (sides[0] == Item.F_Name)
-                                        {
-                                            sides[0] = Item.F_Value.ToString();
-                                        }
-                                        if (sides[0] == Item.D_Name)
-                                        {
-                                            sides[0] = Item.D_Value.ToString();
+                                            foreach (var v in TextBox)
+                                            {
+                                                if (sides[0].Contains(v.ID))
+                                                {
+                                                    sides[0] = v.Text;
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -1192,33 +1341,89 @@ namespace CrystalOSAlpha.Programming
                                 }
                                 else
                                 {
-                                    foreach (var Item in Variables)
+                                    if (bool.TryParse(sides[1], out bool s))
                                     {
-                                        if (sides[1] == Item.S_Name)
+                                        sides[1] = s.ToString();
+                                    }
+                                    else
+                                    {
+                                        bool Found = false;
+                                        foreach (var Item in Variables)
                                         {
-                                            sides[1] = Item.S_Value;
+                                            if (sides[1] == Item.S_Name)
+                                            {
+                                                sides[1] = Item.S_Value;
+                                                Found = true;
+                                            }
+                                            else if (sides[1] == Item.I_Name)
+                                            {
+                                                sides[1] = Item.I_Value.ToString();
+                                                Found = true;
+                                            }
+                                            else if (sides[1] == Item.B_Name)
+                                            {
+                                                sides[1] = Item.B_Value.ToString();
+                                                Found = true;
+                                            }
+                                            else if (sides[1] == Item.F_Name)
+                                            {
+                                                sides[1] = Item.F_Value.ToString();
+                                                Found = true;
+                                            }
+                                            else if (sides[1] == Item.D_Name)
+                                            {
+                                                sides[1] = Item.D_Value.ToString();
+                                                Found = true;
+                                            }
+                                            else if (sides[1] == Item.K_Name)
+                                            {
+                                                left = Item.K_Value;
+                                                Found = true;
+                                            }
                                         }
-                                        if (sides[1] == Item.I_Name)
+                                        if (Found == false)
                                         {
-                                            sides[1] = Item.I_Value.ToString();
+                                            foreach (var v in CheckBox)
+                                            {
+                                                if (v.ID == sides[1])
+                                                {
+                                                    sides[1] = v.Value.ToString();
+                                                }
+                                            }
                                         }
-                                        if (sides[1] == Item.B_Name)
+                                        if (Found == false)
                                         {
-                                            sides[1] = Item.B_Value.ToString();
-                                        }
-                                        if (sides[1] == Item.F_Name)
-                                        {
-                                            sides[1] = Item.F_Value.ToString();
-                                        }
-                                        if (sides[1] == Item.D_Name)
-                                        {
-                                            sides[1] = Item.D_Value.ToString();
+                                            foreach (var v in TextBox)
+                                            {
+                                                if (sides[1].Contains(v.ID))
+                                                {
+                                                    sides[1] = v.Text;
+                                                }
+                                            }
                                         }
                                     }
                                 }
-                                if (int.Parse(sides[0]) < int.Parse(sides[1]))
+                                if(int.TryParse(sides[0], out int l))
                                 {
-                                    blank = true;
+                                    if(int.TryParse(sides[1], out int r))
+                                    {
+                                        if (l < r)
+                                        {
+                                            blank = true;
+                                        }
+                                        else
+                                        {
+                                            Count++;
+                                            Checker = true;
+                                            blank = false;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Count++;
+                                        Checker = true;
+                                        blank = false;
+                                    }
                                 }
                                 else
                                 {
@@ -2363,6 +2568,39 @@ namespace CrystalOSAlpha.Programming
                         }
                     }
                     #endregion Graphical
+
+                    #region Audio
+                    if (line.StartsWith("Audio"))
+                    {
+                        if (line.StartsWith("Audio.Play("))
+                        {
+                            string cleaned = line.Replace("Audio.Play(", "");
+                            cleaned = cleaned.Replace(")", "").Replace("\"", "");
+                            if (File.Exists(cleaned))
+                            {
+                                try
+                                {
+                                    var mixer = new AudioMixer();
+                                    var audioStream = new MemoryAudioStream(new SampleFormat(AudioBitDepth.Bits16, 1, true), 48000, File.ReadAllBytes(cleaned));
+                                    var driver = AC97.Initialize(4096);
+                                    mixer.Streams.Add(audioStream);
+
+                                    var audioManager = new AudioManager()
+                                    {
+                                        Stream = mixer,
+                                        Output = driver
+                                    };
+                                    audioManager.Enable();
+                                }
+                                catch (Exception e)
+                                {
+                                    //Kernel.Clipboard = e.Message;
+                                    //TaskScheduler.Apps.Add(new MsgBox(999, 10, 10, 300, 200, "Error!", "No compatible soundcard\nwas detected!", Resources.Notepad));
+                                }
+                            }
+                        }
+                    }
+                    #endregion Audio
                 }
                 else
                 {
