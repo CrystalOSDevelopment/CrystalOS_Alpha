@@ -352,8 +352,15 @@ namespace CrystalOSAlpha
                 for (int _y = y; _y < y + image.Height; _y++)
                 {
                     Array.Copy(image.RawData, scan_line * image.Width, line, 0, line.Length);
-
-                    if (line[0] != 0 && line[^1] != 0)
+                    bool found = false;
+                    for(int i = 0; i < line.Length && found == false; i++)
+                    {
+                        if (line[i] == 0)
+                        {
+                            found = true;
+                        }
+                    }
+                    if (found == false)//!line[0] != 0 && line[^1] != 0
                     {
                         if (_y < into.Height)
                         {

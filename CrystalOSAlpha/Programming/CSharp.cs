@@ -283,7 +283,7 @@ namespace CrystalOSAlpha.Programming
                             }
                         }
                     }
-                    if (line.StartsWith("int"))
+                    else if (line.StartsWith("int"))
                     {
                         string temp = line.Replace("int", "");
                         //temp = temp.Remove(temp.Length - 1);
@@ -474,7 +474,7 @@ namespace CrystalOSAlpha.Programming
                             }
                         }
                     }
-                    if (line.StartsWith("bool"))
+                    else if (line.StartsWith("bool"))
                     {
                         string temp = line.Replace("bool", "");
                         //temp = temp.Remove(temp.Length - 1);
@@ -494,7 +494,7 @@ namespace CrystalOSAlpha.Programming
                             }
                         }
                     }
-                    if (line.StartsWith("float"))
+                    else if (line.StartsWith("float"))
                     {
                         string temp = line.Replace("float", "");
                         //temp = temp.Remove(temp.Length - 1);
@@ -513,7 +513,7 @@ namespace CrystalOSAlpha.Programming
                             }
                         }
                     }
-                    if (line.StartsWith("double"))
+                    else if (line.StartsWith("double"))
                     {
                         string temp = line.Replace("double", "");
                         //temp = temp.Remove(temp.Length - 1);
@@ -532,6 +532,24 @@ namespace CrystalOSAlpha.Programming
                             }
                         }
                     }
+
+                    //Variable operations
+                    if (line.Contains("+="))
+                    {
+                        string[] Parts = line.Split("+=");
+                        foreach(var v in Variables)
+                        {
+                            if(v.S_Name == Parts[0])
+                            {
+                                v.S_Value += Parts[1].Replace("\"", "");
+                            }
+                            else if (v.I_Name == Parts[0])
+                            {
+                                v.I_Value += int.Parse(Parts[1]);
+                            }
+                        }
+                    }
+
                     if (Returning_Value != null)
                     {
                         if(format == "string")

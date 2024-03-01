@@ -7,7 +7,9 @@
     this.Height = 1005;
     this.Titlebar = true;
     this.RGB = 60, 60, 60;
-    PictureBox pb = new PictureBox(0, 0, "1:\SubwaySim24\Assets\Interior.bmp");
+    PictureBox Interior = new PictureBox(0, 0, "1:\SubwaySim24\Assets\Interior.bmp");
+    PictureBox Tunnel = new PictureBox(0, 0, "1:\SubwaySim24\Assets\Tunnel1.bmp");
+    
     Label VehicleName = new Label(125, 853, VehicleBrand, 255, 255, 255);
     Label VehicleL = new Label(125, 880, VehicleLength, 255, 255, 255);
     Label VehicleW = new Label(125, 907, VehicleWeight, 255, 255, 255);
@@ -26,7 +28,7 @@
     string VehicleLength = "25 Meter";
     string VehicleWeight = "34 Tonn";
     string VehicleMaxSpeed = "120 KM/H";
-    string VehicleSpeed = "0 KM/H";
+    int VehicleSpeed = 0;
     string VehicleGear = "Neutral";
     string VehicleThrotle = "0";
     string VehicleBreak = "0";
@@ -34,4 +36,9 @@
 #void Looping
 {
     //speed.Content = VehicleSpeed;
+}
+#OnClick ThrotleUp
+{
+    VehicleSpeed += 10;
+    VehicleS.Content = VehicleSpeed;
 }

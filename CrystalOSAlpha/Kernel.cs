@@ -107,22 +107,17 @@ namespace CrystalOS_Alpha
         public static string Clipboard = "";
         protected override void Run()
         {
-            SideNav.Core();
-            Rendering.render();
-            TaskScheduler.Exec();
-
-            TaskManager.Main();
-
-            BitFont.DrawBitFontString(ImprovedVBE.cover, "ArialCustomCharset16", System.Drawing.Color.White, Clipboard, 500, 40);
-
-            ImprovedVBE.DrawImageAlpha3(C, (int)MouseManager.X, (int)MouseManager.Y);
-
-
-            ImprovedVBE.display(vbe);
-            vbe.Display();
-            if(TaskScheduler.Apps.Where(d => d.width > 800).Count() > 1)
+            if(TaskScheduler.Apps.Where(d => d.width > 800).Count() != 0)
             {
-                Heap.Collect();
+                if (collect >= 2)
+                {
+                    Heap.Collect();
+                    collect = 0;
+                }
+                else
+                {
+                    collect++;
+                }
             }
             else
             {
@@ -136,6 +131,20 @@ namespace CrystalOS_Alpha
                     collect++;
                 }
             }
+
+            SideNav.Core();
+            Rendering.render();
+            TaskScheduler.Exec();
+
+            TaskManager.Main();
+
+            BitFont.DrawBitFontString(ImprovedVBE.cover, "ArialCustomCharset16", System.Drawing.Color.White, Clipboard, 500, 40);
+
+            ImprovedVBE.DrawImageAlpha3(C, (int)MouseManager.X, (int)MouseManager.Y);
+
+
+            ImprovedVBE.display(vbe);
+            vbe.Display();
         }
 
         //public static string Network(string url)

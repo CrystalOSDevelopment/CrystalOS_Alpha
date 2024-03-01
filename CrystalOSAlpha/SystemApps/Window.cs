@@ -208,7 +208,19 @@ namespace CrystalOSAlpha.SystemApps
                                 }
                                 else
                                 {
-                                    Label.Add(new label(int.Parse(values[0]), int.Parse(values[1]), Vars.Find(var => var.S_Name == values[2]).S_Value, ImprovedVBE.colourToNumber(int.Parse(values[^3]), int.Parse(values[^2]), int.Parse(values[^1])), name));
+                                    string Value = "";
+                                    foreach(var v in Vars)
+                                    {
+                                        if(v.S_Name == values[2])
+                                        {
+                                            Value = v.S_Value;
+                                        }
+                                        else if (v.I_Name == values[2])
+                                        {
+                                            Value = v.I_Value.ToString();
+                                        }
+                                    }
+                                    Label.Add(new label(int.Parse(values[0]), int.Parse(values[1]), Value, ImprovedVBE.colourToNumber(int.Parse(values[^3]), int.Parse(values[^2]), int.Parse(values[^1])), name));
                                 }
                             }
                             else if (trimmed.StartsWith("Button"))
@@ -307,6 +319,11 @@ namespace CrystalOSAlpha.SystemApps
                         }
                     }
                 }
+                if(Picturebox.Count == 2)
+                {
+                    ImprovedVBE.DrawImageAlpha(Picturebox[0], 0, 0, Picturebox[1]);
+                    Picturebox.RemoveAt(0);
+                }
                 initial = false;
             }
 
@@ -347,81 +364,6 @@ namespace CrystalOSAlpha.SystemApps
                     Array.Copy(img.RawData, 0, window.RawData, window.Width * 22, img.RawData.Length);
                 }
 
-                foreach (var button in Button)
-                {
-                    if (button.Clicked == true)
-                    {
-                        UI_Elements.Button.Button_render(window, button.X, button.Y, button.Width, button.Height, ComplimentaryColor.Generate(button.Color).ToArgb(), button.Text);
-
-                        //Need to think about this one for a bit...
-                        foreach (var p in Parts)
-                        {
-                            if (p.StartsWith("\n#OnClick " + button.ID + "\n"))
-                            {
-                                CSharp exec = new CSharp();
-                                exec.Button = Button;
-                                exec.Slider = Slider;
-                                exec.Label = Label;
-                                exec.Scroll = Scroll;
-                                exec.CheckBox = CheckBox;
-                                exec.TextBox = TextBox;
-                                exec.Dropdown = Dropdown;
-                                exec.window = canvas;
-                                exec.CurrentColor = CurrentColor;
-
-                                Label.RemoveAll(d => d.ID == "Debug");
-                                string[] lines = p.Split('\n');
-                                for (int i = 2; i < lines.Length - 1; i++)
-                                {
-                                    exec.Returning_methods(lines[i]);
-                                }
-                                Button = exec.Button;
-                                Slider = exec.Slider;
-                                Label = exec.Label;
-                                Scroll = exec.Scroll;
-                                CheckBox = exec.CheckBox;
-                                TextBox = exec.TextBox;
-                                Dropdown = exec.Dropdown;
-                                if (CurrentColor != exec.CurrentColor)
-                                {
-                                    once = true;
-                                }
-                                if (exec.Clipboard == "Terminate")
-                                {
-                                    TaskScheduler.Apps.Remove(this);
-                                }
-                                CurrentColor = exec.CurrentColor;
-                                Array.Copy(exec.window.RawData, 0, window.RawData, 0, exec.window.RawData.Length);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        UI_Elements.Button.Button_render(window, button.X, button.Y, button.Width, button.Height, button.Color, button.Text);
-                    }
-                }
-
-                foreach (label l in Label)
-                {
-                    l.Label(window);
-                }
-
-                foreach(Slider s in Slider)
-                {
-                    s.Render(window);
-                }
-
-                foreach (var Box in TextBox)
-                {
-                    Box.Box(window, Box.X, Box.Y);
-                }
-
-                foreach (var Checkbox in CheckBox)
-                {
-                    Checkbox.Render(window);
-                }
-
-                //window.RawData = canvas.RawData;
                 back_canvas = canvas;
                 once = false;
             }
@@ -437,7 +379,7 @@ namespace CrystalOSAlpha.SystemApps
                             if (button.Clicked == false)
                             {
                                 button.Clicked = true;
-                                once = true;
+                                temp = true;
                                 clicked = true;
                             }
                         }
@@ -445,7 +387,7 @@ namespace CrystalOSAlpha.SystemApps
                 }
                 if (button.Clicked == true && MouseManager.MouseState == MouseState.None)
                 {
-                    once = true;
+                    temp = true;
                     button.Clicked = false;
                     clicked = false;
                 }
@@ -463,7 +405,7 @@ namespace CrystalOSAlpha.SystemApps
                     slid.UpdateValue(x);
                     if (val != slid.Value)
                     {
-                        once = true;
+                        temp = true;
                     }
                     if (MouseManager.MouseState == MouseState.None)
                     {
@@ -503,7 +445,7 @@ namespace CrystalOSAlpha.SystemApps
                     {
                         slid.Value = false;
                     }
-                    once = true;
+                    temp = true;
                     slid.Clicked = false;
                 }
             }
@@ -643,84 +585,76 @@ namespace CrystalOSAlpha.SystemApps
 
                     foreach (var button in Button)
                     {
-                        if (MouseManager.MouseState == MouseState.Left)
+                        if (button.Clicked == true)
                         {
-                            if (MouseManager.X > x + button.X && MouseManager.X < x + button.X + button.Width)
+                            UI_Elements.Button.Button_render(window, button.X, button.Y, button.Width, button.Height, ComplimentaryColor.Generate(button.Color).ToArgb(), button.Text);
+
+                            //Need to think about this one for a bit...
+                            foreach (var p in Parts)
                             {
-                                if (MouseManager.Y > y + button.Y && MouseManager.Y < y + button.Y + button.Height)
+                                if (p.StartsWith("\n#OnClick " + button.ID + "\n"))
                                 {
-                                    if (button.Clicked == false)
+                                    CSharp exec = new CSharp();
+                                    exec.Button = Button;
+                                    exec.Slider = Slider;
+                                    exec.Label = Label;
+                                    exec.Scroll = Scroll;
+                                    exec.CheckBox = CheckBox;
+                                    exec.TextBox = TextBox;
+                                    exec.Dropdown = Dropdown;
+                                    exec.window = canvas;
+                                    exec.CurrentColor = CurrentColor;
+
+                                    Label.RemoveAll(d => d.ID == "Debug");
+                                    string[] lines = p.Split('\n');
+                                    for (int i = 2; i < lines.Length - 1; i++)
                                     {
-                                        button.Clicked = true;
-                                        once = true;
-                                        clicked = true;
+                                        exec.Returning_methods(lines[i]);
                                     }
+                                    Button = exec.Button;
+                                    Slider = exec.Slider;
+                                    Label = exec.Label;
+                                    Scroll = exec.Scroll;
+                                    CheckBox = exec.CheckBox;
+                                    TextBox = exec.TextBox;
+                                    Dropdown = exec.Dropdown;
+                                    if (CurrentColor != exec.CurrentColor)
+                                    {
+                                        once = true;
+                                    }
+                                    if (exec.Clipboard == "Terminate")
+                                    {
+                                        TaskScheduler.Apps.Remove(this);
+                                    }
+                                    CurrentColor = exec.CurrentColor;
+                                    Array.Copy(exec.window.RawData, 0, window.RawData, 0, exec.window.RawData.Length);
                                 }
                             }
                         }
-                        if (button.Clicked == true && MouseManager.MouseState == MouseState.None)
+                        else
                         {
-                            once = true;
-                            button.Clicked = false;
-                            clicked = false;
+                            UI_Elements.Button.Button_render(window, button.X, button.Y, button.Width, button.Height, button.Color, button.Text);
                         }
                     }
 
-                    foreach (var slid in Slider)
+                    foreach (label l in Label)
                     {
-                        int val = slid.Value;
-                        if (slid.CheckForClick(x, y))
-                        {
-                            slid.Clicked = true;
-                        }
-                        if (slid.Clicked == true)
-                        {
-                            slid.UpdateValue(x);
-                            if (val != slid.Value)
-                            {
-                                once = true;
-                            }
-                            if (MouseManager.MouseState == MouseState.None)
-                            {
-                                slid.Clicked = false;
-                            }
-                        }
+                        l.Label(window);
+                    }
+
+                    foreach (Slider s in Slider)
+                    {
+                        s.Render(window);
                     }
 
                     foreach (var Box in TextBox)
                     {
                         Box.Box(window, Box.X, Box.Y);
-                        if (Box.Clciked(x + Box.X, y + Box.Y) == true && clicked == false)
-                        {
-                            foreach (var box2 in TextBox)
-                            {
-                                box2.Selected = false;
-                            }
-                            clicked = true;
-                            Box.Selected = true;
-                        }
                     }
 
-                    foreach (var slid in CheckBox)
+                    foreach (var Checkbox in CheckBox)
                     {
-                        bool val = slid.Value;
-                        if (slid.CheckForClick(x, y))
-                        {
-                            slid.Clicked = true;
-                        }
-                        if (slid.Clicked == true && MouseManager.MouseState == MouseState.None)
-                        {
-                            if (slid.Value == false)
-                            {
-                                slid.Value = true;
-                            }
-                            else
-                            {
-                                slid.Value = false;
-                            }
-                            once = true;
-                            slid.Clicked = false;
-                        }
+                        Checkbox.Render(window);
                     }
 
                     foreach (var T in Tables)
@@ -736,86 +670,83 @@ namespace CrystalOSAlpha.SystemApps
             {
                 if (temp == true)
                 {
+                    foreach (var img in Picturebox)
+                    {
+                        Array.Copy(img.RawData, 0, window.RawData, window.Width * 22, img.RawData.Length);
+                    }
+
                     foreach (var button in Button)
                     {
-                        if (MouseManager.MouseState == MouseState.Left)
+                        if (button.Clicked == true)
                         {
-                            if (MouseManager.X > x + button.X && MouseManager.X < x + button.X + button.Width)
+                            UI_Elements.Button.Button_render(window, button.X, button.Y, button.Width, button.Height, ComplimentaryColor.Generate(button.Color).ToArgb(), button.Text);
+
+                            //Need to think about this one for a bit...
+                            foreach (var p in Parts)
                             {
-                                if (MouseManager.Y > y + button.Y && MouseManager.Y < y + button.Y + button.Height)
+                                if (p.Contains("#OnClick " + button.ID))//"#OnClick " + button.ID + "\n"
                                 {
-                                    if (button.Clicked == false)
+                                    CSharp exec = new CSharp();
+                                    exec.Button = Button;
+                                    exec.Slider = Slider;
+                                    exec.Label = Label;
+                                    exec.Scroll = Scroll;
+                                    exec.CheckBox = CheckBox;
+                                    exec.TextBox = TextBox;
+                                    exec.Dropdown = Dropdown;
+                                    exec.window = window;
+                                    exec.CurrentColor = CurrentColor;
+                                    exec.Variables = Vars;
+                                    Label.RemoveAll(d => d.ID == "Debug");
+                                    string[] lines = p.Split('\n');
+                                    for (int i = 2; i < lines.Length - 1; i++)
                                     {
-                                        button.Clicked = true;
-                                        once = true;
-                                        clicked = true;
+                                        exec.Returning_methods(lines[i]);
                                     }
+                                    Button = exec.Button;
+                                    Slider = exec.Slider;
+                                    Label = exec.Label;
+                                    Scroll = exec.Scroll;
+                                    CheckBox = exec.CheckBox;
+                                    TextBox = exec.TextBox;
+                                    Dropdown = exec.Dropdown;
+                                    if (CurrentColor != exec.CurrentColor)
+                                    {
+                                        once = true;
+                                    }
+                                    if (exec.Clipboard == "Terminate")
+                                    {
+                                        TaskScheduler.Apps.Remove(this);
+                                    }
+                                    CurrentColor = exec.CurrentColor;
+                                    Array.Copy(exec.window.RawData, 0, window.RawData, 0, exec.window.RawData.Length);
                                 }
                             }
                         }
-                        if (button.Clicked == true && MouseManager.MouseState == MouseState.None)
+                        else
                         {
-                            once = true;
-                            button.Clicked = false;
-                            clicked = false;
+                            UI_Elements.Button.Button_render(window, button.X, button.Y, button.Width, button.Height, button.Color, button.Text);
                         }
                     }
 
-                    foreach (var slid in Slider)
+                    foreach (label l in Label)
                     {
-                        int val = slid.Value;
-                        if (slid.CheckForClick(x, y))
-                        {
-                            slid.Clicked = true;
-                        }
-                        if (slid.Clicked == true)
-                        {
-                            slid.UpdateValue(x);
-                            if (val != slid.Value)
-                            {
-                                once = true;
-                            }
-                            if (MouseManager.MouseState == MouseState.None)
-                            {
-                                slid.Clicked = false;
-                            }
-                        }
+                        l.Label(window);
+                    }
+
+                    foreach (Slider s in Slider)
+                    {
+                        s.Render(window);
                     }
 
                     foreach (var Box in TextBox)
                     {
                         Box.Box(window, Box.X, Box.Y);
-                        if (Box.Clciked(x + Box.X, y + Box.Y) == true && clicked == false)
-                        {
-                            foreach (var box2 in TextBox)
-                            {
-                                box2.Selected = false;
-                            }
-                            clicked = true;
-                            Box.Selected = true;
-                        }
                     }
 
-                    foreach (var slid in CheckBox)
+                    foreach (var Checkbox in CheckBox)
                     {
-                        bool val = slid.Value;
-                        if (slid.CheckForClick(x, y))
-                        {
-                            slid.Clicked = true;
-                        }
-                        if (slid.Clicked == true && MouseManager.MouseState == MouseState.None)
-                        {
-                            if (slid.Value == false)
-                            {
-                                slid.Value = true;
-                            }
-                            else
-                            {
-                                slid.Value = false;
-                            }
-                            once = true;
-                            slid.Clicked = false;
-                        }
+                        Checkbox.Render(window);
                     }
 
                     foreach (var T in Tables)
