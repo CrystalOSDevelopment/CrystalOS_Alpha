@@ -55,22 +55,27 @@
         VehicleSpeed += 10;
         VehicleS.Content = VehicleSpeed;
     }
-    if(VehicleSpeed < 120)
+
+    if(VehicleSpeed > 80)
     {
         VehicleT.Content = "5";
     }
+
     if(VehicleSpeed < 80)
     {
         VehicleT.Content = "4";
     }
+
     if(VehicleSpeed < 60)
     {
         VehicleT.Content = "3";
     }
+
     if(VehicleSpeed < 40)
     {
         VehicleT.Content = "2";
     }
+
     if(VehicleSpeed < 20)
     {
         VehicleT.Content = "1";
@@ -83,22 +88,27 @@
         VehicleSpeed -= 10;
         VehicleS.Content = VehicleSpeed;
     }
-    if(VehicleSpeed < 120)
+
+    if(VehicleSpeed > 80)
     {
         VehicleT.Content = "5";
     }
+
     if(VehicleSpeed < 80)
     {
         VehicleT.Content = "4";
     }
+
     if(VehicleSpeed < 60)
     {
         VehicleT.Content = "3";
     }
+
     if(VehicleSpeed < 40)
     {
         VehicleT.Content = "2";
     }
+
     if(VehicleSpeed < 20)
     {
         VehicleT.Content = "1";

@@ -1,4 +1,5 @@
-﻿using Cosmos.System;
+﻿using Cosmos.Core.Memory;
+using Cosmos.System;
 using Cosmos.System.Graphics;
 using CrystalOS_Alpha;
 using CrystalOSAlpha.Applications;
@@ -325,6 +326,7 @@ namespace CrystalOSAlpha.SystemApps
                     Picturebox.RemoveAt(0);
                 }
                 initial = false;
+                Heap.Collect();
             }
 
             if (once == true)
@@ -366,6 +368,7 @@ namespace CrystalOSAlpha.SystemApps
 
                 back_canvas = canvas;
                 once = false;
+                Heap.Collect();
             }
 
             foreach (var button in Button)
@@ -670,6 +673,7 @@ namespace CrystalOSAlpha.SystemApps
             {
                 if (temp == true)
                 {
+                    Heap.Collect();
                     foreach (var img in Picturebox)
                     {
                         Array.Copy(img.RawData, 0, window.RawData, window.Width * 22, img.RawData.Length);
