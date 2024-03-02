@@ -326,7 +326,6 @@ namespace CrystalOSAlpha.SystemApps
                     Picturebox.RemoveAt(0);
                 }
                 initial = false;
-                Heap.Collect();
             }
 
             if (once == true)
@@ -365,10 +364,8 @@ namespace CrystalOSAlpha.SystemApps
                 {
                     Array.Copy(img.RawData, 0, window.RawData, window.Width * 22, img.RawData.Length);
                 }
-
                 back_canvas = canvas;
                 once = false;
-                Heap.Collect();
             }
 
             foreach (var button in Button)
@@ -520,6 +517,11 @@ namespace CrystalOSAlpha.SystemApps
                     TaskScheduler.Apps.Remove(this);
                 }
                 CurrentColor = execLoop.CurrentColor;
+                if(execLoop.NeedUpdate == true)
+                {
+                    temp = true;
+                    execLoop.NeedUpdate = false;
+                }
                 Array.Copy(execLoop.window.RawData, 0, window.RawData, 0, execLoop.window.RawData.Length);
                 CycleCount = 0;
             }
@@ -673,7 +675,6 @@ namespace CrystalOSAlpha.SystemApps
             {
                 if (temp == true)
                 {
-                    Heap.Collect();
                     foreach (var img in Picturebox)
                     {
                         Array.Copy(img.RawData, 0, window.RawData, window.Width * 22, img.RawData.Length);

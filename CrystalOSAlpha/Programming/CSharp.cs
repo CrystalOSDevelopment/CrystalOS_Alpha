@@ -26,6 +26,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Kernel = CrystalOS_Alpha.Kernel;
 using TaskScheduler = CrystalOSAlpha.Graphics.TaskScheduler;
+using CrystalOSAlpha.Applications.Calculator;
 
 namespace CrystalOSAlpha.Programming
 {
@@ -66,6 +67,8 @@ namespace CrystalOSAlpha.Programming
         public ConsoleKeyEx key = ConsoleKeyEx.NoName;
         public Bitmap window;
         public int CurrentColor = 0;
+
+        public bool NeedUpdate = false;
 
         //For graphical use:
         #region UI_Elements
@@ -180,7 +183,7 @@ namespace CrystalOSAlpha.Programming
                         string temp = line.Replace("string", "");
                         //temp = temp.Remove(temp.Length - 1);
                         string[] values = temp.Split("=");
-                        if (values[1].Contains("\""))
+                        if (values[1].Contains("\"") && !values[1].Contains("+"))
                         {
                             name = values[0];
                             Variables.RemoveAll(d => d.S_Name == name);
@@ -270,6 +273,11 @@ namespace CrystalOSAlpha.Programming
                                             }
                                         }
                                     }
+                                    else if (values[1].Contains("+"))
+                                    {
+                                        values[1] = BuildString.Build(Variables, values[1]);
+                                        Variables.Add(new Programming.Variables(values[0], values[1]));
+                                    }
                                 }
                                 catch(Exception e)
                                 {
@@ -297,6 +305,22 @@ namespace CrystalOSAlpha.Programming
                             name = values[0];
                             Variables.RemoveAll(d => d.I_Name == name);
                             Variables.Add(new Programming.Variables(values[0], s));
+                        }
+                        else if (values[1] == "DateTime.UtcNow.Second")
+                        {
+                            bool found = false;
+                            foreach (var v in Variables)
+                            {
+                                if (v.I_Name == values[0])
+                                {
+                                    found = true;
+                                    v.I_Value = DateTime.UtcNow.Second;
+                                }
+                            }
+                            if (found == false)
+                            {
+                                Variables.Add(new Programming.Variables(values[0], DateTime.UtcNow.Second));
+                            }
                         }
                         else if (values[1] == "DateTime.UtcNow.Minute")
                         {
@@ -465,7 +489,19 @@ namespace CrystalOSAlpha.Programming
                                     }
                                 }
                             }
-                            
+                            else if (values[1].Contains("+") || values[1].Contains("-") || values[1].Contains("*") || values[1].Contains("/"))
+                            {
+                                try
+                                {
+                                    //TODO: If exists, replace value, if not, create var
+                                    values[1] = BuildString.ReplaceVarsToValues(Variables, values[1]);
+                                    Variables.Add(new Programming.Variables(values[0], ((int)CalculatorA.Calculate(values[1]))));
+                                }
+                                catch(Exception e)
+                                {
+                                    Kernel.Clipboard += "\n" + e.Message;
+                                }
+                            }
                         }
                         else
                         {
@@ -541,17 +577,33 @@ namespace CrystalOSAlpha.Programming
                     if (line.Contains("+="))
                     {
                         string[] Parts = line.Split("+=");
+                        bool changed = false;
                         foreach(var v in Variables)
                         {
                             if(v.S_Name == Parts[0])
                             {
                                 v.S_Value += Parts[1].Replace("\"", "");
+                                changed = true;
                             }
                             else if (v.I_Name == Parts[0])
                             {
-                                v.I_Value += int.Parse(Parts[1]);
+                                if (int.TryParse(Parts[1], out int Parsed))
+                                {
+                                    v.I_Value += Parsed;
+                                }
+                                else
+                                {
+                                    foreach (var c in Variables)
+                                    {
+                                        if (c.I_Name == Parts[1])
+                                        {
+                                            v.I_Value += c.I_Value;
+                                        }
+                                    }
+                                }
                             }
                         }
+
                     }
                     else if (line.Contains("-="))
                     {
@@ -561,6 +613,30 @@ namespace CrystalOSAlpha.Programming
                             if (v.I_Name == Parts[0])
                             {
                                 v.I_Value -= int.Parse(Parts[1]);
+                            }
+                        }
+                    }
+                    else if (line.Contains("="))
+                    {
+                        string[] Parts = line.Split("=");
+                        foreach (var v in Variables)
+                        {
+                            if (v.I_Name == Parts[0])
+                            {
+                                if(int.TryParse(Parts[1], out int Parsed))
+                                {
+                                    v.I_Value = Parsed;
+                                }
+                                else
+                                {
+                                    foreach (var c in Variables)
+                                    {
+                                        if(c.I_Name == Parts[1])
+                                        {
+                                            v.I_Value = c.I_Value;
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -2390,19 +2466,23 @@ namespace CrystalOSAlpha.Programming
                                 {
                                     item.Text = split[1].Remove(split[1].Length - 1).Remove(0, 1);
                                 }
+                                NeedUpdate = true;
                             }
                             else if (split[0].Split('.')[1] == "Color")
                             {
                                 string[] rgbValue = split[1].Split(',');
                                 item.TextColor = ImprovedVBE.colourToNumber(int.Parse(rgbValue[0]), int.Parse(rgbValue[1]), int.Parse(rgbValue[2]));
+                                NeedUpdate = true;
                             }
                             else if (split[0].Split('.')[1] == "X")
                             {
                                 item.X = int.Parse(split[1]);
+                                NeedUpdate = true;
                             }
                             else if (split[0].Split('.')[1] == "Y")
                             {
                                 item.Y = int.Parse(split[1]);
+                                NeedUpdate = true;
                             }
                         }
                     }

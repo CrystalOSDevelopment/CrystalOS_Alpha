@@ -19,6 +19,9 @@
     Label VehicleT = new Label(345, 880, VehicleThrotle, 255, 255, 255);
     Label VehicleB = new Label(345, 907, VehicleBreak, 255, 255, 255);
 
+    Label Time = new Label(1480, 25, Seconds, 255, 162, 0);
+    Label WaitTime = new Label(1480, 50, WaitInStation, 255, 162, 0);
+    Label Travelled = new Label(1480, 75, TravelledDistance, 255, 162, 0);
     //Control UI
     //Throtle
     Button ThrotleUp = new Button(1660, 540, 225, 60, "Throtle Up", 1, 1, 1);
@@ -43,10 +46,43 @@
     string VehicleBreak = "0";
     int VehicleSpeed = 0;
     bool Horn = false;
+
+    //Game mechanics
+    int Seconds = 0;
+    int Now = DateTime.UtcNow.Second;
+    int WaitInStation = 8;
+    int TravelledDistance = 0;
 }
 #void Looping
 {
+    int CurrentSecond = DateTime.UtcNow.Second;
+    if(CurrentSecond != Now)
+    {
+        //Time spent in-game
+        Seconds += 1;
+        Now = CurrentSecond;
+        string temp = "Ellapsed time: " + Seconds + "s";
+        Time.Content = temp;
 
+        //Time spent waiting in station
+        if(WaitInStation > 0)
+        {
+            WaitInStation -= 1;
+            string countBack = "You can leave the station after " + WaitInStation + "seconds.";
+            WaitTime.Content = countBack;
+            WaitTime.Color = 255, 162, 0;
+        }
+        else
+        {
+            string countBack = "You can now leave the station! Drive safe!";
+            WaitTime.Content = countBack;
+            WaitTime.Color = 0, 255, 0;
+        }
+        //Measure distance in meter
+        int Dist = VehicleSpeed / 3,6;
+        TravelledDistance += Dist;
+        Travelled.Content = TravelledDistance;
+    }
 }
 #OnClick ThrotleUp
 {
@@ -55,27 +91,22 @@
         VehicleSpeed += 10;
         VehicleS.Content = VehicleSpeed;
     }
-
     if(VehicleSpeed > 80)
     {
         VehicleT.Content = "5";
     }
-
     if(VehicleSpeed < 80)
     {
         VehicleT.Content = "4";
     }
-
     if(VehicleSpeed < 60)
     {
         VehicleT.Content = "3";
     }
-
     if(VehicleSpeed < 40)
     {
         VehicleT.Content = "2";
     }
-
     if(VehicleSpeed < 20)
     {
         VehicleT.Content = "1";
@@ -88,27 +119,22 @@
         VehicleSpeed -= 10;
         VehicleS.Content = VehicleSpeed;
     }
-
     if(VehicleSpeed > 80)
     {
         VehicleT.Content = "5";
     }
-
     if(VehicleSpeed < 80)
     {
         VehicleT.Content = "4";
     }
-
     if(VehicleSpeed < 60)
     {
         VehicleT.Content = "3";
     }
-
     if(VehicleSpeed < 40)
     {
         VehicleT.Content = "2";
     }
-
     if(VehicleSpeed < 20)
     {
         VehicleT.Content = "1";
