@@ -7,8 +7,11 @@
     this.Height = 1005;
     this.Titlebar = true;
     this.RGB = 60, 60, 60;
-    PictureBox Interior = new PictureBox(0, 0, "1:\SubwaySim24\Assets\Interior.bmp");
-    PictureBox Tunnel = new PictureBox(0, 0, "1:\SubwaySim24\Assets\Tunnel1.bmp");
+    PictureBox Interior = new PictureBox(0, 0, "1:\SubwaySim24\Assets\Interior.bmp", true);
+    PictureBox Tunnel = new PictureBox(0, 0, "1:\SubwaySim24\Assets\Tunnel1.bmp", true);
+
+    //Game Graphics
+    Interior.MergeOnto(Tunnel);
     
     Label VehicleName = new Label(125, 853, VehicleBrand, 255, 255, 255);
     Label VehicleL = new Label(125, 880, VehicleLength, 255, 255, 255);
@@ -55,6 +58,7 @@
 }
 #void Looping
 {
+    //Gametic
     int CurrentSecond = DateTime.UtcNow.Second;
     if(CurrentSecond != Now)
     {
@@ -68,7 +72,7 @@
         if(WaitInStation > 0)
         {
             WaitInStation -= 1;
-            string countBack = "You can leave the station after " + WaitInStation + "seconds.";
+            string countBack = "You can leave the station after " + WaitInStation + " seconds.";
             WaitTime.Content = countBack;
             WaitTime.Color = 255, 162, 0;
         }
@@ -79,10 +83,14 @@
             WaitTime.Color = 0, 255, 0;
         }
         //Measure distance in meter
-        int Dist = VehicleSpeed / 3,6;
+        int Dist = VehicleSpeed * 0.277778;
         TravelledDistance += Dist;
-        Travelled.Content = TravelledDistance;
+        string TravelledDist = "Distance travelled: " + TravelledDistance + " meter(s)";
+        Travelled.Content = TravelledDist;
     }
+    //End of Gametic
+    //Rendering
+    //End of Rendering
 }
 #OnClick ThrotleUp
 {

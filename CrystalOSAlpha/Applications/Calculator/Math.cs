@@ -62,6 +62,9 @@ namespace CrystalOSAlpha.Applications.Calculator
             input = input.Replace("(-", "(0-");
             input = input.Replace(",-", ",0-");
 
+            // Replace commas with dots
+            input = input.Replace(",", ".");
+
             List<string> tokens = new List<string>();
             string current = "";
 

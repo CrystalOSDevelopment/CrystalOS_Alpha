@@ -77,13 +77,6 @@ namespace CrystalOSAlpha
         }
         public static void DrawPixelfortext(Bitmap Canvas, int x, int y, int color)
         {
-            //16777215 white
-            /*
-            if (x > 0 && x < width && y > 0 && y < height)
-            {
-                cover.RawData[y * width + x] = color;
-            }
-            */
             if (x > 0 && x < Canvas.Width && y > 0 && y < Canvas.Height)
             {
                 Canvas.RawData[y * Canvas.Width + x] = color;
@@ -145,29 +138,27 @@ namespace CrystalOSAlpha
         }
 
         //Slower but can be improved with Array.Copy();
-        public static void DrawImage(Image image, int x, int y)
+        public static void DrawImage(Bitmap image, int x, int y, Bitmap Into)
         {
             int counter = 0;
-            int prewy = y;
+            int scan_line = 0;
+            int[] line = new int[image.Width];
+
             for (int _y = y; _y < y + image.Height; _y++)
             {
-                for (int _x = x; _x < x + image.Width; _x++)
+                if (x < 0)
                 {
-                    if ((_y * width) - (width - _x) < width * height)
-                    {
-                        if (_x > width || _x < 0)
-                        {
-                            //cover.RawData[((_y * width) - (width - _x))] = 0;
-                            counter++;
-                        }
-                        else
-                        {
-                            cover.RawData[((_y * width) - (width - _x))] = image.RawData[counter];
-                            counter++;
-                        }
-                    }
+                    line = new int[image.Width + x];
+                    x = 0;
                 }
-                prewy++;
+                else if (x + image.Width > Into.Width)
+                {
+                    line = new int[image.Width - (x + image.Width - Into.Width)];
+                }
+                Array.Copy(Into.RawData, scan_line * image.Width, line, 0, image.Width);
+
+                line.CopyTo(Into.RawData, (_y - 1) * width + x);
+                counter += (int)image.Width;
             }
         }
         public static void DrawImageArray(int Width, int Height, int[] RawData, int x, int y)

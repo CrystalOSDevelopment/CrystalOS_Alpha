@@ -65,7 +65,8 @@ namespace CrystalOSAlpha.SystemApps
         public List<TextBox> TextBox = new List<TextBox>();
         public List<label> Label = new List<label>();
         public List<Table> Tables = new List<Table>();
-        public List<Bitmap> Picturebox = new List<Bitmap>();
+        public List<PictureBox> Picturebox = new List<PictureBox>();
+
         public List<Variables> Vars = new List<Variables>();
 
         //public Submenu sm = new Submenu("File",
@@ -307,24 +308,29 @@ namespace CrystalOSAlpha.SystemApps
                                 //Tables[^1].Initialize();
                                 if (int.TryParse(values[0], out int XAxis))
                                 {
-                                    if (XAxis == 0 && File.Exists(values[2].Replace("\"", "")))
+                                    if (File.Exists(values[2].Replace("\"", "")))
                                     {
                                         Bitmap temp = new Bitmap(values[2].Replace("\"", ""));
-                                        if(temp.Width == width)
-                                        {
-                                            Picturebox.Add(temp);
-                                        }
+                                        //bool.TryParse(values[2], out bool t);
+                                        Picturebox.Add(new PictureBox(int.Parse(values[0]), int.Parse(values[1]), name, true, temp));
                                     }
                                 }
+                            }
+                            else
+                            {
+                                CSharp cs = new CSharp();
+                                cs.Picturebox = Picturebox;
+                                cs.Returning_methods(trimmed);
+                                Picturebox = cs.Picturebox;
                             }
                         }
                     }
                 }
-                if(Picturebox.Count == 2)
-                {
-                    ImprovedVBE.DrawImageAlpha(Picturebox[0], 0, 0, Picturebox[1]);
-                    Picturebox.RemoveAt(0);
-                }
+                //if(Picturebox.Count >= 2)
+                //{
+                //    ImprovedVBE.DrawImageAlpha(Picturebox[0], 0, 0, Picturebox[1]);
+                //    Picturebox.RemoveAt(0);
+                //}
                 initial = false;
             }
 
@@ -362,7 +368,7 @@ namespace CrystalOSAlpha.SystemApps
 
                 foreach(var img in Picturebox)
                 {
-                    Array.Copy(img.RawData, 0, window.RawData, window.Width * 22, img.RawData.Length);
+                    //Array.Copy(img.RawData, 0, window.RawData, window.Width * 22, img.RawData.Length);
                 }
                 back_canvas = canvas;
                 once = false;
@@ -380,7 +386,6 @@ namespace CrystalOSAlpha.SystemApps
                             {
                                 button.Clicked = true;
                                 temp = true;
-                                clicked = true;
                             }
                         }
                     }
@@ -472,6 +477,7 @@ namespace CrystalOSAlpha.SystemApps
                 execLoop.Tables = Tables;
                 execLoop.CurrentColor = CurrentColor;
                 execLoop.Variables = Vars;
+                execLoop.Picturebox = Picturebox;
                 execLoop.window = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
                 Array.Copy(window.RawData, 0, execLoop.window.RawData, 0, window.RawData.Length);
                 string[] lines2 = Parts[part].Split('\n');
@@ -522,6 +528,7 @@ namespace CrystalOSAlpha.SystemApps
                     temp = true;
                     execLoop.NeedUpdate = false;
                 }
+                Picturebox = execLoop.Picturebox;
                 Array.Copy(execLoop.window.RawData, 0, window.RawData, 0, execLoop.window.RawData.Length);
                 CycleCount = 0;
             }
@@ -677,7 +684,8 @@ namespace CrystalOSAlpha.SystemApps
                 {
                     foreach (var img in Picturebox)
                     {
-                        Array.Copy(img.RawData, 0, window.RawData, window.Width * 22, img.RawData.Length);
+                        //Array.Copy(img.RawData, 0, window.RawData, window.Width * 22, img.RawData.Length);
+                        img.Render(window);
                     }
 
                     foreach (var button in Button)
@@ -685,47 +693,50 @@ namespace CrystalOSAlpha.SystemApps
                         if (button.Clicked == true)
                         {
                             UI_Elements.Button.Button_render(window, button.X, button.Y, button.Width, button.Height, ComplimentaryColor.Generate(button.Color).ToArgb(), button.Text);
-
-                            //Need to think about this one for a bit...
-                            foreach (var p in Parts)
+                            if(clicked == false)
                             {
-                                if (p.Contains("#OnClick " + button.ID))//"#OnClick " + button.ID + "\n"
+                                //Need to think about this one for a bit...
+                                foreach (var p in Parts)
                                 {
-                                    CSharp exec = new CSharp();
-                                    exec.Button = Button;
-                                    exec.Slider = Slider;
-                                    exec.Label = Label;
-                                    exec.Scroll = Scroll;
-                                    exec.CheckBox = CheckBox;
-                                    exec.TextBox = TextBox;
-                                    exec.Dropdown = Dropdown;
-                                    exec.window = window;
-                                    exec.CurrentColor = CurrentColor;
-                                    exec.Variables = Vars;
-                                    Label.RemoveAll(d => d.ID == "Debug");
-                                    string[] lines = p.Split('\n');
-                                    for (int i = 2; i < lines.Length - 1; i++)
+                                    if (p.Contains("#OnClick " + button.ID))//"#OnClick " + button.ID + "\n"
                                     {
-                                        exec.Returning_methods(lines[i]);
+                                        CSharp exec = new CSharp();
+                                        exec.Button = Button;
+                                        exec.Slider = Slider;
+                                        exec.Label = Label;
+                                        exec.Scroll = Scroll;
+                                        exec.CheckBox = CheckBox;
+                                        exec.TextBox = TextBox;
+                                        exec.Dropdown = Dropdown;
+                                        exec.window = window;
+                                        exec.CurrentColor = CurrentColor;
+                                        exec.Variables = Vars;
+                                        Label.RemoveAll(d => d.ID == "Debug");
+                                        string[] lines = p.Split('\n');
+                                        for (int i = 2; i < lines.Length - 1; i++)
+                                        {
+                                            exec.Returning_methods(lines[i]);
+                                        }
+                                        Button = exec.Button;
+                                        Slider = exec.Slider;
+                                        Label = exec.Label;
+                                        Scroll = exec.Scroll;
+                                        CheckBox = exec.CheckBox;
+                                        TextBox = exec.TextBox;
+                                        Dropdown = exec.Dropdown;
+                                        if (CurrentColor != exec.CurrentColor)
+                                        {
+                                            once = true;
+                                        }
+                                        if (exec.Clipboard == "Terminate")
+                                        {
+                                            TaskScheduler.Apps.Remove(this);
+                                        }
+                                        CurrentColor = exec.CurrentColor;
+                                        Array.Copy(exec.window.RawData, 0, window.RawData, 0, exec.window.RawData.Length);
                                     }
-                                    Button = exec.Button;
-                                    Slider = exec.Slider;
-                                    Label = exec.Label;
-                                    Scroll = exec.Scroll;
-                                    CheckBox = exec.CheckBox;
-                                    TextBox = exec.TextBox;
-                                    Dropdown = exec.Dropdown;
-                                    if (CurrentColor != exec.CurrentColor)
-                                    {
-                                        once = true;
-                                    }
-                                    if (exec.Clipboard == "Terminate")
-                                    {
-                                        TaskScheduler.Apps.Remove(this);
-                                    }
-                                    CurrentColor = exec.CurrentColor;
-                                    Array.Copy(exec.window.RawData, 0, window.RawData, 0, exec.window.RawData.Length);
                                 }
+                                clicked = true;
                             }
                         }
                         else
@@ -996,35 +1007,6 @@ namespace CrystalOSAlpha.SystemApps
                         UI_Elements.Button.Button_render(canvas, button.X, button.Y, button.Width, button.Height, ComplimentaryColor.Generate(button.Color).ToArgb(), button.Text);
 
                         //Need to think about this one for a bit...
-                        foreach (var p in Parts)
-                        {
-                            if (p.StartsWith("#OnClick " + button.ID + "\n"))
-                            {
-                                CSharp exec = new CSharp();
-                                exec.Button = Button;
-                                exec.Slider = Slider;
-                                exec.Label = Label;
-                                exec.Scroll = Scroll;
-                                exec.CheckBox = CheckBox;
-                                exec.TextBox = TextBox;
-                                exec.Dropdown = Dropdown;
-                                exec.window = canvas;
-
-                                string[] lines = p.Split('\n');
-                                for (int i = 2; i < lines.Length - 1; i++)
-                                {
-                                    exec.Returning_methods(lines[i]);
-                                }
-                                Button = exec.Button;
-                                Slider = exec.Slider;
-                                Label = exec.Label;
-                                Scroll = exec.Scroll;
-                                CheckBox = exec.CheckBox;
-                                TextBox = exec.TextBox;
-                                Dropdown = exec.Dropdown;
-                                Array.Copy(exec.window.RawData, 0, window.RawData, 0, exec.window.RawData.Length);
-                            }
-                        }
                     }
                     else
                     {
@@ -1075,7 +1057,7 @@ namespace CrystalOSAlpha.SystemApps
                             if (button.Clicked == false)
                             {
                                 button.Clicked = true;
-                                once = true;
+                                temp = true;
                                 clicked = true;
                             }
                         }

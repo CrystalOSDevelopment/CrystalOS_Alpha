@@ -80,6 +80,7 @@ namespace CrystalOSAlpha.Programming
         public List<TextBox> TextBox = new List<TextBox>();
         public List<label> Label = new List<label>();
         public List<Table> Tables = new List<Table>();
+        public List<PictureBox> Picturebox = new List<PictureBox>();
         #endregion UI_Elements
 
         public string Executor(string input)
@@ -495,7 +496,22 @@ namespace CrystalOSAlpha.Programming
                                 {
                                     //TODO: If exists, replace value, if not, create var
                                     values[1] = BuildString.ReplaceVarsToValues(Variables, values[1]);
-                                    Variables.Add(new Programming.Variables(values[0], ((int)CalculatorA.Calculate(values[1]))));
+                                    if(Variables.Where(d => d.I_Name == values[0]).Count() != 0)
+                                    {
+                                        bool Found = false;
+                                        for(int i = 0; i < Variables.Count() && Found == false; i++)
+                                        {
+                                            if (Variables[i].I_Name == values[0])
+                                            {
+                                                Variables[i].I_Value = (int)CalculatorA.Calculate(values[1]);
+                                                Found = true;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Variables.Add(new Programming.Variables(values[0], ((int)CalculatorA.Calculate(values[1]))));
+                                    }
                                 }
                                 catch(Exception e)
                                 {
@@ -2642,6 +2658,27 @@ namespace CrystalOSAlpha.Programming
                                     {
                                         Y++;
                                         X = 0;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    foreach (var item in Picturebox)
+                    {
+                        if (line.StartsWith(item.ID))
+                        {
+                            if (line.Contains(".MergeOnto("))
+                            {
+                                string temp = line.Replace(item.ID + ".MergeOnto(", "");
+                                temp = temp.Remove(temp.Length - 1);
+                                //Kernel.Clipboard = "Last seen here " + temp;
+                                bool found = false;
+                                for(int i = 0; i < Picturebox.Count && found == false; i++)
+                                {
+                                    if (Picturebox[i].ID == temp)
+                                    {
+                                        ImprovedVBE.DrawImageAlpha(item.image, 0, 0, Picturebox[i].image);
+                                        found = true;
                                     }
                                 }
                             }
