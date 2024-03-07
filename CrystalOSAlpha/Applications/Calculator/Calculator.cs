@@ -90,7 +90,7 @@ namespace CrystalOSAlpha.Applications.Calculator
                 DrawFilledRectangle(CurrentColor, 5, height - 15, width - 10, 15);
                 #endregion corners
 
-                canvas = ImprovedVBE.DrawImageAlpha2(canvas, x, y, canvas);
+                canvas = ImprovedVBE.EnableTransparency(canvas, x, y, canvas);
 
                 DrawGradientLeftToRight();
 
@@ -204,9 +204,9 @@ namespace CrystalOSAlpha.Applications.Calculator
                             canvas.RawData[(yCenter + y) * width + xCenter + x] = color;
                         }
 
-                        //DrawPixelfortext(xCenter + x, yCenter + y, GetGradientColor(x, 0, width, height));
+                        //DrawPixel(xCenter + x, yCenter + y, GetGradientColor(x, 0, width, height));
 
-                        //DrawPixelfortext(xCenter + x, yCenter + y, color);
+                        //DrawPixel(xCenter + x, yCenter + y, color);
                     }
                 }
             }
@@ -235,7 +235,7 @@ namespace CrystalOSAlpha.Applications.Calculator
                     int g2 = (int)(inverseBlendFactor * g3 + blendFactor * g);
                     int b2 = (int)(inverseBlendFactor * b3 + blendFactor * b);
 
-                    DrawPixelfortext(i, j, colourToNumber(r2, g2, b2));
+                    DrawPixel(i, j, colourToNumber(r2, g2, b2));
                 }
             }*/
 
@@ -305,7 +305,7 @@ namespace CrystalOSAlpha.Applications.Calculator
             x_1 = 0;
         }
 
-        public bool DrawImageAlpha2(Image image, int x, int y)
+        public bool EnableTransparency(Image image, int x, int y)
         {
             int counter = 0;
             if (y < 14 || y > height || x < -16 || x > width)

@@ -1,6 +1,7 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
 using CrystalOSAlpha;
+using CrystalOSAlpha.Applications;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics.TaskBar;
@@ -14,11 +15,24 @@ using System.Threading.Tasks;
 
 namespace CrystalOS_Alpha.Graphics.Widgets
 {
-    public class FPS_Counter : WidgetHandling
+    public class FPS_Counter : App
     {
-        public int X { get; set; }
-        public int Y { get; set; }
-        public int Z { get; set; }
+        public int x { get; set; }
+        public int y { get; set; }
+        public int z { get; set; }
+        public int width { get; set; }
+        public int height { get; set; }
+
+        public int desk_ID {get; set;}
+
+        public int AppID { get; set; }
+
+        public string name {get; set;}
+
+        public bool minimised { get; set; }
+        public bool movable { get; set; }
+        public Bitmap icon { get; set; }
+
         public int FPS = 0;
 
         public int LastS = -1;
@@ -32,17 +46,17 @@ namespace CrystalOS_Alpha.Graphics.Widgets
 
         public static int sizeDec = 0;
 
-        public void Core()
+        public void App()
         {
             string output = "FPS: " + FPS.ToString();
             if(Get_Back == true)
             {
                 Back = Base.Widget_Back(200 - sizeDec, 200 - sizeDec, ImprovedVBE.colourToNumber(255, 255, 255));
-                Back = ImprovedVBE.DrawImageAlpha2(Back, X, Y, Back);
+                Back = ImprovedVBE.EnableTransparency(Back, x, y, Back);
                 BitFont.DrawBitFontString(Back, "ArialCustomCharset16", Global_integers.c, output, ((100 - sizeDec / 2) - output.Length * 4), (int)(Back.Height / 2 - 8));//92
                 Get_Back = false;
             }
-            ImprovedVBE.DrawImageAlpha(Back, X, Y, ImprovedVBE.cover);
+            ImprovedVBE.DrawImageAlpha(Back, x, y, ImprovedVBE.cover);
 
             if (LastS == -1)
             {
@@ -62,17 +76,17 @@ namespace CrystalOS_Alpha.Graphics.Widgets
 
             if (MouseManager.MouseState == MouseState.Left)
             {
-                if (((MouseManager.X > X && MouseManager.X < X + Back.Width) && (MouseManager.Y > Y && MouseManager.Y < Y + Back.Height)) || mem == false)
+                if (((MouseManager.X > x && MouseManager.X < x + Back.Width) && (MouseManager.Y > y && MouseManager.Y < y + Back.Height)) || mem == false)
                 {
                     if (mem == true)
                     {
-                        x_dif = (int)MouseManager.X - X;
-                        y_dif = (int)MouseManager.Y - Y;
+                        x_dif = (int)MouseManager.X - x;
+                        y_dif = (int)MouseManager.Y - y;
                         mem = false;
                     }
-                    X = (int)MouseManager.X - x_dif;
-                    Y = (int)MouseManager.Y - y_dif;
-                    if (X + Back.Width > ImprovedVBE.width - 200)
+                    x = (int)MouseManager.X - x_dif;
+                    y = (int)MouseManager.Y - y_dif;
+                    if (x + Back.Width > ImprovedVBE.width - 200)
                     {
                         if (sizeDec < 40)
                         {
@@ -93,25 +107,25 @@ namespace CrystalOS_Alpha.Graphics.Widgets
                 }
                 else
                 {
-                    if (X + Back.Width > ImprovedVBE.width - 200)
+                    if (x + Back.Width > ImprovedVBE.width - 200)
                     {
-                        X = SideNav.X + 15;
-                        Y = SideNav.start_y;
+                        x = SideNav.X + 15;
+                        y = SideNav.start_y;
                     }
                 }
                 SideNav.start_y += (int)Back.Height + 20;
                 if (mem == false)
                 {
-                    X = (int)MouseManager.X - x_dif;
-                    Y = (int)MouseManager.Y - y_dif;
+                    x = (int)MouseManager.X - x_dif;
+                    y = (int)MouseManager.Y - y_dif;
                 }
             }
             else
             {
-                if (X + Back.Width > ImprovedVBE.width - 200)
+                if (x + Back.Width > ImprovedVBE.width - 200)
                 {
-                    X = SideNav.X + 15;
-                    Y = SideNav.start_y;
+                    x = SideNav.X + 15;
+                    y = SideNav.start_y;
                     SideNav.start_y += (int)Back.Height + 20;
                 }
             }

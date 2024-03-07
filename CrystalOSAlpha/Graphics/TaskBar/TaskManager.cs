@@ -78,16 +78,16 @@ namespace CrystalOSAlpha.Graphics.TaskBar
             {
                 icon = ImprovedVBE.ScaleImageStock(new Bitmap(Elephant), 36, 36);
                 Back = Base.Widget_Back(420, 470, ImprovedVBE.colourToNumber(255, 255, 255));
-                Back = ImprovedVBE.DrawImageAlpha2(Back, (int)(Left + X_offset - 300), Top - 480, Back);
+                Back = ImprovedVBE.EnableTransparency(Back, (int)(Left + X_offset - 300), Top - 480, Back);
 
                 TaskBar = Base.Widget_Back((int)(X_offset * 2), 50, ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B));
-                TaskBar = ImprovedVBE.DrawImageAlpha2(TaskBar, (int)(Left - X_offset), Top, TaskBar);
+                TaskBar = ImprovedVBE.EnableTransparency(TaskBar, (int)(Left - X_offset), Top, TaskBar);
 
                 Extension_Dock = Base.Widget_Back(150, 50, ImprovedVBE.colourToNumber(255, 255, 255));
-                Extension_Dock = ImprovedVBE.DrawImageAlpha2(Extension_Dock, (int)(Left - X_offset) - 175, Top, Extension_Dock);
+                Extension_Dock = ImprovedVBE.EnableTransparency(Extension_Dock, (int)(Left - X_offset) - 175, Top, Extension_Dock);
 
                 Search_Box = Base.Widget_Back(210, 36, ImprovedVBE.colourToNumber(255, 255, 255));
-                Search_Box = ImprovedVBE.DrawImageAlpha2(Search_Box, (int)(Left + X_offset - 200), Top - 460, Search_Box, 30, 30, 30, ImprovedVBE.cover);
+                Search_Box = ImprovedVBE.EnableTransparencyPreRGB(Search_Box, (int)(Left + X_offset - 200), Top - 460, Search_Box, 30, 30, 30, ImprovedVBE.cover);
 
                 switch (DateTime.Now.DayOfWeek)
                 {
@@ -128,10 +128,10 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                         X_offset += ImprovedVBE.width / 192 * 1.3;
 
                         TaskBar = Base.Widget_Back((int)(X_offset * 2), 50, ImprovedVBE.colourToNumber(255, 255, 255));
-                        TaskBar = ImprovedVBE.DrawImageAlpha2(TaskBar, (int)(Left - X_offset), Top, TaskBar);
+                        TaskBar = ImprovedVBE.EnableTransparency(TaskBar, (int)(Left - X_offset), Top, TaskBar);
 
                         Extension_Dock = Base.Widget_Back(150, 50, ImprovedVBE.colourToNumber(255, 255, 255));
-                        Extension_Dock = ImprovedVBE.DrawImageAlpha2(Extension_Dock, (int)(Left - X_offset) - 175, Top, Extension_Dock);
+                        Extension_Dock = ImprovedVBE.EnableTransparency(Extension_Dock, (int)(Left - X_offset) - 175, Top, Extension_Dock);
 
                         BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DateTime.UtcNow.Hour.ToString() + ":" + DateTime.UtcNow.Minute, 60, 5);
                         BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DayOfWeek + "," + DateTime.UtcNow.Day, (int)(Extension_Dock.Width / 2 - (DayOfWeek + "," + DateTime.UtcNow.Day).Length * 4), 20);//44
@@ -145,10 +145,10 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                         X_offset -= ImprovedVBE.width / 192 * 1.3;
 
                         TaskBar = Base.Widget_Back((int)(X_offset * 2), 50, ImprovedVBE.colourToNumber(255, 255, 255));
-                        TaskBar = ImprovedVBE.DrawImageAlpha2(TaskBar, (int)(Left - X_offset), Top, TaskBar);
+                        TaskBar = ImprovedVBE.EnableTransparency(TaskBar, (int)(Left - X_offset), Top, TaskBar);
 
                         Extension_Dock = Base.Widget_Back(150, 50, ImprovedVBE.colourToNumber(255, 255, 255));
-                        Extension_Dock = ImprovedVBE.DrawImageAlpha2(Extension_Dock, (int)(Left - X_offset) - 175, Top, Extension_Dock);
+                        Extension_Dock = ImprovedVBE.EnableTransparency(Extension_Dock, (int)(Left - X_offset) - 175, Top, Extension_Dock);
 
                         BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DateTime.UtcNow.Hour.ToString() + ":" + DateTime.UtcNow.Minute, 60, 5);
                         BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DayOfWeek + "," + DateTime.UtcNow.Day, (int)(Extension_Dock.Width / 2 - (DayOfWeek + "," + DateTime.UtcNow.Day).Length * 4), 20);
@@ -311,7 +311,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
             if (Time != DateTime.UtcNow.Minute)
             {
                 Extension_Dock = Base.Widget_Back(150, 50, ImprovedVBE.colourToNumber(255, 255, 255));
-                Extension_Dock = ImprovedVBE.DrawImageAlpha2(Extension_Dock, (int)(Left - X_offset) - 175, Top, Extension_Dock);
+                Extension_Dock = ImprovedVBE.EnableTransparency(Extension_Dock, (int)(Left - X_offset) - 175, Top, Extension_Dock);
                 BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DateTime.UtcNow.Hour.ToString() + ":" + DateTime.UtcNow.Minute, 60, 5);
                 BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DayOfWeek + "," + DateTime.UtcNow.Day, (int)(Extension_Dock.Width / 2 - (DayOfWeek + "," + DateTime.UtcNow.Day).Length * 4), 20);
 
@@ -358,10 +358,10 @@ namespace CrystalOSAlpha.Graphics.TaskBar
             if (update == true)
             {
                 Back = Base.Widget_Back(420, 470, ImprovedVBE.colourToNumber(255, 255, 255));
-                Back = ImprovedVBE.DrawImageAlpha2(Back, (int)(Left + X_offset - 300), Top - 480, Back);
+                Back = ImprovedVBE.EnableTransparency(Back, (int)(Left + X_offset - 300), Top - 480, Back);
 
                 Search_Box = Base.Widget_Back(210, 36, ImprovedVBE.colourToNumber(255, 255, 255));
-                Search_Box = ImprovedVBE.DrawImageAlpha2(Search_Box, (int)(Left + X_offset - 200), Top - 460, Search_Box, 30, 30, 30, ImprovedVBE.cover);
+                Search_Box = ImprovedVBE.EnableTransparencyPreRGB(Search_Box, (int)(Left + X_offset - 200), Top - 460, Search_Box, 30, 30, 30, ImprovedVBE.cover);
                 if (Text_Search != "")
                 {
                     BitFont.DrawBitFontString(Search_Box, "ArialCustomCharset16", Global_integers.c, Text_Search, 5, 9);

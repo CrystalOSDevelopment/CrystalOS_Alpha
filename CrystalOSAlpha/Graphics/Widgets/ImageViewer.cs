@@ -44,7 +44,7 @@ namespace CrystalOSAlpha.Graphics.Widgets
             if (Get_Back == true)
             {
                 Back = Base.Widget_Back(200 - sizeDec, 200 - sizeDec, ImprovedVBE.colourToNumber(255, 255, 255));
-                Back = ImprovedVBE.DrawImageAlpha2(Back, x, y, Back);
+                Back = ImprovedVBE.EnableTransparency(Back, x, y, Back);
                 Bitmap bmp = new Bitmap(Elephant);
                 Nr1 = ImprovedVBE.ScaleImageStock(bmp, (uint)(175 - sizeDec), (uint)(150 - sizeDec));
                 BitFont.DrawBitFontString(Back, "ArialCustomCharset16", System.Drawing.Color.White, "ImageViewer", 7, 2);

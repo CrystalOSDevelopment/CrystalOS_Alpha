@@ -36,7 +36,7 @@ public class Renderer
     {
         if (point2D.X >= 0 && point2D.X < bitmap.Width && point2D.Y >= 0 && point2D.Y < bitmap.Height)
         {
-            ImprovedVBE.DrawPixelfortext(bitmap, point2D.X, point2D.Y, color.ToArgb());
+            ImprovedVBE.DrawPixel(bitmap, point2D.X, point2D.Y, color.ToArgb());
         }
     }
 }

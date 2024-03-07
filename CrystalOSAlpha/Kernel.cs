@@ -79,10 +79,13 @@ namespace CrystalOS_Alpha
             }
 
             FPS_Counter f = new FPS_Counter();
-            f.X = 200;
-            f.Y = 200;
-            f.Z = 0;
-            Rendering.widgets.Add(f);
+            f.x = 200;
+            f.y = 200;
+            f.z = 0;
+            f.name = null;
+            f.minimised = false;
+            f.icon = ImprovedVBE.ScaleImageStock(Resources.Web, 56, 56);
+            TaskScheduler.Apps.Add(f);
 
             ImageViewer i = new ImageViewer();
             i.x = 600;
@@ -138,14 +141,13 @@ namespace CrystalOS_Alpha
             }
 
             SideNav.Core();
-            Rendering.render();
             TaskScheduler.Exec();
 
             TaskManager.Main();
 
             BitFont.DrawBitFontString(ImprovedVBE.cover, "ArialCustomCharset16", System.Drawing.Color.White, Clipboard, 500, 40);
 
-            ImprovedVBE.DrawImageAlpha3(C, (int)MouseManager.X, (int)MouseManager.Y);
+            ImprovedVBE.DrawImageAlpha(C, (int)MouseManager.X, (int)MouseManager.Y, ImprovedVBE.cover);
 
 
             ImprovedVBE.display(vbe);

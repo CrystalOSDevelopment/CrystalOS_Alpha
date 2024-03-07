@@ -96,9 +96,9 @@ namespace CrystalOSAlpha.UI_Elements
                             Canvas.RawData[(yCenter + y) * Canvas.Width + xCenter + x] = color;
                         }
 
-                        //DrawPixelfortext(xCenter + x, yCenter + y, GetGradientColor(x, 0, width, height));
+                        //DrawPixel(xCenter + x, yCenter + y, GetGradientColor(x, 0, width, height));
 
-                        //DrawPixelfortext(xCenter + x, yCenter + y, color);
+                        //DrawPixel(xCenter + x, yCenter + y, color);
                     }
                 }
             }

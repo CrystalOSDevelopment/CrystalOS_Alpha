@@ -85,7 +85,7 @@ namespace CrystalOSAlpha.Graphics.Widgets
                 bool extraction = Buttons[0].Clicked;
                 Buttons[0] = new Button_prop((200 - sizeDec) / 2 - 40, 130, 80, 20, "Convert", 1);
                 Back = Base.Widget_Back(200 - sizeDec, 200 - sizeDec, ImprovedVBE.colourToNumber(255, 255, 255));
-                Back = ImprovedVBE.DrawImageAlpha2(Back, x, y, Back);
+                Back = ImprovedVBE.EnableTransparency(Back, x, y, Back);
 
                 if(MouseManager.MouseState == MouseState.Left && extraction == true)
                 {

@@ -26,7 +26,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
         public static int start_y = 40;
         public static void Core()
         {
-            if(TaskScheduler.Apps.Count(d => d.minimised == false) - 2 == 0)
+            if(TaskScheduler.Apps.Count(d => d.minimised == false) - 3 == 0)
             {
                 if (MouseManager.X > ImprovedVBE.width - 200 && MouseManager.X < ImprovedVBE.width)
                 {
@@ -76,7 +76,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                 if (Get_Back == true)
                 {
                     Back = Base.Widget_Back(200, ImprovedVBE.height - 1, ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B));
-                    Back = ImprovedVBE.DrawImageAlpha2(Back, X - 200, Y, Back);
+                    Back = ImprovedVBE.EnableTransparency(Back, X - 200, Y, Back);
                     BitFont.DrawBitFontString(Back, "VerdanaCustomCharset24", Color.White, "Widgets", 2, 5);
                     //frames.Add(Back);
                     Get_Back = false;

@@ -63,9 +63,9 @@ namespace CrystalOSAlpha.Graphics.Widgets
                             canvas.RawData[(yCenter + y) * width + xCenter + x] = color;
                         }
 
-                        //DrawPixelfortext(xCenter + x, yCenter + y, GetGradientColor(x, 0, width, height));
+                        //DrawPixel(xCenter + x, yCenter + y, GetGradientColor(x, 0, width, height));
 
-                        //DrawPixelfortext(xCenter + x, yCenter + y, color);
+                        //DrawPixel(xCenter + x, yCenter + y, color);
                     }
                 }
             }
@@ -94,7 +94,7 @@ namespace CrystalOSAlpha.Graphics.Widgets
                     int g2 = (int)(inverseBlendFactor * g3 + blendFactor * g);
                     int b2 = (int)(inverseBlendFactor * b3 + blendFactor * b);
 
-                    DrawPixelfortext(i, j, colourToNumber(r2, g2, b2));
+                    DrawPixel(i, j, colourToNumber(r2, g2, b2));
                 }
             }*/
 

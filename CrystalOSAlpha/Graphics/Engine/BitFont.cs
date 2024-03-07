@@ -139,7 +139,7 @@ namespace CrystalOSAlpha.Graphics.Engine
                     {
                         if ((Font[h * (Size / 8) + aw] & 0x80 >> ww) != 0)
                         {
-                            ImprovedVBE.DrawPixelfortext(Canvas, X + aw * 8 + ww, Y + h, Color.ToArgb());
+                            ImprovedVBE.DrawPixel(Canvas, X + aw * 8 + ww, Y + h, Color.ToArgb());
 
                             if (aw * 8 + ww > MaxX)
                             {
@@ -150,7 +150,7 @@ namespace CrystalOSAlpha.Graphics.Engine
                             {
                                 if (UseAntiAliasing)
                                 {
-                                    ImprovedVBE.DrawPixelfortext(Canvas, X + aw * 8 + ww - 1, Y + h, ImprovedVBE.colourToNumber(Color.R / 2, Color.G / 2, Color.B / 2));
+                                    ImprovedVBE.DrawPixel(Canvas, X + aw * 8 + ww - 1, Y + h, ImprovedVBE.colourToNumber(Color.R / 2, Color.G / 2, Color.B / 2));
                                 }
 
                                 LastPixelIsNotDrawn = false;

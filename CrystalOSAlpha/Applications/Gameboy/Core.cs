@@ -74,7 +74,7 @@ namespace CrystalOSAlpha.Applications.Gameboy
                 ImprovedVBE.DrawFilledRectangle(canvas, CurrentColor, 5, height - 15, width - 10, 15, false);
                 #endregion corners
 
-                canvas = ImprovedVBE.DrawImageAlpha2(canvas, x, y, canvas);
+                canvas = ImprovedVBE.EnableTransparency(canvas, x, y, canvas);
 
                 DrawGradientLeftToRight();
 

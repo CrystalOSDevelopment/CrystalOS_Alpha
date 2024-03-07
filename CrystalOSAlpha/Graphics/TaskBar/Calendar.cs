@@ -79,7 +79,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                 }
 
                 render = Widgets.Base.Widget_Back(340, 320, ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B));
-                render = ImprovedVBE.DrawImageAlpha2(render, X, Y, render);
+                render = ImprovedVBE.EnableTransparency(render, X, Y, render);
                 BitFont.DrawBitFontString(render, "ArialCustomCharset16", Color.White, Year + ". " + Month_In_String, 20, 15);
 
                 //For loop the dates

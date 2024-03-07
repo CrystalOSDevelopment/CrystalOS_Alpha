@@ -200,7 +200,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 ImprovedVBE.DrawFilledRectangle(Propeties, ImprovedVBE.colourToNumber(50, 50, 50), 2, 2, (int)Propeties.Width - 4, (int)Propeties.Height - 4, false);
                 #endregion Border
 
-                canvas = ImprovedVBE.DrawImageAlpha2(canvas, x, y, canvas, Color.FromArgb(CurrentColor).R, Color.FromArgb(CurrentColor).G, Color.FromArgb(CurrentColor).B, ImprovedVBE.cover);
+                canvas = ImprovedVBE.EnableTransparencyPreRGB(canvas, x, y, canvas, Color.FromArgb(CurrentColor).R, Color.FromArgb(CurrentColor).G, Color.FromArgb(CurrentColor).B, ImprovedVBE.cover);
 
                 DrawGradientLeftToRight();
 

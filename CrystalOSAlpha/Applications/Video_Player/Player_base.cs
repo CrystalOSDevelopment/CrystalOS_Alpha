@@ -143,12 +143,11 @@ namespace CrystalOSAlpha.Applications.Video_Player
 
             if((time - Get_Minutes(time) * 60) < 10)
             {
-                ImprovedVBE._DrawACSIIString("Ellapsed time: " + Get_Minutes(time) + ":0" + (time - Get_Minutes(time) * 60), x + 11, y + 206, ImprovedVBE.colourToNumber(0, 255, 56));
+                //ImprovedVBE._DrawACSIIString("Ellapsed time: " + Get_Minutes(time) + ":0" + (time - Get_Minutes(time) * 60), x + 11, y + 206, ImprovedVBE.colourToNumber(0, 255, 56));
             }
             else
             {
-                ImprovedVBE._DrawACSIIString("Ellapsed time: " + Get_Minutes(time) + ":" + (time - Get_Minutes(time) * 60), x + 11, y + 206, ImprovedVBE.colourToNumber(0, 255, 56));
-                //ImprovedVBE._DrawACSIIString("Position: " + pos, 16, 256, ImprovedVBE.colourToNumber(0, 255, 56));
+                //ImprovedVBE._DrawACSIIString("Ellapsed time: " + Get_Minutes(time) + ":" + (time - Get_Minutes(time) * 60), x + 11, y + 206, ImprovedVBE.colourToNumber(0, 255, 56));
             }
 
             if (MouseManager.MouseState == MouseState.Left)

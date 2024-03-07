@@ -57,7 +57,7 @@ namespace _3DRendering
         //    float y = y1;
         //    for (int i = 0; i <= steps; i++)
         //    {
-        //        ImprovedVBE.DrawPixelfortext(ImprovedVBE.cover, (int)x, (int)y, Color.Red.ToArgb());
+        //        ImprovedVBE.DrawPixel(ImprovedVBE.cover, (int)x, (int)y, Color.Red.ToArgb());
         //        x += xIncrement;
         //        y += yIncrement;
         //    }
@@ -72,7 +72,7 @@ namespace _3DRendering
 
             while (true)
             {
-                ImprovedVBE.DrawPixelfortext(ImprovedVBE.cover, x1, y1, Color.Red.ToArgb());
+                ImprovedVBE.DrawPixel(ImprovedVBE.cover, x1, y1, Color.Red.ToArgb());
 
                 if (x1 == x2 && y1 == y2) break;
                 int e2 = 2 * err;
@@ -340,7 +340,7 @@ namespace _3DRendering
                 // Draw horizontal lines
                 for (int i = 0; i < k; i += 2)
                 {
-                    ImprovedVBE.line(interX[i], y, interX[i + 1], y, color.ToArgb());
+                    ImprovedVBE.DrawLine(interX[i], y, interX[i + 1], y, color.ToArgb());
                 }
             }
         }

@@ -351,7 +351,7 @@ namespace CrystalOSAlpha.SystemApps
                 ImprovedVBE.DrawFilledRectangle(canvas, CurrentColor, 5, height - 15, width - 10, 15, false);
                 #endregion corners
 
-                canvas = ImprovedVBE.DrawImageAlpha2(canvas, x, y, canvas, Color.FromArgb(CurrentColor).R, Color.FromArgb(CurrentColor).G, Color.FromArgb(CurrentColor).B, ImprovedVBE.cover);
+                canvas = ImprovedVBE.EnableTransparencyPreRGB(canvas, x, y, canvas, Color.FromArgb(CurrentColor).R, Color.FromArgb(CurrentColor).G, Color.FromArgb(CurrentColor).B, ImprovedVBE.cover);
 
                 if(HasTitlebar == true)
                 {
@@ -987,7 +987,7 @@ namespace CrystalOSAlpha.SystemApps
                 ImprovedVBE.DrawFilledRectangle(canvas, CurrentColor, 5, height - 15, width - 10, 15, false);
                 #endregion corners
 
-                canvas = ImprovedVBE.DrawImageAlpha2(canvas, x, y, canvas, Color.FromArgb(CurrentColor).R, Color.FromArgb(CurrentColor).G, Color.FromArgb(CurrentColor).B, RenderTo);
+                canvas = ImprovedVBE.EnableTransparencyPreRGB(canvas, x, y, canvas, Color.FromArgb(CurrentColor).R, Color.FromArgb(CurrentColor).G, Color.FromArgb(CurrentColor).B, RenderTo);
 
                 if (HasTitlebar == true)
                 {

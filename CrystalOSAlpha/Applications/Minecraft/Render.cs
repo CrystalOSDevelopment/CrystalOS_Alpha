@@ -362,153 +362,153 @@ namespace CrystalOSAlpha.Applications.Minecraft
                                 switch (Layers[c].RawData[BlockCounter])
                                 {
                                     case 1:
-                                        DrawImageAlpha2(Dirt, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                        EnableTransparency(Dirt, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                         break;
                                     case 2:
-                                        DrawImageAlpha2(Diamond, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                        EnableTransparency(Diamond, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                         break;
                                     case 3:
-                                        DrawImageAlpha2(Brick, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                        EnableTransparency(Brick, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                         break;
                                     case 4:
-                                        DrawImageAlpha2(BookShelf, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                        EnableTransparency(BookShelf, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                         break;
                                     case 5:
-                                        DrawImageAlpha2(Stone, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                        EnableTransparency(Stone, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                         break;
                                     case 6:
-                                        DrawImageAlpha2(Wood, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                        EnableTransparency(Wood, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                         break;
                                     case 7:
-                                        DrawImageAlpha2(Leaves, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                        EnableTransparency(Leaves, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                         break;
                                     case 8:
-                                        DrawImageAlpha2(Amethyst, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                        EnableTransparency(Amethyst, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                         break;
                                     case 9:
-                                        DrawImageAlpha2(Emerald, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                        EnableTransparency(Emerald, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                         break;
                                     case 10:
-                                        DrawImageAlpha2(Gold, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                        EnableTransparency(Gold, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                         break;
                                     case 11:
-                                        DrawImageAlpha2(Iron, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                        EnableTransparency(Iron, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                         break;
                                     case 12:
-                                        DrawImageAlpha2(Cactus, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                        EnableTransparency(Cactus, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                         break;
                                     case 13:
-                                        DrawImageAlpha2(Chest, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                        EnableTransparency(Chest, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                         break;
                                     case 14:
-                                        DrawImageAlpha2(Furnace, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                        EnableTransparency(Furnace, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                         break;
                                     case 15:
-                                        DrawImageAlpha2(Ice, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                        EnableTransparency(Ice, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                         break;
                                     case 16:
-                                        DrawImageAlpha2(Lava, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                        EnableTransparency(Lava, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                         break;
                                     case 17:
-                                        DrawImageAlpha2(Melon, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                        EnableTransparency(Melon, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                         break;
                                     case 18:
-                                        DrawImageAlpha2(Planks, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                        EnableTransparency(Planks, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                         break;
                                     case 19:
-                                        DrawImageAlpha2(Sand, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                        EnableTransparency(Sand, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                         break;
                                     case 20:
-                                        DrawImageAlpha2(Tnt, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                        EnableTransparency(Tnt, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                         break;
                                     case 21:
-                                        DrawImageAlpha2(Water, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                        EnableTransparency(Water, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                         break;
                                 }
                                 /*
                                 if (Layers[c].RawData[BlockCounter] == 1)
                                 {
-                                    DrawImageAlpha2(Dirt, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                    EnableTransparency(Dirt, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                 }
                                 else if (Layers[c].RawData[BlockCounter] == 2)
                                 {
-                                    DrawImageAlpha2(Diamond, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                    EnableTransparency(Diamond, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                 }
                                 else if (Layers[c].RawData[BlockCounter] == 3)
                                 {
-                                    DrawImageAlpha2(Brick, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                    EnableTransparency(Brick, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                 }
                                 else if (Layers[c].RawData[BlockCounter] == 4)
                                 {
-                                    DrawImageAlpha2(BookShelf, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                    EnableTransparency(BookShelf, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                 }
                                 else if (Layers[c].RawData[BlockCounter] == 5)
                                 {
-                                    DrawImageAlpha2(Stone, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                    EnableTransparency(Stone, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                 }
                                 else if (Layers[c].RawData[BlockCounter] == 6)
                                 {
-                                    DrawImageAlpha2(Wood, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                    EnableTransparency(Wood, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                 }
                                 else if (Layers[c].RawData[BlockCounter] == 7)
                                 {
-                                    DrawImageAlpha2(Leaves, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                    EnableTransparency(Leaves, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                 }
                                 else if (Layers[c].RawData[BlockCounter] == 8)
                                 {
-                                    DrawImageAlpha2(Amethyst, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                    EnableTransparency(Amethyst, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                 }
                                 else if (Layers[c].RawData[BlockCounter] == 9)
                                 {
-                                    DrawImageAlpha2(Emerald, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                    EnableTransparency(Emerald, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                 }
                                 else if (Layers[c].RawData[BlockCounter] == 10)
                                 {
-                                    DrawImageAlpha2(Gold, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                    EnableTransparency(Gold, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                 }
                                 if (Layers[c].RawData[BlockCounter] == 11)
                                 {
-                                    DrawImageAlpha2(Iron, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                    EnableTransparency(Iron, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                 }
                                 else if (Layers[c].RawData[BlockCounter] == 12)
                                 {
-                                    DrawImageAlpha2(Cactus, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                    EnableTransparency(Cactus, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                 }
                                 else if (Layers[c].RawData[BlockCounter] == 13)
                                 {
-                                    DrawImageAlpha2(Chest, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                    EnableTransparency(Chest, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                 }
                                 else if (Layers[c].RawData[BlockCounter] == 14)
                                 {
-                                    DrawImageAlpha2(Furnace, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                    EnableTransparency(Furnace, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                 }
                                 else if (Layers[c].RawData[BlockCounter] == 15)
                                 {
-                                    DrawImageAlpha2(Ice, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                    EnableTransparency(Ice, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                 }
                                 else if (Layers[c].RawData[BlockCounter] == 16)
                                 {
-                                    DrawImageAlpha2(Lava, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                    EnableTransparency(Lava, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                 }
                                 else if (Layers[c].RawData[BlockCounter] == 17)
                                 {
-                                    DrawImageAlpha2(Melon, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                    EnableTransparency(Melon, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                 }
                                 else if (Layers[c].RawData[BlockCounter] == 18)
                                 {
-                                    DrawImageAlpha2(Planks, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                    EnableTransparency(Planks, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                 }
                                 else if (Layers[c].RawData[BlockCounter] == 19)
                                 {
-                                    DrawImageAlpha2(Sand, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                    EnableTransparency(Sand, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                 }
                                 else if (Layers[c].RawData[BlockCounter] == 20)
                                 {
-                                    DrawImageAlpha2(Tnt, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                    EnableTransparency(Tnt, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                 }
                                 else if (Layers[c].RawData[BlockCounter] == 21)
                                 {
-                                    DrawImageAlpha2(Water, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                    EnableTransparency(Water, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                 }
                                 */
                             }
@@ -520,7 +520,7 @@ namespace CrystalOSAlpha.Applications.Minecraft
                             {
                                 dist_x = (int)(i + x_offset - DriftLeft);
                                 dist_y = (int)(pos_y - y_offset - DriftUp);
-                                DrawImageAlpha2(Cursor, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
+                                EnableTransparency(Cursor, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                 /*
                                 if (MouseManager.MouseState == MouseState.Right)
                                 {
@@ -553,7 +553,7 @@ namespace CrystalOSAlpha.Applications.Minecraft
                 {
                     Inventory inv = new Inventory();
                     Inv = inv.Render(width - 40, height - 60, canvas.RawData, Health, Hunger, Level);
-                    DrawImageAlpha2(Inv, 20, 40);
+                    EnableTransparency(Inv, 20, 40);
 
                 }
 
@@ -640,9 +640,9 @@ namespace CrystalOSAlpha.Applications.Minecraft
                             canvas.RawData[(yCenter + y) * width + xCenter + x] = color;
                         }
 
-                        //DrawPixelfortext(xCenter + x, yCenter + y, GetGradientColor(x, 0, width, height));
+                        //DrawPixel(xCenter + x, yCenter + y, GetGradientColor(x, 0, width, height));
 
-                        //DrawPixelfortext(xCenter + x, yCenter + y, color);
+                        //DrawPixel(xCenter + x, yCenter + y, color);
                     }
                 }
             }
@@ -671,7 +671,7 @@ namespace CrystalOSAlpha.Applications.Minecraft
                     int g2 = (int)(inverseBlendFactor * g3 + blendFactor * g);
                     int b2 = (int)(inverseBlendFactor * b3 + blendFactor * b);
 
-                    DrawPixelfortext(i, j, colourToNumber(r2, g2, b2));
+                    DrawPixel(i, j, colourToNumber(r2, g2, b2));
                 }
             }*/
 
@@ -736,7 +736,7 @@ namespace CrystalOSAlpha.Applications.Minecraft
             x_1 = 0;
         }
 
-        public bool DrawImageAlpha2(Image image, int x, int y)
+        public bool EnableTransparency(Image image, int x, int y)
         {
             int counter = 0;
             if (y < 14 || y > height || x < -16 || x > width)

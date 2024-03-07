@@ -29,6 +29,7 @@ namespace CrystalOSAlpha.Graphics
 
         public static void Exec()
         {
+            SideNav.start_y = 40;
             Random rnd = new Random();
             for (int i = 0; i < Apps.Count; i++)
             {
@@ -52,6 +53,10 @@ namespace CrystalOSAlpha.Graphics
                 if (app.AppID.ToString().Length == 0)
                 {
                     app.AppID = rnd.Next(1000, 10000);
+                }
+                if (app.y <= 1)
+                {
+                    app.y = 1;
                 }
                 if (MouseManager.MouseState == MouseState.Left)
                 {

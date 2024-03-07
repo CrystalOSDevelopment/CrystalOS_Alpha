@@ -92,7 +92,7 @@ namespace CrystalOSAlpha.Applications.Minecraft
             Graphics.Engine.BitFont.DrawBitFontString(Inv, "ArialCustomCharset16", Global_integers.c, "PLAYER", width - 150, 30);
             Graphics.Engine.BitFont.DrawBitFontString(Inv, "ArialCustomCharset16", Global_integers.c, "Steve", width - 142, 50);
 
-            DrawImageAlpha2(Player, width - 145, 65);
+            EnableTransparency(Player, width - 145, 65);
 
             Graphics.Engine.BitFont.DrawBitFontString(Inv, "ArialCustomCharset16", Global_integers.c, "Health: " + health, width - 185, 180);
             Graphics.Engine.BitFont.DrawBitFontString(Inv, "ArialCustomCharset16", Global_integers.c, "Food:  " + hunger, width - 185, 200);
@@ -112,7 +112,7 @@ namespace CrystalOSAlpha.Applications.Minecraft
                 //Draw the icon
                 if (i < BlockList.Count)
                 {
-                    DrawImageAlpha2(BlockList[i], x_axis + 10, y_axis + 10);
+                    EnableTransparency(BlockList[i], x_axis + 10, y_axis + 10);
                 }
                 //Extend or draw caracter. Either way I need to extend the window size... Later...!!!
                 if (x_axis > 410)
@@ -162,9 +162,9 @@ namespace CrystalOSAlpha.Applications.Minecraft
                             Inv.RawData[(yCenter + y) * width + xCenter + x] = color;
                         }
 
-                        //DrawPixelfortext(xCenter + x, yCenter + y, GetGradientColor(x, 0, width, height));
+                        //DrawPixel(xCenter + x, yCenter + y, GetGradientColor(x, 0, width, height));
 
-                        //DrawPixelfortext(xCenter + x, yCenter + y, color);
+                        //DrawPixel(xCenter + x, yCenter + y, color);
                     }
                 }
             }
@@ -193,7 +193,7 @@ namespace CrystalOSAlpha.Applications.Minecraft
                     int g2 = (int)(inverseBlendFactor * g3 + blendFactor * g);
                     int b2 = (int)(inverseBlendFactor * b3 + blendFactor * b);
 
-                    DrawPixelfortext(i, j, colourToNumber(r2, g2, b2));
+                    DrawPixel(i, j, colourToNumber(r2, g2, b2));
                 }
             }*/
 
@@ -226,7 +226,7 @@ namespace CrystalOSAlpha.Applications.Minecraft
             return ImprovedVBE.colourToNumber(r, g, b);
         }
 
-        public void DrawImageAlpha2(Image image, int x, int y)
+        public void EnableTransparency(Image image, int x, int y)
         {
             int counter = 0;
             for (int _y = y; _y < y + image.Height; _y++)
@@ -291,13 +291,13 @@ namespace CrystalOSAlpha.Applications.Minecraft
                         int g2 = (int)(inverseBlendFactor * g3 + blendFactor * g);
                         int b2 = (int)(inverseBlendFactor * b3 + blendFactor * b);
 
-                        DrawPixelfortext(i, j, ImprovedVBE.colourToNumber(r2, g2, b2));
+                        DrawPixel(i, j, ImprovedVBE.colourToNumber(r2, g2, b2));
                     }
                 }
             }
         }
 
-        public void DrawPixelfortext(int x, int y, int color)
+        public void DrawPixel(int x, int y, int color)
         {
             //16777215 white
             if (x > 0 && x < width && y > 0 && y < height)
