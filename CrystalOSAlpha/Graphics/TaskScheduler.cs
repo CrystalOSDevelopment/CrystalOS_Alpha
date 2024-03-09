@@ -1,4 +1,5 @@
 ﻿using Cosmos.System;
+using CrystalOS_Alpha;
 using CrystalOSAlpha.Applications;
 using CrystalOSAlpha.Applications.Calculator;
 //using CrystalOSAlpha.Applications.Minecraft;
@@ -9,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Kernel = CrystalOS_Alpha.Kernel;
 
 namespace CrystalOSAlpha.Graphics
 {
@@ -143,7 +145,14 @@ namespace CrystalOSAlpha.Graphics
                 index++;
                 if(app.minimised == false)
                 {
-                    app.App();
+                    try
+                    {
+                        app.App();
+                    }
+                    catch (Exception e)
+                    {
+                        Kernel.Clipboard = e.Message;
+                    }
                 }
                 counter++;
             }

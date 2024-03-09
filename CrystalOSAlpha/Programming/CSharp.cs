@@ -27,6 +27,7 @@ using System.Threading.Tasks;
 using Kernel = CrystalOS_Alpha.Kernel;
 using TaskScheduler = CrystalOSAlpha.Graphics.TaskScheduler;
 using CrystalOSAlpha.Applications.Calculator;
+using System.Drawing;
 
 namespace CrystalOSAlpha.Programming
 {
@@ -588,24 +589,37 @@ namespace CrystalOSAlpha.Programming
                             }
                         }
                     }
+                    else if (line.StartsWith("Point"))
+                    {
+                        string temp = line.Replace("Point", "");
+                        //temp = temp.Remove(temp.Length - 1);
+                        string[] values = temp.Split("=");
+                        string name = values[0];
+                        string point = values[1].Replace("new(", "");
+                        point = point.Remove(point.Length - 1);
+                        string[] parts = point.Split(",");
+                        Variables.Add(new Programming.Variables(name, new Point(int.Parse(parts[0]), int.Parse(parts[1]))));
+                    }
 
                     //Variable operations
                     if (line.Contains("+="))
                     {
                         string[] Parts = line.Split("+=");
+                        string varname = Parts[0];
                         bool changed = false;
-                        foreach(var v in Variables)
+                        for(int i = 0; i < Variables.Count && changed == false; i++)
                         {
-                            if(v.S_Name == Parts[0])
+                            if (Variables[i].S_Name == varname)
                             {
-                                v.S_Value += Parts[1].Replace("\"", "");
+                                Variables[i].S_Value += Parts[1].Replace("\"", "");
                                 changed = true;
                             }
-                            else if (v.I_Name == Parts[0])
+                            else if (Variables[i].I_Name == varname)
                             {
                                 if (int.TryParse(Parts[1], out int Parsed))
                                 {
-                                    v.I_Value += Parsed;
+                                    Variables[i].I_Value += Parsed;
+                                    changed = true;
                                 }
                                 else
                                 {
@@ -613,10 +627,29 @@ namespace CrystalOSAlpha.Programming
                                     {
                                         if (c.I_Name == Parts[1])
                                         {
-                                            v.I_Value += c.I_Value;
+                                            Variables[i].I_Value += c.I_Value;
+                                            changed = true;
                                         }
                                     }
                                 }
+                            }
+                            else if (Variables[i].P_Name + ".X" == varname)
+                            {
+                                Point p = new Point(Variables[i].P_Value.X, Variables[i].P_Value.Y);
+                                if(int.TryParse(Parts[1], out int Parsed))
+                                {
+                                    p.X += Parsed;
+                                }
+                                Variables[i].P_Value = p;
+                            }
+                            else if (Variables[i].P_Name + ".Y" == varname)
+                            {
+                                Point p = new Point(Variables[i].P_Value.X, Variables[i].P_Value.Y);
+                                if (int.TryParse(Parts[1], out int Parsed))
+                                {
+                                    p.Y += Parsed;
+                                }
+                                Variables[i].P_Value = p;
                             }
                         }
 
@@ -629,6 +662,24 @@ namespace CrystalOSAlpha.Programming
                             if (v.I_Name == Parts[0])
                             {
                                 v.I_Value -= int.Parse(Parts[1]);
+                            }
+                            else if (v.P_Name + ".X" == Parts[0])
+                            {
+                                Point p = new Point(v.P_Value.X, v.P_Value.Y);
+                                if (int.TryParse(Parts[1], out int Parsed))
+                                {
+                                    p.X -= Parsed;
+                                }
+                                v.P_Value = p;
+                            }
+                            else if (v.P_Name + ".Y" == Parts[0])
+                            {
+                                Point p = new Point(v.P_Value.X, v.P_Value.Y);
+                                if (int.TryParse(Parts[1], out int Parsed))
+                                {
+                                    p.Y -= Parsed;
+                                }
+                                v.P_Value = p;
                             }
                         }
                     }
@@ -653,6 +704,10 @@ namespace CrystalOSAlpha.Programming
                                         }
                                     }
                                 }
+                            }
+                            else if(v.B_Name == Parts[0])
+                            {
+                                v.B_Value = bool.Parse(Parts[1]);
                             }
                         }
                     }
@@ -2413,7 +2468,6 @@ namespace CrystalOSAlpha.Programming
                         {
                             string cleaned = line.Replace("Graphics.RGB=", "");
                             string[] values = cleaned.Split(',');
-                            //Kernel.Clipboard = ImprovedVBE.colourToNumber(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2])).ToString();
                             CurrentColor = ImprovedVBE.colourToNumber(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]));
                         }
                     }
@@ -2671,7 +2725,6 @@ namespace CrystalOSAlpha.Programming
                             {
                                 string temp = line.Replace(item.ID + ".MergeOnto(", "");
                                 temp = temp.Remove(temp.Length - 1);
-                                //Kernel.Clipboard = "Last seen here " + temp;
                                 bool found = false;
                                 for(int i = 0; i < Picturebox.Count && found == false; i++)
                                 {
@@ -2680,6 +2733,43 @@ namespace CrystalOSAlpha.Programming
                                         ImprovedVBE.DrawImageAlpha(item.image, 0, 0, Picturebox[i].image);
                                         found = true;
                                     }
+                                }
+                            }
+                            else if (line.Contains(".SetPixel"))
+                            {
+                                string cleaned = line.Replace(item.ID + ".SetPixel(", "");
+                                cleaned = cleaned.Remove(cleaned.Length - 1);
+                                string[] values = cleaned.Split(',');
+                                item.image.RawData[item.image.Width * (int.Parse(values[1])) + int.Parse(values[0])] = ImprovedVBE.colourToNumber(int.Parse(values[2]), int.Parse(values[3]), int.Parse(values[4]));
+                            }
+                            else if (line.Contains("Clear"))
+                            {
+                                string cleaned = line.Replace(item.ID + ".Clear(", "");
+                                cleaned = cleaned.Remove(cleaned.Length - 1);
+                                string[] values = cleaned.Split(',');
+                                Array.Fill(item.image.RawData, ImprovedVBE.colourToNumber(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2])));
+                            }
+                            else if (line.Contains(".FilledPollygon"))
+                            {
+                                string cleaned = line.Replace(item.ID + ".FilledPollygon(", "");
+                                cleaned = cleaned.Remove(cleaned.Length - 1);
+                                string[] values = cleaned.Split(',');
+                                List<Point> points = new List<Point>();
+
+                                foreach(string s in values)
+                                {
+                                    foreach(var v in Variables)
+                                    {
+                                        if(s == v.P_Name)
+                                        {
+                                            points.Add(v.P_Value);
+                                        }
+                                    }
+                                }
+                                //new List<System.Drawing.Point> { new System.Drawing.Point(1036, 353), new System.Drawing.Point(1084, 353), new System.Drawing.Point(1093, 455), new System.Drawing.Point(968, 455) }
+                                if(points.Count != 0)
+                                {
+                                    ImprovedVBE.DrawFilledPollygon(item.image, points, ImprovedVBE.colourToNumber(64, 63, 60));
                                 }
                             }
                         }
@@ -2762,6 +2852,9 @@ namespace CrystalOSAlpha.Programming
         public string K_Name { get; set; }
         public ConsoleKeyEx K_Value { get; set; }
 
+        public string P_Name { get; set; }
+        public Point P_Value { get; set; }
+
         public Variables(string name, string value)
         {
             this.S_Name = name;
@@ -2791,6 +2884,11 @@ namespace CrystalOSAlpha.Programming
         {
             this.K_Name = name;
             this.K_Value = value;
+        }
+        public Variables(string name, Point value)
+        {
+            this.P_Name = name;
+            this.P_Value = value;
         }
         public string GetString()
         {

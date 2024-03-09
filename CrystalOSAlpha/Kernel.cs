@@ -107,7 +107,7 @@ namespace CrystalOS_Alpha
             MouseManager.ScreenWidth = 1920;
             MouseManager.ScreenHeight = 1080;
 
-            Fonts.RegisterFonts();
+        Fonts.RegisterFonts();
         }
 
         public static int collect = 0;
@@ -115,29 +115,14 @@ namespace CrystalOS_Alpha
         public static string Clipboard = "";
         protected override void Run()
         {
-            if(TaskScheduler.Apps.Where(d => d.width > 800).Count() != 0)
+            if (collect >= 6)
             {
-                if (collect >= 2)
-                {
-                    Heap.Collect();
-                    collect = 0;
-                }
-                else
-                {
-                    collect++;
-                }
+                Heap.Collect();
+                collect = 0;
             }
             else
             {
-                if (collect >= 6)
-                {
-                    Heap.Collect();
-                    collect = 0;
-                }
-                else
-                {
-                    collect++;
-                }
+                collect++;
             }
 
             SideNav.Core();

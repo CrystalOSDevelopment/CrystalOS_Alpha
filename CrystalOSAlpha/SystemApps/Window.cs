@@ -43,7 +43,6 @@ namespace CrystalOSAlpha.SystemApps
         public bool temp = true;
 
         public Bitmap canvas;
-        public Bitmap back_canvas;
         public Bitmap window;
 
         public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
@@ -69,22 +68,15 @@ namespace CrystalOSAlpha.SystemApps
 
         public List<Variables> Vars = new List<Variables>();
 
-        //public Submenu sm = new Submenu("File",
-        //    new List<Items>
-        //    {
-        //        new Items("New", ""),
-        //        new Items("Open", ""),
-        //        new Items("Save", ""),
-        //        new Items("Close", ""),
-        //    });
         public MenuBar mb;
         public bool HasMB = false;
         #endregion UI_Elements
 
-        public string Code = "";
+        public string Code = "#Define Window_Main\n{\n    this.Title = \"SubwaySim 24\";\n    this.X = 0;\n    this.Y = 0;\n    this.Width = 1920;\n    this.Height = 1005;\n    this.Titlebar = true;\n    this.RGB = 60, 60, 60;\n    //PictureBox Interior = new PictureBox(0, 0, \"1:\\SubwaySim24\\Assets\\Interior.bmp\", true);\n    //PictureBox Tunnel = new PictureBox(0, 0, \"1:\\SubwaySim24\\Assets\\Tunnel1.bmp\", true);\n    PictureBox Tunnel = new PictureBox(0, 0, 1920, 1080, true);\n\n    //Points\n    //Rails\n    Point p1 = new Point(770, 720);\n    Point p2 = new Point(1036, 353);\n    Point p3 = new Point(1038, 355);\n    Point p4 = new Point(790, 720);\n\n    Point p5 = new Point(1097, 720);\n    Point p6 = new Point(1079, 360);\n    Point p7 = new Point(1083, 363);\n    Point p8 = new Point(1116, 720);\n    //Station\n    Point First = new Point(885, 385);\n    Point Second = new Point(890, 388);\n    Point Third = new Point(869, 407);\n    Point Fourth = new Point(869, 466);\n    Point Fifth = new Point(563, 717);\n    Point Sixth = new Point(261, 719);\n    Point Seventh = new Point(231, 567);\n\n    Tunnel.Clear(42, 42, 42);\n    Tunnel.FilledPollygon(p1, p2, p3, p4);\n    Tunnel.FilledPollygon(p5, p6, p7, p8);\n    Tunnel.FilledPollygon(First, Second, Third, Fourth, Fifth, Sixth, Seventh);\n\n    //Game Graphics\n    //Interior.MergeOnto(Tunnel);\n    \n    Label VehicleName = new Label(125, 853, VehicleBrand, 255, 255, 255);\n    Label VehicleL = new Label(125, 880, VehicleLength, 255, 255, 255);\n    Label VehicleW = new Label(125, 907, VehicleWeight, 255, 255, 255);\n    Label VehicleMaxS = new Label(125, 934, VehicleMaxSpeed, 255, 255, 255);\n\n    Label VehicleS = new Label(345, 853, VehicleSpeed, 255, 255, 255);\n    Label VehicleT = new Label(345, 880, VehicleThrotle, 255, 255, 255);\n    Label VehicleB = new Label(345, 907, VehicleBreak, 255, 255, 255);\n\n    Label Time = new Label(1480, 25, Seconds, 255, 162, 0);\n    Label WaitTime = new Label(1480, 50, WaitInStation, 255, 162, 0);\n    Label Travelled = new Label(1480, 75, TravelledDistance, 255, 162, 0);\n    //Control UI\n    //Throtle\n    Button ThrotleUp = new Button(1660, 540, 225, 60, \"Throtle Up\", 1, 1, 1);\n    Button ThrotleDown = new Button(1660, 620, 225, 60, \"Throtle Down\", 1, 1, 1);\n    //Index\n    Button IndexL = new Button(1660, 463, 104, 60, \"Index Left\", 1, 1, 1);\n    Button IndexR = new Button(1781, 463, 104, 60, \"Index Right\", 1, 1, 1);\n    //Door handling\n    Button DoorL = new Button(1660, 385, 104, 60, \"Door Left\", 1, 1, 1);\n    Button DoorR = new Button(1781, 385, 104, 60, \"Door Right\", 1, 1, 1);\n    //Horn\n    Button Horn = new Button(1660, 308, 225, 60, \"Horn\", 1, 1, 1);\n}\n#Define Variables\n{\n    string VehicleBrand = \"Test subway\";\n    string VehicleLength = \"25 Meter\";\n    string VehicleWeight = \"34 Tonn\";\n    string VehicleMaxSpeed = \"120 KM/H\";\n    string VehicleGear = \"Neutral\";\n    string VehicleThrotle = \"0\";\n    string VehicleBreak = \"0\";\n    int VehicleSpeed = 0;\n    bool Horn = false;\n\n    //Game mechanics\n    int Seconds = 0;\n    int Now = DateTime.UtcNow.Second;\n    int WaitInStation = 8;\n    int TravelledDistance = 0;\n}\n#void Looping\n{\n    //Gametic\n    int CurrentSecond = DateTime.UtcNow.Second;\n    if(CurrentSecond != Now)\n    {\n        //Time spent in-game\n        Seconds += 1;\n        Now = CurrentSecond;\n        string temp = \"Ellapsed time: \" + Seconds + \"s\";\n        Time.Content = temp;\n\n        //Time spent waiting in station\n        if(WaitInStation > 0)\n        {\n            WaitInStation -= 1;\n            string countBack = \"You can leave the station after \" + WaitInStation + \" seconds.\";\n            WaitTime.Content = countBack;\n            WaitTime.Color = 255, 162, 0;\n        }\n        else\n        {\n            string countBack = \"You can now leave the station! Drive safe!\";\n            WaitTime.Content = countBack;\n            WaitTime.Color = 0, 255, 0;\n        }\n        //Measure distance in meter\n        int Dist = VehicleSpeed * 0.277778;\n        TravelledDistance += Dist;\n        string TravelledDist = \"Distance travelled: \" + TravelledDistance + \" meter(s)\";\n        Travelled.Content = TravelledDist;\n\n        //Moving tracks\n        P1.X += 10;\n        P2.X += 10;\n        Tunnel.Clear(42, 42, 42);\n        Tunnel.FilledPollygon(p1, p2, p3, p4);\n        Tunnel.FilledPollygon(p5, p6, p7, p8);\n        Tunnel.FilledPollygon(First, Second, Third, Fourth, Fifth, Sixth, Seventh);\n\n        //Game Graphics\n        //Interior.MergeOnto(Tunnel);\n    }\n    //End of Gametic\n    //Rendering\n    //End of Rendering\n}\n#OnClick ThrotleUp\n{\n    if(VehicleSpeed < 120)\n    {\n        VehicleSpeed += 10;\n        VehicleS.Content = VehicleSpeed;\n    }\n    if(VehicleSpeed > 80)\n    {\n        VehicleT.Content = \"5\";\n    }\n    if(VehicleSpeed < 80)\n    {\n        VehicleT.Content = \"4\";\n    }\n    if(VehicleSpeed < 60)\n    {\n        VehicleT.Content = \"3\";\n    }\n    if(VehicleSpeed < 40)\n    {\n        VehicleT.Content = \"2\";\n    }\n    if(VehicleSpeed < 20)\n    {\n        VehicleT.Content = \"1\";\n    }\n}\n#OnClick ThrotleDown\n{\n    if(0 < VehicleSpeed)\n    {\n        VehicleSpeed -= 10;\n        VehicleS.Content = VehicleSpeed;\n    }\n    if(VehicleSpeed > 80)\n    {\n        VehicleT.Content = \"5\";\n    }\n    if(VehicleSpeed < 80)\n    {\n        VehicleT.Content = \"4\";\n    }\n    if(VehicleSpeed < 60)\n    {\n        VehicleT.Content = \"3\";\n    }\n    if(VehicleSpeed < 40)\n    {\n        VehicleT.Content = \"2\";\n    }\n    if(VehicleSpeed < 20)\n    {\n        VehicleT.Content = \"1\";\n    }\n}";
         public List<string> Parts;
 
         public int CycleCount = 0;
+        public int part = 0;
 
         public void App()
         {
@@ -304,24 +296,33 @@ namespace CrystalOSAlpha.SystemApps
                                 //Read data from new()
                                 string[] values = parts[1].Replace("new(", "").Split(",");
 
-                                //Tables.Add(new Table(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]), int.Parse(values[4]), int.Parse(values[5]), name, int.Parse(values[6]), int.Parse(values[7])));
-                                //Tables[^1].Initialize();
-                                if (int.TryParse(values[0], out int XAxis))
+                                if (trimmed.Contains("\""))
                                 {
-                                    if (File.Exists(values[2].Replace("\"", "")))
+                                    if (int.TryParse(values[0], out int XAxis))
                                     {
-                                        Bitmap temp = new Bitmap(values[2].Replace("\"", ""));
-                                        //bool.TryParse(values[2], out bool t);
-                                        Picturebox.Add(new PictureBox(int.Parse(values[0]), int.Parse(values[1]), name, true, temp));
+                                        if (File.Exists(values[2].Replace("\"", "")))
+                                        {
+                                            Bitmap temp = new Bitmap(values[2].Replace("\"", ""));
+                                            //bool.TryParse(values[2], out bool t);
+                                            Picturebox.Add(new PictureBox(int.Parse(values[0]), int.Parse(values[1]), name, true, temp));
+                                        }
                                     }
+                                }
+                                else
+                                {
+                                    Bitmap temp = new Bitmap(uint.Parse(values[2]), uint.Parse(values[3]), ColorDepth.ColorDepth32);
+                                    Array.Fill(temp.RawData, 0);
+                                    Picturebox.Add(new PictureBox(int.Parse(values[0]), int.Parse(values[1]), name, true, temp));
                                 }
                             }
                             else
                             {
                                 CSharp cs = new CSharp();
                                 cs.Picturebox = Picturebox;
+                                cs.Variables = Vars;
                                 cs.Returning_methods(trimmed);
                                 Picturebox = cs.Picturebox;
+                                Vars = cs.Variables;
                             }
                         }
                     }
@@ -337,7 +338,6 @@ namespace CrystalOSAlpha.SystemApps
             if (once == true)
             {
                 canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
-                back_canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
                 window = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
 
                 #region corners
@@ -370,7 +370,13 @@ namespace CrystalOSAlpha.SystemApps
                 {
                     //Array.Copy(img.RawData, 0, window.RawData, window.Width * 22, img.RawData.Length);
                 }
-                back_canvas = canvas;
+                for (int i = 0; i < Parts.Count && part == 0; i++)
+                {
+                    if (Parts[i].Contains("#void Looping"))
+                    {
+                        part = i;
+                    }
+                }
                 once = false;
             }
 
@@ -455,16 +461,7 @@ namespace CrystalOSAlpha.SystemApps
                 }
             }
 
-            int part = 0;
-            for(int i = 0; i < Parts.Count && part == 0; i++)
-            {
-                if (Parts[i].Contains("#void Looping"))
-                {
-                    part = i;
-                }
-            }
-
-            if(part != 0 && CycleCount > 5)
+            if(part != 0 && CycleCount > 8)
             {
                 CSharp execLoop = new CSharp();
                 execLoop.Button = Button;
@@ -480,10 +477,19 @@ namespace CrystalOSAlpha.SystemApps
                 execLoop.Picturebox = Picturebox;
                 execLoop.window = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
                 Array.Copy(window.RawData, 0, execLoop.window.RawData, 0, window.RawData.Length);
+                
+                Parts = Separate(Code);
                 string[] lines2 = Parts[part].Split('\n');
-                for (int i = 2; i < lines2.Length && execLoop.Clipboard != "Terminate"; i++)
+                try
                 {
-                    execLoop.Returning_methods(lines2[i]);
+                    for (int i = 3; i < lines2.Length - 1 && execLoop.Clipboard != "Terminate"; i++)
+                    {
+                        execLoop.Returning_methods(lines2[i]);
+                    }
+                }
+                catch
+                {
+                    Parts = Separate(Code);
                 }
                 if (HasMB)
                 {
@@ -882,12 +888,8 @@ namespace CrystalOSAlpha.SystemApps
                                 //Read data from new()
                                 string[] values = parts[1].Replace("new(", "").Split(",");
                                 //Store the values
-                                //Label.Add(new label(int.Parse(values[0]), int.Parse(values[1]), values[2].Remove(values[2].Length - 1).Remove(0, 1), ImprovedVBE.colourToNumber(int.Parse(values[3]), int.Parse(values[4]), int.Parse(values[5])), name));
-
-                                //Kernel.Clipboard += int.Parse(values[0]) + int.Parse(values[1]) + values[2].Remove(values[2].Length - 1).Remove(0, 1) + ImprovedVBE.colourToNumber(int.Parse(values[^3]), int.Parse(values[^2]), int.Parse(values[^1])) + name;
+                                
                                 Label.Add(new label(int.Parse(values[0]), int.Parse(values[1]), parts[1].Substring(parts[1].IndexOf('\"') + 1, parts[1].LastIndexOf('\"') - parts[1].IndexOf('\"') - 1), ImprovedVBE.colourToNumber(int.Parse(values[^3]), int.Parse(values[^2]), int.Parse(values[^1])), name));
-
-                                //Label.Add(new label(int.Parse(values[0]), int.Parse(values[1]), values[2].Remove(values[2].Length - 1).Remove(0, 1), ImprovedVBE.colourToNumber(int.Parse(values[3]), int.Parse(values[4]), int.Parse(values[5])), name));
                             }
                             else if (trimmed.StartsWith("Button"))
                             {
@@ -973,7 +975,6 @@ namespace CrystalOSAlpha.SystemApps
             if (once == true)
             {
                 canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
-                back_canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
                 window = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
 
                 #region corners
@@ -1040,9 +1041,6 @@ namespace CrystalOSAlpha.SystemApps
                 {
                     T.Render(window);
                 }
-
-                //window.RawData = canvas.RawData;
-                back_canvas = canvas;
                 once = false;
             }
 

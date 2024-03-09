@@ -8,7 +8,33 @@
     this.Titlebar = true;
     this.RGB = 60, 60, 60;
     PictureBox Interior = new PictureBox(0, 0, "1:\SubwaySim24\Assets\Interior.bmp", true);
-    PictureBox Tunnel = new PictureBox(0, 0, "1:\SubwaySim24\Assets\Tunnel1.bmp", true);
+    //PictureBox Tunnel = new PictureBox(0, 0, "1:\SubwaySim24\Assets\Tunnel1.bmp", true);
+    PictureBox Tunnel = new PictureBox(0, 0, 1920, 1080, true);
+
+    //Points
+    //Rails
+    Point p1 = new Point(770, 720);
+    Point p2 = new Point(1036, 353);
+    Point p3 = new Point(1038, 355);
+    Point p4 = new Point(790, 720);
+
+    Point p5 = new Point(1097, 720);
+    Point p6 = new Point(1079, 360);
+    Point p7 = new Point(1083, 363);
+    Point p8 = new Point(1116, 720);
+    //Station
+    Point First = new Point(885, 385);
+    Point Second = new Point(890, 388);
+    Point Third = new Point(869, 407);
+    Point Fourth = new Point(869, 466);
+    Point Fifth = new Point(563, 717);
+    Point Sixth = new Point(261, 719);
+    Point Seventh = new Point(231, 567);
+
+    Tunnel.Clear(42, 42, 42);
+    Tunnel.FilledPollygon(p1, p2, p3, p4);
+    Tunnel.FilledPollygon(p5, p6, p7, p8);
+    Tunnel.FilledPollygon(First, Second, Third, Fourth, Fifth, Sixth, Seventh);
 
     //Game Graphics
     Interior.MergeOnto(Tunnel);
@@ -55,6 +81,10 @@
     int Now = DateTime.UtcNow.Second;
     int WaitInStation = 8;
     int TravelledDistance = 0;
+
+    //Game Rendering
+    int Rail_Centering = 0;
+    bool Change = false;
 }
 #void Looping
 {
@@ -87,6 +117,42 @@
         TravelledDistance += Dist;
         string TravelledDist = "Distance travelled: " + TravelledDistance + " meter(s)";
         Travelled.Content = TravelledDist;
+        if(Change == false)
+        {
+            if(Rail_Centering < 40)
+            {
+                p2.X += 10;
+                p3.X += 10;
+                p6.X += 10;
+                p7.X += 10;
+                Rail_Centering += 10;
+            }
+            else
+            {
+                Change = true;
+            }
+        }
+        else
+        {
+            if(Rail_Centering > -40)
+            {
+                p2.X -= 10;
+                p3.X -= 10;
+                p6.X -= 10;
+                p7.X -= 10;
+                Rail_Centering -= 10;
+            }
+            else
+            {
+                Change = false;
+            }
+        }
+        
+        Tunnel.Clear(42, 42, 42);
+        Tunnel.FilledPollygon(p1, p2, p3, p4);
+        Tunnel.FilledPollygon(p5, p6, p7, p8);
+        Tunnel.FilledPollygon(First, Second, Third, Fourth, Fifth, Sixth, Seventh);
+        Interior.MergeOnto(Tunnel);
     }
     //End of Gametic
     //Rendering

@@ -1,11 +1,14 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
+using CrystalOS_Alpha;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.TaskBar;
 using IL2CPU.API.Attribs;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using Image = Cosmos.System.Graphics.Image;
+using Kernel = CrystalOS_Alpha.Kernel;
 
 namespace CrystalOSAlpha
 {
@@ -73,6 +76,22 @@ namespace CrystalOSAlpha
             }
         }
 
+        //Draws a line to the screen
+        public static void DrawLine(Bitmap Canvas, float x1, float y1, float x2, float y2, int color)
+        {
+            float dx = x2 - x1;
+            float dy = y2 - y1;
+
+            float length = (float)Math.Sqrt(dx * dx + dy * dy);
+
+            float angle = (float)Math.Atan2(dy, dx);
+
+            for (float i = 0; i < length; i++)
+            {
+                DrawPixel(Canvas, (int)(x1 + Math.Cos(angle) * i), (int)(y1 + Math.Sin(angle) * i), color);
+            }
+        }
+
         //Draws a filled recatngle to a given canvas
         //NOTE: if transparent parameter is true, it may cause severe performance loss
         public static void DrawFilledRectangle(Bitmap Canvas, int color, int X, int Y, int Width, int Height, bool transparent)
@@ -126,22 +145,6 @@ namespace CrystalOSAlpha
                         }
                     }
                 }
-            }
-        }
-
-        //Draws a line to the screen
-        public static void DrawLine(float x1, float y1, float x2, float y2, int color)
-        {
-            float dx = x2 - x1;
-            float dy = y2 - y1;
-
-            float length = (float)Math.Sqrt(dx * dx + dy * dy);
-
-            float angle = (float)Math.Atan2(dy, dx);
-
-            for (float i = 0; i < length; i++)
-            {
-                //ImprovedVBE.DrawPixel((int)(x1 + Math.Cos(angle) * i), (int)(y1 + Math.Sin(angle) * i), color);
             }
         }
 
@@ -556,5 +559,98 @@ namespace CrystalOSAlpha
             return (r << 16) + (g << 8) + (b);
         }
         #endregion Graphics
+
+        #region Testing
+        public static void DrawFilledPollygon(Bitmap Canvas, List<Point> Points, int Color)
+        {
+            int XMax = 0;
+            int YMax = 0;
+            for(int i = 0; i < Points.Count; i++)
+            {
+                if (Points[i].X > XMax)
+                {
+                    XMax = Points[i].X;
+                }
+                if (Points[i].Y > YMax)
+                {
+                    YMax = Points[i].Y;
+                }
+            }
+            Bitmap Temp = new Bitmap((uint)XMax, (uint)YMax, ColorDepth.ColorDepth32);
+            Array.Fill(Temp.RawData, 0);
+
+            for(int i = 0; i < Points.Count; i++)
+            {
+                if(i < Points.Count - 1)
+                {
+                    DrawLine(Temp, Points[i].X, Points[i].Y, Points[i + 1].X, Points[i + 1].Y, Color);
+                }
+                else
+                {
+                    DrawLine(Temp, Points[i].X, Points[i].Y, Points[0].X, Points[0].Y, Color);
+                }
+            }
+
+            for(int i = 0; i < Temp.Height - 1; i++)
+            {
+                int StartX = 0;
+                int EndX = 0;
+                bool Found = false;
+
+                for(int j = 0; j < Temp.Width && Found == false; j++)
+                {
+                    if (Temp.RawData[i * Temp.Width + j] != 0)
+                    {
+                        StartX = j;
+                        Found = true;
+                    }
+                }
+
+                Found = false;
+                for (int j = (int)Temp.Width - 1; j >= 0 && Found == false; j--)
+                {
+                    if (Temp.RawData[i * Temp.Width + j] != 0)
+                    {
+                        EndX = j;
+                        Found = true;
+                    }
+                }
+                int Distance = EndX - StartX;
+                Array.Fill(Temp.RawData, Color, (int)(i * Temp.Width + StartX), Distance);
+            }
+            DrawImageAlpha(Temp, 0, 0, Canvas);
+        }
+        public static void DrawPollygonFrame(Bitmap Canvas, List<Point> Points, int Color)
+        {
+            int XMax = 0;
+            int YMax = 0;
+            for (int i = 0; i < Points.Count; i++)
+            {
+                if (Points[i].X > XMax)
+                {
+                    XMax = Points[i].X;
+                }
+                if (Points[i].Y > YMax)
+                {
+                    YMax = Points[i].Y;
+                }
+            }
+            Bitmap Temp = new Bitmap((uint)XMax, (uint)YMax, ColorDepth.ColorDepth32);
+            Array.Fill(Temp.RawData, 0);
+
+            for (int i = 0; i < Points.Count; i++)
+            {
+                if (i < Points.Count - 1)
+                {
+                    DrawLine(Temp, Points[i].X, Points[i].Y, Points[i + 1].X, Points[i + 1].Y, Color);
+                }
+                else
+                {
+                    DrawLine(Temp, Points[i].X, Points[i].Y, Points[0].X, Points[0].Y, Color);
+                }
+            }
+            ImprovedVBE.DrawImageAlpha(Temp, 10, 10, Canvas);
+        }
+        #endregion
     }
 }

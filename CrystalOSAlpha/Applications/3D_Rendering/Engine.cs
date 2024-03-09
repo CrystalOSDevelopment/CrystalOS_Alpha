@@ -340,7 +340,7 @@ namespace _3DRendering
                 // Draw horizontal lines
                 for (int i = 0; i < k; i += 2)
                 {
-                    ImprovedVBE.DrawLine(interX[i], y, interX[i + 1], y, color.ToArgb());
+                    //ImprovedVBE.DrawLine(interX[i], y, interX[i + 1], y, color.ToArgb());
                 }
             }
         }
