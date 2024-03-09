@@ -461,7 +461,7 @@ namespace CrystalOSAlpha.SystemApps
                 }
             }
 
-            if(part != 0 && CycleCount > 8)
+            if(part != 0 && CycleCount > 20)
             {
                 CSharp execLoop = new CSharp();
                 execLoop.Button = Button;

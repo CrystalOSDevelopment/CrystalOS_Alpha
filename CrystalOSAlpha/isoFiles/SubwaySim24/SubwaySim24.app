@@ -13,15 +13,27 @@
 
     //Points
     //Rails
+
+    //Rail1
+    //Left side
     Point p1 = new Point(770, 720);
-    Point p2 = new Point(1036, 353);
-    Point p3 = new Point(1038, 355);
-    Point p4 = new Point(790, 720);
+    Point p2 = new Point(954, 463);
+    Point p3 = new Point(993, 410);
+    Point p4 = new Point(1009, 387);
+    Point p40 = new Point(1024, 369);
+    
+    //Right side
+    Point p11 = new Point(1030, 370);
+    Point p21 = new Point(1015, 390);
+    Point p31 = new Point(1000, 411);
+    Point p41 = new Point(962, 467);
+    Point p42 = new Point(788, 720);
 
     Point p5 = new Point(1097, 720);
     Point p6 = new Point(1079, 360);
     Point p7 = new Point(1083, 363);
     Point p8 = new Point(1116, 720);
+    
     //Station
     Point First = new Point(885, 385);
     Point Second = new Point(890, 388);
@@ -31,10 +43,18 @@
     Point Sixth = new Point(261, 719);
     Point Seventh = new Point(231, 567);
 
+    //Ground
+    Point Ground1 = new Point(231, 574);
+    Point Ground2 = new Point(973, 332);
+    Point Ground3 = new Point(1089, 334);
+    Point Ground4 = new Point(1287, 720);
+    Point Ground5 = new Point(230, 720, 720);
+
     Tunnel.Clear(42, 42, 42);
-    Tunnel.FilledPollygon(p1, p2, p3, p4);
-    Tunnel.FilledPollygon(p5, p6, p7, p8);
-    Tunnel.FilledPollygon(First, Second, Third, Fourth, Fifth, Sixth, Seventh);
+    Tunnel.FilledPollygon(25, 25, 25, Ground1, Ground2, Ground3, Ground4, Ground5);
+    Tunnel.FilledPollygon(64, 63, 60, p1, p2, p3, p4, p40, p11, p21, p31, p41, p42);
+    Tunnel.FilledPollygon(64, 63, 60, p5, p6, p7, p8);
+    Tunnel.FilledPollygon(64, 63, 60, First, Second, Third, Fourth, Fifth, Sixth, Seventh);
 
     //Game Graphics
     Interior.MergeOnto(Tunnel);
@@ -66,6 +86,7 @@
 }
 #Define Variables
 {
+    //Vehicle status
     string VehicleBrand = "Test subway";
     string VehicleLength = "25 Meter";
     string VehicleWeight = "34 Tonn";
@@ -85,6 +106,9 @@
     //Game Rendering
     int Rail_Centering = 0;
     bool Change = false;
+
+    //Player status
+    int Points = 0;
 }
 #void Looping
 {
@@ -117,46 +141,46 @@
         TravelledDistance += Dist;
         string TravelledDist = "Distance travelled: " + TravelledDistance + " meter(s)";
         Travelled.Content = TravelledDist;
-        if(Change == false)
-        {
-            if(Rail_Centering < 40)
-            {
-                p2.X += 10;
-                p3.X += 10;
-                p6.X += 10;
-                p7.X += 10;
-                Rail_Centering += 10;
-            }
-            else
-            {
-                Change = true;
-            }
-        }
-        else
-        {
-            if(Rail_Centering > -40)
-            {
-                p2.X -= 10;
-                p3.X -= 10;
-                p6.X -= 10;
-                p7.X -= 10;
-                Rail_Centering -= 10;
-            }
-            else
-            {
-                Change = false;
-            }
-        }
         
+        //Rendering railway
+        if(TravelledDistance == 10)
+        {
+            p3.X += 3;
+            p4.X += 6;
+            p40.X += 8;
+            
+            p31.X += 3;
+            p21.X += 6;
+            p11.X += 8;
+        }
+        else if(TravelledDistance == 20)
+        {
+            p4.X -= 3;
+            p40.X -= 4;
+            
+            p21.X -= 3;
+            p11.X -= 4;
+        }
+        else if(TravelledDistance == 40)
+        {
+            p3.X -= 3;
+            p4.X -= 3;
+            p40.X -= 4;
+            
+            p31.X -= 3;
+            p21.X -= 3;
+            p11.X -= 4;
+        }
+        //End of rendering railway
+
         Tunnel.Clear(42, 42, 42);
-        Tunnel.FilledPollygon(p1, p2, p3, p4);
-        Tunnel.FilledPollygon(p5, p6, p7, p8);
-        Tunnel.FilledPollygon(First, Second, Third, Fourth, Fifth, Sixth, Seventh);
+        Tunnel.FilledPollygon(25, 25, 25, Ground1, Ground2, Ground3, Ground4, Ground5);
+        Tunnel.FilledPollygon(64, 63, 60, p1, p2, p3, p4, p40, p11, p21, p31, p41, p42);
+        Tunnel.FilledPollygon(64, 63, 60, p5, p6, p7, p8);
+        Tunnel.FilledPollygon(64, 63, 60, First, Second, Third, Fourth, Fifth, Sixth, Seventh);
         Interior.MergeOnto(Tunnel);
     }
     //End of Gametic
-    //Rendering
-    //End of Rendering
 }
 #OnClick ThrotleUp
 {
@@ -213,4 +237,8 @@
     {
         VehicleT.Content = "1";
     }
+}
+#OnClick Horn
+{
+    PCSpeaker.Beep(350, 2000);
 }
