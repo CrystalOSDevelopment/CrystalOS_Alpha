@@ -229,7 +229,7 @@ namespace CrystalOSAlpha
                         }
                         if (found == false)//!line[0] != 0 && line[^1] != 0
                         {
-                            if (_y < into.Height)
+                            if (_y < into.Height - 1)
                             {
                                 line.CopyTo(into.RawData, _y * into.Width + x);
                                 counter += (int)image.Width;
@@ -243,7 +243,7 @@ namespace CrystalOSAlpha
                         {
                             for (int _x = x; _x < x + image.Width; _x++)
                             {
-                                if (_y < into.Height)
+                                if (_y < into.Height - 1)
                                 {
                                     if (_x <= into.Width)
                                     {

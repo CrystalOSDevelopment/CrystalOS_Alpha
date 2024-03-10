@@ -50,11 +50,37 @@
     Point Ground4 = new Point(1287, 720);
     Point Ground5 = new Point(230, 720, 720);
 
+    //Tunnel
+    //Left Side
+    Point T1 = new Point(1, 505);
+    Point T2 = new Point(2, 1);
+    Point T3 = new Point(986, 1);
+    Point T4 = new Point(890, 36);
+    Point T5 = new Point(791, 55);
+    Point T6 = new Point(693, 109);
+    Point T7 = new Point(619, 213);
+    Point T8 = new Point(589, 333);
+    Point T9 = new Point(619, 452);
+    Point T10 = new Point(508, 505);
+    //Right Side
+    Point T11 = new Point(892, 35);
+    Point T12 = new Point(893, 1);
+    Point T13 = new Point(1920, 1);
+    Point T14 = new Point(1920, 505);
+    Point T15 = new Point(1361, 505);
+    Point T16 = new Point(1241, 452);
+    Point T17 = new Point(1272, 333);
+    Point T18 = new Point(1239, 213);
+    Point T19 = new Point(1157, 109);
+    Point T20 = new Point(1050, 54);
+
     Tunnel.Clear(42, 42, 42);
     Tunnel.FilledPollygon(25, 25, 25, Ground1, Ground2, Ground3, Ground4, Ground5);
     Tunnel.FilledPollygon(64, 63, 60, p1, p2, p3, p4, p40, p11, p21, p31, p41, p42);
     Tunnel.FilledPollygon(64, 63, 60, p5, p6, p7, p8);
     Tunnel.FilledPollygon(64, 63, 60, First, Second, Third, Fourth, Fifth, Sixth, Seventh);
+    Tunnel.FilledPollygon(25, 25, 25, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10);
+    Tunnel.FilledPollygon(25, 25, 25, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20);
 
     //Game Graphics
     Interior.MergeOnto(Tunnel);
@@ -178,6 +204,9 @@
         Tunnel.FilledPollygon(64, 63, 60, p1, p2, p3, p4, p40, p11, p21, p31, p41, p42);
         Tunnel.FilledPollygon(64, 63, 60, p5, p6, p7, p8);
         Tunnel.FilledPollygon(64, 63, 60, First, Second, Third, Fourth, Fifth, Sixth, Seventh);
+
+        Tunnel.FilledPollygon(25, 25, 25, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10);
+        Tunnel.FilledPollygon(25, 25, 25, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20);
         Interior.MergeOnto(Tunnel);
     }
     //End of Gametic
@@ -240,5 +269,5 @@
 }
 #OnClick Horn
 {
-    PCSpeaker.Beep(350, 2000);
+    PCSpeaker.Beep(350, 1200);
 }
