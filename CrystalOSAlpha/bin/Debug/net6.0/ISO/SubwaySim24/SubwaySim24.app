@@ -54,33 +54,34 @@
     //Left Side
     Point T1 = new Point(1, 505);
     Point T2 = new Point(2, 1);
-    Point T3 = new Point(986, 1);
-    Point T4 = new Point(890, 36);
-    Point T5 = new Point(791, 55);
-    Point T6 = new Point(693, 109);
-    Point T7 = new Point(619, 213);
-    Point T8 = new Point(589, 333);
-    Point T9 = new Point(619, 452);
-    Point T10 = new Point(508, 505);
+    Point T3 = new Point(987, 1);
+    Point T4 = new Point(986, 185);
+    Point T5 = new Point(947, 220);
+    Point T6 = new Point(935, 278);
+    Point T7 = new Point(970, 332);
+    Point T8 = new Point(619, 452);
+    Point T9 = new Point(507, 505);
+    Point T10 = new Point(0, 505);
     //Right Side
-    Point T11 = new Point(892, 35);
-    Point T12 = new Point(893, 1);
-    Point T13 = new Point(1920, 1);
+    Point T11 = new Point(985, 1);
+    Point T12 = new Point(1920, 1);
+    Point T13 = new Point(1919, 505);
     Point T14 = new Point(1920, 505);
-    Point T15 = new Point(1361, 505);
-    Point T16 = new Point(1241, 452);
-    Point T17 = new Point(1272, 333);
-    Point T18 = new Point(1239, 213);
-    Point T19 = new Point(1157, 109);
-    Point T20 = new Point(1050, 54);
+    Point T15 = new Point(1412, 505);
+    Point T16 = new Point(1140, 435);
+    Point T17 = new Point(1090, 333);
+    Point T18 = new Point(1114, 273);
+    Point T19 = new Point(1098, 216);
+    Point T20 = new Point(1055, 185);
+    Point T21 = new Point(986, 185);
 
     Tunnel.Clear(42, 42, 42);
     Tunnel.FilledPollygon(25, 25, 25, Ground1, Ground2, Ground3, Ground4, Ground5);
     Tunnel.FilledPollygon(64, 63, 60, p1, p2, p3, p4, p40, p11, p21, p31, p41, p42);
     Tunnel.FilledPollygon(64, 63, 60, p5, p6, p7, p8);
     Tunnel.FilledPollygon(64, 63, 60, First, Second, Third, Fourth, Fifth, Sixth, Seventh);
-    Tunnel.FilledPollygon(25, 25, 25, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10);
-    Tunnel.FilledPollygon(25, 25, 25, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20);
+    Tunnel.FilledPollygon(30, 30, 30, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10);
+    Tunnel.FilledPollygon(30, 30, 30, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21);
 
     //Game Graphics
     Interior.MergeOnto(Tunnel);
@@ -205,8 +206,8 @@
         Tunnel.FilledPollygon(64, 63, 60, p5, p6, p7, p8);
         Tunnel.FilledPollygon(64, 63, 60, First, Second, Third, Fourth, Fifth, Sixth, Seventh);
 
-        Tunnel.FilledPollygon(25, 25, 25, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10);
-        Tunnel.FilledPollygon(25, 25, 25, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20);
+        Tunnel.FilledPollygon(30, 30, 30, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10);
+        Tunnel.FilledPollygon(30, 30, 30, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21);
         Interior.MergeOnto(Tunnel);
     }
     //End of Gametic
