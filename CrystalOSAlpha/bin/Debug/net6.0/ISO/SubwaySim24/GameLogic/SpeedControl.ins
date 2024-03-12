@@ -1,0 +1,73 @@
+﻿if(VehicleThrotle == 0)
+{
+    if(VehicleSpeed > 0)
+    {
+        VehicleSpeed -= 1;
+        VehicleS.Content = VehicleSpeed;
+    }
+}
+if(VehicleThrotle == 1)
+{
+    if(VehicleSpeed < 18)
+    {
+        VehicleSpeed += 2;
+        VehicleS.Content = VehicleSpeed;
+    }
+    else
+    {
+        VehicleSpeed -= 1;
+        VehicleS.Content = VehicleSpeed;
+    }
+}
+if(VehicleThrotle == 2)
+{
+    if(VehicleSpeed < 30)
+    {
+        VehicleSpeed += 4;
+        VehicleS.Content = VehicleSpeed;
+    }
+    else
+    {
+        VehicleSpeed -= 1;
+        VehicleS.Content = VehicleSpeed;
+    }
+}
+if(VehicleThrotle == 3)
+{
+    if(VehicleSpeed < 53)
+    {
+        VehicleSpeed += 5;
+        VehicleS.Content = VehicleSpeed;
+    }
+    else
+    {
+        VehicleSpeed -= 1;
+        VehicleS.Content = VehicleSpeed;
+    }
+}
+if(VehicleThrotle == 4)
+{
+    if(VehicleSpeed < 84)
+    {
+        VehicleSpeed += 4;
+        VehicleS.Content = VehicleSpeed;
+    }
+    else
+    {
+        VehicleSpeed -= 1;
+        VehicleS.Content = VehicleSpeed;
+    }
+}
+if(VehicleThrotle == 5)
+{
+    if(VehicleSpeed < 120)
+    {
+        VehicleSpeed += 3;
+        VehicleS.Content = VehicleSpeed;
+    }
+    else
+    {
+        VehicleSpeed -= 1;
+        VehicleS.Content = VehicleSpeed;
+    }
+}

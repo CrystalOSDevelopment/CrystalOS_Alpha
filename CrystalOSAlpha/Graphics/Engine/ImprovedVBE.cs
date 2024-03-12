@@ -558,9 +558,41 @@ namespace CrystalOSAlpha
         {
             return (r << 16) + (g << 8) + (b);
         }
-        #endregion Graphics
 
-        #region Testing
+        //
+        public static void DrawPollygonFrame(Bitmap Canvas, List<Point> Points, int Color)
+        {
+            int XMax = 0;
+            int YMax = 0;
+            for (int i = 0; i < Points.Count; i++)
+            {
+                if (Points[i].X > XMax)
+                {
+                    XMax = Points[i].X;
+                }
+                if (Points[i].Y > YMax)
+                {
+                    YMax = Points[i].Y;
+                }
+            }
+            Bitmap Temp = new Bitmap((uint)XMax, (uint)YMax, ColorDepth.ColorDepth32);
+            Array.Fill(Temp.RawData, 0);
+
+            for (int i = 0; i < Points.Count; i++)
+            {
+                if (i < Points.Count - 1)
+                {
+                    DrawLine(Temp, Points[i].X, Points[i].Y, Points[i + 1].X, Points[i + 1].Y, Color);
+                }
+                else
+                {
+                    DrawLine(Temp, Points[i].X, Points[i].Y, Points[0].X, Points[0].Y, Color);
+                }
+            }
+            ImprovedVBE.DrawImageAlpha(Temp, 10, 10, Canvas);
+        }
+        
+        //
         public static void DrawFilledPollygon(Bitmap Canvas, List<Point> Points, int Color)
         {
             int XMax = 0;
@@ -620,37 +652,9 @@ namespace CrystalOSAlpha
             }
             DrawImageAlpha(Temp, 0, 0, Canvas);
         }
-        public static void DrawPollygonFrame(Bitmap Canvas, List<Point> Points, int Color)
-        {
-            int XMax = 0;
-            int YMax = 0;
-            for (int i = 0; i < Points.Count; i++)
-            {
-                if (Points[i].X > XMax)
-                {
-                    XMax = Points[i].X;
-                }
-                if (Points[i].Y > YMax)
-                {
-                    YMax = Points[i].Y;
-                }
-            }
-            Bitmap Temp = new Bitmap((uint)XMax, (uint)YMax, ColorDepth.ColorDepth32);
-            Array.Fill(Temp.RawData, 0);
+        #endregion Graphics
 
-            for (int i = 0; i < Points.Count; i++)
-            {
-                if (i < Points.Count - 1)
-                {
-                    DrawLine(Temp, Points[i].X, Points[i].Y, Points[i + 1].X, Points[i + 1].Y, Color);
-                }
-                else
-                {
-                    DrawLine(Temp, Points[i].X, Points[i].Y, Points[0].X, Points[0].Y, Color);
-                }
-            }
-            ImprovedVBE.DrawImageAlpha(Temp, 10, 10, Canvas);
-        }
+        #region Testing
         #endregion
     }
 }

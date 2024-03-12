@@ -28,6 +28,7 @@ using Kernel = CrystalOS_Alpha.Kernel;
 using TaskScheduler = CrystalOSAlpha.Graphics.TaskScheduler;
 using CrystalOSAlpha.Applications.Calculator;
 using System.Drawing;
+using System.Threading.Channels;
 
 namespace CrystalOSAlpha.Programming
 {
@@ -661,7 +662,20 @@ namespace CrystalOSAlpha.Programming
                         {
                             if (v.I_Name == Parts[0])
                             {
-                                v.I_Value -= int.Parse(Parts[1]);
+                                if (int.TryParse(Parts[1], out int Parsed))
+                                {
+                                    v.I_Value -= Parsed;
+                                }
+                                else
+                                {
+                                    foreach (var c in Variables)
+                                    {
+                                        if (c.I_Name == Parts[1])
+                                        {
+                                            v.I_Value -= c.I_Value;
+                                        }
+                                    }
+                                }
                             }
                             else if (v.P_Name + ".X" == Parts[0])
                             {

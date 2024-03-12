@@ -456,7 +456,7 @@ namespace CrystalOSAlpha.SystemApps
                 }
             }
 
-            if(part != 0 && CycleCount > 20)
+            if(part != 0 && CycleCount > 40)
             {
                 CSharp execLoop = new CSharp();
                 execLoop.Button = Button;
@@ -736,9 +736,38 @@ namespace CrystalOSAlpha.SystemApps
                                         exec.Variables = Vars;
                                         Label.RemoveAll(d => d.ID == "Debug");
                                         string[] lines = p.Split('\n');
-                                        for (int i = 2; i < lines.Length - 1; i++)
+                                        try
                                         {
-                                            exec.Returning_methods(lines[i]);
+                                            for (int i = 3; i < lines.Length - 1 && exec.Clipboard != "Terminate"; i++)
+                                            {
+                                                if (lines[i].Contains("InjectCode("))
+                                                {
+                                                    string line = lines[i].Trim();
+                                                    line = line.Replace("InjectCode(", "");
+                                                    line = line.Remove(line.Length - 2).Replace("\"", "");
+                                                    if (File.Exists(line))
+                                                    {
+                                                        string ToInject = File.ReadAllText(line);
+                                                        string[] SplittedLines = ToInject.Split("\n");
+                                                        for (int j = 0; j < SplittedLines.Length; j++)
+                                                        {
+                                                            exec.Returning_methods(SplittedLines[j]);
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        Kernel.Clipboard += "\nThe file doesn't exist";
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    exec.Returning_methods(lines[i]);
+                                                }
+                                            }
+                                        }
+                                        catch
+                                        {
+                                            Parts = Separate(Code);
                                         }
                                         Button = exec.Button;
                                         Slider = exec.Slider;

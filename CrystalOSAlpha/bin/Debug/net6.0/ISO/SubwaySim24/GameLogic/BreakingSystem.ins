@@ -1,0 +1,27 @@
+﻿if(VehicleSpeed > 0)
+{
+    if(VehicleBreak == 1)
+    {
+        VehicleSpeed -= 1;
+    }
+    else if(VehicleBreak == 2)
+    {
+        VehicleSpeed -= 2;
+    }
+    else if(VehicleBreak == 3)
+    {
+        VehicleSpeed -= 3;
+    }
+    else if(VehicleBreak == 4)
+    {
+        VehicleSpeed -= 4;
+    }
+}
+else
+{
+    if(VehicleBreak != 0)
+    {
+        VehicleSpeed = 0;
+        VehicleS.Content = VehicleSpeed;
+    }
+}

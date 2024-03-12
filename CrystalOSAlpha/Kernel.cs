@@ -115,7 +115,7 @@ namespace CrystalOS_Alpha
         public static string Clipboard = "";
         protected override void Run()
         {
-            if (collect >= 4)
+            if (collect >= 6)
             {
                 Heap.Collect();
                 collect = 0;

@@ -113,16 +113,24 @@
     Label Time = new Label(1480, 25, Seconds, 255, 162, 0);
     Label WaitTime = new Label(1480, 50, WaitInStation, 255, 162, 0);
     Label Travelled = new Label(1480, 75, TravelledDistance, 255, 162, 0);
+
     //Control UI
     //Throtle
-    Button ThrotleUp = new Button(1660, 540, 225, 60, "Throtle Up", 1, 1, 1);
-    Button ThrotleDown = new Button(1660, 620, 225, 60, "Throtle Down", 1, 1, 1);
+    Button ThrotleUp = new Button(1660, 540, 104, 60, "Throtle Up", 1, 1, 1);
+    Button ThrotleDown = new Button(1660, 620, 104, 60, "Throtle Down", 1, 1, 1);
+
+    //Break
+    Button BreakUp = new Button(1781, 540, 104, 60, "Break Up", 1, 1, 1);
+    Button BreakDown = new Button(1781, 620, 104, 60, "Break Down", 1, 1, 1);
+
     //Index
     Button IndexL = new Button(1660, 463, 104, 60, "Index Left", 1, 1, 1);
     Button IndexR = new Button(1781, 463, 104, 60, "Index Right", 1, 1, 1);
+
     //Door handling
     Button DoorL = new Button(1660, 385, 104, 60, "Door Left", 1, 1, 1);
     Button DoorR = new Button(1781, 385, 104, 60, "Door Right", 1, 1, 1);
+
     //Horn
     Button Horn = new Button(1660, 308, 225, 60, "Horn", 1, 1, 1);
 }
@@ -133,9 +141,10 @@
     string VehicleLength = "25 Meter";
     string VehicleWeight = "34 Tonn";
     string VehicleMaxSpeed = "120 KM/H";
-    string VehicleGear = "Neutral";
-    string VehicleThrotle = "0";
-    string VehicleBreak = "0";
+
+    int VehicleThrotle = 0;
+    int VehicleBreak = 0;
+    int VehicleGear = 0;
     int VehicleSpeed = 0;
     bool Horn = false;
 
@@ -144,10 +153,6 @@
     int Now = DateTime.UtcNow.Second;
     int WaitInStation = 8;
     int TravelledDistance = 0;
-
-    //Game Rendering
-    int Rail_Centering = 0;
-    bool Change = false;
 
     //Player status
     int Points = 0;
@@ -158,6 +163,10 @@
     int CurrentSecond = DateTime.UtcNow.Second;
     if(CurrentSecond != Now)
     {
+        //Adjust vehicle speed
+        InjectCode("1:\SubwaySim24\GameLogic\SpeedControl.ins");
+        InjectCode("1:\SubwaySim24\GameLogic\BreakingSystem.ins");
+
         //Time spent in-game
         Seconds += 1;
         Now = CurrentSecond;
@@ -179,10 +188,13 @@
             WaitTime.Color = 0, 255, 0;
         }
         //Measure distance in meter
-        int Dist = VehicleSpeed * 0.277778;
-        TravelledDistance += Dist;
-        string TravelledDist = "Distance travelled: " + TravelledDistance + " meter(s)";
-        Travelled.Content = TravelledDist;
+        if(VehicleSpeed != 0)
+        {
+            int Dist = VehicleSpeed * 0.277778;
+            TravelledDistance += Dist;
+            string TravelledDist = "Distance travelled: " + TravelledDistance + " meter(s)";
+            Travelled.Content = TravelledDist;        
+        }
         
         //Rendering railway
         InjectCode("1:\SubwaySim24\Maps\Map1.ins");
@@ -204,58 +216,24 @@
 }
 #OnClick ThrotleUp
 {
-    if(VehicleSpeed < 120)
-    {
-        VehicleSpeed += 10;
-        VehicleS.Content = VehicleSpeed;
-    }
-    if(VehicleSpeed > 80)
-    {
-        VehicleT.Content = "5";
-    }
-    if(VehicleSpeed < 80)
-    {
-        VehicleT.Content = "4";
-    }
-    if(VehicleSpeed < 60)
-    {
-        VehicleT.Content = "3";
-    }
-    if(VehicleSpeed < 40)
-    {
-        VehicleT.Content = "2";
-    }
-    if(VehicleSpeed < 20)
-    {
-        VehicleT.Content = "1";
-    }
+    InjectCode("1:\SubwaySim24\GameLogic\ThrotleUp.ins");
 }
 #OnClick ThrotleDown
 {
-    if(0 < VehicleSpeed)
+    InjectCode("1:\SubwaySim24\GameLogic\ThrotleBack.ins");
+}
+#OnClick BreakUp
+{
+    if(VehicleBreak < 8)
     {
-        VehicleSpeed -= 10;
-        VehicleS.Content = VehicleSpeed;
+        VehicleBreak += 1;
+        VehicleB.Content = VehicleBreak;
     }
-    if(VehicleSpeed > 80)
+    if(VehicleBreak != 0)
     {
-        VehicleT.Content = "5";
-    }
-    if(VehicleSpeed < 80)
-    {
-        VehicleT.Content = "4";
-    }
-    if(VehicleSpeed < 60)
-    {
-        VehicleT.Content = "3";
-    }
-    if(VehicleSpeed < 40)
-    {
-        VehicleT.Content = "2";
-    }
-    if(VehicleSpeed < 20)
-    {
-        VehicleT.Content = "1";
+        VehicleThrotle = 0;
+        string ModifyType = VehicleThrotle + " ";
+        VehicleT.Content = ModifyType;
     }
 }
 #OnClick Horn
