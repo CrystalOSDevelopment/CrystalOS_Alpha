@@ -2742,7 +2742,7 @@ namespace CrystalOSAlpha.Programming
                                 string[] values = cleaned.Split(',');
                                 item.image.RawData[item.image.Width * (int.Parse(values[1])) + int.Parse(values[0])] = ImprovedVBE.colourToNumber(int.Parse(values[2]), int.Parse(values[3]), int.Parse(values[4]));
                             }
-                            else if (line.Contains("Clear"))
+                            else if (line.Contains(".Clear"))
                             {
                                 string cleaned = line.Replace(item.ID + ".Clear(", "");
                                 cleaned = cleaned.Remove(cleaned.Length - 1);
@@ -2766,18 +2766,31 @@ namespace CrystalOSAlpha.Programming
                                         }
                                     }
                                 }
-                                //new List<System.Drawing.Point> { new System.Drawing.Point(1036, 353), new System.Drawing.Point(1084, 353), new System.Drawing.Point(1093, 455), new System.Drawing.Point(968, 455) }
                                 if(points.Count != 0)
                                 {
                                     ImprovedVBE.DrawFilledPollygon(item.image, points, ImprovedVBE.colourToNumber(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2])));
                                 }
                             }
-                            else if (line.Contains("FilledRectangle"))
+                            else if (line.Contains(".FilledRectangle"))
                             {
                                 string cleaned = line.Replace(item.ID + ".FilledRectangle", "");
                                 cleaned = cleaned.Remove(cleaned.Length - 1).Remove(0, 1);
                                 string[] values = cleaned.Split(',');
                                 ImprovedVBE.DrawFilledRectangle(item.image, ImprovedVBE.colourToNumber(int.Parse(values[4]), int.Parse(values[5]), int.Parse(values[6])), int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]), false);
+                            }
+                            else if (line.Contains(".Line"))
+                            {
+                                string cleaned = line.Replace(item.ID + ".Line", "");
+                                cleaned = cleaned.Remove(cleaned.Length - 1).Remove(0, 1);
+                                string[] values = cleaned.Split(',');
+                                ImprovedVBE.DrawLine(item.image, float.Parse(values[0]), float.Parse(values[1]), float.Parse(values[2]), float.Parse(values[3]), ImprovedVBE.colourToNumber(int.Parse(values[4]), int.Parse(values[5]), int.Parse(values[6])));
+                            }
+                            else if (line.Contains(".FilledCircle"))
+                            {
+                                string cleaned = line.Replace(item.ID + ".FilledCircle", "");
+                                cleaned = cleaned.Remove(cleaned.Length - 1).Remove(0, 1);
+                                string[] values = cleaned.Split(',');
+                                ImprovedVBE.DrawFilledEllipse(item.image, int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]), ImprovedVBE.colourToNumber(int.Parse(values[4]), int.Parse(values[5]), int.Parse(values[6])));
                             }
                         }
                     }

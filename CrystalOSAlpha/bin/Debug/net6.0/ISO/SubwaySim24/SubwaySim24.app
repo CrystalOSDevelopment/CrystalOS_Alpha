@@ -18,21 +18,31 @@
     //Left side
     Point p1 = new Point(770, 720);
     Point p2 = new Point(954, 463);
-    Point p3 = new Point(993, 410);
-    Point p4 = new Point(1009, 387);
-    Point p40 = new Point(1024, 369);
+    Point p3 = new Point(1023, 368);
+    Point p4 = new Point(1038, 346);
+    Point p40 = new Point(1047, 333);
     
     //Right side
-    Point p11 = new Point(1030, 370);
-    Point p21 = new Point(1015, 390);
-    Point p31 = new Point(1000, 411);
+    Point p11 = new Point(1051, 333);
+    Point p21 = new Point(1045, 344);
+    Point p31 = new Point(1030, 368);
     Point p41 = new Point(962, 467);
     Point p42 = new Point(788, 720);
 
-    Point p5 = new Point(1097, 720);
-    Point p6 = new Point(1079, 360);
-    Point p7 = new Point(1083, 363);
-    Point p8 = new Point(1116, 720);
+    //Rail2
+    //Left side
+    Point q1 = new Point(1097, 697);
+    Point q2 = new Point(1081, 463);
+    Point q3 = new Point(1080, 368);
+    Point q4 = new Point(1078, 346);
+    Point q40 = new Point(1077, 333);
+    
+    //Right side
+    Point q11 = new Point(1082, 333);
+    Point q21 = new Point(1083, 344);
+    Point q31 = new Point(1086, 368);
+    Point q41 = new Point(1096, 467);
+    Point q42 = new Point(1116, 697);
     
     //Station
     Point First = new Point(885, 385);
@@ -75,11 +85,16 @@
     Point T20 = new Point(1055, 185);
     Point T21 = new Point(986, 185);
 
+    //Background
     Tunnel.Clear(42, 42, 42);
+    //Ground
     Tunnel.FilledPollygon(25, 25, 25, Ground1, Ground2, Ground3, Ground4, Ground5);
+    //Rails
     Tunnel.FilledPollygon(64, 63, 60, p1, p2, p3, p4, p40, p11, p21, p31, p41, p42);
-    Tunnel.FilledPollygon(64, 63, 60, p5, p6, p7, p8);
+    Tunnel.FilledPollygon(64, 63, 60, q1, q2, q3, q4, q40, q11, q21, q31, q41, q42);
+    //Station
     Tunnel.FilledPollygon(64, 63, 60, First, Second, Third, Fourth, Fifth, Sixth, Seventh);
+    //Tunnel
     Tunnel.FilledPollygon(30, 30, 30, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10);
     Tunnel.FilledPollygon(30, 30, 30, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21);
 
@@ -170,45 +185,20 @@
         Travelled.Content = TravelledDist;
         
         //Rendering railway
-        if(TravelledDistance == 10)
-        {
-            p3.X += 3;
-            p4.X += 6;
-            p40.X += 8;
-            
-            p31.X += 3;
-            p21.X += 6;
-            p11.X += 8;
-        }
-        else if(TravelledDistance == 20)
-        {
-            p4.X -= 3;
-            p40.X -= 4;
-            
-            p21.X -= 3;
-            p11.X -= 4;
-        }
-        else if(TravelledDistance == 40)
-        {
-            p3.X -= 3;
-            p4.X -= 3;
-            p40.X -= 4;
-            
-            p31.X -= 3;
-            p21.X -= 3;
-            p11.X -= 4;
-        }
+        InjectCode("1:\SubwaySim24\Maps\Map1.ins");
         //End of rendering railway
 
         Tunnel.Clear(42, 42, 42);
         Tunnel.FilledPollygon(25, 25, 25, Ground1, Ground2, Ground3, Ground4, Ground5);
         Tunnel.FilledPollygon(64, 63, 60, p1, p2, p3, p4, p40, p11, p21, p31, p41, p42);
-        Tunnel.FilledPollygon(64, 63, 60, p5, p6, p7, p8);
+        Tunnel.FilledPollygon(64, 63, 60, q1, q2, q3, q4, q40, q11, q21, q31, q41, q42);
         Tunnel.FilledPollygon(64, 63, 60, First, Second, Third, Fourth, Fifth, Sixth, Seventh);
 
         Tunnel.FilledPollygon(30, 30, 30, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10);
         Tunnel.FilledPollygon(30, 30, 30, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21);
         Interior.MergeOnto(Tunnel);
+        //GPS
+        InjectCode("1:\SubwaySim24\Maps\GPS.ins");
     }
     //End of Gametic
 }

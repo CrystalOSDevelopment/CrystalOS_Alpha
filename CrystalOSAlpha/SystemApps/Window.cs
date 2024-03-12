@@ -327,11 +327,6 @@ namespace CrystalOSAlpha.SystemApps
                         }
                     }
                 }
-                //if(Picturebox.Count >= 2)
-                //{
-                //    ImprovedVBE.DrawImageAlpha(Picturebox[0], 0, 0, Picturebox[1]);
-                //    Picturebox.RemoveAt(0);
-                //}
                 initial = false;
             }
 
@@ -484,7 +479,29 @@ namespace CrystalOSAlpha.SystemApps
                 {
                     for (int i = 3; i < lines2.Length - 1 && execLoop.Clipboard != "Terminate"; i++)
                     {
-                        execLoop.Returning_methods(lines2[i]);
+                        if (lines2[i].Contains("InjectCode("))
+                        {
+                            string line = lines2[i].Trim();
+                            line = line.Replace("InjectCode(", "");
+                            line = line.Remove(line.Length - 2).Replace("\"", "");
+                            if(File.Exists(line))
+                            {
+                                string ToInject = File.ReadAllText(line);
+                                string[] SplittedLines = ToInject.Split("\n");
+                                for(int j = 0; j < SplittedLines.Length; j++)
+                                {
+                                    execLoop.Returning_methods(SplittedLines[j]);
+                                }
+                            }
+                            else
+                            {
+                                Kernel.Clipboard += "\nThe file doesn't exist";
+                            }
+                        }
+                        else
+                        {
+                            execLoop.Returning_methods(lines2[i]);
+                        }
                     }
                 }
                 catch

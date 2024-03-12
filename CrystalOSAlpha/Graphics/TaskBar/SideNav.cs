@@ -32,26 +32,6 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                 {
                     if (MouseManager.Y > Y && MouseManager.Y < Y + Back.Height - 70)
                     {
-                        /*
-                        if(X > ImprovedVBE.width - 190 && keyframes == false)
-                        {
-                            X -= 5;
-                            Get_Back = true;
-                        }
-                        else if(X > ImprovedVBE.width - 190 && keyframes == true)
-                        {
-                            X -= 5;
-                            Back = frames[frames.Count - c];
-                            if (c != 1)
-                            {
-                                c--;
-                            }
-                        }
-                        else
-                        {
-                            keyframes = true;
-                        }
-                        */
                         if (X > ImprovedVBE.width - 200)
                         {
                             X -= 5;
@@ -63,13 +43,6 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                     if (X < ImprovedVBE.width)
                     {
                         X += 5;
-                        /*
-                        Back = frames[frames.Count - c];
-                        if(c < frames.Count - 1)
-                        {
-                            c++;
-                        }
-                        */
                     }
                 }
 
@@ -81,8 +54,10 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                     //frames.Add(Back);
                     Get_Back = false;
                 }
-
-                ImprovedVBE.DrawImageAlpha(Back, X, Y, ImprovedVBE.cover);
+                if(X < ImprovedVBE.width - 2)
+                {
+                    ImprovedVBE.DrawImageAlpha(Back, X, Y, ImprovedVBE.cover);
+                }
             }
         }
     }
