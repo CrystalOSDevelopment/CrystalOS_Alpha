@@ -43,15 +43,6 @@
     Point q31 = new Point(1086, 368);
     Point q41 = new Point(1096, 467);
     Point q42 = new Point(1116, 697);
-    
-    //Station
-    Point First = new Point(885, 385);
-    Point Second = new Point(890, 388);
-    Point Third = new Point(869, 407);
-    Point Fourth = new Point(869, 466);
-    Point Fifth = new Point(563, 717);
-    Point Sixth = new Point(261, 719);
-    Point Seventh = new Point(231, 567);
 
     //Ground
     Point Ground1 = new Point(231, 574);
@@ -71,12 +62,10 @@
     Point T7 = new Point(970, 332);
     Point T8 = new Point(619, 452);
     Point T9 = new Point(507, 505);
-    Point T10 = new Point(0, 505);
     //Right Side
     Point T11 = new Point(985, 1);
     Point T12 = new Point(1920, 1);
     Point T13 = new Point(1919, 505);
-    Point T14 = new Point(1920, 505);
     Point T15 = new Point(1412, 505);
     Point T16 = new Point(1140, 435);
     Point T17 = new Point(1090, 333);
@@ -85,6 +74,19 @@
     Point T20 = new Point(1055, 185);
     Point T21 = new Point(986, 185);
 
+    //Start of station
+    Point S1 = new Point(1098, 213);
+    Point S2 = new Point(1920, 213);
+    Point S3 = new Point(1920, 457);
+    Point S4 = new Point(1178, 434);
+    Point S5 = new Point(1098, 310);
+
+    Point S6 = new Point(1098, 310);
+    Point S7 = new Point(1293, 309);
+    Point S8 = new Point(1920, 457);
+    Point S9 = new Point(1178, 434);
+    //End of station
+
     //Background
     Tunnel.Clear(42, 42, 42);
     //Ground
@@ -92,11 +94,12 @@
     //Rails
     Tunnel.FilledPollygon(64, 63, 60, p1, p2, p3, p4, p40, p11, p21, p31, p41, p42);
     Tunnel.FilledPollygon(64, 63, 60, q1, q2, q3, q4, q40, q11, q21, q31, q41, q42);
-    //Station
-    Tunnel.FilledPollygon(64, 63, 60, First, Second, Third, Fourth, Fifth, Sixth, Seventh);
     //Tunnel
-    Tunnel.FilledPollygon(30, 30, 30, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10);
-    Tunnel.FilledPollygon(30, 30, 30, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21);
+    Tunnel.FilledPollygon(30, 30, 30, T1, T2, T3, T4, T5, T6, T7, T8, T9);
+    Tunnel.FilledPollygon(30, 30, 30, T11, T12, T13, T15, T16, T17, T18, T19, T20, T21);
+    //Station
+    Tunnel.FilledPollygon(255, 168, 0, S1, S2, S3, S4, S5);
+    Tunnel.FilledPollygon(255, 255, 255, S6, S7, S8, S9);
 
     //Game Graphics
     Interior.MergeOnto(Tunnel);
@@ -113,6 +116,10 @@
     Label Time = new Label(1480, 25, Seconds, 255, 162, 0);
     Label WaitTime = new Label(1480, 50, WaitInStation, 255, 162, 0);
     Label Travelled = new Label(1480, 75, TravelledDistance, 255, 162, 0);
+    Label Score = new Label(672, 845, Points, 255, 255, 255);
+
+    //GPS
+    Label SpeedL = new Label(533, 588, SpeedLimit, 1, 1, 1);
 
     //Control UI
     //Throtle
@@ -147,6 +154,8 @@
     int VehicleGear = 0;
     int VehicleSpeed = 0;
     bool Horn = false;
+    bool LDoorOpened = false;
+    bool RDoorOpened = false;
 
     //Game mechanics
     int Seconds = 0;
@@ -155,7 +164,21 @@
     int TravelledDistance = 0;
 
     //Player status
-    int Points = 0;
+    int pts = 0;
+    bool givepts = true;
+
+    //Stations
+    string Station1 = "Silverline Square";
+    string Station2 = "Azure Abyss";
+    string Station3 = "Golden Gateway";
+    string Station4 = "Amethyst Arcade";
+    string Station5 = "Lunar Labirinth";
+    string Station6 = "Pearl Plaza";
+
+    //GPS
+    Point Location = new Point(298, 626);
+    bool UpdatePos = false;
+    int SpeedLimit = 0;
 }
 #void Looping
 {
@@ -200,14 +223,19 @@
         InjectCode("1:\SubwaySim24\Maps\Map1.ins");
         //End of rendering railway
 
+        string pnts = "Player score: " + pts + "pts";
+		Score.Content = pnts;
+
         Tunnel.Clear(42, 42, 42);
         Tunnel.FilledPollygon(25, 25, 25, Ground1, Ground2, Ground3, Ground4, Ground5);
         Tunnel.FilledPollygon(64, 63, 60, p1, p2, p3, p4, p40, p11, p21, p31, p41, p42);
         Tunnel.FilledPollygon(64, 63, 60, q1, q2, q3, q4, q40, q11, q21, q31, q41, q42);
-        Tunnel.FilledPollygon(64, 63, 60, First, Second, Third, Fourth, Fifth, Sixth, Seventh);
 
         Tunnel.FilledPollygon(30, 30, 30, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10);
         Tunnel.FilledPollygon(30, 30, 30, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21);
+        //Station
+        InjectCode("1:\SubwaySim24\GameLogic\Stations.ins");
+
         Interior.MergeOnto(Tunnel);
         //GPS
         InjectCode("1:\SubwaySim24\Maps\GPS.ins");
@@ -224,9 +252,23 @@
 }
 #OnClick BreakUp
 {
-    if(VehicleBreak < 8)
+    if(VehicleBreak < 5)
     {
         VehicleBreak += 1;
+        VehicleB.Content = VehicleBreak;
+    }
+    if(VehicleBreak != 0)
+    {
+        VehicleThrotle = 0;
+        string ModifyType = VehicleThrotle + " ";
+        VehicleT.Content = ModifyType;
+    }
+}
+#OnClick BreakDown
+{
+    if(VehicleBreak > 0)
+    {
+        VehicleBreak -= 1;
         VehicleB.Content = VehicleBreak;
     }
     if(VehicleBreak != 0)
@@ -239,4 +281,26 @@
 #OnClick Horn
 {
     PCSpeaker.Beep(350, 1200);
+}
+#OnClick DoorL
+{
+    if(LDoorOpened == true)
+    {
+        LDoorOpened = false;
+    }
+    else
+    {
+        LDoorOpened = true;
+    }
+}
+#OnClick DoorR
+{
+    if(RDoorOpened == true)
+    {
+        RDoorOpened = false;
+    }
+    else
+    {
+        RDoorOpened = true;
+    }
 }

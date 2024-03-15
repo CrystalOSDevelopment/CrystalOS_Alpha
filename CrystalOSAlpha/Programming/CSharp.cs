@@ -85,6 +85,8 @@ namespace CrystalOSAlpha.Programming
         public List<PictureBox> Picturebox = new List<PictureBox>();
         #endregion UI_Elements
 
+        public int CycleCounter = 0;
+
         public string Executor(string input)
         {
             string output = "";
@@ -318,6 +320,7 @@ namespace CrystalOSAlpha.Programming
                                 {
                                     found = true;
                                     v.I_Value = DateTime.UtcNow.Second;
+                                    break;
                                 }
                             }
                             if (found == false)
@@ -716,12 +719,41 @@ namespace CrystalOSAlpha.Programming
                                         {
                                             v.I_Value = c.I_Value;
                                         }
+                                        else if(c.P_Name == Parts[1])
+                                        {
+                                            if (Parts[0].Contains("X"))
+                                            {
+                                                v.I_Value = c.P_Value.X;
+                                            }
+                                            else
+                                            {
+                                                v.I_Value = c.P_Value.Y;
+                                            }
+                                        }
                                     }
                                 }
                             }
                             else if(v.B_Name == Parts[0])
                             {
                                 v.B_Value = bool.Parse(Parts[1]);
+                            }
+                            else if (v.P_Name + ".X" == Parts[0])
+                            {
+                                Point p = new Point(v.P_Value.X, v.P_Value.Y);
+                                if (int.TryParse(Parts[1], out int Parsed))
+                                {
+                                    p.X = Parsed;
+                                }
+                                v.P_Value = p;
+                            }
+                            else if (v.P_Name + ".Y" == Parts[0])
+                            {
+                                Point p = new Point(v.P_Value.X, v.P_Value.Y);
+                                if (int.TryParse(Parts[1], out int Parsed))
+                                {
+                                    p.Y = Parsed;
+                                }
+                                v.P_Value = p;
                             }
                         }
                     }
@@ -2804,7 +2836,25 @@ namespace CrystalOSAlpha.Programming
                                 string cleaned = line.Replace(item.ID + ".FilledCircle", "");
                                 cleaned = cleaned.Remove(cleaned.Length - 1).Remove(0, 1);
                                 string[] values = cleaned.Split(',');
-                                ImprovedVBE.DrawFilledEllipse(item.image, int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]), ImprovedVBE.colourToNumber(int.Parse(values[4]), int.Parse(values[5]), int.Parse(values[6])));
+                                if(int.TryParse(values[0], out int X) && int.TryParse(values[1], out int Y))
+                                {
+                                    ImprovedVBE.DrawFilledEllipse(item.image, X, Y, int.Parse(values[2]), int.Parse(values[3]), ImprovedVBE.colourToNumber(int.Parse(values[4]), int.Parse(values[5]), int.Parse(values[6])));
+                                }
+                                else
+                                {
+                                    int Xpos = 0;
+                                    int Ypos = 0;
+                                    foreach(var v in Variables)
+                                    {
+                                        if(v.P_Name == values[0])
+                                        {
+                                            Xpos = v.P_Value.X;
+                                            Ypos = v.P_Value.Y;
+                                            break;
+                                        }
+                                    }
+                                    ImprovedVBE.DrawFilledEllipse(item.image, Xpos, Ypos, int.Parse(values[1]), int.Parse(values[2]), ImprovedVBE.colourToNumber(int.Parse(values[3]), int.Parse(values[4]), int.Parse(values[5])));
+                                }
                             }
                         }
                     }

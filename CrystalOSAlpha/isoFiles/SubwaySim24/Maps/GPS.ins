@@ -1,6 +1,193 @@
-﻿Tunnel.Line(338, 625, 376, 592, 1, 1, 1);
-Tunnel.Line(376, 592, 426, 572, 1, 1, 1);
-
-//Speed limit
+﻿//Speed limit
 Tunnel.FilledCircle(541, 597, 15, 15, 255, 10, 10);
 Tunnel.FilledCircle(541, 597, 12, 12, 255, 255, 255);
+
+//Vehicle position update
+if(TravelledDistance > 100)
+{
+    if(TravelledDistance > 300)
+    {
+        if(TravelledDistance > 500)
+        {
+            if(TravelledDistance > 700)
+            {
+                if(TravelledDistance > 1000)
+                {
+                    if(TravelledDistance > 1300)
+                    {
+                        if(TravelledDistance > 1600)
+                        {
+                            if(TravelledDistance > 1800)
+                            {
+                                if(TravelledDistance > 2000)
+                                {
+                                    if(TravelledDistance > 2200)
+                                    {
+                                        if(TravelledDistance > 2400)
+                                        {
+                                            if(TravelledDistance > 2600)
+                                            {
+                                                if(TravelledDistance > 2800)
+                                                {
+                                                    if(TravelledDistance > 3100)
+                                                    {
+                                                        if(TravelledDistance > 3300)
+                                                        {
+                                                            if(TravelledDistance > 3500)
+                                                            {
+                                                                if(TravelledDistance > 3700)
+                                                                {
+                                                                    if(TravelledDistance > 3900)
+                                                                    {
+                                                                        if(TravelledDistance > 4100)
+                                                                        {
+                                                                            if(TravelledDistance > 4300)
+                                                                            {
+                                                                                if(TravelledDistance > 4500)
+                                                                                {
+                                                                                    
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    Location.X = 524;
+                                                                                    Location.Y = 558;
+                                                                                }
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                Location.X = 509;
+                                                                                Location.Y = 557;
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            Location.X = 490;
+                                                                            Location.Y = 554;
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        Location.X = 482;
+                                                                        Location.Y = 554;
+                                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                                    Location.X = 462;
+                                                                    Location.Y = 559;
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                Location.X = 444;
+                                                                Location.Y = 563;
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            Location.X = 427;
+                                                            Location.Y = 571;
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        Location.X = 413;
+                                                        Location.Y = 581;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    Location.X = 397;
+                                                    Location.Y = 592;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                Location.X = 387;
+                                                Location.Y = 599;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            Location.X = 383;
+                                            Location.Y = 595;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Location.X = 379;
+                                        Location.Y = 591;
+                                    }
+                                }
+                                else
+                                {
+                                    Location.X = 375;
+                                    Location.Y = 587;
+                                }
+                            }
+                            else
+                            {
+                                Location.X = 361;
+                                Location.Y = 588;
+                            }
+                        }
+                        else
+                        {
+                            Location.X = 342;
+                            Location.Y = 590;
+                        }
+                    }
+                    else
+                    {
+                        Location.X = 331;
+                        Location.Y = 592;
+                    }
+                }
+                else
+                {
+                    Location.X = 321;
+                    Location.Y = 599;
+                }
+            }
+            else
+            {
+                Location.X = 321;
+                Location.Y = 599;
+            }
+        }
+        else
+        {
+            Location.X = 316;
+            Location.Y = 608;
+            SpeedLimit = 70;
+            SpeedL.Content = SpeedLimit;
+        }
+    }
+    else
+    {
+        Location.X = 309;
+        Location.Y = 620;
+        SpeedLimit = 40;
+        SpeedL.Content = SpeedLimit;
+    }
+}
+else
+{
+    Location.X = 304;
+    Location.Y = 629;
+    SpeedLimit = 20;
+    SpeedL.Content = SpeedLimit;
+}
+
+//Map rendering
+
+//Route rendering by lines
+Tunnel.Line(304, 629, 326, 593, 1, 1, 1);
+Tunnel.Line(326, 593, 374, 587, 1, 1, 1);
+Tunnel.Line(374, 587, 387, 599, 1, 1, 1);
+Tunnel.Line(387, 599, 437, 565, 1, 1, 1);
+Tunnel.Line(437, 565, 484, 554, 1, 1, 1);
+Tunnel.Line(484, 554, 525, 559, 1, 1, 1);
+
+//Render the current vehicle location
+Tunnel.FilledCircle(Location, 5, 5, 0, 50, 255);

@@ -472,14 +472,14 @@ namespace CrystalOSAlpha.SystemApps
                 execLoop.Picturebox = Picturebox;
                 execLoop.window = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
                 Array.Copy(window.RawData, 0, execLoop.window.RawData, 0, window.RawData.Length);
-                
+
                 Parts = Separate(Code);
                 string[] lines2 = Parts[part].Split('\n');
                 try
                 {
                     for (int i = 3; i < lines2.Length - 1 && execLoop.Clipboard != "Terminate"; i++)
                     {
-                        if (lines2[i].Contains("InjectCode("))
+                        if (lines2[i].Contains("InjectCode(") && execLoop.Count == 0)
                         {
                             string line = lines2[i].Trim();
                             line = line.Replace("InjectCode(", "");
@@ -501,6 +501,23 @@ namespace CrystalOSAlpha.SystemApps
                         else
                         {
                             execLoop.Returning_methods(lines2[i]);
+                        }
+                        if(MouseManager.MouseState == MouseState.Left)
+                        {
+                            foreach (var button in Button)
+                            {
+                                if (MouseManager.X > x + button.X && MouseManager.X < x + button.X + button.Width)
+                                {
+                                    if (MouseManager.Y > y + button.Y && MouseManager.Y < y + button.Y + button.Height)
+                                    {
+                                        if (button.Clicked == false)
+                                        {
+                                            button.Clicked = true;
+                                            temp = true;
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }

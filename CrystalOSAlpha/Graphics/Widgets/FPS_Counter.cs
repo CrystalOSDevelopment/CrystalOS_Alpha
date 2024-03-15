@@ -1,4 +1,5 @@
-﻿using Cosmos.System;
+﻿using Cosmos.Core.Memory;
+using Cosmos.System;
 using Cosmos.System.Graphics;
 using CrystalOSAlpha;
 using CrystalOSAlpha.Applications;
@@ -54,6 +55,7 @@ namespace CrystalOS_Alpha.Graphics.Widgets
                 Back = Base.Widget_Back(200 - sizeDec, 200 - sizeDec, ImprovedVBE.colourToNumber(255, 255, 255));
                 Back = ImprovedVBE.EnableTransparency(Back, x, y, Back);
                 BitFont.DrawBitFontString(Back, "ArialCustomCharset16", Global_integers.c, output, ((100 - sizeDec / 2) - output.Length * 4), (int)(Back.Height / 2 - 8));//92
+                Heap.Collect();
                 Get_Back = false;
             }
             ImprovedVBE.DrawImageAlpha(Back, x, y, ImprovedVBE.cover);
