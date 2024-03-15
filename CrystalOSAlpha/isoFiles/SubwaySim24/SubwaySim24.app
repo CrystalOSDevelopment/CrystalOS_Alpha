@@ -111,12 +111,15 @@
 
     Label VehicleS = new Label(345, 853, VehicleSpeed, 255, 255, 255);
     Label VehicleT = new Label(345, 880, VehicleThrotle, 255, 255, 255);
-    Label VehicleB = new Label(345, 907, VehicleBreak, 255, 255, 255);
+    Label VehicleB = new Label(345, 907, VehicleBrake, 255, 255, 255);
 
     Label Time = new Label(1480, 25, Seconds, 255, 162, 0);
     Label WaitTime = new Label(1480, 50, WaitInStation, 255, 162, 0);
     Label Travelled = new Label(1480, 75, TravelledDistance, 255, 162, 0);
-    Label Score = new Label(672, 845, Points, 255, 255, 255);
+    Label Score = new Label(672, 824, Points, 255, 255, 255);
+    Label LDoorState = new Label(672, 844, "Left door: Closed", 255, 255, 255);
+    Label RDoorState = new Label(672, 864, "Right door: Closed", 255, 255, 255);
+    Label NextStop = new Label(672, 884, "Next stop: ", 255, 255, 255);
 
     //GPS
     Label SpeedL = new Label(533, 588, SpeedLimit, 1, 1, 1);
@@ -126,9 +129,9 @@
     Button ThrotleUp = new Button(1660, 540, 104, 60, "Throtle Up", 1, 1, 1);
     Button ThrotleDown = new Button(1660, 620, 104, 60, "Throtle Down", 1, 1, 1);
 
-    //Break
-    Button BreakUp = new Button(1781, 540, 104, 60, "Break Up", 1, 1, 1);
-    Button BreakDown = new Button(1781, 620, 104, 60, "Break Down", 1, 1, 1);
+    //Brake
+    Button BrakeUp = new Button(1781, 540, 104, 60, "Brake Up", 1, 1, 1);
+    Button BrakeDown = new Button(1781, 620, 104, 60, "Brake Down", 1, 1, 1);
 
     //Index
     Button IndexL = new Button(1660, 463, 104, 60, "Index Left", 1, 1, 1);
@@ -150,7 +153,7 @@
     string VehicleMaxSpeed = "120 KM/H";
 
     int VehicleThrotle = 0;
-    int VehicleBreak = 0;
+    int VehicleBrake = 0;
     int VehicleGear = 0;
     int VehicleSpeed = 0;
     bool Horn = false;
@@ -250,28 +253,28 @@
 {
     InjectCode("1:\SubwaySim24\GameLogic\ThrotleBack.ins");
 }
-#OnClick BreakUp
+#OnClick BrakeUp
 {
-    if(VehicleBreak < 5)
+    if(VehicleBrake < 5)
     {
-        VehicleBreak += 1;
-        VehicleB.Content = VehicleBreak;
+        VehicleBrake += 1;
+        VehicleB.Content = VehicleBrake;
     }
-    if(VehicleBreak != 0)
+    if(VehicleBrake != 0)
     {
         VehicleThrotle = 0;
         string ModifyType = VehicleThrotle + " ";
         VehicleT.Content = ModifyType;
     }
 }
-#OnClick BreakDown
+#OnClick BrakeDown
 {
-    if(VehicleBreak > 0)
+    if(VehicleBrake > 0)
     {
-        VehicleBreak -= 1;
-        VehicleB.Content = VehicleBreak;
+        VehicleBrake -= 1;
+        VehicleB.Content = VehicleBrake;
     }
-    if(VehicleBreak != 0)
+    if(VehicleBrake != 0)
     {
         VehicleThrotle = 0;
         string ModifyType = VehicleThrotle + " ";
@@ -287,20 +290,24 @@
     if(LDoorOpened == true)
     {
         LDoorOpened = false;
+        LDoorState.Content = "Left door: Closed";
     }
     else
     {
         LDoorOpened = true;
+        LDoorState.Content = "Left door: Opened";
     }
 }
 #OnClick DoorR
 {
     if(RDoorOpened == true)
     {
+        RDoorState.Content = "Right door: Closed";
         RDoorOpened = false;
     }
     else
     {
+        RDoorState.Content = "Right door: Opened";
         RDoorOpened = true;
     }
 }

@@ -1,25 +1,25 @@
 ﻿if(VehicleSpeed > 0)
 {
-    if(VehicleBreak == 1)
+    if(VehicleBrake == 1)
     {
         VehicleSpeed -= 1;
     }
-    else if(VehicleBreak == 2)
+    else if(VehicleBrake == 2)
     {
         VehicleSpeed -= 2;
     }
-    else if(VehicleBreak == 3)
+    else if(VehicleBrake == 3)
     {
         VehicleSpeed -= 3;
     }
-    else if(VehicleBreak == 4)
+    else if(VehicleBrake == 4)
     {
         VehicleSpeed -= 4;
     }
 }
 else
 {
-    if(VehicleBreak != 0)
+    if(VehicleBrake != 0)
     {
         VehicleSpeed = 0;
         VehicleS.Content = VehicleSpeed;

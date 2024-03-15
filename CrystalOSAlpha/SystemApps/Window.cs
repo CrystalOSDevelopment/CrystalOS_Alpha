@@ -53,6 +53,8 @@ namespace CrystalOSAlpha.SystemApps
         public bool clicked = false;
         public bool HasTitlebar = true;
         public bool AlwaysOnTop = false;
+
+        public int Counter = 0;
         #endregion Essential
 
         #region UI_Elements
@@ -456,7 +458,7 @@ namespace CrystalOSAlpha.SystemApps
                 }
             }
 
-            if(part != 0 && CycleCount > 40)
+            if(part != 0 && CycleCount > 50)
             {
                 CSharp execLoop = new CSharp();
                 execLoop.Button = Button;

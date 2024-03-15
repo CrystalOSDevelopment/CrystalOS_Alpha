@@ -115,22 +115,37 @@ namespace CrystalOS_Alpha
         public static string Clipboard = "";
         protected override void Run()
         {
-            //if (collect >= 20)
-            //{
-
-            //    collect = 0;
-            //}
-            //else
-            //{
-            //    collect++;
-            //}
+            if (TaskScheduler.Apps.Where(d => d.width > 800).Count() != 0)
+            {
+                if (collect >= 2)
+                {
+                    Heap.Collect();
+                    collect = 0;
+                }
+                else
+                {
+                    collect++;
+                }
+            }
+            else
+            {
+                if (collect >= 6)
+                {
+                    Heap.Collect();
+                    collect = 0;
+                }
+                else
+                {
+                    collect++;
+                }
+            }
 
             SideNav.Core();
             TaskScheduler.Exec();
 
             TaskManager.Main();
 
-            BitFont.DrawBitFontString(ImprovedVBE.cover, "ArialCustomCharset16", System.Drawing.Color.White, Clipboard, 500, 40);
+           // BitFont.DrawBitFontString(ImprovedVBE.cover, "ArialCustomCharset16", System.Drawing.Color.White, Clipboard, 500, 40);
 
             ImprovedVBE.DrawImageAlpha(C, (int)MouseManager.X, (int)MouseManager.Y, ImprovedVBE.cover);
 

@@ -151,7 +151,7 @@ namespace CrystalOSAlpha.Graphics
                     }
                     catch (Exception e)
                     {
-                        Kernel.Clipboard = e.Message;
+                        //Kernel.Clipboard = e.Message;
                     }
                 }
                 counter++;
