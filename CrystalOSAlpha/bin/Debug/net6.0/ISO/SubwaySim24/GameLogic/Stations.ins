@@ -1,13 +1,13 @@
 ﻿if(WaitInStation == 0)
 {
 	givepts = true;
-	string upd = "Next station: " + Station1;
-	NextStop.Content = upd;
 }
 
 //Station1
 if(TravelledDistance == 0)
 {
+	string upd = "Next station: " + Station1;
+	NextStop.Content = upd;
 	Tunnel.FilledPollygon(255, 168, 0, S1, S2, S3, S4, S5);
     Tunnel.FilledPollygon(255, 255, 255, S6, S7, S8, S9);
 	if(VehicleSpeed == 0)
@@ -21,7 +21,7 @@ if(TravelledDistance == 0)
 					pts += 50;
 					pts += 50;
 					givepts = false;
-					WaitInStation = 300;
+					WaitInStation = 100;
 					string upd = "Next station: " + Station2;
 					NextStop.Content = upd;
 				}
@@ -57,7 +57,7 @@ else if(TravelledDistance < 5)
 						pts += 50;
 						pts += 100;
 						givepts = false;
-						WaitInStation = 300;
+						WaitInStation = 100;
 						string upd = "Next station: " + Station2;
 						NextStop.Content = upd;
 					}
@@ -68,7 +68,7 @@ else if(TravelledDistance < 5)
 }
 else if(TravelledDistance < 15)
 {
-	if(TravelledDistance != 0)
+	if(TravelledDistance > 5)
 	{
 		//Move it
 		S1.X = 1333;
@@ -98,7 +98,7 @@ else if(TravelledDistance < 15)
 						pts += 50;
 						pts += 50;
 						givepts = false;
-						WaitInStation = 300;
+						WaitInStation = 100;
 						string upd = "Next station: " + Station2;
 						NextStop.Content = upd;
 					}
@@ -111,8 +111,6 @@ else if(TravelledDistance < 15)
 //Station2
 if(TravelledDistance > 700)
 {
-	string upd = "Next station: " Station2;
-	NextStop.Content = upd;
 	if(TravelledDistance < 710)
 	{
 		//TODO: Reset the variables -- Done!
@@ -150,7 +148,7 @@ if(TravelledDistance > 700)
 						pts += 50;
 						pts += 50;
 						givepts = false;
-						WaitInStation = 500;
+						WaitInStation = 150;
 						string upd = "Next station: " + Station3;
 						NextStop.Content = upd;
 					}
@@ -160,33 +158,36 @@ if(TravelledDistance > 700)
 	}
 	else if(TravelledDistance < 720)
 	{
-		//Move it
-		S1.X = 1126;
-		S5.X = 1126;
-		S5.Y = 341;
-		S6.X = 1126;
-		S6.Y = 341;
-		S7.X = 1368;
-		S7.Y = 341;
-
-		//Render it
-		Tunnel.FilledPollygon(255, 168, 0, S1, S2, S3, S4, S5);
-		Tunnel.FilledPollygon(255, 255, 255, S6, S7, S8, S9);
-
-		if(VehicleSpeed == 0)
+		if(TravelledDistance > 710)
 		{
-			if(WaitInStation == 0)
+			//Move it
+			S1.X = 1126;
+			S5.X = 1126;
+			S5.Y = 341;
+			S6.X = 1126;
+			S6.Y = 341;
+			S7.X = 1368;
+			S7.Y = 341;
+
+			//Render it
+			Tunnel.FilledPollygon(255, 168, 0, S1, S2, S3, S4, S5);
+			Tunnel.FilledPollygon(255, 255, 255, S6, S7, S8, S9);
+
+			if(VehicleSpeed == 0)
 			{
-				if(givepts == true)
+				if(WaitInStation == 0)
 				{
-					if(RDoorOpened == true)
+					if(givepts == true)
 					{
-						pts += 100;
-						pts += 50;
-						givepts = false;
-						WaitInStation = 500;
-						string upd = "Next station: " + Station3;
-						NextStop.Content = upd;
+						if(RDoorOpened == true)
+						{
+							pts += 100;
+							pts += 50;
+							givepts = false;
+							WaitInStation = 150;
+							string upd = "Next station: " + Station3;
+							NextStop.Content = upd;
+						}
 					}
 				}
 			}
@@ -194,36 +195,39 @@ if(TravelledDistance > 700)
 	}
 	else if(TravelledDistance < 730)
 	{
-		//Move it
-		S1.X = 1333;
-		S4.X = 1448;
-		S4.Y = 343;
-		S5.X = 1333;
-		S5.Y = 351;
-		S6.X = 1333;
-		S6.Y = 351;
-		S7.X = 1538;
-		S7.Y = 351;
-		S9.X = 1448;
-		S9.Y = 443;
-
-		//Render it
-		Tunnel.FilledPollygon(255, 168, 0, S1, S2, S3, S4, S5);
-		Tunnel.FilledPollygon(255, 255, 255, S6, S7, S8, S9);
-		if(VehicleSpeed == 0)
+		if(TravelledDistance > 720)
 		{
-			if(WaitInStation == 0)
+			//Move it
+			S1.X = 1333;
+			S4.X = 1448;
+			S4.Y = 343;
+			S5.X = 1333;
+			S5.Y = 351;
+			S6.X = 1333;
+			S6.Y = 351;
+			S7.X = 1538;
+			S7.Y = 351;
+			S9.X = 1448;
+			S9.Y = 443;
+
+			//Render it
+			Tunnel.FilledPollygon(255, 168, 0, S1, S2, S3, S4, S5);
+			Tunnel.FilledPollygon(255, 255, 255, S6, S7, S8, S9);
+			if(VehicleSpeed == 0)
 			{
-				if(givepts == true)
+				if(WaitInStation == 0)
 				{
-					if(RDoorOpened == true)
+					if(givepts == true)
 					{
-						pts += 50;
-						pts += 50;
-						givepts = false;
-						WaitInStation = 500;
-						string upd = "Next station: " + Station3;
-						NextStop.Content = upd;
+						if(RDoorOpened == true)
+						{
+							pts += 50;
+							pts += 50;
+							givepts = false;
+							WaitInStation = 150;
+							string upd = "Next station: " + Station3;
+							NextStop.Content = upd;
+						}
 					}
 				}
 			}
@@ -271,7 +275,7 @@ if(TravelledDistance > 2000)
 						pts += 50;
 						pts += 50;
 						givepts = false;
-						WaitInStation = 300;
+						WaitInStation = 130;
 						string upd = "Next station: " + Station4;
 						NextStop.Content = upd;
 					}
@@ -281,33 +285,36 @@ if(TravelledDistance > 2000)
 	}
 	else if(TravelledDistance < 2020)
 	{
-		//Move it
-		S1.X = 1126;
-		S5.X = 1126;
-		S5.Y = 341;
-		S6.X = 1126;
-		S6.Y = 341;
-		S7.X = 1368;
-		S7.Y = 341;
-
-		//Render it
-		Tunnel.FilledPollygon(255, 168, 0, S1, S2, S3, S4, S5);
-		Tunnel.FilledPollygon(255, 255, 255, S6, S7, S8, S9);
-
-		if(VehicleSpeed == 0)
+		if(TravelledDistance > 2010)
 		{
-			if(WaitInStation == 0)
+			//Move it
+			S1.X = 1126;
+			S5.X = 1126;
+			S5.Y = 341;
+			S6.X = 1126;
+			S6.Y = 341;
+			S7.X = 1368;
+			S7.Y = 341;
+
+			//Render it
+			Tunnel.FilledPollygon(255, 168, 0, S1, S2, S3, S4, S5);
+			Tunnel.FilledPollygon(255, 255, 255, S6, S7, S8, S9);
+
+			if(VehicleSpeed == 0)
 			{
-				if(givepts == true)
+				if(WaitInStation == 0)
 				{
-					if(RDoorOpened == true)
+					if(givepts == true)
 					{
-						pts += 100;
-						pts += 50;
-						givepts = false;
-						WaitInStation = 300;
-						string upd = "Next station: " + Station4;
-						NextStop.Content = upd;
+						if(RDoorOpened == true)
+						{
+							pts += 100;
+							pts += 50;
+							givepts = false;
+							WaitInStation = 130;
+							string upd = "Next station: " + Station4;
+							NextStop.Content = upd;
+						}
 					}
 				}
 			}
@@ -315,37 +322,40 @@ if(TravelledDistance > 2000)
 	}
 	else if(TravelledDistance < 2030)
 	{
-		//Move it
-		S1.X = 1333;
-		S4.X = 1448;
-		S4.Y = 343;
-		S5.X = 1333;
-		S5.Y = 351;
-		S6.X = 1333;
-		S6.Y = 351;
-		S7.X = 1538;
-		S7.Y = 351;
-		S9.X = 1448;
-		S9.Y = 443;
-
-		//Render it
-		Tunnel.FilledPollygon(255, 168, 0, S1, S2, S3, S4, S5);
-		Tunnel.FilledPollygon(255, 255, 255, S6, S7, S8, S9);
-
-		if(VehicleSpeed == 0)
+		if(TravelledDistance > 2020)
 		{
-			if(WaitInStation == 0)
+			//Move it
+			S1.X = 1333;
+			S4.X = 1448;
+			S4.Y = 343;
+			S5.X = 1333;
+			S5.Y = 351;
+			S6.X = 1333;
+			S6.Y = 351;
+			S7.X = 1538;
+			S7.Y = 351;
+			S9.X = 1448;
+			S9.Y = 443;
+
+			//Render it
+			Tunnel.FilledPollygon(255, 168, 0, S1, S2, S3, S4, S5);
+			Tunnel.FilledPollygon(255, 255, 255, S6, S7, S8, S9);
+
+			if(VehicleSpeed == 0)
 			{
-				if(givepts == true)
+				if(WaitInStation == 0)
 				{
-					if(RDoorOpened == true)
+					if(givepts == true)
 					{
-						pts += 50;
-						pts += 50;
-						givepts = false;
-						WaitInStation = 300;
-						string upd = "Next station: " + Station4;
-						NextStop.Content = upd;
+						if(RDoorOpened == true)
+						{
+							pts += 50;
+							pts += 50;
+							givepts = false;
+							WaitInStation = 130;
+							string upd = "Next station: " + Station4;
+							NextStop.Content = upd;
+						}
 					}
 				}
 			}
@@ -393,7 +403,7 @@ if(TravelledDistance > 3300)
 						pts += 50;
 						pts += 50;
 						givepts = false;
-						WaitInStation = 300;
+						WaitInStation = 100;
 						string upd = "Next station: " + Station5;
 						NextStop.Content = upd;
 					}
@@ -403,33 +413,36 @@ if(TravelledDistance > 3300)
 	}
 	else if(TravelledDistance < 3320)
 	{
-		//Move it
-		S1.X = 1126;
-		S5.X = 1126;
-		S5.Y = 341;
-		S6.X = 1126;
-		S6.Y = 341;
-		S7.X = 1368;
-		S7.Y = 341;
-
-		//Render it
-		Tunnel.FilledPollygon(255, 168, 0, S1, S2, S3, S4, S5);
-		Tunnel.FilledPollygon(255, 255, 255, S6, S7, S8, S9);
-
-		if(VehicleSpeed == 0)
+		if(TravelledDistance > 3310)
 		{
-			if(WaitInStation == 0)
+			//Move it
+			S1.X = 1126;
+			S5.X = 1126;
+			S5.Y = 341;
+			S6.X = 1126;
+			S6.Y = 341;
+			S7.X = 1368;
+			S7.Y = 341;
+
+			//Render it
+			Tunnel.FilledPollygon(255, 168, 0, S1, S2, S3, S4, S5);
+			Tunnel.FilledPollygon(255, 255, 255, S6, S7, S8, S9);
+
+			if(VehicleSpeed == 0)
 			{
-				if(givepts == true)
+				if(WaitInStation == 0)
 				{
-					if(RDoorOpened == true)
+					if(givepts == true)
 					{
-						pts += 100;
-						pts += 50;
-						givepts = false;
-						WaitInStation = 300;
-						string upd = "Next station: " + Station5;
-						NextStop.Content = upd;
+						if(RDoorOpened == true)
+						{
+							pts += 100;
+							pts += 50;
+							givepts = false;
+							WaitInStation = 100;
+							string upd = "Next station: " + Station5;
+							NextStop.Content = upd;
+						}
 					}
 				}
 			}
@@ -437,37 +450,40 @@ if(TravelledDistance > 3300)
 	}
 	else if(TravelledDistance < 3330)
 	{
-		//Move it
-		S1.X = 1333;
-		S4.X = 1448;
-		S4.Y = 343;
-		S5.X = 1333;
-		S5.Y = 351;
-		S6.X = 1333;
-		S6.Y = 351;
-		S7.X = 1538;
-		S7.Y = 351;
-		S9.X = 1448;
-		S9.Y = 443;
-
-		//Render it
-		Tunnel.FilledPollygon(255, 168, 0, S1, S2, S3, S4, S5);
-		Tunnel.FilledPollygon(255, 255, 255, S6, S7, S8, S9);
-
-		if(VehicleSpeed == 0)
+		if(TravelledDistance > 3320)
 		{
-			if(WaitInStation == 0)
+			//Move it
+			S1.X = 1333;
+			S4.X = 1448;
+			S4.Y = 343;
+			S5.X = 1333;
+			S5.Y = 351;
+			S6.X = 1333;
+			S6.Y = 351;
+			S7.X = 1538;
+			S7.Y = 351;
+			S9.X = 1448;
+			S9.Y = 443;
+
+			//Render it
+			Tunnel.FilledPollygon(255, 168, 0, S1, S2, S3, S4, S5);
+			Tunnel.FilledPollygon(255, 255, 255, S6, S7, S8, S9);
+
+			if(VehicleSpeed == 0)
 			{
-				if(givepts == true)
+				if(WaitInStation == 0)
 				{
-					if(RDoorOpened == true)
+					if(givepts == true)
 					{
-						pts += 50;
-						pts += 50;
-						givepts = false;
-						WaitInStation = 300;
-						string upd = "Next station: " + Station5;
-						NextStop.Content = upd;
+						if(RDoorOpened == true)
+						{
+							pts += 50;
+							pts += 50;
+							givepts = false;
+							WaitInStation = 100;
+							string upd = "Next station: " + Station5;
+							NextStop.Content = upd;
+						}
 					}
 				}
 			}
@@ -515,7 +531,8 @@ if(TravelledDistance > 4300)
 						pts += 50;
 						pts += 50;
 						givepts = false;
-						WaitInStation = 300;
+						string upd = "Next station: None";
+						NextStop.Content = upd;
 					}
 				}
 			}
@@ -523,31 +540,35 @@ if(TravelledDistance > 4300)
 	}
 	else if(TravelledDistance < 4320)
 	{
-		//Move it
-		S1.X = 1126;
-		S5.X = 1126;
-		S5.Y = 341;
-		S6.X = 1126;
-		S6.Y = 341;
-		S7.X = 1368;
-		S7.Y = 341;
-
-		//Render it
-		Tunnel.FilledPollygon(255, 168, 0, S1, S2, S3, S4, S5);
-		Tunnel.FilledPollygon(255, 255, 255, S6, S7, S8, S9);
-
-		if(VehicleSpeed == 0)
+		if(TravelledDistance > 4310)
 		{
-			if(WaitInStation == 0)
+			//Move it
+			S1.X = 1126;
+			S5.X = 1126;
+			S5.Y = 341;
+			S6.X = 1126;
+			S6.Y = 341;
+			S7.X = 1368;
+			S7.Y = 341;
+
+			//Render it
+			Tunnel.FilledPollygon(255, 168, 0, S1, S2, S3, S4, S5);
+			Tunnel.FilledPollygon(255, 255, 255, S6, S7, S8, S9);
+
+			if(VehicleSpeed == 0)
 			{
-				if(givepts == true)
+				if(WaitInStation == 0)
 				{
-					if(RDoorOpened == true)
+					if(givepts == true)
 					{
-						pts += 100;
-						pts += 50;
-						givepts = false;
-						WaitInStation = 300;
+						if(RDoorOpened == true)
+						{
+							pts += 100;
+							pts += 50;
+							givepts = false;
+							string upd = "Next station: None";
+							NextStop.Content = upd;
+						}
 					}
 				}
 			}
@@ -555,35 +576,39 @@ if(TravelledDistance > 4300)
 	}
 	else if(TravelledDistance < 4330)
 	{
-		//Move it
-		S1.X = 1333;
-		S4.X = 1448;
-		S4.Y = 343;
-		S5.X = 1333;
-		S5.Y = 351;
-		S6.X = 1333;
-		S6.Y = 351;
-		S7.X = 1538;
-		S7.Y = 351;
-		S9.X = 1448;
-		S9.Y = 443;
-
-		//Render it
-		Tunnel.FilledPollygon(255, 168, 0, S1, S2, S3, S4, S5);
-		Tunnel.FilledPollygon(255, 255, 255, S6, S7, S8, S9);
-
-		if(VehicleSpeed == 0)
+		if(TravelledDistance > 4320)
 		{
-			if(WaitInStation == 0)
+			//Move it
+			S1.X = 1333;
+			S4.X = 1448;
+			S4.Y = 343;
+			S5.X = 1333;
+			S5.Y = 351;
+			S6.X = 1333;
+			S6.Y = 351;
+			S7.X = 1538;
+			S7.Y = 351;
+			S9.X = 1448;
+			S9.Y = 443;
+
+			//Render it
+			Tunnel.FilledPollygon(255, 168, 0, S1, S2, S3, S4, S5);
+			Tunnel.FilledPollygon(255, 255, 255, S6, S7, S8, S9);
+
+			if(VehicleSpeed == 0)
 			{
-				if(givepts == true)
+				if(WaitInStation == 0)
 				{
-					if(RDoorOpened == true)
+					if(givepts == true)
 					{
-						pts += 50;
-						pts += 50;
-						givepts = false;
-						WaitInStation = 300;
+						if(RDoorOpened == true)
+						{
+							pts += 50;
+							pts += 50;
+							givepts = false;
+							string upd = "Next station: None";
+							NextStop.Content = upd;
+						}
 					}
 				}
 			}

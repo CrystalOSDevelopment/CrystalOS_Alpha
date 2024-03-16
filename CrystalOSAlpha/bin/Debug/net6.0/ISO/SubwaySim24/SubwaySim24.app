@@ -7,6 +7,7 @@
     this.Height = 1005;
     this.Titlebar = true;
     this.RGB = 60, 60, 60;
+    this.Icon = "1:\SubwaySim24\Assets\icon.bmp";
     PictureBox Interior = new PictureBox(0, 0, "1:\SubwaySim24\Assets\Interior.bmp", true);
     //PictureBox Tunnel = new PictureBox(0, 0, "1:\SubwaySim24\Assets\Tunnel1.bmp", true);
     PictureBox Tunnel = new PictureBox(0, 0, 1920, 1080, true);

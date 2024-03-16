@@ -2,6 +2,7 @@
 using Cosmos.System;
 using Cosmos.System.Graphics;
 using CrystalOS_Alpha;
+using CrystalOS_Alpha.Graphics.Widgets;
 using CrystalOSAlpha.Applications;
 using CrystalOSAlpha.Applications.Gameboy;
 using CrystalOSAlpha.Applications.WebscapeNavigator;
@@ -186,6 +187,12 @@ namespace CrystalOSAlpha.SystemApps
                                 trimmed = trimmed.Replace("this.AlwaysOnTop=", "");
                                 trimmed = trimmed.Remove(trimmed.Length - 1);
                                 this.AlwaysOnTop = bool.Parse(trimmed);
+                            }
+                            else if (trimmed.StartsWith("this.Icon"))
+                            {
+                                trimmed = trimmed.Replace("this.Icon=", "");
+                                trimmed = trimmed.Remove(trimmed.Length - 1);
+                                this.icon = new Bitmap(trimmed.Replace("\"", ""));
                             }
                             else if (trimmed.StartsWith("Label"))
                             {
@@ -493,6 +500,23 @@ namespace CrystalOSAlpha.SystemApps
                                 for(int j = 0; j < SplittedLines.Length; j++)
                                 {
                                     execLoop.Returning_methods(SplittedLines[j]);
+                                    if (MouseManager.MouseState == MouseState.Left)
+                                    {
+                                        foreach (var button in Button)
+                                        {
+                                            if (MouseManager.X > x + button.X && MouseManager.X < x + button.X + button.Width)
+                                            {
+                                                if (MouseManager.Y > y + button.Y && MouseManager.Y < y + button.Y + button.Height)
+                                                {
+                                                    if (button.Clicked == false)
+                                                    {
+                                                        button.Clicked = true;
+                                                        temp = true;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                             else
@@ -624,11 +648,6 @@ namespace CrystalOSAlpha.SystemApps
                         }
                     }
                 }
-            }
-
-            if (MouseManager.MouseState == MouseState.None)
-            {
-                clicked = false;
             }
 
             if (HasMB)
@@ -842,6 +861,11 @@ namespace CrystalOSAlpha.SystemApps
                     }
                     temp = false;
                 }
+            }
+
+            if (MouseManager.MouseState == MouseState.None)
+            {
+                clicked = false;
             }
 
             if (x == 0 && window.Width == ImprovedVBE.width)
