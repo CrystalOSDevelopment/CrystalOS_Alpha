@@ -1,14 +1,7 @@
-﻿
-using Cosmos.System;
+﻿using Cosmos.System;
 using Cosmos.System.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
 using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CrystalOSAlpha.UI_Elements
 {

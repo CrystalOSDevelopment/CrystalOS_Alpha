@@ -24,60 +24,21 @@
         <VBEResolution>1920x1080x32</VBEResolution>
         <RemoveBootDebugOutput>True</RemoveBootDebugOutput>
         <VMWareEdition>Workstation</VMWareEdition>
-        <Timeout></Timeout>
+        <Timeout>0</Timeout>
+        <BinFormat>Elf</BinFormat>
     </PropertyGroup>
+
+    <ItemGroup>
+      <Compile Remove="Applications\Minecraft\**" />
+      <EmbeddedResource Remove="Applications\Minecraft\**" />
+      <None Remove="Applications\Minecraft\**" />
+    </ItemGroup>
 
     <ItemGroup>
       <None Remove="Applications\Gameboy\4_in_1.gb" />
       <None Remove="Applications\Gameboy\Caesars_Palace.gb" />
-      <None Remove="Applications\Gameboy\Smurfs_Nightmare.gb" />
       <None Remove="Applications\Gameboy\Tetris.gb" />
       <None Remove="Applications\Gameboy\Zelda.gb" />
-      <None Remove="Applications\Minecraft\AMETHYST.bmp" />
-      <None Remove="Applications\Minecraft\BOOKSHELF.bmp" />
-      <None Remove="Applications\Minecraft\BRICK.bmp" />
-      <None Remove="Applications\Minecraft\CACTUS.bmp" />
-      <None Remove="Applications\Minecraft\CHEST.bmp" />
-      <None Remove="Applications\Minecraft\CURSOR.bmp" />
-      <None Remove="Applications\Minecraft\DIAMOND.bmp" />
-      <None Remove="Applications\Minecraft\DIRT.bmp" />
-      <None Remove="Applications\Minecraft\EMERALD.bmp" />
-      <None Remove="Applications\Minecraft\FURNACE.bmp" />
-      <None Remove="Applications\Minecraft\GOLD.bmp" />
-      <None Remove="Applications\Minecraft\ICE.bmp" />
-      <None Remove="Applications\Minecraft\Icons\AMETHYST.bmp" />
-      <None Remove="Applications\Minecraft\Icons\BOOKSHELF.bmp" />
-      <None Remove="Applications\Minecraft\Icons\BRICK.bmp" />
-      <None Remove="Applications\Minecraft\Icons\CACTUS.bmp" />
-      <None Remove="Applications\Minecraft\Icons\CHEST.bmp" />
-      <None Remove="Applications\Minecraft\Icons\DIAMOND.bmp" />
-      <None Remove="Applications\Minecraft\Icons\DIRT.bmp" />
-      <None Remove="Applications\Minecraft\Icons\EMERALD.bmp" />
-      <None Remove="Applications\Minecraft\Icons\FURNACE.bmp" />
-      <None Remove="Applications\Minecraft\Icons\GOLD.bmp" />
-      <None Remove="Applications\Minecraft\Icons\ICE.bmp" />
-      <None Remove="Applications\Minecraft\Icons\IRON.bmp" />
-      <None Remove="Applications\Minecraft\Icons\LAVA.bmp" />
-      <None Remove="Applications\Minecraft\Icons\LEAVES.bmp" />
-      <None Remove="Applications\Minecraft\Icons\MELON.bmp" />
-      <None Remove="Applications\Minecraft\Icons\PLANKS.bmp" />
-      <None Remove="Applications\Minecraft\Icons\PLAYER.bmp" />
-      <None Remove="Applications\Minecraft\Icons\SAND.bmp" />
-      <None Remove="Applications\Minecraft\Icons\STONE.bmp" />
-      <None Remove="Applications\Minecraft\Icons\TNT.bmp" />
-      <None Remove="Applications\Minecraft\Icons\WATER.bmp" />
-      <None Remove="Applications\Minecraft\Icons\WOOD.bmp" />
-      <None Remove="Applications\Minecraft\IRON.bmp" />
-      <None Remove="Applications\Minecraft\LAVA.bmp" />
-      <None Remove="Applications\Minecraft\LEAVES.bmp" />
-      <None Remove="Applications\Minecraft\MELON.bmp" />
-      <None Remove="Applications\Minecraft\PLANKS.bmp" />
-      <None Remove="Applications\Minecraft\SAND.bmp" />
-      <None Remove="Applications\Minecraft\STONE.bmp" />
-      <None Remove="Applications\Minecraft\TNT.bmp" />
-      <None Remove="Applications\Minecraft\WATER.bmp" />
-      <None Remove="Applications\Minecraft\WOOD.bmp" />
-      <None Remove="Applications\Video_Player\Player_Base.bmp" />
       <None Remove="Applications\Video_Player\Shrek.wav" />
       <None Remove="Applications\Video_Player\video.bvf" />
       <None Remove="Applications\Video_Player\video0.bvf" />
@@ -100,11 +61,34 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Compile Include="Applications\Minecraft\Inventory.cs" />
+      <Compile Include="Applications\Minecraft\Render.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
       <EmbeddedResource Include="Applications\Gameboy\4_in_1.gb" />
       <EmbeddedResource Include="Applications\Gameboy\Caesars_Palace.gb" />
-      <EmbeddedResource Include="Applications\Gameboy\Smurfs_Nightmare.gb" />
       <EmbeddedResource Include="Applications\Gameboy\Tetris.gb" />
       <EmbeddedResource Include="Applications\Gameboy\Zelda.gb" />
+      <EmbeddedResource Include="Graphics\Engine\Arial_16.btf" />
+      <EmbeddedResource Include="Graphics\Engine\Cursor.bmp" />
+      <EmbeddedResource Include="Graphics\Engine\Wallp1.bmp" />
+      <EmbeddedResource Include="Graphics\Icons\Calculator.bmp" />
+      <EmbeddedResource Include="Graphics\Icons\Explorer.bmp" />
+      <EmbeddedResource Include="Graphics\Icons\File.bmp" />
+      <EmbeddedResource Include="Graphics\Icons\Folder.bmp" />
+      <EmbeddedResource Include="Graphics\Icons\Gameboy.bmp" />
+      <EmbeddedResource Include="Graphics\Icons\Notepad.bmp" />
+      <EmbeddedResource Include="Graphics\Icons\Settings.bmp" />
+      <EmbeddedResource Include="Graphics\Icons\Terminal.bmp" />
+      <EmbeddedResource Include="Graphics\Icons\WebBrowser.bmp" />
+		<EmbeddedResource Include="Graphics\Icons\IDE.bmp" />
+      <EmbeddedResource Include="Graphics\TaskBar\Icon.bmp" />
+      <EmbeddedResource Include="Graphics\Widgets\Elephant.bmp" />
+      <EmbeddedResource Include="SystemApps\celebrate.bmp" />
+    </ItemGroup>
+
+    <ItemGroup>
       <EmbeddedResource Include="Applications\Minecraft\AMETHYST.bmp" />
       <EmbeddedResource Include="Applications\Minecraft\BOOKSHELF.bmp" />
       <EmbeddedResource Include="Applications\Minecraft\BRICK.bmp" />
@@ -149,30 +133,21 @@
       <EmbeddedResource Include="Applications\Minecraft\TNT.bmp" />
       <EmbeddedResource Include="Applications\Minecraft\WATER.bmp" />
       <EmbeddedResource Include="Applications\Minecraft\WOOD.bmp" />
-      <EmbeddedResource Include="Applications\Video_Player\Player_Base.bmp" />
-      <EmbeddedResource Include="Graphics\Engine\Arial_16.btf" />
-      <EmbeddedResource Include="Graphics\Engine\Cursor.bmp" />
-      <EmbeddedResource Include="Graphics\Engine\Wallp1.bmp" />
-      <EmbeddedResource Include="Graphics\Icons\Calculator.bmp" />
-      <EmbeddedResource Include="Graphics\Icons\Explorer.bmp" />
-      <EmbeddedResource Include="Graphics\Icons\File.bmp" />
-      <EmbeddedResource Include="Graphics\Icons\Folder.bmp" />
-      <EmbeddedResource Include="Graphics\Icons\Gameboy.bmp" />
-      <EmbeddedResource Include="Graphics\Icons\Notepad.bmp" />
-      <EmbeddedResource Include="Graphics\Icons\Settings.bmp" />
-      <EmbeddedResource Include="Graphics\Icons\Terminal.bmp" />
-      <EmbeddedResource Include="Graphics\Icons\WebBrowser.bmp" />
-		<EmbeddedResource Include="Graphics\Icons\IDE.bmp" />
-      <EmbeddedResource Include="Graphics\TaskBar\Icon.bmp" />
-      <EmbeddedResource Include="Graphics\Widgets\Elephant.bmp" />
-      <EmbeddedResource Include="SystemApps\celebrate.bmp" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Cosmos.Build" Version="0-*" NoWarn="NU1604" />
-        <PackageReference Include="Cosmos.Debug.Kernel" Version="0-*" NoWarn="NU1604" />
-        <PackageReference Include="Cosmos.System2" Version="0-*" NoWarn="NU1604" />
-        <PackageReference Include="Cosmos.Plugs" Version="0-*" NoWarn="NU1604" />
+        <PackageReference Include="Cosmos.Build" Version="0.1.0-localbuild20240202115039" NoWarn="NU1604">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Cosmos.Debug.Kernel" Version="0.1.0-localbuild20240202115047" NoWarn="NU1604" />
+        <PackageReference Include="Cosmos.System2" Version="0.1.0-localbuild20240202115047" NoWarn="NU1604" />
+        <PackageReference Include="Cosmos.Plugs" Version="0.1.0-localbuild20240202115047" NoWarn="NU1604" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="isoFiles\SubwaySim24\Assets\" />
+      <Folder Include="isoFiles\SubwaySim24\Audio\" />
     </ItemGroup>
 
 </Project>

@@ -1,16 +1,8 @@
-﻿using Cosmos.System;
-using Cosmos.System.Graphics;
-using CrystalOS_Alpha;
+﻿using Cosmos.System.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using Kernel = CrystalOS_Alpha.Kernel;
 
 namespace CrystalOSAlpha.UI_Elements
 {

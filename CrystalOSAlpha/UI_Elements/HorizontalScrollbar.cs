@@ -1,11 +1,6 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
-using CrystalOS_Alpha;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CrystalOSAlpha.UI_Elements
 {

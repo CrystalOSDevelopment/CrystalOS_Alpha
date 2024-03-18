@@ -27,33 +27,29 @@ namespace CrystalOSAlpha.Applications.Settings
         public int z { get; set; }
         public int width { get; set; }
         public int height { get; set; }
-
         public int desk_ID { get; set; }
         public int AppID { get; set; }
         public string name { get; set; }
-
         public bool minimised { get; set; }
         public bool movable { get; set; }
-        
-
         public Bitmap icon { get; set; }
 
+        public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
+        
         public bool initial = true;
         public bool clicked = false;
-
-        public Bitmap canvas;
-        public Bitmap back_canvas;
         public bool once = true;
-        public Bitmap window;
-        public List<Button_prop> Buttons = new List<Button_prop>();
-
-        public List<Button_prop> Res = new List<Button_prop>();
-        
-        public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
-
-        public string ActiveD = "Display";
 
         public string customres = "";
+
+        public Bitmap back_canvas;
+        public Bitmap window;
+        public Bitmap canvas;
+
+        public List<Button_prop> Res = new List<Button_prop>();
+        public List<Button_prop> Buttons = new List<Button_prop>();
+        
+        public string ActiveD = "Display";
 
         public void App()
         {
@@ -93,32 +89,30 @@ namespace CrystalOSAlpha.Applications.Settings
             }
             if (once == true)
             {
-                canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32); //new int[width * height];
-                back_canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32); //new int[width * height];
+                canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32); 
+                back_canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
                 window = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
 
                 #region corners
-                DrawFilledEllipse(10, 10, 10, 10, CurrentColor);
-                DrawFilledEllipse(width - 11, 10, 10, 10, CurrentColor);
-                DrawFilledEllipse(10, height - 10, 10, 10, CurrentColor);
-                DrawFilledEllipse(width - 11, height - 10, 10, 10, CurrentColor);
+                ImprovedVBE.DrawFilledEllipse(canvas, 10, 10, 10, 10, CurrentColor);
+                ImprovedVBE.DrawFilledEllipse(canvas, width - 11, 10, 10, 10, CurrentColor);
+                ImprovedVBE.DrawFilledEllipse(canvas, 10, height - 10, 10, 10, CurrentColor);
+                ImprovedVBE.DrawFilledEllipse(canvas, width - 11, height - 10, 10, 10, CurrentColor);
 
-                DrawFilledRectangle(CurrentColor, 0, 10, width, height - 20);
-                DrawFilledRectangle(CurrentColor, 5, 0, width - 10, 15);
-                DrawFilledRectangle(CurrentColor, 5, height - 15, width - 10, 15);
+                ImprovedVBE.DrawFilledRectangle(canvas, CurrentColor, 0, 10, width, height - 20, false);
+                ImprovedVBE.DrawFilledRectangle(canvas, CurrentColor, 5, 0, width - 10, 15, false);
+                ImprovedVBE.DrawFilledRectangle(canvas, CurrentColor, 5, height - 15, width - 10, 15, false);
                 #endregion corners
 
                 canvas = ImprovedVBE.EnableTransparency(canvas, x, y, canvas);
 
-                DrawGradientLeftToRight();
+                ImprovedVBE.DrawGradientLeftToRight(canvas);
 
-                DrawFilledEllipse(width - 13, 10, 8, 8, ImprovedVBE.colourToNumber(255, 0, 0));
+                ImprovedVBE.DrawFilledEllipse(canvas, width - 13, 10, 8, 8, ImprovedVBE.colourToNumber(255, 0, 0));
 
-                DrawFilledEllipse(width - 34, 10, 8, 8, ImprovedVBE.colourToNumber(227, 162, 37));
+                ImprovedVBE.DrawFilledEllipse(canvas, width - 34, 10, 8, 8, ImprovedVBE.colourToNumber(227, 162, 37));
 
                 BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, name, 2, 2);
-
-                //Button.Button_render(canvas, 10, 70, 100, 25, 1, "Click");
 
                 foreach (var button in Buttons)
                 {
@@ -254,81 +248,79 @@ namespace CrystalOSAlpha.Applications.Settings
 
                         BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, "Attempting to ping google.com - 8.8.8.8", 128, 75);
 
-                        int PacketSent = 0;
-                        int PacketReceived = 0;
-                        int PacketLost = 0;
-                        int PercentLoss;
-
-                        Address source;
-                        Address destination = Address.Parse("8.8.8.8");
-
-                        if (destination != null)
+                        if(VMTools.IsVMWare == true)
                         {
-                            source = IPConfig.FindNetwork(destination);
-                        }
-                        else //Make a DNS request if it's not an IP
-                        {
-                            var xClient = new DnsClient();
-                            xClient.Connect(DNSConfig.DNSNameservers[0]);
-                            xClient.SendAsk("google.com");
-                            destination = xClient.Receive();
-                            xClient.Close();
+                            int PacketSent = 0;
+                            int PacketReceived = 0;
+                            int PacketLost = 0;
+                            int PercentLoss;
 
-                            if (destination == null)
+                            Address source;
+                            Address destination = Address.Parse("8.8.8.8");
+
+                            if (destination != null)
                             {
+                                source = IPConfig.FindNetwork(destination);
+                            }
+                            else //Make a DNS request if it's not an IP
+                            {
+                                var xClient = new DnsClient();
+                                xClient.Connect(DNSConfig.DNSNameservers[0]);
+                                xClient.SendAsk("google.com");
+                                destination = xClient.Receive();
+                                xClient.Close();
+
+                                if (destination == null)
+                                {
                                 
+                                }
+
+                                source = IPConfig.FindNetwork(destination);
                             }
-
-                            source = IPConfig.FindNetwork(destination);
-                        }
-
-                        try
-                        {
-                            var xClient = new ICMPClient();
-                            xClient.Connect(destination);
-
-                            for (int i = 0; i < 4; i++)
+                            try
                             {
-                                xClient.SendEcho();
+                                var xClient = new ICMPClient();
+                                xClient.Connect(destination);
 
-                                PacketSent++;
-
-                                var endpoint = new EndPoint(Address.Zero, 0);
-
-                                int second = xClient.Receive(ref endpoint, 4000);
-
-                                if (second == -1)
+                                for (int i = 0; i < 4; i++)
                                 {
-                                    BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, "Failed to recieve ICMP packet: Timeout\n\nNetwork status: Offline", 128, 102);
-                                    PacketLost++;
-                                }
-                                else
-                                {
-                                    if (second < 1)
-                                    {
-                                        BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, "Successfuly recieved ICMP packet: " + second + "\n\nNetwork status: Online", 128, 102);
-                                        //Kernel.console.WriteLine("Reply received from " + endpoint.Address.ToString() + " time < 1s");
-                                    }
-                                    else if (second >= 1)
-                                    {
-                                        BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, "Successfuly recieved ICMP packet: " + second + "\n\nNetwork status: Online", 128, 102);
-                                        //Kernel.console.WriteLine("Reply received from " + endpoint.Address.ToString() + " time " + second + "s");
-                                    }
+                                    xClient.SendEcho();
 
-                                    PacketReceived++;
+                                    PacketSent++;
+
+                                    var endpoint = new EndPoint(Address.Zero, 0);
+
+                                    int second = xClient.Receive(ref endpoint, 4000);
+
+                                    if (second == -1)
+                                    {
+                                        BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, "Failed to recieve ICMP packet: Timeout\n\nNetwork status: Offline", 128, 102);
+                                        PacketLost++;
+                                    }
+                                    else
+                                    {
+                                        if (second < 1)
+                                        {
+                                            BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, "Successfuly recieved ICMP packet: " + second + "\n\nNetwork status: Online", 128, 102);
+                                        }
+                                        else if (second >= 1)
+                                        {
+                                            BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, "Successfuly recieved ICMP packet: " + second + "\n\nNetwork status: Online", 128, 102);
+                                        }
+
+                                        PacketReceived++;
+                                    }
                                 }
+
+                                xClient.Close();
+                            }
+                            catch
+                            {
+                            
                             }
 
-                            xClient.Close();
+                            PercentLoss = 25 * PacketLost;
                         }
-                        catch
-                        {
-                            
-                        }
-
-                        PercentLoss = 25 * PacketLost;
-
-                        
                         BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, NetworkConfiguration.CurrentAddress.ToString(), 128, 48);
                         break;
                     case "About OS":
@@ -347,8 +339,7 @@ namespace CrystalOSAlpha.Applications.Settings
                         break;
                 }
 
-                window.RawData = canvas.RawData;
-                back_canvas = canvas;
+                Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
                 once = false;
             }
 
@@ -407,94 +398,6 @@ namespace CrystalOSAlpha.Applications.Settings
             }
 
             ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
-        }
-
-        public int x_1 = 0;
-        public int y_1 = 0;
-
-        public void DrawFilledEllipse(int xCenter, int yCenter, int yR, int xR, int color)
-        {
-            for (int y = -yR; y <= yR; y++)
-            {
-                for (int x = -xR; x <= xR; x++)
-                {
-                    if (x * x * yR * yR + y * y * xR * xR <= yR * yR * xR * xR)
-                    {
-                        if (xCenter + x > 0 && xCenter + x < width - 1 && yCenter + y > 0 && yCenter + y < height)
-                        {
-                            canvas.RawData[(yCenter + y) * width + xCenter + x] = color;
-                        }
-                    }
-                }
-            }
-        }
-
-        public void DrawFilledRectangle(int color, int X, int Y, int Width, int Height)
-        {
-            if (X < width && Y < height)
-            {
-                int[] line = new int[Width];
-                if (X < 0)
-                {
-                    line = new int[Width + X];
-                }
-                else if (X + Width > width)
-                {
-                    line = new int[Width - (X + Width - width)];
-                }
-                Array.Fill(line, color);
-
-                for (int i = Y; i < Y + Height; i++)
-                {
-                    Array.Copy(line, 0, canvas.RawData, i * width + X, line.Length);
-                }
-            }
-
-        }
-        public int GetGradientColor(int x, int y, int width, int height)
-        {
-            int r = (int)((double)x / width * 255);
-            int g = (int)((double)y / height * 255);
-            int b = 255;
-
-            return ImprovedVBE.colourToNumber(r, g, b);
-        }
-        public void DrawGradientLeftToRight()
-        {
-            int gradientColorStart = GetGradientColor(0, 0, width, height);
-            int gradientColorEnd = GetGradientColor(width, 0, width, height);
-
-            int rStart = Color.FromArgb(gradientColorStart).R;
-            int gStart = Color.FromArgb(gradientColorStart).G;
-            int bStart = Color.FromArgb(gradientColorStart).B;
-
-            int rEnd = Color.FromArgb(gradientColorEnd).R;
-            int gEnd = Color.FromArgb(gradientColorEnd).G;
-            int bEnd = Color.FromArgb(gradientColorEnd).B;
-
-            for (int i = 0; i < canvas.RawData.Length; i++)
-            {
-                if (x_1 == width - 1)
-                {
-                    x_1 = 0;
-                }
-                else
-                {
-                    x_1++;
-                }
-                int r = (int)((double)x_1 / width * (rEnd - rStart)) + rStart;
-                int g = (int)((double)x_1 / width * (gEnd - gStart)) + gStart;
-                int b = (int)((double)x_1 / width * (bEnd - bStart)) + bStart;
-                if (canvas.RawData[i] != 0)
-                {
-                    canvas.RawData[i] = ImprovedVBE.colourToNumber(r, g, b);
-                }
-                if (i / width > 20)
-                {
-                    break;
-                }
-            }
-            x_1 = 0;
         }
     }
 }

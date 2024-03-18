@@ -1,14 +1,10 @@
-﻿using CrystalOS_Alpha;
-using CrystalOSAlpha.UI_Elements;
-using System;
+﻿using CrystalOSAlpha.UI_Elements;
 using System.Collections.Generic;
 
 class GenerateMenubar
 {
     public MenuBar Generate(string input)
     {
-        //string input = "#Menubar\n{\n\"File\":\n\"New\":\n//CodeNew\n.\n\"Open\":\n//CodeOpen\n.\n---\n\"Help\":\n\"Getting Started\":\n//Code\n.\n}";
-
         List<string> menus = new List<string>();
         List<Submenu> submenus = new List<Submenu>();
 

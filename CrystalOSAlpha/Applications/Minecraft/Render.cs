@@ -5,11 +5,6 @@ using IL2CPU.API.Attribs;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace CrystalOSAlpha.Applications.Minecraft
 {
@@ -188,8 +183,7 @@ namespace CrystalOSAlpha.Applications.Minecraft
                     }
                     else
                     {
-                        y_offset -= 8;//16
-                        //x_offset -= 8;//1
+                        y_offset -= 8;
                         Y_cur -= 1;
                         X_cur += 15;
                     }
@@ -203,8 +197,7 @@ namespace CrystalOSAlpha.Applications.Minecraft
                     }
                     else
                     {
-                        y_offset += 8;//16
-                        //x_offset += 8;//1
+                        y_offset += 8;
                         Y_cur += 1;
                         X_cur -= 15;
                     }
@@ -218,8 +211,8 @@ namespace CrystalOSAlpha.Applications.Minecraft
                     }
                     else
                     {
-                        x_offset += 9;//16
-                        y_offset += 4;//16
+                        x_offset += 9;
+                        y_offset += 4;
                         X_cur += 1;
                     }
                     once = true;
@@ -232,8 +225,8 @@ namespace CrystalOSAlpha.Applications.Minecraft
                     }
                     else
                     {
-                        x_offset -= 9;//16
-                        y_offset -= 4;//16
+                        x_offset -= 9;
+                        y_offset -= 4;
                         X_cur -= 1;
                     }
                     once = true;
@@ -301,20 +294,20 @@ namespace CrystalOSAlpha.Applications.Minecraft
                 if (update == true)
                 {
                     //This is the part where we set the values of the windows (propeties)
-                    canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32); //new int[width * height];
+                    canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
                     window = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
 
                     #region corners
                     if (rounded == true)
                     {
-                        DrawFilledEllipse(10, 10, 10, 10, CurrentColor);
-                        DrawFilledEllipse(width - 11, 10, 10, 10, CurrentColor);
-                        DrawFilledEllipse(10, height - 10, 10, 10, CurrentColor);
-                        DrawFilledEllipse(width - 11, height - 10, 10, 10, CurrentColor);
+                        ImprovedVBE.DrawFilledEllipse(canvas, 10, 10, 10, 10, CurrentColor);
+                        ImprovedVBE.DrawFilledEllipse(canvas, width - 11, 10, 10, 10, CurrentColor);
+                        ImprovedVBE.DrawFilledEllipse(canvas, 10, height - 10, 10, 10, CurrentColor);
+                        ImprovedVBE.DrawFilledEllipse(canvas, width - 11, height - 10, 10, 10, CurrentColor);
 
-                        DrawFilledRectangle(CurrentColor, 0, 10, width, height - 20);
-                        DrawFilledRectangle(CurrentColor, 5, 0, width - 10, 15);
-                        DrawFilledRectangle(CurrentColor, 5, height - 15, width - 10, 15);
+                        ImprovedVBE.DrawFilledRectangle(canvas, CurrentColor, 0, 10, width, height - 20, false);
+                        ImprovedVBE.DrawFilledRectangle(canvas, CurrentColor, 5, 0, width - 10, 15, false);
+                        ImprovedVBE.DrawFilledRectangle(canvas, CurrentColor, 5, height - 15, width - 10, 1, false);
                     }
                     else
                     {
@@ -326,14 +319,13 @@ namespace CrystalOSAlpha.Applications.Minecraft
 
                     if (windowed == true)
                     {
-                        DrawGradientLeftToRight();
+                        ImprovedVBE.DrawGradientLeftToRight(canvas);
                     }
 
-                    DrawFilledEllipse(width - 13, 10, 8, 8, ImprovedVBE.colourToNumber(255, 0, 0));
+                    ImprovedVBE.DrawFilledEllipse(canvas, width - 13, 10, 8, 8, ImprovedVBE.colourToNumber(255, 0, 0));
 
-                    DrawFilledEllipse(width - 34, 10, 8, 8, ImprovedVBE.colourToNumber(227, 162, 37));
+                    ImprovedVBE.DrawFilledEllipse(canvas, width - 34, 10, 8, 8, ImprovedVBE.colourToNumber(227, 162, 37));
 
-                    //canvas.RawData = Word_processor.draw_text(name, 2, 2, ImprovedVBE.colourToNumber(255, 255, 255), canvas.RawData, width, height);
                     BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, name, 2, 2);
                     #endregion base
                 }
@@ -343,7 +335,6 @@ namespace CrystalOSAlpha.Applications.Minecraft
 
                 double DriftUp = 0;
                 double DriftLeft = 0;
-                int counter = 0;
 
                 for (int c = 0; c < Layers.Count; c++)
                 {
@@ -425,92 +416,6 @@ namespace CrystalOSAlpha.Applications.Minecraft
                                         EnableTransparency(Water, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
                                         break;
                                 }
-                                /*
-                                if (Layers[c].RawData[BlockCounter] == 1)
-                                {
-                                    EnableTransparency(Dirt, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
-                                }
-                                else if (Layers[c].RawData[BlockCounter] == 2)
-                                {
-                                    EnableTransparency(Diamond, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
-                                }
-                                else if (Layers[c].RawData[BlockCounter] == 3)
-                                {
-                                    EnableTransparency(Brick, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
-                                }
-                                else if (Layers[c].RawData[BlockCounter] == 4)
-                                {
-                                    EnableTransparency(BookShelf, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
-                                }
-                                else if (Layers[c].RawData[BlockCounter] == 5)
-                                {
-                                    EnableTransparency(Stone, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
-                                }
-                                else if (Layers[c].RawData[BlockCounter] == 6)
-                                {
-                                    EnableTransparency(Wood, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
-                                }
-                                else if (Layers[c].RawData[BlockCounter] == 7)
-                                {
-                                    EnableTransparency(Leaves, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
-                                }
-                                else if (Layers[c].RawData[BlockCounter] == 8)
-                                {
-                                    EnableTransparency(Amethyst, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
-                                }
-                                else if (Layers[c].RawData[BlockCounter] == 9)
-                                {
-                                    EnableTransparency(Emerald, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
-                                }
-                                else if (Layers[c].RawData[BlockCounter] == 10)
-                                {
-                                    EnableTransparency(Gold, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
-                                }
-                                if (Layers[c].RawData[BlockCounter] == 11)
-                                {
-                                    EnableTransparency(Iron, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
-                                }
-                                else if (Layers[c].RawData[BlockCounter] == 12)
-                                {
-                                    EnableTransparency(Cactus, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
-                                }
-                                else if (Layers[c].RawData[BlockCounter] == 13)
-                                {
-                                    EnableTransparency(Chest, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
-                                }
-                                else if (Layers[c].RawData[BlockCounter] == 14)
-                                {
-                                    EnableTransparency(Furnace, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
-                                }
-                                else if (Layers[c].RawData[BlockCounter] == 15)
-                                {
-                                    EnableTransparency(Ice, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
-                                }
-                                else if (Layers[c].RawData[BlockCounter] == 16)
-                                {
-                                    EnableTransparency(Lava, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
-                                }
-                                else if (Layers[c].RawData[BlockCounter] == 17)
-                                {
-                                    EnableTransparency(Melon, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
-                                }
-                                else if (Layers[c].RawData[BlockCounter] == 18)
-                                {
-                                    EnableTransparency(Planks, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
-                                }
-                                else if (Layers[c].RawData[BlockCounter] == 19)
-                                {
-                                    EnableTransparency(Sand, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
-                                }
-                                else if (Layers[c].RawData[BlockCounter] == 20)
-                                {
-                                    EnableTransparency(Tnt, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
-                                }
-                                else if (Layers[c].RawData[BlockCounter] == 21)
-                                {
-                                    EnableTransparency(Water, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
-                                }
-                                */
                             }
                             else
                             {
@@ -521,16 +426,6 @@ namespace CrystalOSAlpha.Applications.Minecraft
                                 dist_x = (int)(i + x_offset - DriftLeft);
                                 dist_y = (int)(pos_y - y_offset - DriftUp);
                                 EnableTransparency(Cursor, (int)(i + x_offset - DriftLeft), (int)(pos_y - y_offset - DriftUp));
-                                /*
-                                if (MouseManager.MouseState == MouseState.Right)
-                                {
-                                    Layers[1][BlockCounter] = 0;
-                                }
-                                else if (MouseManager.MouseState == MouseState.Left)
-                                {
-                                    Layers[1][BlockCounter] = Current_Block;
-                                }
-                                */
                             }
                             BlockCounter++;
 
@@ -545,7 +440,6 @@ namespace CrystalOSAlpha.Applications.Minecraft
                     pos_x = -4 * (c + 1);
                     temp_x = -8 * (c + 1);
                     temp_y = -4 * (c + 1);
-                    //DriftLeft += 1;
                     DriftUp += 8.5;
                 }
 
@@ -575,165 +469,6 @@ namespace CrystalOSAlpha.Applications.Minecraft
             }
 
             ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
-
-            #region mechanical
-            if (MouseManager.MouseState == MouseState.Left)
-            {
-                if (MouseManager.X > x + width - 21 && MouseManager.X < x + width - 5)
-                {
-                    if (MouseManager.Y > y && MouseManager.Y < y + 20)
-                    {
-                        //Task_Manager.calculators.RemoveAt(Task_Manager.indicator);
-                    }
-                }
-                if (movable == false)
-                {
-                    if (MouseManager.X > x && MouseManager.X < x + 352)
-                    {
-                        if (MouseManager.Y > y && MouseManager.Y < y + 18)
-                        {
-                            movable = true;
-                        }
-                    }
-                }
-            }
-            if (movable == true)
-            {
-                x = (int)MouseManager.X;
-                y = (int)MouseManager.Y;
-                if (MouseManager.MouseState == MouseState.Right)
-                {
-                    movable = false;
-                }
-            }
-            #endregion core
-        }
-
-        public void DrawFilledEllipse(int xCenter, int yCenter, int yR, int xR, int color)
-        {
-            /*
-            int r = (color & 0xff0000) >> 16;
-            int g = (color & 0x00ff00) >> 8;
-            int b = (color & 0x0000ff);
-
-            float blendFactor = 0.5f;
-            float inverseBlendFactor = 1 - blendFactor;
-            */
-            for (int y = -yR; y <= yR; y++)
-            {
-                for (int x = -xR; x <= xR; x++)
-                {
-                    if (x * x * yR * yR + y * y * xR * xR <= yR * yR * xR * xR)
-                    {
-                        /*
-                        int r3 = (cover.RawData[(yCenter + y) * width + xCenter + x] & 0xff0000) >> 16;
-                        int g3 = (cover.RawData[(yCenter + y) * width + xCenter + x] & 0x00ff00) >> 8;
-                        int b3 = (cover.RawData[(yCenter + y) * width + xCenter + x] & 0x0000ff);
-                        //Color c = Color.FromArgb(cover.RawData[j * width + i]);
-
-                        int r2 = (int)(inverseBlendFactor * r3 + blendFactor * r);
-                        int g2 = (int)(inverseBlendFactor * g3 + blendFactor * g);
-                        int b2 = (int)(inverseBlendFactor * b3 + blendFactor * b);
-                        */
-                        if (xCenter + x > 0 && xCenter + x < width - 1 && yCenter + y > 0 && yCenter + y < height)
-                        {
-                            canvas.RawData[(yCenter + y) * width + xCenter + x] = color;
-                        }
-
-                        //DrawPixel(xCenter + x, yCenter + y, GetGradientColor(x, 0, width, height));
-
-                        //DrawPixel(xCenter + x, yCenter + y, color);
-                    }
-                }
-            }
-        }
-
-        public void DrawFilledRectangle(int color, int X, int Y, int Width, int Height)
-        {
-            /*
-            int r = (color & 0xff0000) >> 16;
-            int g = (color & 0x00ff00) >> 8;
-            int b = (color & 0x0000ff);
-
-            float blendFactor = 0.5f;
-            float inverseBlendFactor = 1 - blendFactor;
-
-            for (int j = Y; j < Y + Height; j++)
-            {
-                for (int i = X; i < X + Width; i++)
-                {
-                    int r3 = (cover.RawData[j * width + i] & 0xff0000) >> 16;
-                    int g3 = (cover.RawData[j * width + i] & 0x00ff00) >> 8;
-                    int b3 = (cover.RawData[j * width + i] & 0x0000ff);
-                    //Color c = Color.FromArgb(cover.RawData[j * width + i]);
-
-                    int r2 = (int)(inverseBlendFactor * r3 + blendFactor * r);
-                    int g2 = (int)(inverseBlendFactor * g3 + blendFactor * g);
-                    int b2 = (int)(inverseBlendFactor * b3 + blendFactor * b);
-
-                    DrawPixel(i, j, colourToNumber(r2, g2, b2));
-                }
-            }*/
-
-            if (X < width && Y < height)
-            {
-                int[] line = new int[Width];
-                if (X < 0)
-                {
-                    line = new int[Width + X];
-                }
-                else if (X + Width > width)
-                {
-                    line = new int[Width - (X + Width - width)];
-                }
-                Array.Fill(line, color);
-
-                for (int i = Y; i < Y + Height; i++)
-                {
-                    Array.Copy(line, 0, canvas.RawData, i * width + X, line.Length);
-                }
-            }
-
-        }
-        public int GetGradientColor(int x, int y, int width, int height)
-        {
-            int r = (int)((double)x / width * 255);
-            int g = (int)((double)y / height * 255);
-            int b = 255;
-
-            return ImprovedVBE.colourToNumber(r, g, b);
-        }
-        public void DrawGradientLeftToRight()
-        {
-            int gradientColorStart = GetGradientColor(0, 0, width, height); int gradientColorEnd = GetGradientColor(width + 1, 0, width, height);
-
-            int rStart = Color.FromArgb(gradientColorStart).R; int gStart = Color.FromArgb(gradientColorStart).G; int bStart = Color.FromArgb(gradientColorStart).B;
-
-            int rEnd = Color.FromArgb(gradientColorEnd).R; int gEnd = Color.FromArgb(gradientColorEnd).G; int bEnd = Color.FromArgb(gradientColorEnd).B;
-
-            for (int i = 0; i < canvas.RawData.Length; i++)
-            {
-                if (x_1 == width - 1)
-                {
-                    x_1 = 0;
-                }
-                else
-                {
-                    x_1++;
-                }
-                int r = (int)((double)x_1 / width * (rEnd - rStart)) + rStart;
-                int g = (int)((double)x_1 / width * (gEnd - gStart)) + gStart;
-                int b = (int)((double)x_1 / width * (bEnd - bStart)) + bStart;
-                if (canvas.RawData[i] == ImprovedVBE.colourToNumber(113, 188, 225))
-                {
-                    canvas.RawData[i] = ImprovedVBE.colourToNumber(r, g, b);
-                }
-                if (i / width > 20)
-                {
-                    break;
-                }
-            }
-            x_1 = 0;
         }
 
         public bool EnableTransparency(Image image, int x, int y)
@@ -782,10 +517,5 @@ namespace CrystalOSAlpha.Applications.Minecraft
             }
             return true;
         }
-    }
-
-    class Layer
-    {
-        public int[] layer { get; set; }
     }
 }

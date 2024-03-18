@@ -2,14 +2,8 @@
 using Cosmos.System.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.SystemApps;
-using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
-using Kernel = CrystalOS_Alpha.Kernel;
 
 namespace CrystalOSAlpha.UI_Elements
 {

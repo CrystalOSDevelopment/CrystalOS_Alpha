@@ -5,13 +5,7 @@ using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.UI_Elements;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using TaskScheduler = CrystalOSAlpha.Graphics.TaskScheduler;
 
 namespace CrystalOSAlpha.Applications.Terminal
@@ -33,35 +27,28 @@ namespace CrystalOSAlpha.Applications.Terminal
         public Bitmap icon { get; set; }
         #endregion Core_Values
 
-        public List<Button_prop> Buttons = new List<Button_prop>();
-        public List<Scrollbar_Values> Scroll = new List<Scrollbar_Values>();
+        public int offset = 0;
+        public int offset2 = 0;
+        public int index = 0;
+        public int Reg_Y = 0;
+        public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
 
+        public string content = "Crystal-PC> ";
+
+        public string command = "";
         public bool initial = true;
         public bool clicked = false;
         public bool temp = true;
         public bool once = true;
-
-        public int x_1 = 0;
-        public int y_1 = 0;
-        public int Reg_Y = 0;
-        public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
+        public bool echo_off = false;
 
         public Bitmap canvas;
         public Bitmap window;
         public Bitmap Container;
 
-        public string content = "Crystal-PC> ";
-
-        public string command = "";
-
-        public int offset = 0;
-        public int offset2 = 0;
-
+        public List<Button_prop> Buttons = new List<Button_prop>();
+        public List<Scrollbar_Values> Scroll = new List<Scrollbar_Values>();
         public List<string> cmd_history = new List<string>();
-
-        public int index = 0;
-
-        public bool echo_off = false;
 
         public void App()
         {
@@ -94,7 +81,7 @@ namespace CrystalOSAlpha.Applications.Terminal
 
                 canvas = ImprovedVBE.EnableTransparency(canvas, x, y, canvas);
 
-                DrawGradientLeftToRight();
+                ImprovedVBE.DrawGradientLeftToRight(canvas);
 
                 ImprovedVBE.DrawFilledEllipse(canvas, width - 13, 10, 8, 8, ImprovedVBE.colourToNumber(255, 0, 0));
 
@@ -131,7 +118,6 @@ namespace CrystalOSAlpha.Applications.Terminal
                 canvas = Scrollbar.Render(canvas, Scroll[0]);
 
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
-                //window.RawData = canvas.RawData;
                 once = false;
                 temp = true;
             }
@@ -304,20 +290,6 @@ namespace CrystalOSAlpha.Applications.Terminal
                 Array.Fill(Container.RawData, ImprovedVBE.colourToNumber(36, 36, 36));
                 window = Scrollbar.Render(window, Scroll[0]);
 
-                //string output = "";
-
-                //output = content;
-                /*
-                if (output.Split('\n').Length > 23)
-                {
-                    int h = Scroll[0].Pos / 8;
-                    for (int i = 0; i < h; i++)
-                    {
-                        int index = output.IndexOf('\n');
-                        output = output.Remove(0, index + 1);
-                    }
-                }
-                */
                 if(content.Split('\n').Length > 21)
                 {
                     content = content.Remove(0, Get_index_of_char(content, '\n', offset));
@@ -329,52 +301,6 @@ namespace CrystalOSAlpha.Applications.Terminal
                 temp = false;
             }
             ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
-        }
-
-        public int GetGradientColor(int x, int y, int width, int height)
-        {
-            int r = (int)((double)x / width * 255);
-            int g = (int)((double)y / height * 255);
-            int b = 255;
-
-            return ImprovedVBE.colourToNumber(r, g, b);
-        }
-        public void DrawGradientLeftToRight()
-        {
-            int gradientColorStart = GetGradientColor(0, 0, width, height);
-            int gradientColorEnd = GetGradientColor(width, 0, width, height);
-
-            int rStart = Color.FromArgb(gradientColorStart).R;
-            int gStart = Color.FromArgb(gradientColorStart).G;
-            int bStart = Color.FromArgb(gradientColorStart).B;
-
-            int rEnd = Color.FromArgb(gradientColorEnd).R;
-            int gEnd = Color.FromArgb(gradientColorEnd).G;
-            int bEnd = Color.FromArgb(gradientColorEnd).B;
-
-            for (int i = 0; i < canvas.RawData.Length; i++)
-            {
-                if (x_1 == width - 1)
-                {
-                    x_1 = 0;
-                }
-                else
-                {
-                    x_1++;
-                }
-                int r = (int)((double)x_1 / width * (rEnd - rStart)) + rStart;
-                int g = (int)((double)x_1 / width * (gEnd - gStart)) + gStart;
-                int b = (int)((double)x_1 / width * (bEnd - bStart)) + bStart;
-                if (canvas.RawData[i] != 0)
-                {
-                    canvas.RawData[i] = ImprovedVBE.colourToNumber(r, g, b);
-                }
-                if (i / width > 20)
-                {
-                    break;
-                }
-            }
-            x_1 = 0;
         }
         public int Get_index_of_char(string source, char c, int index)
         {

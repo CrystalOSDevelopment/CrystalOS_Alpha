@@ -1,54 +1,40 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
-using CrystalOSAlpha.Applications.Calculator;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.UI_Elements;
 using ProjectDMG;
-using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CrystalOSAlpha.Applications.Gameboy
 {
     class Core : App
     {
-
-        ProjectDMG.ProjectDMG gameboy = new ProjectDMG.ProjectDMG();
-
         public int x { get; set; }
         public int y { get; set; }
         public int z { get; set; }
         public int width { get; set; }
         public int height { get; set; }
-
         public int desk_ID { get; set; }
         public int AppID { get; set; }
         public string name {get ; set; }
-
         public bool minimised { get; set; }
         public bool movable { get; set; }
         public Bitmap icon { get; set; }
-        public Bitmap canvas;
+
         public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
+
+        public bool once = true;
+        public bool Power_on = true;
+        public bool initial = true;
+        public bool clicked = false;
+
+        public Bitmap canvas;
 
         public List<Button_prop> Buttons = new List<Button_prop>();
 
-        public bool once = true;
-
-        public int x_1 = 0;
-        public int y_1 = 0;
-
-        public bool Power_on = true;
-
-        public bool initial = true;
-
-        public bool clicked = false;
-
+        ProjectDMG.ProjectDMG gameboy = new ProjectDMG.ProjectDMG();
         public void App()
         {
             if(initial == true)
@@ -61,7 +47,7 @@ namespace CrystalOSAlpha.Applications.Gameboy
             }
             if(once == true)
             {
-                canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32); //new int[width * height];
+                canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
 
                 #region corners
                 ImprovedVBE.DrawFilledEllipse(canvas, 10, 10, 10, 10, CurrentColor);
@@ -76,7 +62,7 @@ namespace CrystalOSAlpha.Applications.Gameboy
 
                 canvas = ImprovedVBE.EnableTransparency(canvas, x, y, canvas);
 
-                DrawGradientLeftToRight();
+                ImprovedVBE.DrawGradientLeftToRight(canvas);
 
                 ImprovedVBE.DrawFilledEllipse(canvas, width - 13, 10, 8, 8, ImprovedVBE.colourToNumber(255, 0, 0));
 
@@ -154,51 +140,6 @@ namespace CrystalOSAlpha.Applications.Gameboy
 
             gameboy.EXECUTE();
 
-        }
-        public int GetGradientColor(int x, int y, int width, int height)
-        {
-            int r = (int)((double)x / width * 255);
-            int g = (int)((double)y / height * 255);
-            int b = 255;
-
-            return ImprovedVBE.colourToNumber(r, g, b);
-        }
-        public void DrawGradientLeftToRight()
-        {
-            int gradientColorStart = GetGradientColor(0, 0, width, height);
-            int gradientColorEnd = GetGradientColor(width, 0, width, height);
-
-            int rStart = Color.FromArgb(gradientColorStart).R;
-            int gStart = Color.FromArgb(gradientColorStart).G;
-            int bStart = Color.FromArgb(gradientColorStart).B;
-
-            int rEnd = Color.FromArgb(gradientColorEnd).R;
-            int gEnd = Color.FromArgb(gradientColorEnd).G;
-            int bEnd = Color.FromArgb(gradientColorEnd).B;
-
-            for (int i = 0; i < canvas.RawData.Length; i++)
-            {
-                if (x_1 == width - 1)
-                {
-                    x_1 = 0;
-                }
-                else
-                {
-                    x_1++;
-                }
-                int r = (int)((double)x_1 / width * (rEnd - rStart)) + rStart;
-                int g = (int)((double)x_1 / width * (gEnd - gStart)) + gStart;
-                int b = (int)((double)x_1 / width * (bEnd - bStart)) + bStart;
-                if (canvas.RawData[i] != 0)
-                {
-                    canvas.RawData[i] = ImprovedVBE.colourToNumber(r, g, b);
-                }
-                if (i / width > 20)
-                {
-                    break;
-                }
-            }
-            x_1 = 0;
         }
     }
 }

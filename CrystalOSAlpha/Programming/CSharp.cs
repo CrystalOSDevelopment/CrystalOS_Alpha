@@ -813,7 +813,6 @@ namespace CrystalOSAlpha.Programming
                                 if (temp.Contains("+"))
                                 {
                                     string[] container = temp.Split("+");
-                                    string outing = "";
                                     foreach(string s in container)
                                     {
                                         foreach(var item in Variables)
@@ -930,7 +929,6 @@ namespace CrystalOSAlpha.Programming
                                 if (temp.Contains("+"))
                                 {
                                     string[] container = temp.Split("+");
-                                    string outing = "";
                                     foreach (string s in container)
                                     {
                                         foreach (var item in Variables)

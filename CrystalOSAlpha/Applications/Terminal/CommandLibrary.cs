@@ -14,8 +14,8 @@ namespace CrystalOSAlpha.Applications.Terminal
 {
     class CommandLibrary
     {
-        public static string output = "";
         public static int offset = 0;
+        public static string output = "";
 
         public static List<Value_Cases> memory = new List<Value_Cases>();
         public static string Execute(string input)

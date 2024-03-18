@@ -1,12 +1,6 @@
 ﻿using Cosmos.System.Graphics;
-using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CrystalOSAlpha.UI_Elements
 {
@@ -22,7 +16,6 @@ namespace CrystalOSAlpha.UI_Elements
             ImprovedVBE.DrawFilledRectangle(canvas, Color, X + 2, Y + 2, Width - 4, Height - 4, false);
             if(Color == System.Drawing.Color.White.ToArgb())
             {
-                //BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Global_integers.c, Text, X + (Width / 2) - (Text.Length), Y + Height / 2 - 9);
                 offset = BitFont.DrawBitFontString(canvas_Blank, "ArialCustomCharset16", System.Drawing.Color.Black, Text, Width - (Text.Length * 6) - 3, Height / 2 - 8);
                 BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", ComplimentaryColor.Generate(Color), Text, X + (Width / 2) - (offset / 2), Y + Height / 2 - 9);
             }

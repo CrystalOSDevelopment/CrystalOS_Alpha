@@ -4,10 +4,6 @@ using CrystalOSAlpha.Graphics.Engine;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace CrystalOSAlpha.UI_Elements
 {
@@ -54,7 +50,6 @@ namespace CrystalOSAlpha.UI_Elements
 
             if(Clicked == true)
             {
-                //ImprovedVBE.DrawFilledRectangle(canvas, ImprovedVBE.colourToNumber(60, 60, 60), X, Y + Height, Width, 100, false);
                 int top = 3;
                 foreach(var d in v)
                 {

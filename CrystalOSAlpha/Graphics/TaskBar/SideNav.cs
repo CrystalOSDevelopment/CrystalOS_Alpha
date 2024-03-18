@@ -1,11 +1,7 @@
 ﻿using Cosmos.System.Graphics;
 using Cosmos.System;
 using CrystalOSAlpha.Graphics.Engine;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CrystalOSAlpha.Graphics.Widgets;
 using System.Drawing;
 
@@ -15,15 +11,13 @@ namespace CrystalOSAlpha.Graphics.TaskBar
     {
         public static int X = ImprovedVBE.width;
         public static int Y = 0;
+        public static int start_y = 40;
 
         public static bool Get_Back = true;
-        public static Bitmap Back;
         public static bool keyframes = false;
 
-        public static List<Bitmap> frames = new List<Bitmap>();
-        public static int c = 1;
+        public static Bitmap Back;
 
-        public static int start_y = 40;
         public static void Core()
         {
             if(TaskScheduler.Apps.Count(d => d.minimised == false) - 3 == 0)
@@ -51,7 +45,6 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                     Back = Base.Widget_Back(200, ImprovedVBE.height - 1, ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B));
                     Back = ImprovedVBE.EnableTransparency(Back, X - 200, Y, Back);
                     BitFont.DrawBitFontString(Back, "VerdanaCustomCharset24", Color.White, "Widgets", 2, 5);
-                    //frames.Add(Back);
                     Get_Back = false;
                 }
                 if(X < ImprovedVBE.width - 2)

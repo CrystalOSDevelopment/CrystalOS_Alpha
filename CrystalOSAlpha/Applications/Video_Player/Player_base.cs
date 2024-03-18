@@ -5,14 +5,7 @@ using Cosmos.System.Audio;
 using Cosmos.System.Graphics;
 using IL2CPU.API.Attribs;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Cosmos.HAL.BlockDevice.Registers;
-using System.Diagnostics.Metrics;
 using Cosmos.System;
-using CrystalOSAlpha;
 
 namespace CrystalOSAlpha.Applications.Video_Player
 {
@@ -25,29 +18,31 @@ namespace CrystalOSAlpha.Applications.Video_Player
         [ManifestResourceStream(ResourceName = "CrystalOSAlpha.Applications.Video_Player.Shrek.wav")] public static byte[] music;
 
         [ManifestResourceStream(ResourceName = "CrystalOSAlpha.Applications.Video_Player.video.bvf")] public static byte[] video;
-        //public static Bitmap frame;
         public static byte[] data = new byte[20054];
 
-        public static bool first_startup = true;
-
-        public static float timing = 0;
         public static int i = 0;
-
         public static int drifting = 0;
         public static int multiplyer = 1;
         public static int temp = 0;
-        public static bool stop = false;
-
-        public static bool enable = true;
-
         public static int x = 100;
         public static int y = 100;
 
+        public static int FPS = 0;
+        public static int LastS = -1;
+        public static int Ticken = 0;
+        public static int counter = 0;
+        public static int time = 0;
+
+        public static uint pos = 0;
+        
+        public static float timing = 0;
+        
+        public static bool first_startup = true;
+        public static bool stop = false;
+        public static bool enable = true;
         public static bool moove = false;
         public static bool pause = true;
         public static bool Clicked = false;
-
-        public static uint pos = 0;
 
         public static void Player()
         {
@@ -83,7 +78,6 @@ namespace CrystalOSAlpha.Applications.Video_Player
 
                 }
                 first_startup = false;
-                //Array.Copy(video, 0, data, 0, 20053);
             }
             if(pause == false)
             {
@@ -117,9 +111,9 @@ namespace CrystalOSAlpha.Applications.Video_Player
                             i = ((time - (2 + drifting)) * 20054 * 10) + counter * 20054;
                         }
                     }
-                    if (timing < 2)//17
+                    if (timing < 2)
                     {
-                        timing += 0.7f;//0.7
+                        timing += 0.7f;
                     }
                     else
                     {
@@ -198,32 +192,7 @@ namespace CrystalOSAlpha.Applications.Video_Player
                     moove = false;
                 }
             }
-            /*
-            if (Task_Manager.indicator == Task_Manager.calculators.Count - 1)
-            {
-
-            }
-            else
-            {
-                if (MouseManager.MouseState == MouseState.Left)
-                {
-                    if (MouseManager.X > x && MouseManager.X < x + basic.Width)
-                    {
-                        if (MouseManager.Y > y && MouseManager.Y < y + basic.Height)
-                        {
-                            //z = 999;
-                        }
-                    }
-                }
-            }
-            */
         }
-
-        public static int FPS = 0;
-        public static int LastS = -1;
-        public static int Ticken = 0;
-        public static int counter = 0;
-        public static int time = 0;
         public static void Update()
         {
             if (LastS == -1)

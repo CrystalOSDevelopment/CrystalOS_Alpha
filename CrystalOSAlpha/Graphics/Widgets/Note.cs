@@ -27,34 +27,31 @@ namespace CrystalOSAlpha.Graphics.Widgets
         public int desk_ID {get; set; }
         public int AppID { get; set; }
         public string name {get; set; }
-
         public bool minimised { get; set; }
         public bool movable { get; set; }
         public Bitmap icon { get; set; }
 
-        public bool Get_Back = true;
-        public Bitmap Back;
-
+        public int memory = 0;
         public int x_dif = 10;
         public int y_dif = 10;
-        public bool mem = true;
-        public bool initial = true;
-
         public static int sizeDec = 0;
+
+        public bool mem = true;
+        public bool Get_Back = true;
+        public bool initial = true;
+        public bool clicked = false;
+        public bool Which = true;
+
         public string a = "";
         public string b = "";
-        public List<Button_prop> Buttons = new List<Button_prop>();
-        public bool clicked = false;
-
-        public List<Dropdown> dropdowns = new List<Dropdown>();
-        public List<values> value = new List<values>();
-
-        public int memory = 0;
-
         public string input = "";
         public string result = "";
+        
+        public Bitmap Back;
 
-        public bool Which = true;
+        public List<Button_prop> Buttons = new List<Button_prop>();
+        public List<Dropdown> dropdowns = new List<Dropdown>();
+        public List<values> value = new List<values>();
 
         public void App()
         {
@@ -170,11 +167,11 @@ namespace CrystalOSAlpha.Graphics.Widgets
                     }
                 }
 
-                BitFont.DrawBitFontString(Back, "ArialCustomCharset16", Global_integers.c, "From: ", 10, 30);//92, ((100 - sizeDec / 2) - from.Length * 4)
+                BitFont.DrawBitFontString(Back, "ArialCustomCharset16", Global_integers.c, "From: ", 10, 30);
                 TextBox.Box(Back, 10, 55, 180 - sizeDec, 20, ImprovedVBE.colourToNumber(60, 60, 60), input, "Input", TextBox.Options.left);
-                BitFont.DrawBitFontString(Back, "ArialCustomCharset16", Global_integers.c, "To: ", 10, 80);//92
+                BitFont.DrawBitFontString(Back, "ArialCustomCharset16", Global_integers.c, "To: ", 10, 80);
                 TextBox.Box(Back, 10, 105, 180 - sizeDec, 20, ImprovedVBE.colourToNumber(60, 60, 60), result, "Output", TextBox.Options.left);
-                BitFont.DrawBitFontString(Back, "ArialCustomCharset16", Global_integers.c, output, ((100 - sizeDec / 2) - output.Length * 4), 3);//92
+                BitFont.DrawBitFontString(Back, "ArialCustomCharset16", Global_integers.c, output, ((100 - sizeDec / 2) - output.Length * 4), 3);
                 int ind = 0;
                 foreach (var Dropd in dropdowns)
                 {

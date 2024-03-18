@@ -123,11 +123,9 @@ namespace CrystalOSAlpha.Applications.WebscapeNavigator
                     {
                         int t = X_index;
                         X_index += BitFont.DrawBitFontString(DrawBoard, "ArialCustomCharset16", Color.Blue, mod, X_index, Y_index) + 5;
-                        //X_index += BitFont.DrawBitFontString(DrawBoard, "ArialCustomCharset16", Color.Blue, href, X_index, Y_index + 18) + 5;
                         Link.Add(new Links(t, Y_index, X_index - t, href));
                     }
 
-                    //BitFont.DrawBitFontString(DrawBoard, "ArialCustomCharset16", Color.Black, mod, X_index, Y_index);
                     X_index = 5;
                     Y_index += 18;
                 }

@@ -25,22 +25,19 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public int z { get; set; }
         public int width { get; set; }
         public int height { get; set; }
-
         public int desk_ID { get; set; }
         public int AppID { get; set; }
         public string name { get; set; }
         public string Path { get; set; }
         public string namedProject { get; set; }
-
         public bool minimised { get; set; }
         public bool movable { get; set; }
         public Bitmap icon { get; set; }
 
+        public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
+        
         public Bitmap canvas;
         public Bitmap window;
-
-        public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
-        public int x_1 = 0;
 
         public bool initial = true;
         public bool once = true;
@@ -60,14 +57,20 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         #endregion App UI
 
         #region Core variables
-        public Bitmap WindowCanvas;
-        public Bitmap UIContainer;
-        public Bitmap Propeties;
-        public Bitmap Container;
 
-        bool temp = true;
+        public int StoredX = 0;
+        public int StoredY = 0;
+        public int Sel = 0;
+        public int lineIndex = 0;
+        public int cursorIndex = 0;
+        public bool temp = true;
 
-        string code = "";
+        public string code = "";
+        public string Back_content = "";
+        public string lineCount = "";
+        public string Selected = "";
+        public string ThatID = "";
+        public static string Typo = "";
 
         public List<string> Elements = new List<string> { "Label", "Button", "TextBox", "Slider", "Scrollbar", "PictureBox", "CheckBox", "Radio button", "Progressbar", "Menutab", "Table" };
         public List<Elements> Full = new List<Elements>();
@@ -76,21 +79,10 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public Table t = new Table(2, 7, 412, 600);
         public Window preview;
 
-        public string Selected = "";
-
-        public int StoredX = 0;
-        public int StoredY = 0;
-
-        public string ThatID = "";
-        public static string Typo = "";
-
-        public string lineCount = "";
-
-        public string Back_content = "";
-        public int cursorIndex = 0;
-        public int lineIndex = 0;
-
-        public int Sel = 0;
+        public Bitmap WindowCanvas;
+        public Bitmap UIContainer;
+        public Bitmap Propeties;
+        public Bitmap Container;
         #endregion Core variables
 
         public void App()
@@ -202,7 +194,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
                 canvas = ImprovedVBE.EnableTransparencyPreRGB(canvas, x, y, canvas, Color.FromArgb(CurrentColor).R, Color.FromArgb(CurrentColor).G, Color.FromArgb(CurrentColor).B, ImprovedVBE.cover);
 
-                DrawGradientLeftToRight();
+                ImprovedVBE.DrawGradientLeftToRight(canvas);
 
                 ImprovedVBE.DrawFilledEllipse(canvas, width - 13, 10, 8, 8, ImprovedVBE.colourToNumber(255, 0, 0));
 
@@ -350,7 +342,6 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                         {
                             if (Selected == "Button")
                             {
-                                //code = CodeGenerator.Generate(code, "Button btn = new Button(10, 30, 110, 25, \"Hello World\", 1, 1, 1);");
                                 int ex = StoredX - 10 - preview.x;
                                 int epsz = StoredY - 54 - preview.y;
                                 int W = (int)MouseManager.X - ex - 10 - preview.x;
@@ -359,7 +350,6 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                             }
                             else if (Selected == "Label")
                             {
-                                //code = CodeGenerator.Generate(code, "Button btn = new Button(10, 30, 110, 25, \"Hello World\", 1, 1, 1);");
                                 int ex = StoredX - 10 - preview.x;
                                 int epsz = StoredY - 54 - preview.y;
                                 int W = (int)MouseManager.X - ex - 10 - preview.x;
@@ -368,7 +358,6 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                             }
                             else if (Selected == "TextBox")
                             {
-                                //code = CodeGenerator.Generate(code, "Button btn = new Button(10, 30, 110, 25, \"Hello World\", 1, 1, 1);");
                                 int ex = StoredX - 10 - preview.x;
                                 int epsz = StoredY - 54 - preview.y;
                                 int W = (int)MouseManager.X - ex - 10 - preview.x;
@@ -377,7 +366,6 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                             }
                             else if (Selected == "Slider")
                             {
-                                //code = CodeGenerator.Generate(code, "Button btn = new Button(10, 30, 110, 25, \"Hello World\", 1, 1, 1);");
                                 int ex = StoredX - 10 - preview.x;
                                 int epsz = StoredY - 54 - preview.y;
                                 int W = (int)MouseManager.X - ex - 10 - preview.x;
@@ -386,7 +374,6 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                             }
                             else if (Selected == "CheckBox")
                             {
-                                //code = CodeGenerator.Generate(code, "Button btn = new Button(10, 30, 110, 25, \"Hello World\", 1, 1, 1);");
                                 int ex = StoredX - 10 - preview.x;
                                 int epsz = StoredY - 54 - preview.y;
                                 int W = (int)MouseManager.X - ex - 10 - preview.x;
@@ -411,7 +398,6 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     {
                         TaskScheduler.Apps.Add(new Window(100, 100, 999, 350, 200, 0, "Later", false, icon, code));
                         File.WriteAllText(Path + ".app", code);
-                        //Kernel.Clipboard = Path + "\\" + namedProject + ".app";
                     }
                     else
                     {
@@ -426,7 +412,6 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                     code = CodeGenerator.RemoveLineByID(code, t.GetValue(1, 6));
                                 }
                                 v.Content = Keyboard.HandleKeyboard(v.Content, k);
-                                //code = CodeGenerator.Generate(code, "Button btn = new Button(10, 30, 110, 25, \"Hello World\", 1, 1, 1);");
                                 if (t.Cells[counter - 1].Content.Contains("Window."))
                                 {
                                     code = CodeGenerator.Generate(code, "this." + t.Cells[counter - 1].Content.Replace("Window.", "") + " = " + v.Content + ";");
@@ -506,7 +491,6 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                         editing = true;
                                     }
                                 }
-                                //Kernel.Clipboard = code;
                                 temp = true;
                             }
                             counter++;
@@ -523,7 +507,6 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
             if (preview.Code != code)
             {
-                //Kernel.Clipboard = code;
                 preview = new Window(20, 50, 999, 400, 300, 1, "New Window", false, icon, code);
                 temp = true;
             }
@@ -544,7 +527,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 Array.Fill(Propeties.RawData, ImprovedVBE.colourToNumber(36, 36, 36));
                 ImprovedVBE.DrawFilledRectangle(Propeties, ImprovedVBE.colourToNumber(50, 50, 50), 2, 2, (int)Propeties.Width - 4, (int)Propeties.Height - 4, false);
 
-                Array.Fill(Container.RawData, ImprovedVBE.colourToNumber(36, 36, 36));//BAckground
+                Array.Fill(Container.RawData, ImprovedVBE.colourToNumber(36, 36, 36));//Background
                 ImprovedVBE.DrawFilledRectangle(Container, ImprovedVBE.colourToNumber(50, 50, 50), 2, 2, (int)Container.Width - 4, (int)Container.Height - 4, false);//Border
                 
                 BitFont.DrawBitFontString(Container, "ArialCustomCharset16", new CarbonIDE().HighLight(Back_content), Back_content, 42 - ((HZS[0].Pos - 20) * 4), 7 - VSB[0].Value);//The actual code
@@ -862,52 +845,6 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
             }
 
             Array.Copy(window.RawData, 0, ImprovedVBE.cover.RawData, 0, window.RawData.Length);
-        }
-
-        public int GetGradientColor(int x, int y, int width, int height)
-        {
-            int r = (int)((double)x / width * 255);
-            int g = (int)((double)y / height * 255);
-            int b = 255;
-
-            return ImprovedVBE.colourToNumber(r, g, b);
-        }
-        public void DrawGradientLeftToRight()
-        {
-            int gradientColorStart = GetGradientColor(0, 0, width, height);
-            int gradientColorEnd = GetGradientColor(width, 0, width, height);
-
-            int rStart = Color.FromArgb(gradientColorStart).R;
-            int gStart = Color.FromArgb(gradientColorStart).G;
-            int bStart = Color.FromArgb(gradientColorStart).B;
-
-            int rEnd = Color.FromArgb(gradientColorEnd).R;
-            int gEnd = Color.FromArgb(gradientColorEnd).G;
-            int bEnd = Color.FromArgb(gradientColorEnd).B;
-
-            for (int i = 0; i < canvas.RawData.Length; i++)
-            {
-                if (x_1 == width - 1)
-                {
-                    x_1 = 0;
-                }
-                else
-                {
-                    x_1++;
-                }
-                int r = (int)((double)x_1 / width * (rEnd - rStart)) + rStart;
-                int g = (int)((double)x_1 / width * (gEnd - gStart)) + gStart;
-                int b = (int)((double)x_1 / width * (bEnd - bStart)) + bStart;
-                if (canvas.RawData[i] != 0)
-                {
-                    canvas.RawData[i] = ImprovedVBE.colourToNumber(r, g, b);
-                }
-                if (i / width > 20)
-                {
-                    break;
-                }
-            }
-            x_1 = 0;
         }
     }
 

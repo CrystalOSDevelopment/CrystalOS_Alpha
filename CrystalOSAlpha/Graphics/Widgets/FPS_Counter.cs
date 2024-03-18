@@ -35,17 +35,16 @@ namespace CrystalOS_Alpha.Graphics.Widgets
         public Bitmap icon { get; set; }
 
         public int FPS = 0;
-
         public int LastS = -1;
         public int Ticken = 0;
-        public bool Get_Back = true;
-        public Bitmap Back;
-
         public int x_dif = 10;
         public int y_dif = 10;
-        public bool mem = true;
-
         public static int sizeDec = 0;
+
+        public bool Get_Back = true;
+        public bool mem = true;
+        
+        public Bitmap Back;
 
         public void App()
         {

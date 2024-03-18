@@ -1,24 +1,15 @@
-﻿using Cosmos.Core.Memory;
-using Cosmos.System;
+﻿using Cosmos.System;
 using Cosmos.System.Graphics;
-using CrystalOS_Alpha;
-using CrystalOS_Alpha.Graphics.Widgets;
 using CrystalOSAlpha.Applications;
-using CrystalOSAlpha.Applications.Gameboy;
-using CrystalOSAlpha.Applications.WebscapeNavigator;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
-using CrystalOSAlpha.Graphics.Icons;
 using CrystalOSAlpha.Graphics.Widgets;
 using CrystalOSAlpha.Programming;
 using CrystalOSAlpha.UI_Elements;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Metrics;
 using System.Drawing;
 using System.IO;
-using System.Runtime.CompilerServices;
-using static IL2CPU.API.Attribs.AsmMarker;
 using Kernel = CrystalOS_Alpha.Kernel;
 using TaskScheduler = CrystalOSAlpha.Graphics.TaskScheduler;
 
@@ -41,21 +32,19 @@ namespace CrystalOSAlpha.SystemApps
         public bool minimised { get; set; }
         public bool movable { get; set; }
         public Bitmap icon { get; set; }
-        public bool temp = true;
 
-        public Bitmap canvas;
-        public Bitmap window;
-
+        public int Counter = 0;
         public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
-        public int x_1 = 0;
 
         public bool initial = true;
         public bool once = true;
         public bool clicked = false;
         public bool HasTitlebar = true;
         public bool AlwaysOnTop = false;
+        public bool temp = true;
 
-        public int Counter = 0;
+        public Bitmap canvas;
+        public Bitmap window;
         #endregion Essential
 
         #region UI_Elements
@@ -75,12 +64,11 @@ namespace CrystalOSAlpha.SystemApps
         public bool HasMB = false;
         #endregion UI_Elements
 
-        public string Code = "#Define Window_Main\n{\n    this.Title = \"SubwaySim 24\";\n    this.X = 0;\n    this.Y = 0;\n    this.Width = 1920;\n    this.Height = 1005;\n    this.Titlebar = true;\n    this.RGB = 60, 60, 60;\n    //PictureBox Interior = new PictureBox(0, 0, \"1:\\SubwaySim24\\Assets\\Interior.bmp\", true);\n    //PictureBox Tunnel = new PictureBox(0, 0, \"1:\\SubwaySim24\\Assets\\Tunnel1.bmp\", true);\n    PictureBox Tunnel = new PictureBox(0, 0, 1920, 1080, true);\n\n    //Points\n    //Rails\n    Point p1 = new Point(770, 720);\n    Point p2 = new Point(1036, 353);\n    Point p3 = new Point(1038, 355);\n    Point p4 = new Point(790, 720);\n\n    Point p5 = new Point(1097, 720);\n    Point p6 = new Point(1079, 360);\n    Point p7 = new Point(1083, 363);\n    Point p8 = new Point(1116, 720);\n    //Station\n    Point First = new Point(885, 385);\n    Point Second = new Point(890, 388);\n    Point Third = new Point(869, 407);\n    Point Fourth = new Point(869, 466);\n    Point Fifth = new Point(563, 717);\n    Point Sixth = new Point(261, 719);\n    Point Seventh = new Point(231, 567);\n\n    Tunnel.Clear(42, 42, 42);\n    Tunnel.FilledPollygon(p1, p2, p3, p4);\n    Tunnel.FilledPollygon(p5, p6, p7, p8);\n    Tunnel.FilledPollygon(First, Second, Third, Fourth, Fifth, Sixth, Seventh);\n\n    //Game Graphics\n    //Interior.MergeOnto(Tunnel);\n    \n    Label VehicleName = new Label(125, 853, VehicleBrand, 255, 255, 255);\n    Label VehicleL = new Label(125, 880, VehicleLength, 255, 255, 255);\n    Label VehicleW = new Label(125, 907, VehicleWeight, 255, 255, 255);\n    Label VehicleMaxS = new Label(125, 934, VehicleMaxSpeed, 255, 255, 255);\n\n    Label VehicleS = new Label(345, 853, VehicleSpeed, 255, 255, 255);\n    Label VehicleT = new Label(345, 880, VehicleThrotle, 255, 255, 255);\n    Label VehicleB = new Label(345, 907, VehicleBreak, 255, 255, 255);\n\n    Label Time = new Label(1480, 25, Seconds, 255, 162, 0);\n    Label WaitTime = new Label(1480, 50, WaitInStation, 255, 162, 0);\n    Label Travelled = new Label(1480, 75, TravelledDistance, 255, 162, 0);\n    //Control UI\n    //Throtle\n    Button ThrotleUp = new Button(1660, 540, 225, 60, \"Throtle Up\", 1, 1, 1);\n    Button ThrotleDown = new Button(1660, 620, 225, 60, \"Throtle Down\", 1, 1, 1);\n    //Index\n    Button IndexL = new Button(1660, 463, 104, 60, \"Index Left\", 1, 1, 1);\n    Button IndexR = new Button(1781, 463, 104, 60, \"Index Right\", 1, 1, 1);\n    //Door handling\n    Button DoorL = new Button(1660, 385, 104, 60, \"Door Left\", 1, 1, 1);\n    Button DoorR = new Button(1781, 385, 104, 60, \"Door Right\", 1, 1, 1);\n    //Horn\n    Button Horn = new Button(1660, 308, 225, 60, \"Horn\", 1, 1, 1);\n}\n#Define Variables\n{\n    string VehicleBrand = \"Test subway\";\n    string VehicleLength = \"25 Meter\";\n    string VehicleWeight = \"34 Tonn\";\n    string VehicleMaxSpeed = \"120 KM/H\";\n    string VehicleGear = \"Neutral\";\n    string VehicleThrotle = \"0\";\n    string VehicleBreak = \"0\";\n    int VehicleSpeed = 0;\n    bool Horn = false;\n\n    //Game mechanics\n    int Seconds = 0;\n    int Now = DateTime.UtcNow.Second;\n    int WaitInStation = 8;\n    int TravelledDistance = 0;\n}\n#void Looping\n{\n    //Gametic\n    int CurrentSecond = DateTime.UtcNow.Second;\n    if(CurrentSecond != Now)\n    {\n        //Time spent in-game\n        Seconds += 1;\n        Now = CurrentSecond;\n        string temp = \"Ellapsed time: \" + Seconds + \"s\";\n        Time.Content = temp;\n\n        //Time spent waiting in station\n        if(WaitInStation > 0)\n        {\n            WaitInStation -= 1;\n            string countBack = \"You can leave the station after \" + WaitInStation + \" seconds.\";\n            WaitTime.Content = countBack;\n            WaitTime.Color = 255, 162, 0;\n        }\n        else\n        {\n            string countBack = \"You can now leave the station! Drive safe!\";\n            WaitTime.Content = countBack;\n            WaitTime.Color = 0, 255, 0;\n        }\n        //Measure distance in meter\n        int Dist = VehicleSpeed * 0.277778;\n        TravelledDistance += Dist;\n        string TravelledDist = \"Distance travelled: \" + TravelledDistance + \" meter(s)\";\n        Travelled.Content = TravelledDist;\n\n        //Moving tracks\n        P1.X += 10;\n        P2.X += 10;\n        Tunnel.Clear(42, 42, 42);\n        Tunnel.FilledPollygon(p1, p2, p3, p4);\n        Tunnel.FilledPollygon(p5, p6, p7, p8);\n        Tunnel.FilledPollygon(First, Second, Third, Fourth, Fifth, Sixth, Seventh);\n\n        //Game Graphics\n        //Interior.MergeOnto(Tunnel);\n    }\n    //End of Gametic\n    //Rendering\n    //End of Rendering\n}\n#OnClick ThrotleUp\n{\n    if(VehicleSpeed < 120)\n    {\n        VehicleSpeed += 10;\n        VehicleS.Content = VehicleSpeed;\n    }\n    if(VehicleSpeed > 80)\n    {\n        VehicleT.Content = \"5\";\n    }\n    if(VehicleSpeed < 80)\n    {\n        VehicleT.Content = \"4\";\n    }\n    if(VehicleSpeed < 60)\n    {\n        VehicleT.Content = \"3\";\n    }\n    if(VehicleSpeed < 40)\n    {\n        VehicleT.Content = \"2\";\n    }\n    if(VehicleSpeed < 20)\n    {\n        VehicleT.Content = \"1\";\n    }\n}\n#OnClick ThrotleDown\n{\n    if(0 < VehicleSpeed)\n    {\n        VehicleSpeed -= 10;\n        VehicleS.Content = VehicleSpeed;\n    }\n    if(VehicleSpeed > 80)\n    {\n        VehicleT.Content = \"5\";\n    }\n    if(VehicleSpeed < 80)\n    {\n        VehicleT.Content = \"4\";\n    }\n    if(VehicleSpeed < 60)\n    {\n        VehicleT.Content = \"3\";\n    }\n    if(VehicleSpeed < 40)\n    {\n        VehicleT.Content = \"2\";\n    }\n    if(VehicleSpeed < 20)\n    {\n        VehicleT.Content = \"1\";\n    }\n}";
-        public List<string> Parts;
-
-        public int CycleCount = 0;
         public int part = 0;
-
+        public int CycleCount = 0;
+        public string Code = "#Define Window_Main\n{\n    this.Title = \"SubwaySim 24\";\n    this.X = 0;\n    this.Y = 0;\n    this.Width = 1920;\n    this.Height = 1005;\n    this.Titlebar = true;\n    this.RGB = 60, 60, 60;\n    //PictureBox Interior = new PictureBox(0, 0, \"1:\\SubwaySim24\\Assets\\Interior.bmp\", true);\n    //PictureBox Tunnel = new PictureBox(0, 0, \"1:\\SubwaySim24\\Assets\\Tunnel1.bmp\", true);\n    PictureBox Tunnel = new PictureBox(0, 0, 1920, 1080, true);\n\n    //Points\n    //Rails\n    Point p1 = new Point(770, 720);\n    Point p2 = new Point(1036, 353);\n    Point p3 = new Point(1038, 355);\n    Point p4 = new Point(790, 720);\n\n    Point p5 = new Point(1097, 720);\n    Point p6 = new Point(1079, 360);\n    Point p7 = new Point(1083, 363);\n    Point p8 = new Point(1116, 720);\n    //Station\n    Point First = new Point(885, 385);\n    Point Second = new Point(890, 388);\n    Point Third = new Point(869, 407);\n    Point Fourth = new Point(869, 466);\n    Point Fifth = new Point(563, 717);\n    Point Sixth = new Point(261, 719);\n    Point Seventh = new Point(231, 567);\n\n    Tunnel.Clear(42, 42, 42);\n    Tunnel.FilledPollygon(p1, p2, p3, p4);\n    Tunnel.FilledPollygon(p5, p6, p7, p8);\n    Tunnel.FilledPollygon(First, Second, Third, Fourth, Fifth, Sixth, Seventh);\n\n    //Game Graphics\n    //Interior.MergeOnto(Tunnel);\n    \n    Label VehicleName = new Label(125, 853, VehicleBrand, 255, 255, 255);\n    Label VehicleL = new Label(125, 880, VehicleLength, 255, 255, 255);\n    Label VehicleW = new Label(125, 907, VehicleWeight, 255, 255, 255);\n    Label VehicleMaxS = new Label(125, 934, VehicleMaxSpeed, 255, 255, 255);\n\n    Label VehicleS = new Label(345, 853, VehicleSpeed, 255, 255, 255);\n    Label VehicleT = new Label(345, 880, VehicleThrotle, 255, 255, 255);\n    Label VehicleB = new Label(345, 907, VehicleBreak, 255, 255, 255);\n\n    Label Time = new Label(1480, 25, Seconds, 255, 162, 0);\n    Label WaitTime = new Label(1480, 50, WaitInStation, 255, 162, 0);\n    Label Travelled = new Label(1480, 75, TravelledDistance, 255, 162, 0);\n    //Control UI\n    //Throtle\n    Button ThrotleUp = new Button(1660, 540, 225, 60, \"Throtle Up\", 1, 1, 1);\n    Button ThrotleDown = new Button(1660, 620, 225, 60, \"Throtle Down\", 1, 1, 1);\n    //Index\n    Button IndexL = new Button(1660, 463, 104, 60, \"Index Left\", 1, 1, 1);\n    Button IndexR = new Button(1781, 463, 104, 60, \"Index Right\", 1, 1, 1);\n    //Door handling\n    Button DoorL = new Button(1660, 385, 104, 60, \"Door Left\", 1, 1, 1);\n    Button DoorR = new Button(1781, 385, 104, 60, \"Door Right\", 1, 1, 1);\n    //Horn\n    Button Horn = new Button(1660, 308, 225, 60, \"Horn\", 1, 1, 1);\n}\n#Define Variables\n{\n    string VehicleBrand = \"Test subway\";\n    string VehicleLength = \"25 Meter\";\n    string VehicleWeight = \"34 Tonn\";\n    string VehicleMaxSpeed = \"120 KM/H\";\n    string VehicleGear = \"Neutral\";\n    string VehicleThrotle = \"0\";\n    string VehicleBreak = \"0\";\n    int VehicleSpeed = 0;\n    bool Horn = false;\n\n    //Game mechanics\n    int Seconds = 0;\n    int Now = DateTime.UtcNow.Second;\n    int WaitInStation = 8;\n    int TravelledDistance = 0;\n}\n#void Looping\n{\n    //Gametic\n    int CurrentSecond = DateTime.UtcNow.Second;\n    if(CurrentSecond != Now)\n    {\n        //Time spent in-game\n        Seconds += 1;\n        Now = CurrentSecond;\n        string temp = \"Ellapsed time: \" + Seconds + \"s\";\n        Time.Content = temp;\n\n        //Time spent waiting in station\n        if(WaitInStation > 0)\n        {\n            WaitInStation -= 1;\n            string countBack = \"You can leave the station after \" + WaitInStation + \" seconds.\";\n            WaitTime.Content = countBack;\n            WaitTime.Color = 255, 162, 0;\n        }\n        else\n        {\n            string countBack = \"You can now leave the station! Drive safe!\";\n            WaitTime.Content = countBack;\n            WaitTime.Color = 0, 255, 0;\n        }\n        //Measure distance in meter\n        int Dist = VehicleSpeed * 0.277778;\n        TravelledDistance += Dist;\n        string TravelledDist = \"Distance travelled: \" + TravelledDistance + \" meter(s)\";\n        Travelled.Content = TravelledDist;\n\n        //Moving tracks\n        P1.X += 10;\n        P2.X += 10;\n        Tunnel.Clear(42, 42, 42);\n        Tunnel.FilledPollygon(p1, p2, p3, p4);\n        Tunnel.FilledPollygon(p5, p6, p7, p8);\n        Tunnel.FilledPollygon(First, Second, Third, Fourth, Fifth, Sixth, Seventh);\n\n        //Game Graphics\n        //Interior.MergeOnto(Tunnel);\n    }\n    //End of Gametic\n    //Rendering\n    //End of Rendering\n}\n#OnClick ThrotleUp\n{\n    if(VehicleSpeed < 120)\n    {\n        VehicleSpeed += 10;\n        VehicleS.Content = VehicleSpeed;\n    }\n    if(VehicleSpeed > 80)\n    {\n        VehicleT.Content = \"5\";\n    }\n    if(VehicleSpeed < 80)\n    {\n        VehicleT.Content = \"4\";\n    }\n    if(VehicleSpeed < 60)\n    {\n        VehicleT.Content = \"3\";\n    }\n    if(VehicleSpeed < 40)\n    {\n        VehicleT.Content = \"2\";\n    }\n    if(VehicleSpeed < 20)\n    {\n        VehicleT.Content = \"1\";\n    }\n}\n#OnClick ThrotleDown\n{\n    if(0 < VehicleSpeed)\n    {\n        VehicleSpeed -= 10;\n        VehicleS.Content = VehicleSpeed;\n    }\n    if(VehicleSpeed > 80)\n    {\n        VehicleT.Content = \"5\";\n    }\n    if(VehicleSpeed < 80)\n    {\n        VehicleT.Content = \"4\";\n    }\n    if(VehicleSpeed < 60)\n    {\n        VehicleT.Content = \"3\";\n    }\n    if(VehicleSpeed < 40)\n    {\n        VehicleT.Content = \"2\";\n    }\n    if(VehicleSpeed < 20)\n    {\n        VehicleT.Content = \"1\";\n    }\n}";
+        
+        public List<string> Parts = new List<string>();
         public void App()
         {
             if (AlwaysOnTop == true)
@@ -359,7 +347,7 @@ namespace CrystalOSAlpha.SystemApps
 
                 if(HasTitlebar == true)
                 {
-                    DrawGradientLeftToRight();
+                    ImprovedVBE.DrawGradientLeftToRight(canvas);
 
                     ImprovedVBE.DrawFilledEllipse(canvas, width - 13, 10, 8, 8, ImprovedVBE.colourToNumber(255, 0, 0));
 
@@ -369,11 +357,6 @@ namespace CrystalOSAlpha.SystemApps
                 }
 
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
-
-                foreach(var img in Picturebox)
-                {
-                    //Array.Copy(img.RawData, 0, window.RawData, window.Width * 22, img.RawData.Length);
-                }
                 for (int i = 0; i < Parts.Count && part == 0; i++)
                 {
                     if (Parts[i].Contains("#void Looping"))
@@ -1081,7 +1064,7 @@ namespace CrystalOSAlpha.SystemApps
 
                 if (HasTitlebar == true)
                 {
-                    DrawGradientLeftToRight();
+                    ImprovedVBE.DrawGradientLeftToRight(canvas);
 
                     ImprovedVBE.DrawFilledEllipse(canvas, width - 13, 10, 8, 8, ImprovedVBE.colourToNumber(255, 0, 0));
 
@@ -1265,52 +1248,6 @@ namespace CrystalOSAlpha.SystemApps
                 }
             }
             ImprovedVBE.DrawImageAlpha(window, x, y, RenderTo);
-        }
-
-        public int GetGradientColor(int x, int y, int width, int height)
-        {
-            int r = (int)((double)x / width * 255);
-            int g = (int)((double)y / height * 255);
-            int b = 255;
-
-            return ImprovedVBE.colourToNumber(r, g, b);
-        }
-        public void DrawGradientLeftToRight()
-        {
-            int gradientColorStart = GetGradientColor(0, 0, width, height);
-            int gradientColorEnd = GetGradientColor(width, 0, width, height);
-
-            int rStart = Color.FromArgb(gradientColorStart).R;
-            int gStart = Color.FromArgb(gradientColorStart).G;
-            int bStart = Color.FromArgb(gradientColorStart).B;
-
-            int rEnd = Color.FromArgb(gradientColorEnd).R;
-            int gEnd = Color.FromArgb(gradientColorEnd).G;
-            int bEnd = Color.FromArgb(gradientColorEnd).B;
-
-            for (int i = 0; i < canvas.RawData.Length; i++)
-            {
-                if (x_1 == width - 1)
-                {
-                    x_1 = 0;
-                }
-                else
-                {
-                    x_1++;
-                }
-                int r = (int)((double)x_1 / width * (rEnd - rStart)) + rStart;
-                int g = (int)((double)x_1 / width * (gEnd - gStart)) + gStart;
-                int b = (int)((double)x_1 / width * (bEnd - bStart)) + bStart;
-                if (canvas.RawData[i] != 0)
-                {
-                    canvas.RawData[i] = ImprovedVBE.colourToNumber(r, g, b);
-                }
-                if (i / width > 20)
-                {
-                    break;
-                }
-            }
-            x_1 = 0;
         }
 
         public List<string> Separate(string In)

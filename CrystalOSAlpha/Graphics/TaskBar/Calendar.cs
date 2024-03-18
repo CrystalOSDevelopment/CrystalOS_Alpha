@@ -14,18 +14,19 @@ namespace CrystalOSAlpha.Graphics.TaskBar
 {
     class Calendar
     {
-        public static Bitmap render;
-        public static bool get_Render = true;
-        public static string DayOfWeek = "";
-        public static bool clicked = false;
-
-        public static List<Button_prop> Buttons = new List<Button_prop>();
-
-        public static bool initial = true;
-
         public static int Month = DateTime.Now.Month;
         public static int Year = DateTime.Now.Year;
+
+        public static bool get_Render = true;
+        public static bool clicked = false;
+        public static bool initial = true;
+
+        public static string DayOfWeek = "";
         public static string Month_In_String = "";
+
+        public static Bitmap render;
+
+        public static List<Button_prop> Buttons = new List<Button_prop>();
         public static void Calendar_Widget(int X, int Y)
         {
             if (get_Render == true)

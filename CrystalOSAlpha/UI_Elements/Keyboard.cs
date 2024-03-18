@@ -1,10 +1,4 @@
 ﻿using Cosmos.System;
-using CrystalOS_Alpha;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Kernel = CrystalOS_Alpha.Kernel;
 
 namespace CrystalOSAlpha.UI_Elements
@@ -34,7 +28,7 @@ namespace CrystalOSAlpha.UI_Elements
                         Kernel.Is_KeyboardMouse = true;
                         break;
                     default:
-                        temp += Keyboard_HU(key);//key.KeyChar;
+                        temp += Keyboard_HU(key);
                         break;
                 }
             }

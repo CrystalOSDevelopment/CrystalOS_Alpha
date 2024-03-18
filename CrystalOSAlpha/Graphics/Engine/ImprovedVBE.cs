@@ -227,7 +227,7 @@ namespace CrystalOSAlpha
                                 found = true;
                             }
                         }
-                        if (found == false)//!line[0] != 0 && line[^1] != 0
+                        if (found == false)
                         {
                             if (_y < into.Height - 1)
                             {
@@ -559,7 +559,7 @@ namespace CrystalOSAlpha
             return (r << 16) + (g << 8) + (b);
         }
 
-        //
+        //For 3D rendering in the future
         public static void DrawPollygonFrame(Bitmap Canvas, List<Point> Points, int Color)
         {
             int XMax = 0;
@@ -592,7 +592,7 @@ namespace CrystalOSAlpha
             ImprovedVBE.DrawImageAlpha(Temp, 10, 10, Canvas);
         }
         
-        //
+        //For 3D rendering in the future
         public static void DrawFilledPollygon(Bitmap Canvas, List<Point> Points, int Color)
         {
             int XMax = 0;
@@ -654,7 +654,54 @@ namespace CrystalOSAlpha
         }
         #endregion Graphics
 
-        #region Testing
+        #region For Window look
+        public static int GetGradientColor(int x, int y, int width, int height)
+        {
+            int r = (int)((double)x / width * 255);
+            int g = (int)((double)y / height * 255);
+            int b = 255;
+
+            return ImprovedVBE.colourToNumber(r, g, b);
+        }
+        public static void DrawGradientLeftToRight(Bitmap Input)
+        {
+            int x_1 = 0;
+
+            int gradientColorStart = GetGradientColor(0, 0, (int)Input.Width, (int)Input.Height);
+            int gradientColorEnd = GetGradientColor((int)Input.Width, 0, (int)Input.Width, (int)Input.Height);
+
+            int rStart = Color.FromArgb(gradientColorStart).R;
+            int gStart = Color.FromArgb(gradientColorStart).G;
+            int bStart = Color.FromArgb(gradientColorStart).B;
+
+            int rEnd = Color.FromArgb(gradientColorEnd).R;
+            int gEnd = Color.FromArgb(gradientColorEnd).G;
+            int bEnd = Color.FromArgb(gradientColorEnd).B;
+
+            for (int i = 0; i < Input.RawData.Length; i++)
+            {
+                if (x_1 == Input.Width - 1)
+                {
+                    x_1 = 0;
+                }
+                else
+                {
+                    x_1++;
+                }
+                int r = (int)((double)x_1 / Input.Width * (rEnd - rStart)) + rStart;
+                int g = (int)((double)x_1 / Input.Width * (gEnd - gStart)) + gStart;
+                int b = (int)((double)x_1 / Input.Width * (bEnd - bStart)) + bStart;
+                if (Input.RawData[i] != 0)
+                {
+                    Input.RawData[i] = colourToNumber(r, g, b);
+                }
+                if (i / Input.Width > 20)
+                {
+                    break;
+                }
+            }
+            x_1 = 0;
+        }
         #endregion
     }
 }

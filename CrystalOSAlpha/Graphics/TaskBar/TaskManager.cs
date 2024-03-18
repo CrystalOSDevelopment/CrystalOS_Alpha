@@ -1,7 +1,5 @@
 ﻿using Cosmos.System;
-using Cosmos.System.FileSystem;
 using Cosmos.System.Graphics;
-using CrystalOSAlpha.Applications.Artistic_Stuff.ColorView;
 using CrystalOSAlpha.Applications.Calculator;
 using CrystalOSAlpha.Applications.CarbonIDE;
 using CrystalOSAlpha.Applications.Gameboy;
@@ -15,15 +13,10 @@ using CrystalOSAlpha.Graphics.Icons;
 using CrystalOSAlpha.Graphics.Widgets;
 using CrystalOSAlpha.UI_Elements;
 using IL2CPU.API.Attribs;
-using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.SymbolStore;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CrystalOSAlpha.Graphics.TaskBar
 {
@@ -31,37 +24,34 @@ namespace CrystalOSAlpha.Graphics.TaskBar
     {
         public static int Top = ImprovedVBE.height;
         public static int Left = ImprovedVBE.width / 2 + 60;
-
         public static int height = 50;
         public static int width = 50;
+        public static int Time = 0;
 
         public static double X_offset = 10;
 
         public static bool resize = true;
-
         public static bool MenuOpened = false;
+        public static bool Triggered = false;
+        public static bool update = true;
+        public static bool clicked = true;
+        public static bool calendar = false;
+        public static bool initial = true;
+        public static bool disable = false;
+
+        public static string DayOfWeek = "";
+        public static string Text_Search = "";
 
         [ManifestResourceStream(ResourceName = "CrystalOSAlpha.Graphics.TaskBar.Icon.bmp")] public static byte[] Elephant;
         public static Bitmap icon;
         public static Bitmap Back;
         public static Bitmap TaskBar;
         public static Bitmap Extension_Dock;
-
         public static Bitmap Search_Box;
 
         public static List<Menu_Items> Items = new List<Menu_Items>();
-        public static bool Triggered = false;
-        public static string DayOfWeek = "";
-
-        public static bool update = true;
-        public static bool clicked = true;
-        public static bool calendar = false;
-
-        public static int Time = 0;
-
         public static List<Button_prop> Buttons = new List<Button_prop>();
-        public static bool initial = true;
-        public static bool disable = false;
+
         public static void Main()
         {
             if (initial == true)
@@ -287,8 +277,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                     }
                     else
                     {
-                        //MenuOpened = false;
-                        //calendar = false;
+
                     }
                 }
                 if(MenuOpened == true)
@@ -323,7 +312,6 @@ namespace CrystalOSAlpha.Graphics.TaskBar
             ImprovedVBE.DrawImageAlpha(icon, (int)(Left + X_offset - 41), Top + height / 2 - 18, ImprovedVBE.cover);
         }
 
-        public static string Text_Search = "";
         public static void Menu_Manager()
         {
             foreach (var button in Buttons)
@@ -401,7 +389,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
             ImprovedVBE.DrawImageAlpha(Back, (int)(Left + X_offset - 300), Top - 480, ImprovedVBE.cover);
 
             int x = (int)(Left + X_offset - 290);
-            int y = Top - 370;//358
+            int y = Top - 370;
             int co = 0;
 
             bool start = false;
@@ -524,17 +512,6 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                             ImprovedVBE.DrawImageAlpha(m.Icon, x - ((int)(Left + X_offset - 290)) + 12, 110, Back);
                             BitFont.DrawBitFontString(Back, "ArialCustomCharset16", Global_integers.c, m.Name, x - ((int)(Left + X_offset - 290)) + 12, 170);
                         }
-                        /*
-                        if (x < Left + X_offset - 290 + Back.Width)
-                        {
-                            x += 70;
-                        }
-                        else
-                        {
-                            y += 50;
-                            x = (int)(Left + X_offset - 290);
-                        }
-                        */
                         if(co < 5)
                         {
                             x += 70;
@@ -693,19 +670,6 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                                 }
                                 else if (m.Source == "CarbonIDE")
                                 {
-                                    /*
-                                    CarbonIDE ide = new CarbonIDE();
-                                    ide.x = 0;
-                                    ide.y = 0;
-                                    ide.width = ImprovedVBE.width;
-                                    ide.height = ImprovedVBE.height - 75;
-                                    ide.z = 999;
-                                    ide.icon = ImprovedVBE.ScaleImageStock(Resources.IDE, 56, 56);
-                                    ide.name = "CarbonIDE";
-
-                                    TaskScheduler.Apps.Add(ide);
-                                    */
-                                    //CarbonInit c = new CarbonInit();
                                     CarbonInit c = new CarbonInit();
                                     c.name = "CarbonIDE - Init";
                                     c.x = 100;

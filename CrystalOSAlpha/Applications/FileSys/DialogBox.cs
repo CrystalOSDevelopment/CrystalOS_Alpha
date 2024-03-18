@@ -43,6 +43,13 @@ namespace CrystalOSAlpha.Applications.FileSys
         #endregion UI_Elements
 
         #region Extra
+        public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
+        
+        public string message = "";
+        public string Path = "0:\\";
+        public string SourceFile = "";
+        public string SourceFileTemp = "0:\\";
+        
         public bool initial = true;
         public bool once = true;
         public bool clicked = false;
@@ -50,19 +57,10 @@ namespace CrystalOSAlpha.Applications.FileSys
 
         public Bitmap canvas;
         public Bitmap window;
-
         public Bitmap Container;
         public Bitmap QuickAccess;
-        public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
 
-        public string message = "";
-
-        public int x_1 = 0;
-
-        public string Path = "0:\\";
         public List<Structure> Items = new List<Structure>();
-        public string SourceFile = "";
-        public string SourceFileTemp = "0:\\";
         #endregion Extra
 
         public DialogBox(int x, int y, int z, int width, int height, int desk_ID, string name, bool minimised, Bitmap icon)
@@ -77,7 +75,6 @@ namespace CrystalOSAlpha.Applications.FileSys
             this.minimised = minimised;
             this.icon = icon;
         }
-
 
         public void App()
         {
@@ -124,7 +121,7 @@ namespace CrystalOSAlpha.Applications.FileSys
 
                 canvas = ImprovedVBE.EnableTransparency(canvas, x, y, canvas);
 
-                DrawGradientLeftToRight();
+                ImprovedVBE.DrawGradientLeftToRight(canvas);
 
                 ImprovedVBE.DrawFilledEllipse(canvas, width - 13, 10, 8, 8, ImprovedVBE.colourToNumber(255, 0, 0));
 
@@ -133,7 +130,6 @@ namespace CrystalOSAlpha.Applications.FileSys
                 BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, name, 2, 2);
 
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
-                //window.RawData = canvas.RawData;
                 once = false;
                 temp = true;
             }
@@ -376,52 +372,6 @@ namespace CrystalOSAlpha.Applications.FileSys
             }
 
             ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
-        }
-
-        public int GetGradientColor(int x, int y, int width, int height)
-        {
-            int r = (int)((double)x / width * 255);
-            int g = (int)((double)y / height * 255);
-            int b = 255;
-
-            return ImprovedVBE.colourToNumber(r, g, b);
-        }
-        public void DrawGradientLeftToRight()
-        {
-            int gradientColorStart = GetGradientColor(0, 0, width, height);
-            int gradientColorEnd = GetGradientColor(width, 0, width, height);
-
-            int rStart = Color.FromArgb(gradientColorStart).R;
-            int gStart = Color.FromArgb(gradientColorStart).G;
-            int bStart = Color.FromArgb(gradientColorStart).B;
-
-            int rEnd = Color.FromArgb(gradientColorEnd).R;
-            int gEnd = Color.FromArgb(gradientColorEnd).G;
-            int bEnd = Color.FromArgb(gradientColorEnd).B;
-
-            for (int i = 0; i < canvas.RawData.Length; i++)
-            {
-                if (x_1 == width - 1)
-                {
-                    x_1 = 0;
-                }
-                else
-                {
-                    x_1++;
-                }
-                int r = (int)((double)x_1 / width * (rEnd - rStart)) + rStart;
-                int g = (int)((double)x_1 / width * (gEnd - gStart)) + gStart;
-                int b = (int)((double)x_1 / width * (bEnd - bStart)) + bStart;
-                if (canvas.RawData[i] != 0)
-                {
-                    canvas.RawData[i] = ImprovedVBE.colourToNumber(r, g, b);
-                }
-                if (i / width > 20)
-                {
-                    break;
-                }
-            }
-            x_1 = 0;
         }
     }
 }

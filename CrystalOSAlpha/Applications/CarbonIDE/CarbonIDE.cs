@@ -37,22 +37,20 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public Bitmap icon { get; set; }
         #endregion important
 
-        public List<Button_prop> Buttons = new List<Button_prop>();
-        public List<Scrollbar_Values> Scroll = new List<Scrollbar_Values>();
-
-        public bool initial = true;
-        public bool clicked = false;
-
-        public int x_1 = 0;
-        public int y_1 = 0;
-
-        public Bitmap canvas;
-        public bool once = true;
-        public Bitmap window;
         public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
+        public int Reg_Y = 0;
+        public int memory = 0;
+        public int cursorIndex = 0;
+        public int lineIndex = 0;
+
+        public string Back_content = "";
+        public string content = "";
+        public string source = "";
+        public string lineCount = "";
+        public string Path = "";
+        public string namedProject = "";
 
         public string TestCode = "string name = Console.ReadLine();\nif(name == \"John\")\n{\n    Console.WriteLine(\"Hi\");\n}\nelse if(name == \"Doe\")\n{\n    Console.WriteLine(\"Hello\");\n}\nelse if(name == \"Carol\")\n{\n    Console.WriteLine(\"Who even are you?\");\n}\nelse\n{\n    Console.WriteLine(\"No message for you!\");\n}\nfor(int i = 5; i < 15; i++)\n{\n    Console.WriteLine(i + \". Cycle\");\n}\nConsole.WriteLine(\"End of Program\");\nfor(int i = 0; i < 10; i++)\n{\n    Console.WriteLine(i + \". Cycle\");\n}\nConsole.WriteLine(\"End of Program\");";
-        //public string content = "Console.WriteLine(\"Guess a number game!\");\nint num = Random.Next(0, 11);\nConsole.WriteLine(num);";
         public string Game = "Console.WriteLine(\"Guess a number game!\");\nbool match = false;\nint num = Random.Next(0, 11);\nConsole.WriteLine(\"You have 3 guesses!\");\nfor(int i = 0; i < 3; i++)\n{\n    Console.Write(i + \". Guess\");\n    int guessed = Console.ReadLine();\n    if(guessed == num)\n    {\n        Console.WriteLine(\"That's Correct\");\n        bool match = true;\n    }\n    else if(guessed > num)\n    {\n        Console.WriteLine(\"Guessed is bigger\");\n    }\n    else\n    {\n        Console.WriteLine(\"Guessed is smaller\");\n    }\n}\nConsole.WriteLine(\"The correct number was: \" + num);";
         public string TestWhile = "Console.Write(\"Start while loop? (y, n): \");\nstring input = Console.ReadLine();\nwhile(input == \"y\")\n{\n    for(int i = 0; i < 3; i++)\n    {\n        Console.WriteLine(\"Test\");\n    }\n    Console.Write(\"end of cycle, continue?(y, n): \");\n    string input = Console.ReadLine();\n}";
         public string Keyboard_Test = "ReadKey key;\nReadKey key2;\nif(key == key2)\n{\n    Console.WriteLine(\"Two keys are matching!\");\n}\nif(key == ConsoleKeyEx.U)\n{\n    Console.WriteLine(\"You pressed the Escape key!\");\n}";
@@ -93,52 +91,39 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
             "    Graphics.FilledCircle(85, 200, 20, 20, 0, 128, 255);\n" +
             "}";
 
-        public string Back_content = "";
-        public string content = "";
-        //public string content = "File.Create(\"0:\\\", \"Sample.app\");\nFile.WriteAllText(\"0:\\Sample.app\", \"Console.WriteLine(\\\"Hello, World!\\\");\");";
-        //public string content = "";
-        public string source = "";
-
+        public bool initial = true;
+        public bool clicked = false;
+        public bool once = true;
         public bool temp = true;
 
-        public int Reg_Y = 0;
+        public List<Button_prop> Buttons = new List<Button_prop>();
+        public List<Scrollbar_Values> Scroll = new List<Scrollbar_Values>();
 
+        public Bitmap canvas;
+        public Bitmap window;
         public Bitmap Container;
         public Bitmap Strucrure;
 
         public List<Dropdown> dropdowns = new List<Dropdown>();
         public List<values> value = new List<values>();
-
         public List<CSharpFile> FileTree = new List<CSharpFile>();
 
-        public int memory = 0;
-
-        public string lineCount = "";
-
-        public int cursorIndex = 0;
-        public int lineIndex = 0;
-
-        public string Path = "";
-        public string namedProject = "";
         public void App()
         {
             if (initial == true)
             {
                 Buttons.Add(new Button_prop(5, 27, 60, 20, "New", 1));
+                Buttons.Add(new Button_prop(195, 27, 60, 20, "Run", 1));
+                Buttons.Add(new Button_prop(270, 27, 60, 20, "Save", 1));
 
+                Scroll.Add(new Scrollbar_Values(width - 347, 30, 20, height - 60, 0));
+                Scroll.Add(new Scrollbar_Values(width - 25, 30, 20, height - 267, 0));
+                
                 Dropdown d = new Dropdown(72, 27, 115, 20, "Type");
                 dropdowns.Add(d);
 
                 value.Add(new values(false, "C# console", "Type"));
                 value.Add(new values(true, "C# GUI", "Type"));
-
-                Buttons.Add(new Button_prop(195, 27, 60, 20, "Run", 1));
-
-                Buttons.Add(new Button_prop(270, 27, 60, 20, "Save", 1));
-
-                Scroll.Add(new Scrollbar_Values(width - 347, 30, 20, height - 60, 0));
-
-                Scroll.Add(new Scrollbar_Values(width - 25, 30, 20, height - 267, 0));
 
                 //Starting to init line counting
                 for(int i = 0; i < 278; i++)
@@ -183,7 +168,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 }
                 FileTree.Clear();
 
-                foreach (DirectoryEntry dir in Kernel.fs.GetDirectoryListing(Path))//"0:\\User\\Source\\Demo"
+                foreach (DirectoryEntry dir in Kernel.fs.GetDirectoryListing(Path))
                 {
                     if (dir.mEntryType == DirectoryEntryTypeEnum.File)
                     {
@@ -194,9 +179,9 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
             }
             if (once == true)
             {
-                canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32); //new int[width * height];
+                canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
                 window = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
-                Container = new Bitmap((uint)(width - 332), (uint)(height - 60), ColorDepth.ColorDepth32);//(width - 356), (uint)(height - 60)
+                Container = new Bitmap((uint)(width - 332), (uint)(height - 60), ColorDepth.ColorDepth32);
                 Strucrure = new Bitmap((uint)(314), (uint)height - 267, ColorDepth.ColorDepth32);
 
                 Array.Fill(Container.RawData, ImprovedVBE.colourToNumber(60, 60, 60));
@@ -215,7 +200,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
                 canvas = ImprovedVBE.EnableTransparency(canvas, x, y, canvas);
 
-                DrawGradientLeftToRight();
+                ImprovedVBE.DrawGradientLeftToRight(canvas);
 
                 ImprovedVBE.DrawFilledEllipse(canvas, width - 13, 10, 8, 8, ImprovedVBE.colourToNumber(255, 0, 0));
 
@@ -223,13 +208,10 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
                 BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, name, 2, 2);
 
-                //Button.Button_render(canvas, 10, 70, 100, 25, 1, "Click");
-
                 canvas = Scrollbar.Render(canvas, Scroll[0]);
                 canvas = Scrollbar.Render(canvas, Scroll[1]);
 
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
-                //window.RawData = canvas.RawData;
                 once = false;
                 temp = true;
             }
@@ -405,8 +387,6 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                 }
                                 break;
                             case "Save":
-                                //BitFont.DrawBitFontString(window, "ArialCustomCharset16", Color.White, CSharp.Executor(content), 500, 500);
-
                                 foreach (DirectoryEntry d in Kernel.fs.GetDirectoryListing("0:\\User\\Source\\Demo"))
                                 {
                                     if (d.mEntryType == DirectoryEntryTypeEnum.File)
@@ -527,7 +507,6 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 temp = true;
             }
 
-            //ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
             Array.Copy(window.RawData, 0, ImprovedVBE.cover.RawData, 0, window.RawData.Length);
             foreach (var Dropd in dropdowns)
             {
@@ -615,81 +594,21 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
             }
         }
 
-        public int GetGradientColor(int x, int y, int width, int height)
-        {
-            int r = (int)((double)x / width * 255);
-            int g = (int)((double)y / height * 255);
-            int b = 255;
-
-            return ImprovedVBE.colourToNumber(r, g, b);
-        }
-        public void DrawGradientLeftToRight()
-        {
-            int gradientColorStart = GetGradientColor(0, 0, width, height);
-            int gradientColorEnd = GetGradientColor(width, 0, width, height);
-
-            int rStart = Color.FromArgb(gradientColorStart).R;
-            int gStart = Color.FromArgb(gradientColorStart).G;
-            int bStart = Color.FromArgb(gradientColorStart).B;
-
-            int rEnd = Color.FromArgb(gradientColorEnd).R;
-            int gEnd = Color.FromArgb(gradientColorEnd).G;
-            int bEnd = Color.FromArgb(gradientColorEnd).B;
-
-            for (int i = 0; i < canvas.RawData.Length; i++)
-            {
-                if (x_1 == width - 1)
-                {
-                    x_1 = 0;
-                }
-                else
-                {
-                    x_1++;
-                }
-                int r = (int)((double)x_1 / width * (rEnd - rStart)) + rStart;
-                int g = (int)((double)x_1 / width * (gEnd - gStart)) + gStart;
-                int b = (int)((double)x_1 / width * (bEnd - bStart)) + bStart;
-                if (canvas.RawData[i] != 0)
-                {
-                    canvas.RawData[i] = ImprovedVBE.colourToNumber(r, g, b);
-                }
-                if (i / width > 20)
-                {
-                    break;
-                }
-            }
-            x_1 = 0;
-        }
-
-        public int Get_index_of_char(string source, char c, int index)
-        {
-            int counter = 0;
-            int index_out = 0;
-            for (int i = 0; counter < index || i < source.Length; i++)
-            {
-                if (source[i] == c)
-                {
-                    counter++;
-                }
-                index_out = i;
-            }
-            return index_out;
-        }
-
         public Color[] HighLight(string source)
         {
             Color[] colors = new Color[source.Length];
             Array.Fill(colors, Color.White);
 
-            string Extra = "";
             int index = 0;
-            bool was_String = false;
-            string state = "Ended";
-
-            int qCount = 0;
-
-            bool comment = false;
             int sepCounter = 0;
+            int qCount = 0;
+            
+            string Extra = "";
+            string state = "Ended";
+            
+            bool was_String = false;
+            bool comment = false;
+
             foreach(char c in source)
             {
                 if(state == "Ended")
@@ -730,7 +649,6 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                         {
                             colors[i] = Color.Green;
                         }
-                        //Extra = "";
                         break;
                     case "Math":
                         for (int i = index - Extra.Length + 1; i <= index; i++)

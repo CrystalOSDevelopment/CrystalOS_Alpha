@@ -7,10 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using TaskScheduler = CrystalOSAlpha.Graphics.TaskScheduler;
 
 namespace CrystalOSAlpha.Applications.Notepad
@@ -34,28 +31,23 @@ namespace CrystalOSAlpha.Applications.Notepad
         public Bitmap icon { get; set; }
         #endregion important
 
-        public List<Button_prop> Buttons = new List<Button_prop>();
-        public List<Scrollbar_Values> Scroll = new List<Scrollbar_Values>();
+        public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
+        public int Reg_Y = 0;
 
         public bool initial = true;
         public bool clicked = false;
-
-        public int x_1 = 0;
-        public int y_1 = 0;
-
-        public Bitmap canvas;
         public bool once = true;
-        public Bitmap window;
-        public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
+        public bool temp = true;
 
         public string content = "";
         public string source = "";
 
-        public bool temp = true;
-
-        public int Reg_Y = 0;
-
+        public Bitmap canvas;
+        public Bitmap window;
         public Bitmap Container;
+
+        public List<Button_prop> Buttons = new List<Button_prop>();
+        public List<Scrollbar_Values> Scroll = new List<Scrollbar_Values>();
 
         public void App()
         {
@@ -71,7 +63,7 @@ namespace CrystalOSAlpha.Applications.Notepad
             }
             if (once == true)
             {
-                canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32); //new int[width * height];
+                canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
                 window = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
                 Container = new Bitmap((uint)(width - 29), (uint)(height - 60), ColorDepth.ColorDepth32);
 
@@ -90,15 +82,13 @@ namespace CrystalOSAlpha.Applications.Notepad
 
                 canvas = ImprovedVBE.EnableTransparency(canvas, x, y, canvas);
 
-                DrawGradientLeftToRight();
+                ImprovedVBE.DrawGradientLeftToRight(canvas);
 
                 ImprovedVBE.DrawFilledEllipse(canvas, width - 13, 10, 8, 8, ImprovedVBE.colourToNumber(255, 0, 0));
 
                 ImprovedVBE.DrawFilledEllipse(canvas, width - 34, 10, 8, 8, ImprovedVBE.colourToNumber(227, 162, 37));
 
                 BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, name, 2, 2);
-
-                //Button.Button_render(canvas, 10, 70, 100, 25, 1, "Click");
 
                 foreach (var button in Buttons)
                 {
@@ -133,7 +123,6 @@ namespace CrystalOSAlpha.Applications.Notepad
                 canvas = Scrollbar.Render(canvas, Scroll[0]);
 
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
-                //window.RawData = canvas.RawData;
                 once = false;
                 temp = true;
             }
@@ -255,55 +244,7 @@ namespace CrystalOSAlpha.Applications.Notepad
             ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
         }
 
-        public int GetGradientColor(int x, int y, int width, int height)
-        {
-            int r = (int)((double)x / width * 255);
-            int g = (int)((double)y / height * 255);
-            int b = 255;
-
-            return ImprovedVBE.colourToNumber(r, g, b);
-        }
-        public void DrawGradientLeftToRight()
-        {
-            int gradientColorStart = GetGradientColor(0, 0, width, height);
-            int gradientColorEnd = GetGradientColor(width, 0, width, height);
-
-            int rStart = Color.FromArgb(gradientColorStart).R;
-            int gStart = Color.FromArgb(gradientColorStart).G;
-            int bStart = Color.FromArgb(gradientColorStart).B;
-
-            int rEnd = Color.FromArgb(gradientColorEnd).R;
-            int gEnd = Color.FromArgb(gradientColorEnd).G;
-            int bEnd = Color.FromArgb(gradientColorEnd).B;
-
-            for (int i = 0; i < canvas.RawData.Length; i++)
-            {
-                if (x_1 == width - 1)
-                {
-                    x_1 = 0;
-                }
-                else
-                {
-                    x_1++;
-                }
-                int r = (int)((double)x_1 / width * (rEnd - rStart)) + rStart;
-                int g = (int)((double)x_1 / width * (gEnd - gStart)) + gStart;
-                int b = (int)((double)x_1 / width * (bEnd - bStart)) + bStart;
-                if (canvas.RawData[i] != 0)
-                {
-                    canvas.RawData[i] = ImprovedVBE.colourToNumber(r, g, b);
-                }
-                if (i / width > 20)
-                {
-                    break;
-                }
-            }
-            x_1 = 0;
-        }
-
-        static string LoremIpsum(int minWords, int maxWords,
-    int minSentences, int maxSentences,
-    int numParagraphs)
+        static string LoremIpsum(int minWords, int maxWords, int minSentences, int maxSentences, int numParagraphs)
         {
 
             var words = new[]{"lorem", "ipsum", "dolor", "sit", "amet", "consectetuer",

@@ -66,7 +66,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     break;
                 default:
                     string temp = Keyboard.HandleKeyboard("", keyInfo);
-                    lines[lineIndex] = lines[lineIndex].Insert(cursorIndex, temp); //keyInfo.KeyChar.ToString()
+                    lines[lineIndex] = lines[lineIndex].Insert(cursorIndex, temp);
                     //cursorIndex++;
                     cursorIndex += temp.Length;
                     break;

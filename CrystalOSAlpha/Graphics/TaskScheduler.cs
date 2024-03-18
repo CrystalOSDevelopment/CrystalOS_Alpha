@@ -1,34 +1,25 @@
 ﻿using Cosmos.System;
-using CrystalOS_Alpha;
 using CrystalOSAlpha.Applications;
-using CrystalOSAlpha.Applications.Calculator;
-//using CrystalOSAlpha.Applications.Minecraft;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics.TaskBar;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kernel = CrystalOS_Alpha.Kernel;
 
 namespace CrystalOSAlpha.Graphics
 {
     class TaskScheduler
     {
-        public static List<App> Apps = new List<App>();
+        public static int counter = 0;
         public static int neg_x = 0;
         public static int neg_y = 0;
-        public static bool get_values = true;
         public static int index = 0;
-
         public static int x_offset = (int)(TaskManager.Left - TaskManager.X_offset) + 15;
         public static int y_offset = TaskManager.Top - 35;
 
         public static bool Clicked = false;
+        public static bool get_values = true;
 
-        public static int counter = 0;
-
+        public static List<App> Apps = new List<App>();
         public static void Exec()
         {
             SideNav.start_y = 40;
@@ -151,7 +142,7 @@ namespace CrystalOSAlpha.Graphics
                     }
                     catch (Exception e)
                     {
-                        //Kernel.Clipboard = e.Message;
+
                     }
                 }
                 counter++;
