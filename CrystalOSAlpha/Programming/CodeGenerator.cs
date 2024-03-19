@@ -22,7 +22,6 @@ namespace CrystalOSAlpha.Programming
                                 "    this.Height = 300;\n" +
                                 "    this.Titlebar = true;\n" +
                                 "    this.RGB = 60, 60, 60;\n" +
-                                //"    Table table = new Table(10, 50, 10, 10, 480, 200, 480, 200);\n" +
                                 "}\n" +
                                 "#void Looping\n" + 
                                 "{\n" +
@@ -38,7 +37,6 @@ namespace CrystalOSAlpha.Programming
                 {
                     if (newComponent.Trim().StartsWith("this.Width"))
                     {
-                        //Kernel.Clipboard = "It comes here just fine";
                         for (int i = 0; i < block.Length; i++)
                         {
                             if (block[i].Trim().StartsWith("this.Width"))
@@ -199,30 +197,6 @@ namespace CrystalOSAlpha.Programming
         public static List<string> Separate(string In)
         {
             List<string> parts = new List<string>();
-
-            //string current = "";
-            //int openedRemainingBrackets = 0;
-            //bool Started = false;
-            //bool wasWhiteSpace = false;
-            //for (int i = 0; i < In.Length; i++)
-            //{
-            //    current += In[i];
-            //    if (In[i] == '{')
-            //    {
-            //        openedRemainingBrackets++;
-            //        Started = true;
-            //    }
-            //    else if (In[i] == '}')
-            //    {
-            //        openedRemainingBrackets--;
-            //    }
-            //    if (i != 0 && openedRemainingBrackets == 0 && Started == true)
-            //    {
-            //        parts.Add(current);
-            //        Started = false;
-            //        current = "";
-            //    }
-            //}
             parts = CodeGenerator.ToList(In.Split("\n#"));
             for (int i = 0; i < parts.Count; i++)
             {
@@ -231,7 +205,8 @@ namespace CrystalOSAlpha.Programming
                     parts[i] = parts[i].Insert(0, "\n#");
                 }
             }
-            return parts;        }
+            return parts;
+        }
         public static List<string> ToList(string[] content)
         {
             List<string> parts = new List<string>();

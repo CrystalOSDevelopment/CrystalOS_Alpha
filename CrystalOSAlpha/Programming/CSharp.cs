@@ -1,76 +1,60 @@
-﻿using Cosmos.Core_Asm;
-using Cosmos.HAL.Audio;
+﻿using Cosmos.HAL.Audio;
 using Cosmos.HAL.Drivers.Audio;
 using Cosmos.System;
 using Cosmos.System.Audio.IO;
 using Cosmos.System.Audio;
 using Cosmos.System.Graphics;
-using Cosmos.System.Graphics.Fonts;
-using CrystalOS_Alpha;
 using CrystalOSAlpha.Applications;
-using CrystalOSAlpha.Applications.Gameboy;
 using CrystalOSAlpha.Applications.Terminal;
-using CrystalOSAlpha.Graphics;
-using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics.Icons;
 using CrystalOSAlpha.Graphics.Widgets;
 using CrystalOSAlpha.SystemApps;
 using CrystalOSAlpha.UI_Elements;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
-using Kernel = CrystalOS_Alpha.Kernel;
 using TaskScheduler = CrystalOSAlpha.Graphics.TaskScheduler;
 using CrystalOSAlpha.Applications.Calculator;
 using System.Drawing;
-using System.Threading.Channels;
 
 namespace CrystalOSAlpha.Programming
 {
     class CSharp
     {
-        public List<Variables> Variables = new List<Variables>();
-        public bool firstline = true;
-        public bool WaitForResponse = false;
-
-        public string Returning_Value = null;
-        public string name = null;
-        public List<bool> statements = new List<bool>() { true };
-
-        public string format = "string";
-
-        public bool WasIf = false;
-        public bool WasTrue = false;
-        public bool Checker = false;
-
-        public bool blank = false;
-
-        public string Clipboard = "";
-
         public int Count = 0;
-
-        public bool looping = false;
+        public int CurrentColor = 0;
+        public int WhileBracket = 0;
+        public int StartPoint = 0;
         public int Bracket = 0;
         public int Bookmark = 0;
         public int Cycles = 0;
         public int MaxCycle = 0;
+        public int CycleCounter = 0;
 
+        public bool firstline = true;
+        public bool WaitForResponse = false;
+        public bool WasIf = false;
+        public bool WasTrue = false;
+        public bool Checker = false;
+        public bool blank = false;
+        public bool looping = false;
         public bool WhileLoop = false;
-        public int WhileBracket = 0;
-        public int StartPoint = 0;
         public bool WasElse = false;
-
         public bool KeyOnly = false;
-        public ConsoleKeyEx key = ConsoleKeyEx.NoName;
-        public Bitmap window;
-        public int CurrentColor = 0;
-
         public bool NeedUpdate = false;
+
+        public string Returning_Value = null;
+        public string name = null;
+        public string format = "string";
+        public string Clipboard = "";
+
+        public Bitmap window;
+        
+        public ConsoleKeyEx key = ConsoleKeyEx.NoName;
+
+        public List<bool> statements = new List<bool>() { true };
+        public List<Variables> Variables = new List<Variables>();
 
         //For graphical use:
         #region UI_Elements
@@ -85,19 +69,9 @@ namespace CrystalOSAlpha.Programming
         public List<PictureBox> Picturebox = new List<PictureBox>();
         #endregion UI_Elements
 
-        public int CycleCounter = 0;
-
         public string Executor(string input)
         {
             string output = "";
-            /*
-            string[] lines = input.Split('\n');
-            for(int i = indic; i < lines.Length && WaitForResponse; i++)
-            {
-                output += Returning_methods(lines[i]);
-                indic++;
-            }
-            */
             Programming_Term c = new Programming_Term();
             c.x = 100;
             c.y = 100;
@@ -186,7 +160,6 @@ namespace CrystalOSAlpha.Programming
                     if (line.StartsWith("string"))
                     {
                         string temp = line.Replace("string", "");
-                        //temp = temp.Remove(temp.Length - 1);
                         string[] values = temp.Split("=");
                         if (values[1].Contains("\"") && !values[1].Contains("+"))
                         {
@@ -303,7 +276,6 @@ namespace CrystalOSAlpha.Programming
                     else if (line.StartsWith("int"))
                     {
                         string temp = line.Replace("int", "");
-                        //temp = temp.Remove(temp.Length - 1);
                         string[] values = temp.Split("=");
                         if (int.TryParse(values[1], out int s) == true)
                         {
@@ -390,8 +362,6 @@ namespace CrystalOSAlpha.Programming
                                     Clipboard = e.Message;
                                 }
                             }
-                            
-                            //Clipboard = generated.ToString();
                         }
                         else if (!values[1].StartsWith("Console"))
                         {
@@ -520,7 +490,7 @@ namespace CrystalOSAlpha.Programming
                                 }
                                 catch(Exception e)
                                 {
-                                    Kernel.Clipboard += "\n" + e.Message;
+                                    
                                 }
                             }
                         }
@@ -538,7 +508,6 @@ namespace CrystalOSAlpha.Programming
                     else if (line.StartsWith("bool"))
                     {
                         string temp = line.Replace("bool", "");
-                        //temp = temp.Remove(temp.Length - 1);
                         string[] values = temp.Split("=");
                         if (bool.TryParse(values[1], out bool s) == true)
                         {
@@ -558,7 +527,6 @@ namespace CrystalOSAlpha.Programming
                     else if (line.StartsWith("float"))
                     {
                         string temp = line.Replace("float", "");
-                        //temp = temp.Remove(temp.Length - 1);
                         string[] values = temp.Split("=");
                         if (float.TryParse(values[1], out float f) == true)
                         {
@@ -577,7 +545,6 @@ namespace CrystalOSAlpha.Programming
                     else if (line.StartsWith("double"))
                     {
                         string temp = line.Replace("double", "");
-                        //temp = temp.Remove(temp.Length - 1);
                         string[] values = temp.Split("=");
                         if (double.TryParse(values[1], out double f) == true)
                         {
@@ -596,7 +563,6 @@ namespace CrystalOSAlpha.Programming
                     else if (line.StartsWith("Point"))
                     {
                         string temp = line.Replace("Point", "");
-                        //temp = temp.Remove(temp.Length - 1);
                         string[] values = temp.Split("=");
                         string name = values[0];
                         string point = values[1].Replace("new(", "");
@@ -806,7 +772,6 @@ namespace CrystalOSAlpha.Programming
                         if (temp.StartsWith("WriteLine("))
                         {
                             temp = temp.Replace("WriteLine(", "");
-                            //temp = temp.Replace(")", "");
                             temp = temp.Remove(temp.Length - 1);
                             if (!temp.Contains("\""))
                             {
@@ -1626,7 +1591,6 @@ namespace CrystalOSAlpha.Programming
                         }
                         catch (Exception e)
                         {
-                            //BitFont.DrawBitFontString(ImprovedVBE.cover, "ArialCustomCharset16", System.Drawing.Color.White, e.Message, 10, 10);
                             Clipboard = e.Message;
                         }
                     }
@@ -1980,7 +1944,6 @@ namespace CrystalOSAlpha.Programming
                         }
                         catch (Exception e)
                         {
-                            //BitFont.DrawBitFontString(ImprovedVBE.cover, "ArialCustomCharset16", System.Drawing.Color.White, e.Message, 10, 10);
                             Clipboard = e.Message;
                         }
                     }
@@ -2410,7 +2373,6 @@ namespace CrystalOSAlpha.Programming
                         {
                             string temp = input.Replace("File.WriteAllText(", "");
                             temp = temp.Remove(temp.Length - 3);
-
                             string[] args = temp.Split(",\"");
 
                             if (File.Exists(args[0].Replace("\"", "")))
@@ -2420,11 +2382,7 @@ namespace CrystalOSAlpha.Programming
                                     string CleanUp = args[1];
                                     
                                     Clipboard += CleanUp + "\n";
-                                    
-                                    //CleanUp = CleanUp.Remove(CleanUp.Length - 1);
-                                    
-                                    //Clipboard += CleanUp + "\n";
-                                    
+
                                     CleanUp = CleanUp.Replace("\\\"", "\"");
                                     
                                     Clipboard += CleanUp;
@@ -2441,23 +2399,19 @@ namespace CrystalOSAlpha.Programming
                         {
                             string temp = input.Replace("File.Copy(", "");
                             temp = temp.Remove(temp.Length - 2);
-
-
                             string[] args = temp.Split(",");
 
                             if (File.Exists(args[0].Replace("\"", "")))
                             {
                                 try
                                 {
-                                    //File.Move(args[0].Replace("\"", ""), args[1].Replace("\"", ""));
                                     string s = File.ReadAllText(args[0].Replace("\"", ""));
-                                    //File.Delete(args[0].Replace("\"", ""));
                                     File.Create(args[1].Replace("\"", ""));
                                     File.WriteAllText(args[1].Replace("\"", ""), s);
                                 }
                                 catch (Exception e)
                                 {
-                                    Kernel.Clipboard = e.Message;
+                                    Clipboard = e.Message;
                                 }
                             }
                         }
@@ -2473,10 +2427,6 @@ namespace CrystalOSAlpha.Programming
                         if(key != ConsoleKeyEx.NoName)
                         {
                             Variables.Add(new Programming.Variables(temp, key));
-                            //if (key == ConsoleKeyEx.E)
-                            //{
-                            //    Clipboard += temp + "\nEEEEEEEEEEEEEEE";
-                            //}
                             key = ConsoleKeyEx.NoName;
                             WaitForResponse = false;
                             KeyOnly = false;
@@ -2892,8 +2842,7 @@ namespace CrystalOSAlpha.Programming
                                 }
                                 catch (Exception e)
                                 {
-                                    //Kernel.Clipboard = e.Message;
-                                    //TaskScheduler.Apps.Add(new MsgBox(999, 10, 10, 300, 200, "Error!", "No compatible soundcard\nwas detected!", Resources.Notepad));
+                                    
                                 }
                             }
                         }
