@@ -1,6 +1,5 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
-using CrystalOS_Alpha;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.TaskBar;
 using IL2CPU.API.Attribs;
@@ -8,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using Image = Cosmos.System.Graphics.Image;
-using Kernel = CrystalOS_Alpha.Kernel;
 
 namespace CrystalOSAlpha
 {
@@ -31,8 +29,6 @@ namespace CrystalOSAlpha
         public static void display(VBECanvas c)
         {
             c.DrawImage(cover, 0, 0);
-            //clear(c, Global_Integers.c);
-            //cover.RawData = data.RawData;
             Clear(0);
             if(Res == true)
             {
@@ -46,11 +42,6 @@ namespace CrystalOSAlpha
 
                     TaskManager.Top = height;
                     TaskManager.Left = width / 2 + 60;
-
-                    //width = 1920;
-                    //height = 1080;
-
-                    c.Clear(Color.Black);
                 }
                 catch
                 {
@@ -169,36 +160,9 @@ namespace CrystalOSAlpha
 
         //Draws an image to a given canvas
         //NOTE: This method ignores Alpha values
-        public static void DrawImage(Bitmap image, int x, int y, Bitmap Into)
+        public static void DrawImage(Bitmap image, int x, int y, Bitmap into)
         {
-            int counter = 0;
-            int scan_line = 0;
-            int[] line = new int[image.Width];
-            for (int _y = y; _y < y + image.Height; _y++)
-            {
-                if (x < 0)
-                {
-                    line = new int[image.Width + x];
-                    x = 0;
-                }
-                else if (x + image.Width > Into.Width)
-                {
-                    line = new int[image.Width - (x + image.Width - Into.Width)];
-                }
-                Array.Copy(Into.RawData, scan_line * image.Width, line, 0, image.Width);
-
-                if(_y > 0)
-                {
-                    line.CopyTo(Into.RawData, (_y - 1) * width + x);
-                }
-                counter += (int)image.Width;
-            }
-        }
-
-        //Draws an image to a given canvas
-        //NOTE: Not actually blending colors by their alpha value! Works like this: if RGB value is 0, 0, 0 => pixel is not rendered(transparent)
-        public static Bitmap DrawImageAlpha(Bitmap image, int x, int y, Bitmap into)
-        {
+            int TempX = x;
             int[] line = new int[image.Width];
             if (x < into.Width)
             {
@@ -218,7 +182,68 @@ namespace CrystalOSAlpha
                 {
                     try
                     {
-                        Array.Copy(image.RawData, scan_line * image.Width, line, 0, line.Length);
+                        if (TempX < 0)
+                        {
+                            Array.Copy(image.RawData, scan_line * image.Width - TempX, line, 0, line.Length);
+                        }
+                        else
+                        {
+                            Array.Copy(image.RawData, scan_line * image.Width, line, 0, line.Length);
+                        }
+                        if (_y < into.Height - 1 && _y > 0)
+                        {
+                            if (x < 0)
+                            {
+                                x = 0;
+                            }
+                            line.CopyTo(into.RawData, _y * into.Width + x);
+                            counter += (int)image.Width;
+                        }
+                        else
+                        {
+                            counter += (int)image.Width;
+                        }
+                    }
+                    catch
+                    {
+
+                    }
+                }
+            }
+        }
+
+        //Draws an image to a given canvas
+        //NOTE: Not actually blending colors by their alpha value! Works like this: if RGB value is 0, 0, 0 => pixel is not rendered(transparent)
+        public static Bitmap DrawImageAlpha(Bitmap image, int x, int y, Bitmap into)
+        {
+            int TempX = x;
+            int[] line = new int[image.Width];
+            if (x < into.Width)
+            {
+                if (x < 0)
+                {
+                    line = new int[image.Width + x];
+                    x = 0;
+                }
+                else if (x + image.Width > into.Width)
+                {
+                    line = new int[image.Width - (x + image.Width - into.Width)];
+                }
+
+                int counter = 0;
+                int scan_line = 0;
+                for (int _y = y; _y < y + image.Height; _y++, scan_line++)
+                {
+                    try
+                    {
+                        if(TempX < 0)
+                        {
+                            Array.Copy(image.RawData, scan_line * image.Width - TempX, line, 0, line.Length);
+                        }
+                        else
+                        {
+                            Array.Copy(image.RawData, scan_line * image.Width, line, 0, line.Length);
+                        }
                         bool found = false;
                         for(int i = 0; i < line.Length && found == false; i++)
                         {
@@ -231,6 +256,10 @@ namespace CrystalOSAlpha
                         {
                             if (_y < into.Height - 1)
                             {
+                                if(x < 0)
+                                {
+                                    x = 0;
+                                }
                                 line.CopyTo(into.RawData, _y * into.Width + x);
                                 counter += (int)image.Width;
                             }
@@ -241,11 +270,12 @@ namespace CrystalOSAlpha
                         }
                         else
                         {
+                            x = TempX;
                             for (int _x = x; _x < x + image.Width; _x++)
                             {
                                 if (_y < into.Height - 1)
                                 {
-                                    if (_x <= into.Width)
+                                    if (_x <= into.Width && _x >= 0)
                                     {
                                         if (image.RawData[counter] == 0)
                                         {

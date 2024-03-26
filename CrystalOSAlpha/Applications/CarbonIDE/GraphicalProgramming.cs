@@ -11,8 +11,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Reflection.Metadata;
-using Kernel = CrystalOS_Alpha.Kernel;
 using TaskScheduler = CrystalOSAlpha.Graphics.TaskScheduler;
 
 namespace CrystalOSAlpha.Applications.CarbonIDE

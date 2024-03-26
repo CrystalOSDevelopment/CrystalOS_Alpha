@@ -11,6 +11,8 @@ namespace CrystalOSAlpha.UI_Elements
         public int Width { get; set; }
         public int Height { get; set; }
         public int Pos { get; set; }
+        public int MinVal { get; set; }
+        public int MaxVal { get; set; }
         public int LockedPos = 0;
         public int Value = 0;
         public bool Clicked { get; set; }
@@ -24,6 +26,17 @@ namespace CrystalOSAlpha.UI_Elements
             this.Height = height;
             this.Pos = Pos;
             this.Sensitivity = Sensitivity;
+        }
+        public VerticalScrollbar(int x, int y, int width, int height, int Pos, int MinVal, int MaxVal)
+        {
+            this.x = x;
+            this.y = y;
+            this.Width = width;
+            this.Height = height;
+            this.Pos = Pos;
+            this.MinVal = MinVal;
+            this.MaxVal = MaxVal;
+            this.Sensitivity = (MaxVal - MinVal) / (this.Height - 40);
         }
         public void Render(Bitmap canvas)
         {
@@ -43,19 +56,24 @@ namespace CrystalOSAlpha.UI_Elements
         {
             if (MouseManager.MouseState == MouseState.Left)
             {
-                if((Y > y + Pos && Y < Pos + 20) || Clicked == true)
+                if((Y > y + Pos && Y < y + Pos + 20) || Clicked == true)
                 {
                     if (X > x && X < x + Width && Clicked == false)
                     {
                         LockedPos = Y - (y + Pos);
                         Clicked = true;
+                        return true;
                     }
                     if (Clicked == true)
                     {
-                        Pos = Y - y - LockedPos;
+                        if(Y - y - LockedPos != Pos)
+                        {
+                            Pos = Y - y - LockedPos;
+                            Pos = Math.Clamp(Pos, 20, Height - 40);
+                            return true;
+                        }
                     }
-                    Pos = Math.Clamp(Pos, 20, Height - 40);
-                    return true;
+                    return false;
                 }
             }
             else

@@ -145,9 +145,4 @@
         <PackageReference Include="Cosmos.Plugs" Version="0.1.0-localbuild20240202115047" NoWarn="NU1604" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="isoFiles\SubwaySim24\Assets\" />
-      <Folder Include="isoFiles\SubwaySim24\Audio\" />
-    </ItemGroup>
-
 </Project>

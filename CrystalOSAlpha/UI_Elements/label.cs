@@ -11,6 +11,7 @@ namespace CrystalOSAlpha.UI_Elements
         public string Text { get; set; }
         public int TextColor { get; set; }
         public string ID { get; set; }
+        public string FontType { get; set; }
         public label(int X, int Y, string Text, int TextColor, string iD)
         {
             this.X = X;
@@ -19,9 +20,25 @@ namespace CrystalOSAlpha.UI_Elements
             this.TextColor = TextColor;
             ID = iD;
         }
+        public label(int X, int Y, string Text, string fontType, int TextColor, string iD)
+        {
+            this.X = X;
+            this.Y = Y;
+            this.Text = Text;
+            this.TextColor = TextColor;
+            this.FontType = fontType;
+            ID = iD;
+        }
         public void Label(Bitmap canvas)
         {
-            BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.FromArgb(TextColor), Text, X, Y + 22);
+            if(FontType != null)
+            {
+                BitFont.DrawBitFontString(canvas, FontType, Color.FromArgb(TextColor), Text, X, Y + 22);
+            }
+            else
+            {
+                BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.FromArgb(TextColor), Text, X, Y + 22);
+            }
         }
     }
 }

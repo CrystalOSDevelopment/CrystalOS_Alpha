@@ -31,5 +31,19 @@ namespace CrystalOSAlpha.Graphics.Widgets
             ImprovedVBE.DrawFilledRectangle(canvas, CurrentColor, 5, height - 15, width - 10, 15, false);
             return canvas;
         }
+        public static void Widget_Back(Bitmap back, int width, int height, int CurrentColor)
+        {
+            Base.width = (int)back.Width;
+            Base.height = (int)back.Height;
+
+            ImprovedVBE.DrawFilledEllipse(back, 10, 10, 10, 10, CurrentColor);
+            ImprovedVBE.DrawFilledEllipse(back, width - 11, 10, 10, 10, CurrentColor);
+            ImprovedVBE.DrawFilledEllipse(back, 10, height - 10, 10, 10, CurrentColor);
+            ImprovedVBE.DrawFilledEllipse(back, width - 11, height - 10, 10, 10, CurrentColor);
+
+            ImprovedVBE.DrawFilledRectangle(back, CurrentColor, 0, 10, width, height - 20, false);
+            ImprovedVBE.DrawFilledRectangle(back, CurrentColor, 5, 0, width - 10, 15, false);
+            ImprovedVBE.DrawFilledRectangle(back, CurrentColor, 5, height - 15, width - 10, 15, false);
+        }
     }
 }

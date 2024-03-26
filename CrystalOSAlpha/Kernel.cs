@@ -19,7 +19,7 @@ namespace CrystalOS_Alpha
 {
     public class Kernel : Sys.Kernel
     {
-        public VBECanvas vbe = new VBECanvas(new Mode(1920, 1080, ColorDepth.ColorDepth32));
+        public static VBECanvas vbe = new VBECanvas(new Mode(1920, 1080, ColorDepth.ColorDepth32));
         [ManifestResourceStream(ResourceName = "CrystalOSAlpha.Graphics.Engine.Cursor.bmp")] public static byte[] Cursor;
         public static Bitmap C = new Bitmap(Cursor);
         public static CosmosVFS fs = new CosmosVFS();
@@ -32,6 +32,9 @@ namespace CrystalOS_Alpha
                 Sys.FileSystem.VFS.VFSManager.RegisterVFS(fs);
                 Directory.CreateDirectory("0:\\User\\Source");
                 Directory.CreateDirectory("0:\\User\\Documents");
+                Directory.CreateDirectory("0:\\User\\System");
+                File.Create("0:\\User\\System\\FrequentApps.sys");
+                File.WriteAllText("0:\\User\\System\\FrequentApps.sys", "Settings\nGameboy\nMinecraft");
                 Directory.CreateDirectory("0:\\Programs");
                 Directory.CreateDirectory("0:\\Programs\\Office");
             }
@@ -100,7 +103,6 @@ namespace CrystalOS_Alpha
 
             SideNav.Core();
             TaskScheduler.Exec();
-
             TaskManager.Main();
 
             ImprovedVBE.DrawImageAlpha(C, (int)MouseManager.X, (int)MouseManager.Y, ImprovedVBE.cover);
