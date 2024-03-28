@@ -43,5 +43,6 @@ namespace CrystalOSAlpha.Graphics
         public static string Background_type = "Default";
         //Colors 
         public static string Background_color = "CystalBlack";
+        public static int LevelOfTransparency = 85;
     }
 }

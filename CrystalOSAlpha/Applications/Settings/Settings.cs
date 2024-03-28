@@ -126,6 +126,12 @@ namespace CrystalOSAlpha.Applications.Settings
                         Slider.Add(new Slider(6, 563, 290, 1, 255, Global_integers.StartColor.R, "SatrtRed"));
                         Slider.Add(new Slider(6, 587, 290, 1, 255, Global_integers.StartColor.G, "StartGreen"));
                         Slider.Add(new Slider(6, 611, 290, 1, 255, Global_integers.StartColor.B, "StartBlue"));
+
+                        Slider.Add(new Slider(6, 660, 290, 1, 255, Global_integers.EndColor.R, "EndRed"));
+                        Slider.Add(new Slider(6, 684, 290, 1, 255, Global_integers.EndColor.G, "EndGreen"));
+                        Slider.Add(new Slider(6, 708, 290, 1, 255, Global_integers.EndColor.B, "EndBlue"));
+
+                        Slider.Add(new Slider(6, 763, 290, 0, 50, Global_integers.LevelOfTransparency, "Transparency"));
                         break;
                     case "Sound":
                         
@@ -351,7 +357,6 @@ namespace CrystalOSAlpha.Applications.Settings
                                 case "TaskbarBlue":
                                     v.Y = 527 - VerticalScrollbar[0].Value;
                                     break;
-
                                 case "SatrtRed":
                                     v.Y = 585 - VerticalScrollbar[0].Value;
                                     break;
@@ -360,6 +365,19 @@ namespace CrystalOSAlpha.Applications.Settings
                                     break;
                                 case "StartBlue":
                                     v.Y = 633 - VerticalScrollbar[0].Value;
+                                    break;
+
+                                case "EndRed":
+                                    v.Y = 682 - VerticalScrollbar[0].Value;
+                                    break;
+                                case "EndGreen":
+                                    v.Y = 706 - VerticalScrollbar[0].Value;
+                                    break;
+                                case "EndBlue":
+                                    v.Y = 730 - VerticalScrollbar[0].Value;
+                                    break;
+                                case "Transparency":
+                                    v.Y = 785 - VerticalScrollbar[0].Value;
                                     break;
                             }
                             v.Render(Container);
@@ -380,6 +398,15 @@ namespace CrystalOSAlpha.Applications.Settings
                         BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Red: " + Slider[6].Value, 308, 579 - VerticalScrollbar[0].Value);
                         BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Green: " + Slider[7].Value, 308, 603 - VerticalScrollbar[0].Value);
                         BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Blue: " + Slider[8].Value, 308, 627 - VerticalScrollbar[0].Value);
+
+                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "End color(titlebar)", 6, 652 - VerticalScrollbar[0].Value);
+
+                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Red: " + Slider[9].Value, 308, 676 - VerticalScrollbar[0].Value);
+                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Green: " + Slider[10].Value, 308, 700 - VerticalScrollbar[0].Value);
+                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Blue: " + Slider[11].Value, 308, 724 - VerticalScrollbar[0].Value);
+
+                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Transparency", 6, 754 - VerticalScrollbar[0].Value);
+                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Level: " + Slider[12].Value / 100.0f, 308, 779 - VerticalScrollbar[0].Value);
                         #endregion Global color settings
                         //Render the Container
                         ImprovedVBE.DrawImage(Container, 128, 62, canvas);
@@ -769,6 +796,21 @@ namespace CrystalOSAlpha.Applications.Settings
                         case "StartBlue":
                             Color StartB = Color.FromArgb(Global_integers.StartColor.R, Global_integers.StartColor.G, v.Value);
                             Global_integers.StartColor = StartB;
+                            break;
+                        case "EndRed":
+                            Color EndR = Color.FromArgb(v.Value, Global_integers.EndColor.G, Global_integers.EndColor.B);
+                            Global_integers.EndColor = EndR;
+                            break;
+                        case "EndGreen":
+                            Color EndG = Color.FromArgb(Global_integers.EndColor.R, v.Value, Global_integers.EndColor.B);
+                            Global_integers.EndColor = EndG;
+                            break;
+                        case "EndBlue":
+                            Color EndB = Color.FromArgb(Global_integers.EndColor.R, Global_integers.EndColor.G, v.Value);
+                            Global_integers.EndColor = EndB;
+                            break;
+                        case "Transparency":
+                            Global_integers.LevelOfTransparency = 100 - v.Value;
                             break;
                     }
                 }

@@ -1,21 +1,11 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
-using CrystalOS_Alpha;
 using CrystalOSAlpha.Graphics;
-using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.UI_Elements;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using Kernel = CrystalOS_Alpha.Kernel;
 using TaskScheduler = CrystalOSAlpha.Graphics.TaskScheduler;
 
 namespace CrystalOSAlpha.Applications.WebscapeNavigator

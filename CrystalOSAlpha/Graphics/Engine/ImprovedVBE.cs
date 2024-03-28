@@ -430,7 +430,7 @@ namespace CrystalOSAlpha
             int g = Global_integers.G;
             int b = Global_integers.B;
 
-            float blendFactor = 0.85f;
+            float blendFactor = (float)Global_integers.LevelOfTransparency / 100.0f;//0.85f
             float inverseBlendFactor = 1 - blendFactor;
 
             int counter = 0;
@@ -492,7 +492,7 @@ namespace CrystalOSAlpha
             int g = G;
             int b = B;
 
-            float blendFactor = 0.85f;
+            float blendFactor = (float)Global_integers.LevelOfTransparency / 100.0f;
             float inverseBlendFactor = 1 - blendFactor;
 
             int counter = 0;
@@ -693,7 +693,7 @@ namespace CrystalOSAlpha
             int bEnd = endColor.B;
 
             int r = (int)((double)x / width * (rEnd - rStart)) + rStart;
-            int g = (int)((double)y / height * (gEnd - gStart)) + gStart;
+            int g = (int)((double)x / width * (gEnd - gStart)) + gStart;
             int b = (int)((double)x / width * (bEnd - bStart)) + bStart;
 
             return colourToNumber(r, g, b);
