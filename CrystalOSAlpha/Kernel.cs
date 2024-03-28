@@ -34,7 +34,12 @@ namespace CrystalOS_Alpha
                 Directory.CreateDirectory("0:\\User\\Documents");
                 Directory.CreateDirectory("0:\\User\\System");
                 File.Create("0:\\User\\System\\FrequentApps.sys");
-                File.WriteAllText("0:\\User\\System\\FrequentApps.sys", "Settings\nGameboy\nMinecraft");
+                File.WriteAllText("0:\\User\\System\\FrequentApps.sys", "Settings\nGameboy\nMinecraft\nSettings");
+                if (!File.Exists("0:\\User\\System\\Appearance.sys"))
+                {
+                    File.Create("0:\\User\\System\\Appearance.sys");
+                    File.WriteAllText("0:\\User\\System\\Appearance.sys", "Wallpaper=Default");
+                }
                 Directory.CreateDirectory("0:\\Programs");
                 Directory.CreateDirectory("0:\\Programs\\Office");
             }
@@ -101,9 +106,18 @@ namespace CrystalOS_Alpha
                 }
             }
 
-            SideNav.Core();
-            TaskScheduler.Exec();
-            TaskManager.Main();
+            if(TaskManager.MenuOpened == false)
+            {
+                SideNav.Core();
+                TaskManager.Main();
+                TaskScheduler.Exec();
+            }
+            else
+            {
+                SideNav.Core();
+                TaskScheduler.Exec();
+                TaskManager.Main();
+            }
 
             ImprovedVBE.DrawImageAlpha(C, (int)MouseManager.X, (int)MouseManager.Y, ImprovedVBE.cover);
 

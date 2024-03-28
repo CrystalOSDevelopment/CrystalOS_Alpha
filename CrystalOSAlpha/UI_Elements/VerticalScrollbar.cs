@@ -17,7 +17,7 @@ namespace CrystalOSAlpha.UI_Elements
         public int Value = 0;
         public bool Clicked { get; set; }
         public string ID { get; set; }
-        public float Sensitivity { get; set; }
+        public float Sensitivity = 1.0f;
         public VerticalScrollbar(int x, int y, int width, int height, int Pos, float Sensitivity)
         {
             this.x = x;
@@ -36,7 +36,7 @@ namespace CrystalOSAlpha.UI_Elements
             this.Pos = Pos;
             this.MinVal = MinVal;
             this.MaxVal = MaxVal;
-            this.Sensitivity = (MaxVal - MinVal) / (this.Height - 40);
+            this.Sensitivity = (float)(((float)MaxVal - (float)MinVal) / ((float)this.Height - 60.0));
         }
         public void Render(Bitmap canvas)
         {

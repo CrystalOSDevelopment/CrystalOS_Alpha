@@ -1,5 +1,6 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
+using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
 using IL2CPU.API.Attribs;
 using System;
@@ -21,83 +22,31 @@ namespace CrystalOSAlpha.Applications.Minecraft
         public int z { get; set; }
         public int x { get; set; }
         public int y { get; set; }
-
-        public int x_1 = 0;
-        public int y_1 = 0;
         public int width {get; set; }
         public int height { get; set; }
 
         public Bitmap icon { get; set; }
         public Bitmap canvas;
-        public bool once = true;
         public Bitmap window;
 
-        public string source = "";
-        public int CurrentColor = ImprovedVBE.colourToNumber(113, 188, 225);
-
-        public static int Last(string s, char searc_char)
-        {
-            int i = 0;
-            int temp = 0;
-            if (s.Contains(searc_char))
-            {
-                foreach (char c in s)
-                {
-                    if (c == searc_char)
-                    {
-                        i = temp;
-                    }
-                    temp++;
-                }
-            }
-            return i;
-        }
-        public static int Count(string s)
-        {
-            int i = 0;
-            foreach (char c in s)
-            {
-                if (c == '\n')
-                {
-                    i++;
-                }
-            }
-            return i;
-        }
-
-        public static int FirstLast(string s)
-        {
-            int i = 0;
-            foreach (char c in s)
-            {
-                if (c != ' ')
-                {
-                    return i;
-                }
-                i++;
-            }
-            return i;
-        }
-
-        //public List<UI_Elements> Elements = new List<UI_Elements>();
-
-        //public List<Variables> Variable = new List<Variables>();
-
-        public bool WasTrue = false;
         public List<bool> Statements_Cond = new List<bool> { false };
 
+        public bool WasTrue = false;
         public bool windowed = true;
         public bool rounded = true;
         public bool fullscreen = true;
+        public bool once = true;
 
+        public string source = "";
         public string command = "";
         public bool WasIF = false;
         public bool VoidStarted = false;
         public bool update = true;
-        public int kernelCycle = 1;
 
         public int x_offset = 300;
         public int y_offset = 100;
+        public int CurrentColor = ImprovedVBE.colourToNumber(113, 188, 225);
+        public int kernelCycle = 1;
         #endregion vars
 
         #region Blocks
@@ -172,103 +121,103 @@ namespace CrystalOSAlpha.Applications.Minecraft
             KeyEvent key;
             if (KeyboardManager.TryReadKey(out key))
             {
-                if (key.Key == ConsoleKeyEx.W)
+                switch (key.Key)
                 {
-                    if (inventory == true)
-                    {
-                        if (Inventory.Cursor >= 8)
+                    case ConsoleKeyEx.W:
+                        if (inventory == true)
                         {
-                            Inventory.Cursor -= 8;
+                            if (Inventory.Cursor >= 8)
+                            {
+                                Inventory.Cursor -= 8;
+                            }
                         }
-                    }
-                    else
-                    {
-                        y_offset -= 8;
-                        Y_cur -= 1;
-                        X_cur += 15;
-                    }
-                    once = true;
-                }
-                else if (key.Key == ConsoleKeyEx.S)
-                {
-                    if (inventory == true)
-                    {
-                        Inventory.Cursor += 8;
-                    }
-                    else
-                    {
-                        y_offset += 8;
-                        Y_cur += 1;
-                        X_cur -= 15;
-                    }
-                    once = true;
-                }
-                else if (key.Key == ConsoleKeyEx.A)
-                {
-                    if (inventory == true)
-                    {
-                        Inventory.Cursor -= 1;
-                    }
-                    else
-                    {
-                        x_offset += 9;
-                        y_offset += 4;
-                        X_cur += 1;
-                    }
-                    once = true;
-                }
-                else if (key.Key == ConsoleKeyEx.D)
-                {
-                    if (inventory == true)
-                    {
-                        Inventory.Cursor += 1;
-                    }
-                    else
-                    {
-                        x_offset -= 9;
-                        y_offset -= 4;
-                        X_cur -= 1;
-                    }
-                    once = true;
-                }
-                else if (key.Key == ConsoleKeyEx.I)
-                {
-                    if (inventory == true)
-                    {
+                        else
+                        {
+                            y_offset -= 8;
+                            Y_cur -= 1;
+                            X_cur += 15;
+                        }
+                        once = true;
+                        break;
+                    case ConsoleKeyEx.S:
+                        if (inventory == true)
+                        {
+                            Inventory.Cursor += 8;
+                        }
+                        else
+                        {
+                            y_offset += 8;
+                            Y_cur += 1;
+                            X_cur -= 15;
+                        }
+                        once = true;
+                        break;
+                    case ConsoleKeyEx.A:
+                        if (inventory == true)
+                        {
+                            Inventory.Cursor -= 1;
+                        }
+                        else
+                        {
+                            x_offset += 9;
+                            y_offset += 4;
+                            X_cur += 1;
+                        }
+                        once = true;
+                        break;
+                    case ConsoleKeyEx.D:
+                        if (inventory == true)
+                        {
+                            Inventory.Cursor += 1;
+                        }
+                        else
+                        {
+                            x_offset -= 9;
+                            y_offset -= 4;
+                            X_cur -= 1;
+                        }
+                        once = true;
+                        break;
+                    case ConsoleKeyEx.I:
+                        if (inventory == true)
+                        {
+                            inventory = false;
+                        }
+                        else
+                        {
+                            inventory = true;
+                        }
+                        once = true;
+                        break;
+                    case ConsoleKeyEx.UpArrow:
+                        if(inventory == false)
+                        {
+                            LayerofCur++;
+                            once = true;
+                        }
+                        break;
+                    case ConsoleKeyEx.DownArrow:
+                        if(inventory == false)
+                        {
+                            LayerofCur--;
+                            once = true;
+                        }
+                        break;
+                    case ConsoleKeyEx.Enter:
+                        Current_Block = Inventory.Cursor + 1;
                         inventory = false;
-                    }
-                    else
-                    {
-                        inventory = true;
-                    }
-                    once = true;
-                }
-                else if (key.Key == ConsoleKeyEx.UpArrow)
-                {
-                    LayerofCur++;
-                    once = true;
-                }
-                else if (key.Key == ConsoleKeyEx.DownArrow)
-                {
-                    LayerofCur--;
-                    once = true;
-                }
-                else if (key.Key == ConsoleKeyEx.Enter)
-                {
-                    Current_Block = Inventory.Cursor + 1;
-                    inventory = false;
-                    once = true;
-                }
-                else
-                {
-                    int res = 0;
-                    if (int.TryParse(key.KeyChar.ToString(), out res))
-                    {
-                        if (res != 0)
+                        once = true;
+                        break;
+                    default:
+                        int res = 0;
+                        if (int.TryParse(key.KeyChar.ToString(), out res))
                         {
-                            Current_Block = res;
+                            if (res != 0)
+                            {
+                                Current_Block = res;
+                            }
                         }
-                    }
+                        break;
                 }
             }
 
@@ -293,41 +242,8 @@ namespace CrystalOSAlpha.Applications.Minecraft
             {
                 if (update == true)
                 {
-                    //This is the part where we set the values of the windows (propeties)
-                    canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
-                    window = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
-
-                    #region corners
-                    if (rounded == true)
-                    {
-                        ImprovedVBE.DrawFilledEllipse(canvas, 10, 10, 10, 10, CurrentColor);
-                        ImprovedVBE.DrawFilledEllipse(canvas, width - 11, 10, 10, 10, CurrentColor);
-                        ImprovedVBE.DrawFilledEllipse(canvas, 10, height - 10, 10, 10, CurrentColor);
-                        ImprovedVBE.DrawFilledEllipse(canvas, width - 11, height - 10, 10, 10, CurrentColor);
-
-                        ImprovedVBE.DrawFilledRectangle(canvas, CurrentColor, 0, 10, width, height - 20, false);
-                        ImprovedVBE.DrawFilledRectangle(canvas, CurrentColor, 5, 0, width - 10, 15, false);
-                        ImprovedVBE.DrawFilledRectangle(canvas, CurrentColor, 5, height - 15, width - 10, 1, false);
-                    }
-                    else
-                    {
-                        Array.Fill(canvas.RawData, CurrentColor);
-                    }
-                    #endregion corners
-
-                    #region base
-
-                    if (windowed == true)
-                    {
-                        ImprovedVBE.DrawGradientLeftToRight(canvas);
-                    }
-
-                    ImprovedVBE.DrawFilledEllipse(canvas, width - 13, 10, 8, 8, ImprovedVBE.colourToNumber(255, 0, 0));
-
-                    ImprovedVBE.DrawFilledEllipse(canvas, width - 34, 10, 8, 8, ImprovedVBE.colourToNumber(227, 162, 37));
-
-                    BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, name, 2, 2);
-                    #endregion base
+                    Bitmap back = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
+                    (canvas, back, window) = WindowGenerator.Generate(x, y, width, height, CurrentColor, name);
                 }
 
                 int pos_y = 0;

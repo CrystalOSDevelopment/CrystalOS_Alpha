@@ -130,7 +130,7 @@ namespace CrystalOSAlpha
 
                     for (int i = Y; i < Y + Height; i++)
                     {
-                        if(i < height)
+                        if(i < Canvas.Height && i >= 0)
                         {
                             Array.Copy(line, 0, Canvas.RawData, (i * Canvas.Width) + X, line.Length);
                         }
@@ -444,7 +444,6 @@ namespace CrystalOSAlpha
                         {
                             if (image.RawData[counter] == 0)
                             {
-                                //output.RawData[counter] = cover.RawData[_y * width + _x];
                                 counter++;
                             }
                             else
@@ -454,13 +453,11 @@ namespace CrystalOSAlpha
                                     int r3 = (cover.RawData[_y * width + _x] & 0xff0000) >> 16;
                                     int g3 = (cover.RawData[_y * width + _x] & 0x00ff00) >> 8;
                                     int b3 = (cover.RawData[_y * width + _x] & 0x0000ff);
-                                    //Color c = Color.FromArgb(cover.RawData[j * width + i]);
 
                                     int r2 = (int)(inverseBlendFactor * r3 + blendFactor * r);
                                     int g2 = (int)(inverseBlendFactor * g3 + blendFactor * g);
                                     int b2 = (int)(inverseBlendFactor * b3 + blendFactor * b);
 
-                                    //DrawPixel(image, _x, _y, colourToNumber(r2, g2, b2));
                                     output.RawData[counter] = colourToNumber(r2, g2, b2);
                                 }
                                 catch
@@ -685,20 +682,28 @@ namespace CrystalOSAlpha
         #endregion Graphics
 
         #region For Window look
-        public static int GetGradientColor(int x, int y, int width, int height)
+        public static int GetGradientColor(int x, int y, int width, int height, Color startColor, Color endColor)
         {
-            int r = (int)((double)x / width * 255);
-            int g = (int)((double)y / height * 255);
-            int b = 255;
+            int rStart = startColor.R;
+            int gStart = startColor.G;
+            int bStart = startColor.B;
 
-            return ImprovedVBE.colourToNumber(r, g, b);
+            int rEnd = endColor.R;
+            int gEnd = endColor.G;
+            int bEnd = endColor.B;
+
+            int r = (int)((double)x / width * (rEnd - rStart)) + rStart;
+            int g = (int)((double)y / height * (gEnd - gStart)) + gStart;
+            int b = (int)((double)x / width * (bEnd - bStart)) + bStart;
+
+            return colourToNumber(r, g, b);
         }
         public static void DrawGradientLeftToRight(Bitmap Input)
         {
             int x_1 = 0;
 
-            int gradientColorStart = GetGradientColor(0, 0, (int)Input.Width, (int)Input.Height);
-            int gradientColorEnd = GetGradientColor((int)Input.Width, 0, (int)Input.Width, (int)Input.Height);
+            int gradientColorStart = GetGradientColor(0, 0, (int)Input.Width, (int)Input.Height, Global_integers.StartColor, Global_integers.EndColor);
+            int gradientColorEnd = GetGradientColor((int)Input.Width, 0, (int)Input.Width, (int)Input.Height, Global_integers.StartColor, Global_integers.EndColor);
 
             int rStart = Color.FromArgb(gradientColorStart).R;
             int gStart = Color.FromArgb(gradientColorStart).G;

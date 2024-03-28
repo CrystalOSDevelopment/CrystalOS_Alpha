@@ -75,30 +75,7 @@ namespace CrystalOSAlpha.Applications.Calculator
             }
             if(once == true)
             {
-                canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
-                back_canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
-                window = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
-
-                #region corners
-                ImprovedVBE.DrawFilledEllipse(canvas, 10, 10, 10, 10, CurrentColor);
-                ImprovedVBE.DrawFilledEllipse(canvas, width - 11, 10, 10, 10, CurrentColor);
-                ImprovedVBE.DrawFilledEllipse(canvas, 10, height - 10, 10, 10, CurrentColor);
-                ImprovedVBE.DrawFilledEllipse(canvas, width - 11, height - 10, 10, 10, CurrentColor);
-
-                ImprovedVBE.DrawFilledRectangle(canvas, CurrentColor, 0, 10, width, height - 20, false);
-                ImprovedVBE.DrawFilledRectangle(canvas, CurrentColor, 5, 0, width - 10, 15, false);
-                ImprovedVBE.DrawFilledRectangle(canvas, CurrentColor, 5, height - 15, width - 10, 15,false);
-                #endregion corners
-
-                canvas = ImprovedVBE.EnableTransparency(canvas, x, y, canvas);
-
-                ImprovedVBE.DrawGradientLeftToRight(canvas);
-
-                ImprovedVBE.DrawFilledEllipse(canvas, width - 13, 10, 8, 8, ImprovedVBE.colourToNumber(255, 0, 0));
-
-                ImprovedVBE.DrawFilledEllipse(canvas, width - 34, 10, 8, 8, ImprovedVBE.colourToNumber(227, 162, 37));
-
-                BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, name, 2, 2);
+                (canvas, back_canvas, window) = WindowGenerator.Generate(x, y, width, height, CurrentColor, name);
 
                 foreach(var button in Buttons)
                 {

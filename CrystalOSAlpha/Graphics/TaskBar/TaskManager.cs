@@ -1,5 +1,6 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
+using CrystalOS_Alpha;
 using CrystalOSAlpha.Applications.Calculator;
 using CrystalOSAlpha.Applications.CarbonIDE;
 using CrystalOSAlpha.Applications.Gameboy;
@@ -342,9 +343,9 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                             //Copy background from wallpaper for faster rounded corner rendering
                             Array.Copy(ImprovedVBE.cover.RawData, 0, TaskBar.RawData, 0, ImprovedVBE.width * 45);
                             //Draws the "Rounded rectangle" to the canvas
-                            Bitmap temp = Base.Widget_Back(ImprovedVBE.width, 45, ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B));
+                            Bitmap temp = Base.Widget_Back(ImprovedVBE.width, 45, ImprovedVBE.colourToNumber(Global_integers.TaskBarR, Global_integers.TaskBarG, Global_integers.TaskBarB));
                             //Does transparency stuff
-                            ImprovedVBE.EnableTransparency(temp, 0, 0, TaskBar);
+                            ImprovedVBE.EnableTransparencyPreRGB(temp, 0, 0, TaskBar, Global_integers.TaskBarR, Global_integers.TaskBarG, Global_integers.TaskBarB, ImprovedVBE.cover);
                             //Draw CrystalOS Alpha logo to the taskbar
                             ImprovedVBE.DrawImageAlpha(icon, (int)(ImprovedVBE.width / 2 - icon.Width / 2), 5, TaskBar);
                             //Having a backup copy for date/time display
@@ -413,6 +414,23 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                                     }
                                 }
                             }
+                            if (MouseManager.X > ImprovedVBE.width - 100 && MouseManager.X < ImprovedVBE.width)
+                            {
+                                if(MouseManager.Y > 0 && MouseManager.Y < Backup.Height)
+                                {
+                                    if (calendar == false && clicked == false)
+                                    {
+                                        update = true;
+                                        calendar = true;
+                                        clicked = true;
+                                    }
+                                    else if (calendar == true && clicked == false)
+                                    {
+                                        calendar = false;
+                                        clicked = true;
+                                    }
+                                }
+                            }
                         }
                         else if(MouseManager.MouseState == MouseState.None)
                         {
@@ -423,6 +441,10 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                             Dynamic_Menu(ImprovedVBE.width / 2 - 200, 50, 400, 400);
                         }
                         //Add calendar here
+                        if(calendar == true)
+                        {
+                            Calendar.Calendar_Widget(ImprovedVBE.width - 345, (int)Backup.Height + 5);
+                        }
                     break;
             }
         }
@@ -834,7 +856,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
             {
                 //Get the Menu
                 Back = Base.Widget_Back(Width, Height, ImprovedVBE.colourToNumber(255, 255, 255));
-                Back = ImprovedVBE.EnableTransparency(Back, X, Y, Back);
+                Back = ImprovedVBE.EnableTransparencyPreRGB(Back, X, Y, Back, Global_integers.TaskBarR, Global_integers.TaskBarG, Global_integers.TaskBarB, ImprovedVBE.cover);
                 //Render Main Menu only
                 if(ExtendedMenu == false)
                 {
@@ -1121,7 +1143,6 @@ namespace CrystalOSAlpha.Graphics.TaskBar
             {
                 if (vscroll.CheckClick((int)MouseManager.X - X, (int)MouseManager.Y - Y))
                 {
-                    vscroll.Render(Back);
                     update = true;
                 }
             }
@@ -1129,6 +1150,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
             //Activate click on MenuItems
             if(MouseManager.MouseState == MouseState.Left)
             {
+                CrystalOS_Alpha.Kernel.Clipboard = Items.Count.ToString();
                 foreach(var v in Items)
                 {
                     switch (ExtendedMenu)
@@ -1136,7 +1158,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                         case true:
                                 if (MouseManager.X > X + v.X + 10 && (MouseManager.X < X + Width - v.X - 20 || MouseManager.X < X + v.X + v.Icon.Width))
                                 {
-                                    if (MouseManager.Y > Y + v.Y + 68 && MouseManager.Y < Y + v.Y + v.Icon.Height + 68 && v.Y > 0)
+                                    if (MouseManager.Y > Y + v.Y + 68 && MouseManager.Y < Y + v.Y + v.Icon.Height + 68 && v.Y > 0 && v.Y < Buffer.Height)
                                     {
                                         AppDecider(v.Source, v.Icon);
                                     }
@@ -1304,7 +1326,10 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                     break;
                 case "WebscapeNavigator":
                     Applications.WebscapeNavigator.Webscape WebscapeNavigator = new Applications.WebscapeNavigator.Webscape();
-                    WebscapeNavigator.content = File.ReadAllText("0:\\index.html");
+                    if (File.Exists("0:\\index.html"))
+                    {
+                        WebscapeNavigator.content = File.ReadAllText("0:\\index.html");
+                    }
                     WebscapeNavigator.x = 100;
                     WebscapeNavigator.y = 100;
                     WebscapeNavigator.width = 700;
