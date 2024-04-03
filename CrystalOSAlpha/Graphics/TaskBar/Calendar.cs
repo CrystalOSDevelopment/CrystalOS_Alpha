@@ -79,11 +79,11 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                         break;
                 }
 
-                render = Widgets.Base.Widget_Back(340, 320, ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B));
-                render = ImprovedVBE.EnableTransparency(render, X, Y, render);
+                render = Widgets.Base.Widget_Back(340, 320, ImprovedVBE.colourToNumber(Global_integers.TaskBarR, Global_integers.TaskBarG, Global_integers.TaskBarB));
+                render = ImprovedVBE.EnableTransparencyPreRGB(render, X, Y, render, Global_integers.TaskBarR, Global_integers.TaskBarG, Global_integers.TaskBarB, ImprovedVBE.cover);
                 BitFont.DrawBitFontString(render, "ArialCustomCharset16", Color.White, Year + ". " + Month_In_String, 20, 15);
 
-                //For loop the dates
+                //For looping the dates
 
                 var firstDay = new DateTime(Year, Month, 1);
 
@@ -116,7 +116,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                             DayOfWeek = "Sunday";
                             break;
                     }
-                    BitFont.DrawBitFontString(render, "ArialCustomCharset16", Color.White, DayOfWeek.Remove(3), x_index - 20, y_index);
+                    BitFont.DrawBitFontString(render, "ArialCustomCharset16", Color.White, DayOfWeek.Remove(3), x_index - 17, y_index);
                     x_index += 300 / 7 + 4;
                 }
 

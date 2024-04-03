@@ -1250,6 +1250,11 @@ namespace CrystalOSAlpha.SystemApps
             ImprovedVBE.DrawImageAlpha(window, x, y, RenderTo);
         }
 
+        public void RightClick()
+        {
+
+        }
+
         public List<string> Separate(string In)
         {
             List<string> parts = new List<string>();

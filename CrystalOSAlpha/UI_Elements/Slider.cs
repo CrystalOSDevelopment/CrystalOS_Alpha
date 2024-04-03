@@ -39,9 +39,9 @@ namespace CrystalOSAlpha.UI_Elements
 
         public void Render(Bitmap Canvas)
         {
-            ImprovedVBE.DrawFilledRectangle(Canvas, ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B), X, Y, Width, 7, false);
+            ImprovedVBE.DrawFilledRectangle(Canvas, ImprovedVBE.colourToNumber(1, 1, 1), X, Y, Width, 7, false);
 
-            ImprovedVBE.DrawFilledEllipse(Canvas, (int)(X + Value / Sensitivity), Y + 4, 6, 6, ImprovedVBE.colourToNumber(Global_integers.R + 20, Global_integers.G + 20, Global_integers.B + 20));
+            ImprovedVBE.DrawFilledEllipse(Canvas, (int)(X + Value / Sensitivity), Y + 4, 6, 6, ImprovedVBE.colourToNumber(30, 30, 30));
         }
 
         public bool CheckForClick(int x, int y)

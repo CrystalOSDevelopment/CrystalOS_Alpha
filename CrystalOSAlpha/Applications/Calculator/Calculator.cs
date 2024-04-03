@@ -113,7 +113,7 @@ namespace CrystalOSAlpha.Applications.Calculator
                     }
                 }
 
-                TextBox.Box(canvas, 5, 25, (int)(canvas.Width - 10), 40, ImprovedVBE.colourToNumber(60, 60, 60), Content, "Sample text", TextBox.Options.right);
+                TextBox.Box(canvas, 5, 25, (int)(canvas.Width - 10), 40, ImprovedVBE.colourToNumber(60, 60, 60), Content, "0.", TextBox.Options.right);
 
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
                 once = false;
@@ -145,6 +145,10 @@ namespace CrystalOSAlpha.Applications.Calculator
             }
 
             ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
+        }
+        public void RightClick()
+        {
+
         }
     }
 }

@@ -594,6 +594,11 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
             }
         }
 
+        public void RightClick()
+        {
+
+        }
+
         public Color[] HighLight(string source)
         {
             Color[] colors = new Color[source.Length];

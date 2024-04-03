@@ -222,6 +222,11 @@ namespace CrystalOSAlpha.Applications.Notepad
             ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
         }
 
+        public void RightClick()
+        {
+
+        }
+
         static string LoremIpsum(int minWords, int maxWords, int minSentences, int maxSentences, int numParagraphs)
         {
 

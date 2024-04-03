@@ -29,5 +29,9 @@ namespace CrystalOSAlpha.Applications.Artistic_Stuff.ColorView
         {
             //TODO: Needs a comple re-write, since the other one wasn't working at all
         }
+        public void RightClick()
+        {
+
+        }
     }
 }

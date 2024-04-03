@@ -17,39 +17,88 @@ namespace CrystalOSAlpha.Graphics.TaskBar
         public static bool keyframes = false;
 
         public static Bitmap Back;
+        public static string temp = "";
 
         public static void Core()
         {
             if(TaskScheduler.Apps.Count(d => d.minimised == false) - 3 == 0)
             {
-                if (MouseManager.X > ImprovedVBE.width - 200 && MouseManager.X < ImprovedVBE.width)
+                if(temp != Global_integers.TaskBarType)
                 {
-                    if (MouseManager.Y > Y && MouseManager.Y < Y + Back.Height - 70)
-                    {
-                        if (X > ImprovedVBE.width - 200)
+                    Get_Back = true;
+                    temp = Global_integers.TaskBarType;
+                }
+                switch (Global_integers.TaskBarType)
+                {
+                    case "Classic":
+                        start_y = 40;
+                        if (MouseManager.X > ImprovedVBE.width - 200 && MouseManager.X < ImprovedVBE.width)
                         {
-                            X -= 5;
+                            if (MouseManager.Y > Y && MouseManager.Y < Y + Back.Height - 70)
+                            {
+                                if (X > ImprovedVBE.width - 200)
+                                {
+                                    X -= 5;
+                                }
+                            }
                         }
-                    }
-                }
-                else
-                {
-                    if (X < ImprovedVBE.width)
-                    {
-                        X += 5;
-                    }
-                }
-
-                if (Get_Back == true)
-                {
-                    Back = Base.Widget_Back(200, ImprovedVBE.height - 1, ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B));
-                    Back = ImprovedVBE.EnableTransparency(Back, X - 200, Y, Back);
-                    BitFont.DrawBitFontString(Back, "VerdanaCustomCharset24", Color.White, "Widgets", 2, 5);
-                    Get_Back = false;
-                }
-                if(X < ImprovedVBE.width - 2)
-                {
-                    ImprovedVBE.DrawImageAlpha(Back, X, Y, ImprovedVBE.cover);
+                        else
+                        {
+                            if (X < ImprovedVBE.width)
+                            {
+                                X += 5;
+                            }
+                        }
+                        if (Get_Back == true)
+                        {
+                            Back = Base.Widget_Back(200, ImprovedVBE.height - 1, ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B));
+                            Back = ImprovedVBE.EnableTransparency(Back, X - 200, Y, Back);
+                            BitFont.DrawBitFontString(Back, "VerdanaCustomCharset24", Color.White, "Widgets", 2, 5);
+                            Get_Back = false;
+                        }
+                        if(X < ImprovedVBE.width - 2)
+                        {
+                            ImprovedVBE.DrawImageAlpha(Back, X, Y, ImprovedVBE.cover);
+                        }
+                        break;
+                    case "Nostalgia":
+                        start_y = 87;
+                        if (MouseManager.X > ImprovedVBE.width - 200 && MouseManager.X < ImprovedVBE.width && TaskManager.calendar == false)
+                        {
+                            if (MouseManager.Y > Y + 47 && MouseManager.Y < Y + Back.Height)
+                            {
+                                if (X > ImprovedVBE.width - 200)
+                                {
+                                    X -= 5;
+                                }
+                            }
+                            else
+                            {
+                                if (X < ImprovedVBE.width)
+                                {
+                                    X += 5;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (X < ImprovedVBE.width)
+                            {
+                                X += 5;
+                            }
+                        }
+                        if (Get_Back == true)
+                        {
+                            Back = Base.Widget_Back(200, ImprovedVBE.height - 47, ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B));
+                            Back = ImprovedVBE.EnableTransparency(Back, X - 200, Y + 47, Back);
+                            BitFont.DrawBitFontString(Back, "VerdanaCustomCharset24", Color.White, "Widgets", 2, 5);
+                            Get_Back = false;
+                        }
+                        if (X < ImprovedVBE.width - 2 && TaskManager.calendar == false)
+                        {
+                            ImprovedVBE.DrawImageAlpha(Back, X, Y + 47, ImprovedVBE.cover);
+                        }
+                        break;
                 }
             }
         }

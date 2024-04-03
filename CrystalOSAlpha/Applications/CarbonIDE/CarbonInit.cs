@@ -500,5 +500,9 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
             ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
         }
+        public void RightClick()
+        {
+
+        }
     }
 }

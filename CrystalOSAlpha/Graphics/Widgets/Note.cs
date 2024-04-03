@@ -404,5 +404,10 @@ namespace CrystalOSAlpha.Graphics.Widgets
             }
             #endregion Graphical
         }
+
+        public void RightClick()
+        {
+
+        }
     }
 }

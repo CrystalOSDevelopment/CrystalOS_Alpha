@@ -2,6 +2,7 @@
 using CrystalOSAlpha.Applications;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics.TaskBar;
+using CrystalOSAlpha.UI_Elements;
 using System;
 using System.Collections.Generic;
 
@@ -20,9 +21,10 @@ namespace CrystalOSAlpha.Graphics
         public static bool get_values = true;
 
         public static List<App> Apps = new List<App>();
+        public static List<App> AppsQuick = new List<App>();
+        public static List<Button_prop> Buttons = new List<Button_prop>();
         public static void Exec()
         {
-            SideNav.start_y = 40;
             Random rnd = new Random();
             for (int i = 0; i < Apps.Count; i++)
             {
@@ -139,6 +141,7 @@ namespace CrystalOSAlpha.Graphics
                     try
                     {
                         app.App();
+                        app.RightClick();
                     }
                     catch (Exception e)
                     {
@@ -157,53 +160,94 @@ namespace CrystalOSAlpha.Graphics
 
         public static void Render_Icons()
         {
-            foreach(var app in Apps)
+            switch (Global_integers.TaskBarType)
             {
-                if(MouseManager.MouseState == MouseState.Left)
-                {
-                    if(MouseManager.X > x_offset && MouseManager.X < x_offset + app.icon.Width)
+                case "Classic":
+                    foreach(var app in Apps)
                     {
-                        if(MouseManager.Y > y_offset && MouseManager.Y < y_offset + app.icon.Height + 15)
+                        if(MouseManager.MouseState == MouseState.Left)
                         {
-                            if(Clicked == false && app.name != null)
+                            if(MouseManager.X > x_offset && MouseManager.X < x_offset + app.icon.Width)
                             {
-                                if(app.minimised == true)
+                                if(MouseManager.Y > y_offset && MouseManager.Y < y_offset + app.icon.Height + 15)
                                 {
-                                    app.minimised = false;
+                                    if(Clicked == false && app.name != null)
+                                    {
+                                        if(app.minimised == true)
+                                        {
+                                            app.minimised = false;
+                                        }
+                                        else
+                                        {
+                                            app.minimised = true;
+                                            app.z = 999;
+                                        }
+                                        Clicked = true;
+                                    }
                                 }
-                                else
-                                {
-                                    app.minimised = true;
-                                    app.z = 999;
-                                }
-                                Clicked = true;
                             }
                         }
+                        if(app.name != null)
+                        {
+                            ImprovedVBE.DrawImageAlpha(app.icon, x_offset, y_offset, ImprovedVBE.cover);
+                        }
+                        if(app.name.Length > 7)
+                        {
+                            BitFont.DrawBitFontString(ImprovedVBE.cover, "ArialCustomCharset16", System.Drawing.Color.White, app.name.Remove(7), x_offset + 4, (int)(y_offset + app.icon.Height + 3));
+                        }
+                        else
+                        {
+                            BitFont.DrawBitFontString(ImprovedVBE.cover, "ArialCustomCharset16", System.Drawing.Color.White, app.name, x_offset + 4, (int)(y_offset + app.icon.Height + 3));
+                        }
+                        if(app.name != null)
+                        {
+                            x_offset += (int)app.icon.Width + 8;
+                        }
                     }
-                }
-                if(app.name != null)
-                {
-                    ImprovedVBE.DrawImageAlpha(app.icon, x_offset, y_offset, ImprovedVBE.cover);
-                }
-                if(app.name.Length > 7)
-                {
-                    BitFont.DrawBitFontString(ImprovedVBE.cover, "ArialCustomCharset16", System.Drawing.Color.White, app.name.Remove(7), x_offset + 4, (int)(y_offset + app.icon.Height + 3));
-                }
-                else
-                {
-                    BitFont.DrawBitFontString(ImprovedVBE.cover, "ArialCustomCharset16", System.Drawing.Color.White, app.name, x_offset + 4, (int)(y_offset + app.icon.Height + 3));
-                }
-                if(app.name != null)
-                {
-                    x_offset += (int)app.icon.Width + 8;
-                }
+                    if (MouseManager.MouseState == MouseState.None)
+                    {
+                        Clicked = false;
+                    }
+                    x_offset = (int)(TaskManager.Left - TaskManager.X_offset) + 15;
+                    y_offset = TaskManager.Top - 35;
+                    break;
+                case "Nostalgia":
+                    int XVal = 10;
+                    int YVal = 5;
+                    foreach(var btn in Apps)
+                    {
+                        if(btn.name != null)
+                        {
+                            Button.Button_render(ImprovedVBE.cover, XVal, YVal, 70, 25, 1, btn.name);
+                            if(MouseManager.MouseState == MouseState.Left)
+                            {
+                                if(MouseManager.X > XVal && MouseManager.X < XVal + 70)
+                                {
+                                    if (MouseManager.Y > YVal && MouseManager.Y < YVal + 25)
+                                    {
+                                        Button.Button_render(ImprovedVBE.cover, XVal, YVal, 70, 25, ImprovedVBE.colourToNumber(255, 255, 255), btn.name);
+                                        if(btn.minimised == false && Clicked == false)
+                                        {
+                                            btn.minimised = true;
+                                            Clicked = true;
+                                        }
+                                        else if(btn.minimised == true && Clicked == false)
+                                        {
+                                            btn.minimised = false;
+                                            Clicked = true;
+                                        }
+                                    }
+                                }
+                            }
+                            if(Clicked == true && MouseManager.MouseState == MouseState.None)
+                            {
+                                Clicked = false;
+                            }
+                            XVal += 80;
+                        }
+                    }
+                    break;
             }
-            if (MouseManager.MouseState == MouseState.None)
-            {
-                Clicked = false;
-            }
-            x_offset = (int)(TaskManager.Left - TaskManager.X_offset) + 15;
-            y_offset = TaskManager.Top - 35;
         }
     }
 }

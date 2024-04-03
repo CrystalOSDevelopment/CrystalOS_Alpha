@@ -10,6 +10,7 @@ namespace CrystalOSAlpha.Applications
     public interface App
     {
         void App();
+        void RightClick();
         int x { get; set; }
         int y { get; set; }
         int z { get; set; }

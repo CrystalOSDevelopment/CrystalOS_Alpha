@@ -373,6 +373,11 @@ namespace CrystalOSAlpha.Applications.Terminal
             ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
         }
 
+        public void RightClick()
+        {
+
+        }
+
         public int Get_index_of_char(string source, char c, int index)
         {
             int counter = 0;

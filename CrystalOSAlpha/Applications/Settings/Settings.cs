@@ -131,7 +131,10 @@ namespace CrystalOSAlpha.Applications.Settings
                         Slider.Add(new Slider(6, 684, 290, 1, 255, Global_integers.EndColor.G, "EndGreen"));
                         Slider.Add(new Slider(6, 708, 290, 1, 255, Global_integers.EndColor.B, "EndBlue"));
 
-                        Slider.Add(new Slider(6, 763, 290, 0, 50, Global_integers.LevelOfTransparency, "Transparency"));
+                        Slider.Add(new Slider(6, 763, 290, 0, 100, Global_integers.LevelOfTransparency, "Transparency"));
+
+                        Colors.Add(new Button_prop(6, 832, 130, 25, "Nostalgia", 1, "Old"));
+                        Colors.Add(new Button_prop(151, 832, 130, 25, "Float-up", 1, "Animated"));
                         break;
                     case "Sound":
                         
@@ -309,6 +312,14 @@ namespace CrystalOSAlpha.Applications.Settings
                             {
                                 button.Y = 265 - VerticalScrollbar[0].Value;
                             }
+                            else if (button.ID.StartsWith("Old"))
+                            {
+                                button.Y = 854 - VerticalScrollbar[0].Value;
+                            }
+                            else if (button.ID.StartsWith("Animated"))
+                            {
+                                button.Y = 854 - VerticalScrollbar[0].Value;
+                            }
                             else
                             {
                                 button.Y = 212 - VerticalScrollbar[0].Value;
@@ -406,8 +417,12 @@ namespace CrystalOSAlpha.Applications.Settings
                         BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Blue: " + Slider[11].Value, 308, 724 - VerticalScrollbar[0].Value);
 
                         BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Transparency", 6, 754 - VerticalScrollbar[0].Value);
-                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Level: " + Slider[12].Value / 100.0f, 308, 779 - VerticalScrollbar[0].Value);
+                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Level: " + (100 - Slider[12].Value) / 100.0f, 308, 779 - VerticalScrollbar[0].Value);
                         #endregion Global color settings
+
+                        #region Menubar options
+                        BitFont.DrawBitFontString(Container, "VerdanaCustomCharset24", Color.White, "Menubar options", 6, 820 - VerticalScrollbar[0].Value);
+                        #endregion Menubar options
                         //Render the Container
                         ImprovedVBE.DrawImage(Container, 128, 62, canvas);
                         //Render the vertical scrollbar on the window
@@ -422,82 +437,83 @@ namespace CrystalOSAlpha.Applications.Settings
                     case "Networking":
                         BitFont.DrawBitFontString(canvas, "VerdanaCustomCharset24", Color.White, ActiveD, width - BitFont.DrawBitFontString(back_canvas, "VerdanaCustomCharset24", Color.White, ActiveD, 0, 0) - 5, 24);
 
-                        BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, "Attempting to ping google.com - 8.8.8.8", 128, 75);
+                        BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, "Not implemented or not in working condition", 128, 75);
+                        //BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, "Attempting to ping google.com - 8.8.8.8", 128, 75);
 
-                        if(VMTools.IsVMWare == true)
-                        {
-                            int PacketSent = 0;
-                            int PacketReceived = 0;
-                            int PacketLost = 0;
-                            int PercentLoss;
+                        //if(VMTools.IsVMWare == true)
+                        //{
+                        //    int PacketSent = 0;
+                        //    int PacketReceived = 0;
+                        //    int PacketLost = 0;
+                        //    int PercentLoss;
 
-                            Address source;
-                            Address destination = Address.Parse("8.8.8.8");
+                        //    Address source;
+                        //    Address destination = Address.Parse("8.8.8.8");
 
-                            if (destination != null)
-                            {
-                                source = IPConfig.FindNetwork(destination);
-                            }
-                            else //Make a DNS request if it's not an IP
-                            {
-                                var xClient = new DnsClient();
-                                xClient.Connect(DNSConfig.DNSNameservers[0]);
-                                xClient.SendAsk("google.com");
-                                destination = xClient.Receive();
-                                xClient.Close();
+                        //    if (destination != null)
+                        //    {
+                        //        source = IPConfig.FindNetwork(destination);
+                        //    }
+                        //    else //Make a DNS request if it's not an IP
+                        //    {
+                        //        var xClient = new DnsClient();
+                        //        xClient.Connect(DNSConfig.DNSNameservers[0]);
+                        //        xClient.SendAsk("google.com");
+                        //        destination = xClient.Receive();
+                        //        xClient.Close();
 
-                                if (destination == null)
-                                {
+                        //        if (destination == null)
+                        //        {
                                 
-                                }
+                        //        }
 
-                                source = IPConfig.FindNetwork(destination);
-                            }
-                            try
-                            {
-                                var xClient = new ICMPClient();
-                                xClient.Connect(destination);
+                        //        source = IPConfig.FindNetwork(destination);
+                        //    }
+                        //    try
+                        //    {
+                        //        var xClient = new ICMPClient();
+                        //        xClient.Connect(destination);
 
-                                for (int i = 0; i < 4; i++)
-                                {
-                                    xClient.SendEcho();
+                        //        for (int i = 0; i < 4; i++)
+                        //        {
+                        //            xClient.SendEcho();
 
-                                    PacketSent++;
+                        //            PacketSent++;
 
-                                    var endpoint = new EndPoint(Address.Zero, 0);
+                        //            var endpoint = new EndPoint(Address.Zero, 0);
 
-                                    int second = xClient.Receive(ref endpoint, 4000);
+                        //            int second = xClient.Receive(ref endpoint, 4000);
 
-                                    if (second == -1)
-                                    {
-                                        BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, "Failed to recieve ICMP packet: Timeout\n\nNetwork status: Offline", 128, 102);
-                                        PacketLost++;
-                                    }
-                                    else
-                                    {
-                                        if (second < 1)
-                                        {
-                                            BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, "Successfuly recieved ICMP packet: " + second + "\n\nNetwork status: Online", 128, 102);
-                                        }
-                                        else if (second >= 1)
-                                        {
-                                            BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, "Successfuly recieved ICMP packet: " + second + "\n\nNetwork status: Online", 128, 102);
-                                        }
+                        //            if (second == -1)
+                        //            {
+                        //                BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, "Failed to recieve ICMP packet: Timeout\n\nNetwork status: Offline", 128, 102);
+                        //                PacketLost++;
+                        //            }
+                        //            else
+                        //            {
+                        //                if (second < 1)
+                        //                {
+                        //                    BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, "Successfuly recieved ICMP packet: " + second + "\n\nNetwork status: Online", 128, 102);
+                        //                }
+                        //                else if (second >= 1)
+                        //                {
+                        //                    BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, "Successfuly recieved ICMP packet: " + second + "\n\nNetwork status: Online", 128, 102);
+                        //                }
 
-                                        PacketReceived++;
-                                    }
-                                }
+                        //                PacketReceived++;
+                        //            }
+                        //        }
 
-                                xClient.Close();
-                            }
-                            catch
-                            {
+                        //        xClient.Close();
+                        //    }
+                        //    catch
+                        //    {
                             
-                            }
+                        //    }
 
-                            PercentLoss = 25 * PacketLost;
-                        }
-                        BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, NetworkConfiguration.CurrentAddress.ToString(), 128, 48);
+                        //    PercentLoss = 25 * PacketLost;
+                        //}
+                        //BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, NetworkConfiguration.CurrentAddress.ToString(), 128, 48);
                         break;
                     case "About OS":
                         BitFont.DrawBitFontString(canvas, "VerdanaCustomCharset24", Color.White, ActiveD, width - BitFont.DrawBitFontString(back_canvas, "VerdanaCustomCharset24", Color.White, ActiveD, 0, 0) - 5, 24);
@@ -588,7 +604,7 @@ namespace CrystalOSAlpha.Applications.Settings
                 {
                     if (MouseManager.X > x + button.X + 128 && MouseManager.X < x + button.X + button.Width + 128)
                     {
-                        if (MouseManager.Y > y + button.Y + 62 && MouseManager.Y < y + button.Y + button.Height + 62)
+                        if (MouseManager.Y > y + button.Y + 62 && MouseManager.Y < y + button.Y + button.Height + 62 && button.Y > 0 && button.Y < 308)
                         {
                             switch (button.ID)
                             {
@@ -741,12 +757,24 @@ namespace CrystalOSAlpha.Applications.Settings
                                         File.WriteAllText("0:\\User\\System\\Appearance.sys", "Wallpaper=Default");
                                     }
                                     break;
+                                case "Old":
+                                    Global_integers.TaskBarType = "Nostalgia";
+                                    TaskManager.ClearLists();
+                                    TaskManager.initial = true;
+                                    TaskManager.resize = true;
+                                    break;
+                                case "Animated":
+                                    Global_integers.TaskBarType = "Classic";
+                                    TaskManager.ClearLists();
+                                    TaskManager.initial = true;
+                                    TaskManager.resize = true;
+                                    break;
                             }
                         }
                     }
                     if(MouseManager.X > x + 134 && MouseManager.X < x + 134 + MiniWallp.Width)
                     {
-                        if(MouseManager.Y > y + 125 - VerticalScrollbar[0].Value && MouseManager.Y < y + 125 - VerticalScrollbar[0].Value + MiniWallp.Height)
+                        if(MouseManager.Y > y + 125 - VerticalScrollbar[0].Value && MouseManager.Y < y + 125 - VerticalScrollbar[0].Value + MiniWallp.Height && MouseManager.Y > y + 62 && MouseManager.Y < y + MiniWallp.Height + 62)
                         {
                             Global_integers.Background_type = "Default";
                             ImprovedVBE.Temp.RawData.CopyTo(ImprovedVBE.data.RawData, 0);
@@ -810,11 +838,20 @@ namespace CrystalOSAlpha.Applications.Settings
                             Global_integers.EndColor = EndB;
                             break;
                         case "Transparency":
-                            Global_integers.LevelOfTransparency = 100 - v.Value;
+                            if(v.Value > 40)
+                            {
+                                TaskManager.resize = true;
+                                Global_integers.LevelOfTransparency = v.Value;
+                            }
                             break;
                     }
                 }
             }
+        }
+
+        public void RightClick()
+        {
+
         }
     }
 }

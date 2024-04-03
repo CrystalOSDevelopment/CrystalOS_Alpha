@@ -387,6 +387,11 @@ namespace CrystalOSAlpha.Applications.Minecraft
             ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
         }
 
+        public void RightClick()
+        {
+
+        }
+
         public bool EnableTransparency(Image image, int x, int y)
         {
             int counter = 0;

@@ -119,5 +119,10 @@ namespace CrystalOSAlpha.Graphics.Widgets
                 Get_Back = true;
             }
         }
+
+        public void RightClick()
+        {
+
+        }
     }
 }

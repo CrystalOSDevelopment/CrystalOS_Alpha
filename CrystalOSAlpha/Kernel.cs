@@ -54,7 +54,7 @@ namespace CrystalOS_Alpha
             TaskScheduler.Apps.Add(f);
 
             ImageViewer i = new ImageViewer();
-            i.x = 600;
+            i.x = ImprovedVBE.width;
             i.y = 200;
             i.z = 999;
             i.minimised = false;
@@ -62,7 +62,7 @@ namespace CrystalOS_Alpha
             TaskScheduler.Apps.Add(i);
 
             Note n = new Note();
-            n.x = 900;
+            n.x = ImprovedVBE.width;
             n.y = 200;
             n.z = 999;
             n.name = null;

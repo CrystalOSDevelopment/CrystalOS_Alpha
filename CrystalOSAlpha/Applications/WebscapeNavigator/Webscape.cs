@@ -205,5 +205,10 @@ namespace CrystalOSAlpha.Applications.WebscapeNavigator
             
             ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
         }
+
+        public void RightClick()
+        {
+
+        }
     }
 }

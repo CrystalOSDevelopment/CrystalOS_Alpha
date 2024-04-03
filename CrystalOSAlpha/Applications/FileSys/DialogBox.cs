@@ -373,5 +373,10 @@ namespace CrystalOSAlpha.Applications.FileSys
 
             ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
         }
+
+        public void RightClick()
+        {
+
+        }
     }
 }

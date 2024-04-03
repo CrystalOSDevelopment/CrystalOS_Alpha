@@ -19,7 +19,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Security.Cryptography.X509Certificates;
 
 namespace CrystalOSAlpha.Graphics.TaskBar
 {
@@ -75,263 +74,275 @@ namespace CrystalOSAlpha.Graphics.TaskBar
             switch (Global_integers.TaskBarType)
             {
                 case "Classic":
-                        if (initial == true)
+                    if (initial == true)
+                    {
+                        Buttons.Add(new Button_prop(5, 300, 410, 25, "More applications ->", 1));
+
+                        Buttons.Add(new Button_prop(5, 375, 80, 25, "Power off", 1));
+                        Buttons.Add(new Button_prop(90, 375, 80, 25, "Reboot", 1));
+                        Buttons.Add(new Button_prop(175, 375, 80, 25, "Log out", 1));
+
+                        initial = false;
+                    }
+                    if (resize == true)
+                    {
+                        icon = ImprovedVBE.ScaleImageStock(new Bitmap(Elephant), 36, 36);
+                        Back = Base.Widget_Back(420, 470, ImprovedVBE.colourToNumber(255, 255, 255));
+                        Back = ImprovedVBE.EnableTransparency(Back, (int)(Left + X_offset - 300), Top - 480, Back);
+
+                        TaskBar = Base.Widget_Back((int)(X_offset * 2), 50, ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B));
+                        TaskBar = ImprovedVBE.EnableTransparency(TaskBar, (int)(Left - X_offset), Top, TaskBar);
+
+                        Extension_Dock = Base.Widget_Back(150, 50, ImprovedVBE.colourToNumber(255, 255, 255));
+                        Extension_Dock = ImprovedVBE.EnableTransparency(Extension_Dock, (int)(Left - X_offset) - 175, Top, Extension_Dock);
+
+                        Search_Box = Base.Widget_Back(210, 36, ImprovedVBE.colourToNumber(255, 255, 255));
+                        Search_Box = ImprovedVBE.EnableTransparencyPreRGB(Search_Box, (int)(Left + X_offset - 200), Top - 460, Search_Box, 30, 30, 30, ImprovedVBE.cover);
+
+                        switch (DateTime.Now.DayOfWeek)
                         {
-                            Buttons.Add(new Button_prop(5, 300, 410, 25, "More applications ->", 1));
-
-                            Buttons.Add(new Button_prop(5, 375, 80, 25, "Power off", 1));
-                            Buttons.Add(new Button_prop(90, 375, 80, 25, "Reboot", 1));
-                            Buttons.Add(new Button_prop(175, 375, 80, 25, "Log out", 1));
-
-                            initial = false;
+                            case System.DayOfWeek.Monday:
+                                DayOfWeek = "Monday";
+                                break;
+                            case System.DayOfWeek.Tuesday:
+                                DayOfWeek = "Tuesday";
+                                break;
+                            case System.DayOfWeek.Wednesday:
+                                DayOfWeek = "Wednesday";
+                                break;
+                            case System.DayOfWeek.Thursday:
+                                DayOfWeek = "Thursday";
+                                break;
+                            case System.DayOfWeek.Friday:
+                                DayOfWeek = "Friday";
+                                break;
+                            case System.DayOfWeek.Saturday:
+                                DayOfWeek = "Saturday";
+                                break;
+                            case System.DayOfWeek.Sunday:
+                                DayOfWeek = "Sunday";
+                                break;
                         }
-                        if (resize == true)
+
+                        BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DateTime.UtcNow.Hour.ToString() + ":" + DateTime.UtcNow.Minute, 60, 5);
+                        BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DayOfWeek + "," + DateTime.UtcNow.Day, (int)(Extension_Dock.Width / 2 - (DayOfWeek + "," + DateTime.UtcNow.Day).Length * 4), 20);
+                        resize = false;
+                    }
+                    if (MenuOpened == false && calendar == false)
+                    {
+                        if (MouseManager.X > Left - ((ImprovedVBE.width / 192 * 1.3) * 35) - 175 && MouseManager.X < Left + ((ImprovedVBE.width / 192 * 1.3) * 35) && MouseManager.Y > ImprovedVBE.height - 70 && MouseManager.Y < ImprovedVBE.height)
                         {
-                            icon = ImprovedVBE.ScaleImageStock(new Bitmap(Elephant), 36, 36);
-                            Back = Base.Widget_Back(420, 470, ImprovedVBE.colourToNumber(255, 255, 255));
-                            Back = ImprovedVBE.EnableTransparency(Back, (int)(Left + X_offset - 300), Top - 480, Back);
-
-                            TaskBar = Base.Widget_Back((int)(X_offset * 2), 50, ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B));
-                            TaskBar = ImprovedVBE.EnableTransparency(TaskBar, (int)(Left - X_offset), Top, TaskBar);
-
-                            Extension_Dock = Base.Widget_Back(150, 50, ImprovedVBE.colourToNumber(255, 255, 255));
-                            Extension_Dock = ImprovedVBE.EnableTransparency(Extension_Dock, (int)(Left - X_offset) - 175, Top, Extension_Dock);
-
-                            Search_Box = Base.Widget_Back(210, 36, ImprovedVBE.colourToNumber(255, 255, 255));
-                            Search_Box = ImprovedVBE.EnableTransparencyPreRGB(Search_Box, (int)(Left + X_offset - 200), Top - 460, Search_Box, 30, 30, 30, ImprovedVBE.cover);
-
-                            switch (DateTime.Now.DayOfWeek)
+                            if (X_offset < ImprovedVBE.width / 192 * 1.3 * 35)
                             {
-                                case System.DayOfWeek.Monday:
-                                    DayOfWeek = "Monday";
-                                    break;
-                                case System.DayOfWeek.Tuesday:
-                                    DayOfWeek = "Tuesday";
-                                    break;
-                                case System.DayOfWeek.Wednesday:
-                                    DayOfWeek = "Wednesday";
-                                    break;
-                                case System.DayOfWeek.Thursday:
-                                    DayOfWeek = "Thursday";
-                                    break;
-                                case System.DayOfWeek.Friday:
-                                    DayOfWeek = "Friday";
-                                    break;
-                                case System.DayOfWeek.Saturday:
-                                    DayOfWeek = "Saturday";
-                                    break;
-                                case System.DayOfWeek.Sunday:
-                                    DayOfWeek = "Sunday";
-                                    break;
-                            }
+                                Top -= 2;
+                                X_offset += ImprovedVBE.width / 192 * 1.3;
 
-                            BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DateTime.UtcNow.Hour.ToString() + ":" + DateTime.UtcNow.Minute, 60, 5);
-                            BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DayOfWeek + "," + DateTime.UtcNow.Day, (int)(Extension_Dock.Width / 2 - (DayOfWeek + "," + DateTime.UtcNow.Day).Length * 4), 20);
-                            resize = false;
-                        }
-                        if(MenuOpened == false && calendar == false)
-                        {
-                            if(MouseManager.X > Left - ((ImprovedVBE.width / 192 * 1.3) * 35) - 175 && MouseManager.X < Left + ((ImprovedVBE.width / 192 * 1.3) * 35) && MouseManager.Y > ImprovedVBE.height - 70 && MouseManager.Y < ImprovedVBE.height)
-                            {
-                                if(X_offset < ImprovedVBE.width / 192 * 1.3 * 35)
-                                {
-                                    Top -= 2;
-                                    X_offset += ImprovedVBE.width / 192 * 1.3;
+                                TaskBar = Base.Widget_Back((int)(X_offset * 2), 50, ImprovedVBE.colourToNumber(255, 255, 255));
+                                TaskBar = ImprovedVBE.EnableTransparency(TaskBar, (int)(Left - X_offset), Top, TaskBar);
 
-                                    TaskBar = Base.Widget_Back((int)(X_offset * 2), 50, ImprovedVBE.colourToNumber(255, 255, 255));
-                                    TaskBar = ImprovedVBE.EnableTransparency(TaskBar, (int)(Left - X_offset), Top, TaskBar);
+                                Extension_Dock = Base.Widget_Back(150, 50, ImprovedVBE.colourToNumber(255, 255, 255));
+                                Extension_Dock = ImprovedVBE.EnableTransparency(Extension_Dock, (int)(Left - X_offset) - 175, Top, Extension_Dock);
 
-                                    Extension_Dock = Base.Widget_Back(150, 50, ImprovedVBE.colourToNumber(255, 255, 255));
-                                    Extension_Dock = ImprovedVBE.EnableTransparency(Extension_Dock, (int)(Left - X_offset) - 175, Top, Extension_Dock);
-
-                                    BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DateTime.UtcNow.Hour.ToString() + ":" + DateTime.UtcNow.Minute, 60, 5);
-                                    BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DayOfWeek + "," + DateTime.UtcNow.Day, (int)(Extension_Dock.Width / 2 - (DayOfWeek + "," + DateTime.UtcNow.Day).Length * 4), 20);//44
-                                }
-                            }
-                            else
-                            {
-                                if (X_offset > 10)
-                                {
-                                    Top += 2;
-                                    X_offset -= ImprovedVBE.width / 192 * 1.3;
-
-                                    TaskBar = Base.Widget_Back((int)(X_offset * 2), 50, ImprovedVBE.colourToNumber(255, 255, 255));
-                                    TaskBar = ImprovedVBE.EnableTransparency(TaskBar, (int)(Left - X_offset), Top, TaskBar);
-
-                                    Extension_Dock = Base.Widget_Back(150, 50, ImprovedVBE.colourToNumber(255, 255, 255));
-                                    Extension_Dock = ImprovedVBE.EnableTransparency(Extension_Dock, (int)(Left - X_offset) - 175, Top, Extension_Dock);
-
-                                    BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DateTime.UtcNow.Hour.ToString() + ":" + DateTime.UtcNow.Minute, 60, 5);
-                                    BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DayOfWeek + "," + DateTime.UtcNow.Day, (int)(Extension_Dock.Width / 2 - (DayOfWeek + "," + DateTime.UtcNow.Day).Length * 4), 20);
-                                }
-                            }
-                            if (Triggered == true && MouseManager.MouseState == MouseState.None)
-                            {
-                                Triggered = false;
-                            }
-                            if (MouseManager.MouseState == MouseState.Left)
-                            {
-                                if(MouseManager.X > Left + X_offset - 38 && MouseManager.X < Left + X_offset)
-                                {
-                                    if(MouseManager.Y > Top && MouseManager.Y < ImprovedVBE.height - 10)
-                                    {
-                                        update = true;
-                                        if (Triggered == false)
-                                        {
-                                            Items.Clear();
-
-                                            Menu_Items m = new Menu_Items();
-                                            m.Name = "Mine...";
-                                            m.Source = "Minecraft";
-                                            m.Icon = ImprovedVBE.ScaleImageStock(ImageViewer.Nr1, 56, 56);
-                                            Items.Add(m);
-
-                                            m.Name = "Calc...";
-                                            m.Source = "Calculator";
-                                            m.Icon = ImprovedVBE.ScaleImageStock(Resources.Calculator, 56, 56);
-                                            Items.Add(m);
-
-                                            m.Name = "Sett...";
-                                            m.Source = "Settings";
-                                            m.Icon = ImprovedVBE.ScaleImageStock(Resources.Settings, 56, 56);
-                                            Items.Add(m);
-
-                                            m.Name = "Game...";
-                                            m.Source = "Gameboy";
-                                            m.Icon = ImprovedVBE.ScaleImageStock(Resources.Gameboy, 56, 56);
-                                            Items.Add(m);
-
-                                            m.Name = "Note...";
-                                            m.Source = "Notepad";
-                                            m.Icon = ImprovedVBE.ScaleImageStock(Resources.Notepad, 56, 56);
-                                            Items.Add(m);
-
-                                            m.Name = "Term...";
-                                            m.Source = "Terminal";
-                                            m.Icon = ImprovedVBE.ScaleImageStock(Resources.Terminal, 56, 56);
-                                            Items.Add(m);
-
-                                            m.Name = "File...";
-                                            m.Source = "Explorer";
-                                            m.Icon = ImprovedVBE.ScaleImageStock(Resources.Explorer, 56, 56);
-                                            Items.Add(m);
-
-                                            m.Name = "Webs...";
-                                            m.Source = "WebscapeNavigator";
-                                            m.Icon = ImprovedVBE.ScaleImageStock(Resources.Web, 56, 56);
-                                            Items.Add(m);
-
-                                            m.Name = "Carb...";
-                                            m.Source = "CarbonIDE";
-                                            m.Icon = ImprovedVBE.ScaleImageStock(Resources.IDE, 56, 56);
-                                            Items.Add(m);
-
-                                            calendar = false;
-                                            MenuOpened = true;
-                                            resize = true;
-                                            Triggered = true;
-                                        }
-                                    }
-                                }
-                                if (MouseManager.X > Left - X_offset - 175 && MouseManager.X < Left - X_offset - 20)
-                                {
-                                    if (MouseManager.Y > Top && MouseManager.Y < ImprovedVBE.height - 10)
-                                    {
-                                        update = true;
-                                        if (Triggered == false)
-                                        {
-                                            MenuOpened = false;
-                                            calendar = true;
-                                            Triggered = true;
-                                        }
-                                    }
-                                }
+                                BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DateTime.UtcNow.Hour.ToString() + ":" + DateTime.UtcNow.Minute, 60, 5);
+                                BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DayOfWeek + "," + DateTime.UtcNow.Day, (int)(Extension_Dock.Width / 2 - (DayOfWeek + "," + DateTime.UtcNow.Day).Length * 4), 20);//44
                             }
                         }
                         else
                         {
-                            if (Triggered == true && MouseManager.MouseState == MouseState.None)
+                            if (X_offset > 10)
                             {
-                                Triggered = false;
+                                Top += 2;
+                                X_offset -= ImprovedVBE.width / 192 * 1.3;
+
+                                TaskBar = Base.Widget_Back((int)(X_offset * 2), 50, ImprovedVBE.colourToNumber(255, 255, 255));
+                                TaskBar = ImprovedVBE.EnableTransparency(TaskBar, (int)(Left - X_offset), Top, TaskBar);
+
+                                Extension_Dock = Base.Widget_Back(150, 50, ImprovedVBE.colourToNumber(255, 255, 255));
+                                Extension_Dock = ImprovedVBE.EnableTransparency(Extension_Dock, (int)(Left - X_offset) - 175, Top, Extension_Dock);
+
+                                BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DateTime.UtcNow.Hour.ToString() + ":" + DateTime.UtcNow.Minute, 60, 5);
+                                BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DayOfWeek + "," + DateTime.UtcNow.Day, (int)(Extension_Dock.Width / 2 - (DayOfWeek + "," + DateTime.UtcNow.Day).Length * 4), 20);
                             }
-                            if (MouseManager.MouseState == MouseState.Left)
+                        }
+                        if (Triggered == true && MouseManager.MouseState == MouseState.None)
+                        {
+                            Triggered = false;
+                        }
+                        if (MouseManager.MouseState == MouseState.Left)
+                        {
+                            if (MouseManager.X > Left + X_offset - 38 && MouseManager.X < Left + X_offset)
                             {
-                                if (MouseManager.X > Left && MouseManager.X < Left + X_offset)
+                                if (MouseManager.Y > Top && MouseManager.Y < ImprovedVBE.height - 10)
                                 {
-                                    if (MouseManager.Y > Top && MouseManager.Y < ImprovedVBE.height - 10)
+                                    update = true;
+                                    if (Triggered == false)
                                     {
-                                       if(Triggered == false)
-                                       {
-                                            Items.Clear();
-                                            if(MenuOpened == false)
-                                            {
-                                                MenuOpened = true;
-                                                calendar = false;
-                                            }
-                                            else
-                                            {
-                                                MenuOpened = false;
-                                            }
-                                            Triggered = true;
-                                       }
-                                    }
-                                }
-                                else if (MouseManager.X > Left - X_offset - 175 && MouseManager.X < Left - X_offset - 20)
-                                {
-                                    if (MouseManager.Y > Top && MouseManager.Y < ImprovedVBE.height - 10)
-                                    {
-                                        update = true;
-                                        if (Triggered == false)
+                                        Items.Clear();
+
+                                        Items = new List<Menu_Items>()
                                         {
-                                            if(calendar == false)
+                                            new Menu_Items
                                             {
-                                                calendar = true;
-                                                MenuOpened = false;
-                                            }
-                                            else
+                                                Name = "Mine...",
+                                                Source = "Minecraft",
+                                                Icon = ImprovedVBE.ScaleImageStock(ImageViewer.Nr1, Global_integers.IconWidth, Global_integers.IconHeight)
+                                            },
+                                            new Menu_Items
                                             {
-                                                calendar = false;
+                                                Name = "Calc...",
+                                                Source = "Calculator",
+                                                Icon = ImprovedVBE.ScaleImageStock(Resources.Calculator, Global_integers.IconWidth, Global_integers.IconHeight)
+                                            },
+                                            new Menu_Items
+                                            {
+                                                Name = "Carb...",
+                                                Source = "CarbonIDE",
+                                                Icon = ImprovedVBE.ScaleImageStock(Resources.IDE, Global_integers.IconWidth, Global_integers.IconHeight)
+                                            },
+                                            new Menu_Items
+                                            {
+                                                Name = "File...",
+                                                Source = "Explorer",
+                                                Icon = ImprovedVBE.ScaleImageStock(Resources.Explorer, Global_integers.IconWidth, Global_integers.IconHeight)
+                                            },
+                                            new Menu_Items
+                                            {
+                                                Name = "Game...",
+                                                Source = "Gameboy",
+                                                Icon = ImprovedVBE.ScaleImageStock(Resources.Gameboy, Global_integers.IconWidth, Global_integers.IconHeight)
+                                            },
+                                            new Menu_Items
+                                            {
+                                                Name = "Sett...",
+                                                Source = "Settings",
+                                                Icon = ImprovedVBE.ScaleImageStock(Resources.Settings, Global_integers.IconWidth, Global_integers.IconHeight)
+                                            },
+                                            new Menu_Items
+                                            {
+                                                Name = "Note...",
+                                                Source = "Notepad",
+                                                Icon = ImprovedVBE.ScaleImageStock(Resources.Notepad, Global_integers.IconWidth, Global_integers.IconHeight)
+                                            },
+                                            new Menu_Items
+                                            {
+                                                Name = "Term...",
+                                                Source = "Terminal",
+                                                Icon = ImprovedVBE.ScaleImageStock(Resources.Terminal, Global_integers.IconWidth, Global_integers.IconHeight)
+                                            },
+                                            new Menu_Items
+                                            {
+                                                Name = "Webs...",
+                                                Source = "WebscapeNavigator",
+                                                Icon = ImprovedVBE.ScaleImageStock(Resources.Web, Global_integers.IconWidth, Global_integers.IconHeight)
                                             }
-                                            Triggered = true;
-                                        }
+                                        };
+
+                                        calendar = false;
+                                        MenuOpened = true;
+                                        resize = true;
+                                        Triggered = true;
                                     }
                                 }
-                                else
+                            }
+                            if (MouseManager.X > Left - X_offset - 175 && MouseManager.X < Left - X_offset - 20)
+                            {
+                                if (MouseManager.Y > Top && MouseManager.Y < ImprovedVBE.height - 10)
                                 {
-
+                                    update = true;
+                                    if (Triggered == false)
+                                    {
+                                        MenuOpened = false;
+                                        calendar = true;
+                                        Triggered = true;
+                                    }
                                 }
                             }
-                            if(MenuOpened == true)
-                            {
-                                Menu_Manager();
-                            }
-                            else if(calendar == true)
-                            {
-                                Calendar.Calendar_Widget((int)(Left - X_offset) - 275, Top - 330);
-                            }
                         }
-
-                        ImprovedVBE.DrawImageAlpha(TaskBar, (int)(Left - X_offset), Top, ImprovedVBE.cover);
-
-                        if(Top < ImprovedVBE.height - 10)
+                    }
+                    else
+                    {
+                        if (Triggered == true && MouseManager.MouseState == MouseState.None)
                         {
-                            TaskScheduler.Render_Icons();
+                            Triggered = false;
                         }
-
-                        if (Time != DateTime.UtcNow.Minute)
+                        if (MouseManager.MouseState == MouseState.Left)
                         {
-                            Extension_Dock = Base.Widget_Back(150, 50, ImprovedVBE.colourToNumber(255, 255, 255));
-                            Extension_Dock = ImprovedVBE.EnableTransparency(Extension_Dock, (int)(Left - X_offset) - 175, Top, Extension_Dock);
-                            BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DateTime.UtcNow.Hour.ToString() + ":" + DateTime.UtcNow.Minute, 60, 5);
-                            BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DayOfWeek + "," + DateTime.UtcNow.Day, (int)(Extension_Dock.Width / 2 - (DayOfWeek + "," + DateTime.UtcNow.Day).Length * 4), 20);
+                            if (MouseManager.X > Left && MouseManager.X < Left + X_offset)
+                            {
+                                if (MouseManager.Y > Top && MouseManager.Y < ImprovedVBE.height - 10)
+                                {
+                                    if (Triggered == false)
+                                    {
+                                        Items.Clear();
+                                        if (MenuOpened == false)
+                                        {
+                                            MenuOpened = true;
+                                            calendar = false;
+                                        }
+                                        else
+                                        {
+                                            MenuOpened = false;
+                                        }
+                                        Triggered = true;
+                                    }
+                                }
+                            }
+                            else if (MouseManager.X > Left - X_offset - 175 && MouseManager.X < Left - X_offset - 20)
+                            {
+                                if (MouseManager.Y > Top && MouseManager.Y < ImprovedVBE.height - 10)
+                                {
+                                    update = true;
+                                    if (Triggered == false)
+                                    {
+                                        if (calendar == false)
+                                        {
+                                            calendar = true;
+                                            MenuOpened = false;
+                                        }
+                                        else
+                                        {
+                                            calendar = false;
+                                        }
+                                        Triggered = true;
+                                    }
+                                }
+                            }
+                            else
+                            {
 
-                            Time = DateTime.UtcNow.Minute;
+                            }
                         }
+                        if (MenuOpened == true)
+                        {
+                            Menu_Manager();
+                        }
+                        else if (calendar == true)
+                        {
+                            Calendar.Calendar_Widget((int)(Left - X_offset) - 275, Top - 330);
+                        }
+                    }
 
-                        ImprovedVBE.DrawImageAlpha(Extension_Dock, (int)(Left - X_offset) - 175, Top, ImprovedVBE.cover);
-            
-                        ImprovedVBE.DrawImageAlpha(icon, (int)(Left + X_offset - 41), Top + height / 2 - 18, ImprovedVBE.cover);
-                    break;
+                    ImprovedVBE.DrawImageAlpha(TaskBar, (int)(Left - X_offset), Top, ImprovedVBE.cover);
+
+                    if (Top < ImprovedVBE.height - 10)
+                    {
+                        TaskScheduler.Render_Icons();
+                    }
+
+                    if (Time != DateTime.UtcNow.Minute)
+                    {
+                        Extension_Dock = Base.Widget_Back(150, 50, ImprovedVBE.colourToNumber(255, 255, 255));
+                        Extension_Dock = ImprovedVBE.EnableTransparency(Extension_Dock, (int)(Left - X_offset) - 175, Top, Extension_Dock);
+                        BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DateTime.UtcNow.Hour.ToString() + ":" + DateTime.UtcNow.Minute, 60, 5);
+                        BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DayOfWeek + "," + DateTime.UtcNow.Day, (int)(Extension_Dock.Width / 2 - (DayOfWeek + "," + DateTime.UtcNow.Day).Length * 4), 20);
+
+                        Time = DateTime.UtcNow.Minute;
+                    }
+
+                    ImprovedVBE.DrawImageAlpha(Extension_Dock, (int)(Left - X_offset) - 175, Top, ImprovedVBE.cover);
+
+                    ImprovedVBE.DrawImageAlpha(icon, (int)(Left + X_offset - 41), Top + height / 2 - 18, ImprovedVBE.cover);
+                break;
 
                 case "Nostalgia":
                         if(resize == true)
@@ -380,6 +391,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
 
                             //Disable the if condition to only execute this part once -> Works efficiently
                             resize = false;
+                            Time = 99;
                         }
                         if(Time != DateTime.UtcNow.Minute)
                         {
@@ -406,6 +418,8 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                                         update = true;
                                         MenuOpened = true;
                                         clicked = true;
+                                        ExtendedMenu = false;
+                                        ClearLists();
                                     }
                                     else if(MenuOpened == true && clicked == false)
                                     {
@@ -423,6 +437,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                                         update = true;
                                         calendar = true;
                                         clicked = true;
+                                        Calendar.get_Render = true;
                                     }
                                     else if (calendar == true && clicked == false)
                                     {
@@ -439,12 +454,17 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                         if(MenuOpened == true)
                         {
                             Dynamic_Menu(ImprovedVBE.width / 2 - 200, 50, 400, 400);
+                            calendar = false;
                         }
                         //Add calendar here
                         if(calendar == true)
                         {
                             Calendar.Calendar_Widget(ImprovedVBE.width - 345, (int)Backup.Height + 5);
+                            MenuOpened = false;
                         }
+
+                        //Render app buttons to the menubar
+                        TaskScheduler.Render_Icons();
                     break;
             }
         }
@@ -503,10 +523,10 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                     if (button.Clicked == true)
                     {
                         Button.Button_render(Back, button.X, button.Y, button.Width, button.Height, Color.White.ToArgb(), button.Text);
-                        switch(button.Text)
+                        switch (button.Text)
                         {
                             case "Power off":
-                                Power.Shutdown(); 
+                                Power.Shutdown();
                                 break;
                             case "Reboot":
                                 Power.Reboot();
@@ -531,24 +551,24 @@ namespace CrystalOSAlpha.Graphics.TaskBar
 
             bool start = false;
 
-            if(Text_Search.Length > 0)
+            if (Text_Search.Length > 0)
             {
                 start = true;
             }
 
-            foreach(Menu_Items m in Items)
+            foreach (Menu_Items m in Items)
             {
                 if (start == true)
                 {
                     if (m.Source.ToLower().Contains(Text_Search.ToLower()))
                     {
-                        if(MouseManager.MouseState == MouseState.Left)
+                        if (MouseManager.MouseState == MouseState.Left)
                         {
-                            if(MouseManager.X > x && MouseManager.X < x + 70)
+                            if (MouseManager.X > x && MouseManager.X < x + 70)
                             {
                                 if (MouseManager.Y > y && MouseManager.Y < y + 50)
                                 {
-                                    if(m.Source == "Minecraft")
+                                    if (m.Source == "Minecraft")
                                     {
                                         Bitmap layer = new Bitmap(140, 140, ColorDepth.ColorDepth32);
                                         Array.Fill(layer.RawData, 1);
@@ -589,7 +609,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
 
                                         MenuOpened = false;
                                     }
-                                    else if(m.Source == "Calculator")
+                                    else if (m.Source == "Calculator")
                                     {
                                         Calculator c = new Calculator();
                                         c.x = 100;
@@ -644,12 +664,12 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                                 }
                             }
                         }
-                        if(update == true)
+                        if (update == true)
                         {
                             ImprovedVBE.DrawImageAlpha(m.Icon, x - ((int)(Left + X_offset - 290)) + 12, 110, Back);
                             BitFont.DrawBitFontString(Back, "ArialCustomCharset16", Global_integers.c, m.Name, x - ((int)(Left + X_offset - 290)) + 12, 170);
                         }
-                        if(co < 5)
+                        if (co < 5)
                         {
                             x += 70;
                             co++;
@@ -844,7 +864,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
             }
             update = false;
             KeyEvent k;
-            if(KeyboardManager.TryReadKey(out k))
+            if (KeyboardManager.TryReadKey(out k))
             {
                 Text_Search = Keyboard.HandleKeyboard(Text_Search, k);
                 update = true;
@@ -1161,6 +1181,8 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                                     if (MouseManager.Y > Y + v.Y + 68 && MouseManager.Y < Y + v.Y + v.Icon.Height + 68 && v.Y > 0 && v.Y < Buffer.Height)
                                     {
                                         AppDecider(v.Source, v.Icon);
+                                        ExtendedMenu = false;
+                                        ClearLists();
                                     }
                                 }
                             break;

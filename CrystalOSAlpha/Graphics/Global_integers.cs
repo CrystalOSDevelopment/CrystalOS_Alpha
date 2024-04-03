@@ -37,7 +37,7 @@ namespace CrystalOSAlpha.Graphics
 
         //To change the start and end color of the gradient window titlebar modify these values
         public static Color StartColor = Color.Blue;
-        public static Color EndColor = Color.Pink;
+        public static Color EndColor = Color.DeepPink;
 
         //Modes: Default(Preloaded wallpaper), Monocolor(One single color as wallpaper), Loaded(Load from file. WARNING: Loading from filesystem may result in higher memory usage)
         public static string Background_type = "Default";

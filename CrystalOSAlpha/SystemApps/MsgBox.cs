@@ -127,5 +127,10 @@ namespace CrystalOSAlpha.SystemApps
 
             ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
         }
+
+        public void RightClick()
+        {
+
+        }
     }
 }

@@ -121,6 +121,10 @@ namespace CrystalOSAlpha.Applications.Gameboy
             }
 
             gameboy.EXECUTE();
+        }
+
+        public void RightClick()
+        {
 
         }
     }

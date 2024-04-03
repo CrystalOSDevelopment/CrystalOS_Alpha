@@ -844,6 +844,11 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
             Array.Copy(window.RawData, 0, ImprovedVBE.cover.RawData, 0, window.RawData.Length);
         }
+
+        public void RightClick()
+        {
+
+        }
     }
 
     class Elements

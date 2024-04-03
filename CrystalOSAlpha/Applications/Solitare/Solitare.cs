@@ -1,15 +1,4 @@
-﻿using Cosmos.System;
-using Cosmos.System.Graphics;
-using CrystalOSAlpha.Applications.Calculator;
-using CrystalOSAlpha.Graphics;
-using CrystalOSAlpha.Graphics.Engine;
-using CrystalOSAlpha.UI_Elements;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Cosmos.System.Graphics;
 
 namespace CrystalOSAlpha.Applications.Solitare
 {
@@ -32,6 +21,11 @@ namespace CrystalOSAlpha.Applications.Solitare
         public void App()
         {
             
+        }
+
+        public void RightClick()
+        {
+
         }
     }
 }
