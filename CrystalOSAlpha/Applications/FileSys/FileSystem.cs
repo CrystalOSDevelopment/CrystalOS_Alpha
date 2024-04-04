@@ -7,6 +7,7 @@ using CrystalOSAlpha.Graphics.Icons;
 using CrystalOSAlpha.Programming;
 using CrystalOSAlpha.SystemApps;
 using CrystalOSAlpha.UI_Elements;
+using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -43,6 +44,7 @@ namespace CrystalOSAlpha.Applications.FileSys
 
         public string command = "";
         public string Route = @"0:\";
+        public static string PathRightClick = "";
 
         public bool initial = true;
         public bool clicked = false;
@@ -57,8 +59,11 @@ namespace CrystalOSAlpha.Applications.FileSys
 
         public List<string> cmd_history = new List<string>();
         public List<Button_prop> Buttons = new List<Button_prop>();
-        public List<Scrollbar_Values> Scroll = new List<Scrollbar_Values>();
+        public List<VerticalScrollbar> Scroll = new List<VerticalScrollbar>();
         public List<Structure> Items = new List<Structure>();
+        public List<RightClick> rightClicks = new List<RightClick>();
+        public List<string> MItems = new List<string>();
+
         public void App()
         {
             if (initial == true)
@@ -66,7 +71,7 @@ namespace CrystalOSAlpha.Applications.FileSys
                 Buttons.Add(new Button_prop(4, 29, 70, 25, "Back", 1));
                 Buttons.Add(new Button_prop(77, 29, 70, 25, "Forward", 1));
 
-                Scroll.Add(new Scrollbar_Values(width - 22, 43, 20, 272, 0));
+                Scroll.Add(new VerticalScrollbar(width - 22, 65, 20, 272, 20, 0, 800));
 
                 initial = false;
             }
@@ -113,8 +118,6 @@ namespace CrystalOSAlpha.Applications.FileSys
                 ImprovedVBE.DrawImageAlpha(side, 4, 65, canvas);
                 ImprovedVBE.DrawImageAlpha(Main, 154, 65, canvas);
 
-                canvas = Scrollbar.Render(canvas, Scroll[0]);
-
                 BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, "Tabs", 163, 337);
 
                 ImprovedVBE.DrawFilledRectangle(canvas, ImprovedVBE.colourToNumber(36, 36, 36), 154, 351, 461, 20, false);
@@ -149,49 +152,11 @@ namespace CrystalOSAlpha.Applications.FileSys
                 }
             }
 
-            foreach (var scv in Scroll)
+            foreach (var vscroll in Scroll)
             {
-                if (MouseManager.MouseState == MouseState.Left)
-                {
-                    if (MouseManager.Y > y + scv.y + 42 + scv.Pos && MouseManager.Y < y + 22 + scv.y + scv.Pos + 42)
-                    {
-                        if (MouseManager.X > x + scv.x + 2 && MouseManager.X < x + scv.x + scv.Width)
-                        {
-                            if (scv.Clicked == false)
-                            {
-                                scv.Clicked = true;
-                                Reg_Y = (int)MouseManager.Y - y - scv.y - 42 - scv.Pos;
-                            }
-                        }
-                        temp = true;
-                    }
-                }
-                if (MouseManager.MouseState == MouseState.None && scv.Clicked == true)
+                if (vscroll.CheckClick((int)MouseManager.X - x, (int)MouseManager.Y - y))
                 {
                     temp = true;
-                    scv.Clicked = false;
-                }
-                if (scv.Clicked == true && MouseManager.MouseState == MouseState.None)
-                {
-                    scv.Clicked = false;
-                }
-                if (MouseManager.Y > y + scv.y + 48 && MouseManager.Y < y + scv.y + scv.Height - 42 && scv.Clicked == true)
-                {
-                    if (scv.Pos >= 0 && scv.Pos <= scv.Height - 44)
-                    {
-                        scv.Pos = (int)MouseManager.Y - y - scv.y - 42 - Reg_Y;
-                    }
-                    else
-                    {
-                        if (scv.Pos < 0)
-                        {
-                            scv.Pos = 1;
-                        }
-                        else
-                        {
-                            scv.Pos = scv.Height - 44;
-                        }
-                    }
                 }
             }
 
@@ -274,8 +239,11 @@ namespace CrystalOSAlpha.Applications.FileSys
                     }
                 }
                 ImprovedVBE.DrawImageAlpha(Main, 154, 65, window);
-
-                window = Scrollbar.Render(window, Scroll[0]);
+                //Render scrollbar
+                foreach (var vscroll in Scroll)
+                {
+                    vscroll.Render(window);
+                }
                 temp = false;
             }
 
@@ -366,7 +334,103 @@ namespace CrystalOSAlpha.Applications.FileSys
 
         public void RightClick()
         {
-
+            //Adding the base of the contextmenu
+            if (MouseManager.MouseState == MouseState.Right && clicked == false)
+            {
+                rightClicks.Clear();
+                MItems.Clear();
+                MItems = new List<string>
+                {
+                    "Open",
+                    "Open with:Extensive:",
+                    "Add to Favorites",
+                    "Copy as path",
+                    "Propeties"
+                };
+                rightClicks.Add(new UI_Elements.RightClick((int)MouseManager.X, (int)MouseManager.Y, 200, 500, MItems, "Main"));
+                clicked = true;
+            }
+            //Reenabling right click
+            else if(MouseManager.MouseState == MouseState.None && clicked == true)
+            {
+                clicked = false;
+            }
+            //Render the contextmenus + logic
+            int Pointer = 0;
+            bool Found = false;
+            foreach(var v in rightClicks)
+            {
+                v.ProcessNRender();
+                if(MouseManager.MouseState == MouseState.Left && clicked == false)
+                {
+                    switch (v.ID)
+                    {
+                        case "Main":
+                            switch (v.Selected)
+                            {
+                                case 0:
+                                    //Open the chosen file/directory
+                                    break;
+                                case 1:
+                                    MItems = new List<string>
+                                    {
+                                        "File explorer",
+                                        "Notepad",
+                                        "Binary reader",
+                                    };
+                                    if(!rightClicks.Exists(d => d.ID == "OpenWith"))
+                                    {
+                                        rightClicks.Add(new UI_Elements.RightClick(v.X + v.Width - 5, v.Y + v.Selected * 25 + 10, 200, 500, MItems, "OpenWith"));
+                                        clicked = true;
+                                    }
+                                    else
+                                    {
+                                        rightClicks.RemoveRange(Pointer + 1, rightClicks.Count - Pointer - 1);
+                                        clicked = true;
+                                    }
+                                    break;
+                                case 2:
+                                    //Add to Favorites
+                                    break;
+                                case 3:
+                                    //TODO: Clipboard implementation
+                                    //Copy the path
+                                    break;
+                                case 4:
+                                    //Propeties of file/folders
+                                    break;
+                            }
+                            break;
+                        case "OpenWith":
+                            switch (v.Selected)
+                            {
+                                case 0:
+                                    //Do it with file explorer
+                                    break;
+                                case 1:
+                                    //Do it with notepad
+                                    break;
+                                case 2:
+                                    //Do it with binary reader: Not implemented
+                                    break;
+                            }
+                            break;
+                    }
+                    if(v.Selected < 0)
+                    {
+                        Found = true;
+                    }
+                    else
+                    {
+                        Found = false;
+                    }
+                }
+                Pointer++;
+            }
+            if(Found == true)
+            {
+                rightClicks.Clear();
+            }
         }
     }
 
