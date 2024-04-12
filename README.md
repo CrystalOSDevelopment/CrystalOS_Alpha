@@ -1,5 +1,5 @@
 # CrystalOS_Alpha
 This is a concept/demo release of CrystalOS Alpha Edition
 
-# Prewiev (2024. 01. 20.)
-![Alt text](https://cdn.discordapp.com/attachments/1041835360075923599/1198315749803053167/image.png?ex=65be7582&is=65ac0082&hm=b340eef57e3045866e28724d05b1111dcd170ebdfa703a35c046cc540d95d2ab&)
+# Prewiev (2024. 04. 12.)
+![Preview](https://cdn.discordapp.com/attachments/819707035360034836/1228432301109543004/image.png?ex=662c05bb&is=661990bb&hm=7c57f0d764610ef06b64016b67881801ef69af7f37186b9c3c5a3072f3c563cb&)
