@@ -35,7 +35,7 @@ namespace CrystalOSAlpha.Applications.Calculator
 
         public Bitmap canvas;
         public Bitmap back_canvas;
-        public Bitmap window;
+        public Bitmap window { get; set; }
 
         public List<Button_prop> Buttons = new List<Button_prop>();
 

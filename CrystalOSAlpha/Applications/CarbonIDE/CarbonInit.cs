@@ -52,7 +52,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
         public Bitmap canvas;
         public Bitmap back_canvas;
-        public Bitmap window;
+        public Bitmap window { get; set; }
 
         public List<Button_prop> Buttons = new List<Button_prop>();
         public List<Scrollbar_Values> Scroll = new List<Scrollbar_Values>();

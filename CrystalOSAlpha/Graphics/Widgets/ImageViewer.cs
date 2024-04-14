@@ -27,6 +27,7 @@ namespace CrystalOSAlpha.Graphics.Widgets
         public bool minimised { get; set; }
         public bool movable { get; set; }
         public Bitmap icon { get; set; }
+        public Bitmap window { get; set; }
 
         public int x_dif = 10;
         public int y_dif = 10;

@@ -48,7 +48,7 @@ namespace CrystalOSAlpha.Applications.Settings
         public string customres = "";
 
         public Bitmap back_canvas;
-        public Bitmap window;
+        public Bitmap window { get; set; }
         public Bitmap canvas;
         public Bitmap MiniWallp;
 
@@ -133,8 +133,12 @@ namespace CrystalOSAlpha.Applications.Settings
 
                         Slider.Add(new Slider(6, 763, 290, 0, 100, Global_integers.LevelOfTransparency, "Transparency"));
 
-                        Colors.Add(new Button_prop(6, 832, 130, 25, "Nostalgia", 1, "Old"));
-                        Colors.Add(new Button_prop(151, 832, 130, 25, "Float-up", 1, "Animated"));
+                        Slider.Add(new Slider(6, 856, 290, 0, 255, Global_integers.IconR, "IconR"));
+                        Slider.Add(new Slider(6, 880, 290, 0, 255, Global_integers.IconG, "IconG"));
+                        Slider.Add(new Slider(6, 904, 290, 0, 255, Global_integers.IconB, "IconB"));
+
+                        Colors.Add(new Button_prop(6, 921, 130, 25, "Nostalgia", 1, "Old"));
+                        Colors.Add(new Button_prop(151, 921, 130, 25, "Float-up", 1, "Animated"));
                         break;
                     case "Sound":
                         
@@ -314,15 +318,26 @@ namespace CrystalOSAlpha.Applications.Settings
                             }
                             else if (button.ID.StartsWith("Old"))
                             {
-                                button.Y = 854 - VerticalScrollbar[0].Value;
+                                button.Y = 943 - VerticalScrollbar[0].Value;
                             }
                             else if (button.ID.StartsWith("Animated"))
                             {
-                                button.Y = 854 - VerticalScrollbar[0].Value;
+                                button.Y = 943 - VerticalScrollbar[0].Value;
                             }
                             else
                             {
                                 button.Y = 212 - VerticalScrollbar[0].Value;
+                            }
+                            if(button.Color == ImprovedVBE.data.RawData[^1])
+                            {
+                                button.Text = "X";
+                            }
+                            else
+                            {
+                                if(button.Text.Length < 2)
+                                {
+                                    button.Text = "";
+                                }
                             }
                             if (button.Clicked == true)
                             {
@@ -390,6 +405,16 @@ namespace CrystalOSAlpha.Applications.Settings
                                 case "Transparency":
                                     v.Y = 785 - VerticalScrollbar[0].Value;
                                     break;
+
+                                case "IconR":
+                                    v.Y = 834 - VerticalScrollbar[0].Value;
+                                    break;
+                                case "IconG":
+                                    v.Y = 858 - VerticalScrollbar[0].Value;
+                                    break;
+                                case "IconB":
+                                    v.Y = 882 - VerticalScrollbar[0].Value;
+                                    break;
                             }
                             v.Render(Container);
                         }
@@ -418,10 +443,15 @@ namespace CrystalOSAlpha.Applications.Settings
 
                         BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Transparency", 6, 754 - VerticalScrollbar[0].Value);
                         BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Level: " + (100 - Slider[12].Value) / 100.0f, 308, 779 - VerticalScrollbar[0].Value);
+
+                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Icon background", 6, 804 - VerticalScrollbar[0].Value);
+                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Red: " + Slider[13].Value, 308, 828 - VerticalScrollbar[0].Value);
+                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Green: " + Slider[14].Value, 308, 852 - VerticalScrollbar[0].Value);
+                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Blue: " + Slider[15].Value, 308, 876 - VerticalScrollbar[0].Value);
                         #endregion Global color settings
 
                         #region Menubar options
-                        BitFont.DrawBitFontString(Container, "VerdanaCustomCharset24", Color.White, "Menubar options", 6, 820 - VerticalScrollbar[0].Value);
+                        BitFont.DrawBitFontString(Container, "VerdanaCustomCharset24", Color.White, "Menubar options", 6, 909 - VerticalScrollbar[0].Value);
                         #endregion Menubar options
                         //Render the Container
                         ImprovedVBE.DrawImage(Container, 128, 62, canvas);
@@ -614,6 +644,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, Color.Green.ToArgb());
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
+                                    once = true;
                                     break;
                                 case "CrystalBlue":
                                     Global_integers.Background_type = "Monocolor";
@@ -621,6 +652,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, Color.Blue.ToArgb());
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
+                                    once = true;
                                     break;
                                 case "CrystalYellow":
                                     Global_integers.Background_type = "Monocolor";
@@ -628,6 +660,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, Color.Yellow.ToArgb());
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
+                                    once = true;
                                     break;
                                 case "CrystalOrange":
                                     Global_integers.Background_type = "Monocolor";
@@ -635,6 +668,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, Color.Orange.ToArgb());
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
+                                    once = true;
                                     break;
                                 case "CrystalRed":
                                     Global_integers.Background_type = "Monocolor";
@@ -642,6 +676,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, Color.Red.ToArgb());
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
+                                    once = true;
                                     break;
                                 case "CrystalBlack":
                                     Global_integers.Background_type = "Monocolor";
@@ -649,6 +684,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, Color.Black.ToArgb());
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
+                                    once = true;
                                     break;
                                 case "CrystalPink":
                                     Global_integers.Background_type = "Monocolor";
@@ -656,6 +692,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, Color.Pink.ToArgb());
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
+                                    once = true;
                                     break;
                                 case "CrystalPurple":
                                     Global_integers.Background_type = "Monocolor";
@@ -663,6 +700,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, Color.Purple.ToArgb());
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
+                                    once = true;
                                     break;
                                 case "CrystalAqua":
                                     Global_integers.Background_type = "Monocolor";
@@ -670,6 +708,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, Color.Aqua.ToArgb());
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
+                                    once = true;
                                     break;
                                 case "CrystalWhite":
                                     Global_integers.Background_type = "Monocolor";
@@ -677,6 +716,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, Color.White.ToArgb());
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
+                                    once = true;
                                     break;
 
                                 case "GoldenSunshine":
@@ -685,6 +725,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, button.Color);
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
+                                    once = true;
                                     break;
                                 case "CoralOrange":
                                     Global_integers.Background_type = "Monocolor";
@@ -692,6 +733,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, button.Color);
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
+                                    once = true;
                                     break;
                                 case "PeachPink":
                                     Global_integers.Background_type = "Monocolor";
@@ -699,6 +741,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, button.Color);
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
+                                    once = true;
                                     break;
                                 case "SkyBlue":
                                     Global_integers.Background_type = "Monocolor";
@@ -706,6 +749,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, button.Color);
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
+                                    once = true;
                                     break;
                                 case "OceanBlue":
                                     Global_integers.Background_type = "Monocolor";
@@ -713,6 +757,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, button.Color);
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
+                                    once = true;
                                     break;
                                 case "TurquoiseTeal":
                                     Global_integers.Background_type = "Monocolor";
@@ -720,6 +765,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, button.Color);
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
+                                    once = true;
                                     break;
                                 case "EmeraldGreen":
                                     Global_integers.Background_type = "Monocolor";
@@ -727,6 +773,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, button.Color);
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
+                                    once = true;
                                     break;
                                 case "MintGreen":
                                     Global_integers.Background_type = "Monocolor";
@@ -734,6 +781,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, button.Color);
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
+                                    once = true;
                                     break;
                                 case "LavenderPurple":
                                     Global_integers.Background_type = "Monocolor";
@@ -741,6 +789,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, button.Color);
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
+                                    once = true;
                                     break;
                                 case "SoothingGray":
                                     Global_integers.Background_type = "Monocolor";
@@ -748,6 +797,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, button.Color);
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
+                                    once = true;
                                     break;
                                 case "LoadFile":
                                     if (VMTools.IsVMWare == true)
@@ -770,11 +820,12 @@ namespace CrystalOSAlpha.Applications.Settings
                                     TaskManager.resize = true;
                                     break;
                             }
+                            clicked = true;
                         }
                     }
                     if(MouseManager.X > x + 134 && MouseManager.X < x + 134 + MiniWallp.Width)
                     {
-                        if(MouseManager.Y > y + 125 - VerticalScrollbar[0].Value && MouseManager.Y < y + 125 - VerticalScrollbar[0].Value + MiniWallp.Height && MouseManager.Y > y + 62 && MouseManager.Y < y + MiniWallp.Height + 62)
+                        if(MouseManager.Y > y + 125 - VerticalScrollbar[0].Value && MouseManager.Y < y + 125 - VerticalScrollbar[0].Value + MiniWallp.Height && MouseManager.Y > y + 62)
                         {
                             Global_integers.Background_type = "Default";
                             ImprovedVBE.Temp.RawData.CopyTo(ImprovedVBE.data.RawData, 0);
@@ -836,6 +887,15 @@ namespace CrystalOSAlpha.Applications.Settings
                         case "EndBlue":
                             Color EndB = Color.FromArgb(Global_integers.EndColor.R, Global_integers.EndColor.G, v.Value);
                             Global_integers.EndColor = EndB;
+                            break;
+                        case "IconR":
+                            Global_integers.IconR = v.Value;
+                            break;
+                        case "IconG":
+                            Global_integers.IconG = v.Value;
+                            break;
+                        case "IconB":
+                            Global_integers.IconB = v.Value;
                             break;
                         case "Transparency":
                             if(v.Value > 40)

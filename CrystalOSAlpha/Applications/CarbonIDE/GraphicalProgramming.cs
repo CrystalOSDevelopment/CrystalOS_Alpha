@@ -35,7 +35,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
         
         public Bitmap canvas;
-        public Bitmap window;
+        public Bitmap window { get; set; }
 
         public bool initial = true;
         public bool once = true;

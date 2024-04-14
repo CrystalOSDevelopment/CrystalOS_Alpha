@@ -56,7 +56,7 @@ namespace CrystalOSAlpha.Applications.FileSys
         public bool temp = false;
 
         public Bitmap canvas;
-        public Bitmap window;
+        public Bitmap window { get; set; }
         public Bitmap Container;
         public Bitmap QuickAccess;
 

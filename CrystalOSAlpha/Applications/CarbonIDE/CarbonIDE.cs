@@ -100,7 +100,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public List<Scrollbar_Values> Scroll = new List<Scrollbar_Values>();
 
         public Bitmap canvas;
-        public Bitmap window;
+        public Bitmap window { get; set; }
         public Bitmap Container;
         public Bitmap Strucrure;
 

@@ -43,7 +43,7 @@ namespace CrystalOSAlpha.Applications.Notepad
         public string source = "";
 
         public Bitmap canvas;
-        public Bitmap window;
+        public Bitmap window { get; set; }
         public Bitmap Container;
 
         public List<Button_prop> Buttons = new List<Button_prop>();

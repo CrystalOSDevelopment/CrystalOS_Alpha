@@ -27,7 +27,7 @@ namespace CrystalOSAlpha.Applications.Minecraft
 
         public Bitmap icon { get; set; }
         public Bitmap canvas;
-        public Bitmap window;
+        public Bitmap window { get; set; }
 
         public List<bool> Statements_Cond = new List<bool> { false };
 

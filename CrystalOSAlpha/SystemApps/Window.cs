@@ -48,7 +48,7 @@ namespace CrystalOSAlpha.SystemApps
         public bool temp = true;
 
         public Bitmap canvas;
-        public Bitmap window;
+        public Bitmap window { get; set; }
         #endregion Essential
 
         #region UI_Elements

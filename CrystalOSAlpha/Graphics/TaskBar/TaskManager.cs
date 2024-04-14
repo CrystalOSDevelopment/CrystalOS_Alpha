@@ -1,6 +1,5 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
-using CrystalOS_Alpha;
 using CrystalOSAlpha.Applications.Calculator;
 using CrystalOSAlpha.Applications.CarbonIDE;
 using CrystalOSAlpha.Applications.Gameboy;
@@ -12,7 +11,6 @@ using CrystalOSAlpha.Applications.Terminal;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics.Icons;
 using CrystalOSAlpha.Graphics.Widgets;
-using CrystalOSAlpha.Programming;
 using CrystalOSAlpha.UI_Elements;
 using IL2CPU.API.Attribs;
 using System;
@@ -88,13 +86,13 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                     {
                         icon = ImprovedVBE.ScaleImageStock(new Bitmap(Elephant), 36, 36);
                         Back = Base.Widget_Back(420, 470, ImprovedVBE.colourToNumber(255, 255, 255));
-                        Back = ImprovedVBE.EnableTransparency(Back, (int)(Left + X_offset - 300), Top - 480, Back);
+                        Back = ImprovedVBE.EnableTransparencyPreRGB(Back, (int)(Left + X_offset - 300), Top - 480, Back, Global_integers.TaskBarR, Global_integers.TaskBarG, Global_integers.TaskBarB, ImprovedVBE.cover);
 
-                        TaskBar = Base.Widget_Back((int)(X_offset * 2), 50, ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B));
-                        TaskBar = ImprovedVBE.EnableTransparency(TaskBar, (int)(Left - X_offset), Top, TaskBar);
+                        TaskBar = Base.Widget_Back((int)(X_offset * 2), 50, ImprovedVBE.colourToNumber(Global_integers.TaskBarR, Global_integers.TaskBarG, Global_integers.TaskBarB));
+                        TaskBar = ImprovedVBE.EnableTransparencyPreRGB(TaskBar, (int)(Left - X_offset), Top, TaskBar, Global_integers.TaskBarR, Global_integers.TaskBarG, Global_integers.TaskBarB, ImprovedVBE.cover);
 
                         Extension_Dock = Base.Widget_Back(150, 50, ImprovedVBE.colourToNumber(255, 255, 255));
-                        Extension_Dock = ImprovedVBE.EnableTransparency(Extension_Dock, (int)(Left - X_offset) - 175, Top, Extension_Dock);
+                        Extension_Dock = ImprovedVBE.EnableTransparencyPreRGB(Extension_Dock, (int)(Left - X_offset) - 175, Top, Extension_Dock, Global_integers.TaskBarR, Global_integers.TaskBarG, Global_integers.TaskBarB, ImprovedVBE.cover);
 
                         Search_Box = Base.Widget_Back(210, 36, ImprovedVBE.colourToNumber(255, 255, 255));
                         Search_Box = ImprovedVBE.EnableTransparencyPreRGB(Search_Box, (int)(Left + X_offset - 200), Top - 460, Search_Box, 30, 30, 30, ImprovedVBE.cover);
@@ -138,10 +136,10 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                                 X_offset += ImprovedVBE.width / 192 * 1.3;
 
                                 TaskBar = Base.Widget_Back((int)(X_offset * 2), 50, ImprovedVBE.colourToNumber(255, 255, 255));
-                                TaskBar = ImprovedVBE.EnableTransparency(TaskBar, (int)(Left - X_offset), Top, TaskBar);
+                                TaskBar = ImprovedVBE.EnableTransparencyPreRGB(TaskBar, (int)(Left - X_offset), Top, TaskBar, Global_integers.TaskBarR, Global_integers.TaskBarG, Global_integers.TaskBarB, ImprovedVBE.cover);
 
                                 Extension_Dock = Base.Widget_Back(150, 50, ImprovedVBE.colourToNumber(255, 255, 255));
-                                Extension_Dock = ImprovedVBE.EnableTransparency(Extension_Dock, (int)(Left - X_offset) - 175, Top, Extension_Dock);
+                                Extension_Dock = ImprovedVBE.EnableTransparencyPreRGB(Extension_Dock, (int)(Left - X_offset) - 175, Top, Extension_Dock, Global_integers.TaskBarR, Global_integers.TaskBarG, Global_integers.TaskBarB, ImprovedVBE.cover);
 
                                 BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DateTime.UtcNow.Hour.ToString() + ":" + DateTime.UtcNow.Minute, 60, 5);
                                 BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DayOfWeek + "," + DateTime.UtcNow.Day, (int)(Extension_Dock.Width / 2 - (DayOfWeek + "," + DateTime.UtcNow.Day).Length * 4), 20);//44
@@ -155,10 +153,10 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                                 X_offset -= ImprovedVBE.width / 192 * 1.3;
 
                                 TaskBar = Base.Widget_Back((int)(X_offset * 2), 50, ImprovedVBE.colourToNumber(255, 255, 255));
-                                TaskBar = ImprovedVBE.EnableTransparency(TaskBar, (int)(Left - X_offset), Top, TaskBar);
+                                TaskBar = ImprovedVBE.EnableTransparencyPreRGB(TaskBar, (int)(Left - X_offset), Top, TaskBar, Global_integers.TaskBarR, Global_integers.TaskBarG, Global_integers.TaskBarB, ImprovedVBE.cover);
 
                                 Extension_Dock = Base.Widget_Back(150, 50, ImprovedVBE.colourToNumber(255, 255, 255));
-                                Extension_Dock = ImprovedVBE.EnableTransparency(Extension_Dock, (int)(Left - X_offset) - 175, Top, Extension_Dock);
+                                Extension_Dock = ImprovedVBE.EnableTransparencyPreRGB(Extension_Dock, (int)(Left - X_offset) - 175, Top, Extension_Dock, Global_integers.TaskBarR, Global_integers.TaskBarG, Global_integers.TaskBarB, ImprovedVBE.cover);
 
                                 BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DateTime.UtcNow.Hour.ToString() + ":" + DateTime.UtcNow.Minute, 60, 5);
                                 BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DayOfWeek + "," + DateTime.UtcNow.Day, (int)(Extension_Dock.Width / 2 - (DayOfWeek + "," + DateTime.UtcNow.Day).Length * 4), 20);
@@ -332,7 +330,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                     if (Time != DateTime.UtcNow.Minute)
                     {
                         Extension_Dock = Base.Widget_Back(150, 50, ImprovedVBE.colourToNumber(255, 255, 255));
-                        Extension_Dock = ImprovedVBE.EnableTransparency(Extension_Dock, (int)(Left - X_offset) - 175, Top, Extension_Dock);
+                        Extension_Dock = ImprovedVBE.EnableTransparencyPreRGB(Extension_Dock, (int)(Left - X_offset) - 175, Top, Extension_Dock, Global_integers.TaskBarR, Global_integers.TaskBarG, Global_integers.TaskBarB, ImprovedVBE.cover);
                         BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DateTime.UtcNow.Hour.ToString() + ":" + DateTime.UtcNow.Minute, 60, 5);
                         BitFont.DrawBitFontString(Extension_Dock, "ArialCustomCharset16", Global_integers.c, DayOfWeek + "," + DateTime.UtcNow.Day, (int)(Extension_Dock.Width / 2 - (DayOfWeek + "," + DateTime.UtcNow.Day).Length * 4), 20);
 
@@ -503,7 +501,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
             if (update == true)
             {
                 Back = Base.Widget_Back(420, 470, ImprovedVBE.colourToNumber(255, 255, 255));
-                Back = ImprovedVBE.EnableTransparency(Back, (int)(Left + X_offset - 300), Top - 480, Back);
+                Back = ImprovedVBE.EnableTransparencyPreRGB(Back, (int)(Left + X_offset - 300), Top - 480, Back, Global_integers.TaskBarR, Global_integers.TaskBarG, Global_integers.TaskBarB, ImprovedVBE.cover);
 
                 Search_Box = Base.Widget_Back(210, 36, ImprovedVBE.colourToNumber(255, 255, 255));
                 Search_Box = ImprovedVBE.EnableTransparencyPreRGB(Search_Box, (int)(Left + X_offset - 200), Top - 460, Search_Box, 30, 30, 30, ImprovedVBE.cover);
@@ -896,7 +894,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                     if(VMTools.IsVMWare == true)
                     {
                         Items = new List<Menu_Items>();
-                        string FrequentApps = File.ReadAllText("0:\\User\\System\\FrequentApps.sys");
+                        string FrequentApps = File.ReadAllText("0:\\System\\FrequentApps.sys");
                         string[] Sep = FrequentApps.Split("\n");
                         for(int i = 0; i < Sep.Length; i++)
                         {
@@ -919,6 +917,15 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                                         Icon = ImprovedVBE.ScaleImageStock(Resources.Gameboy, Global_integers.IconWidth, Global_integers.IconHeight)
                                     };
                                     Items.Add(Gameboy);
+                                    break;
+                                case "FileSystem":
+                                    Menu_Items FS = new Menu_Items
+                                    {
+                                        Name = "File Explorer",
+                                        Source = "File Explorer",
+                                        Icon = ImprovedVBE.ScaleImageStock(Resources.Explorer, Global_integers.IconWidth, Global_integers.IconHeight)
+                                    };
+                                    Items.Add(FS);
                                     break;
                             }
                         }
@@ -1170,7 +1177,6 @@ namespace CrystalOSAlpha.Graphics.TaskBar
             //Activate click on MenuItems
             if(MouseManager.MouseState == MouseState.Left)
             {
-                CrystalOS_Alpha.Kernel.Clipboard = Items.Count.ToString();
                 foreach(var v in Items)
                 {
                     switch (ExtendedMenu)

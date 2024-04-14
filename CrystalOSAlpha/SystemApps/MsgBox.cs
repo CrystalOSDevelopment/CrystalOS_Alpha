@@ -37,7 +37,7 @@ namespace CrystalOSAlpha.SystemApps
 
         public Bitmap canvas;
         public Bitmap back_canvas;
-        public Bitmap window;
+        public Bitmap window { get; set; }
         public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
 
         public string message = "";

@@ -88,7 +88,7 @@ namespace CrystalOSAlpha.UI_Elements
 
             return ImprovedVBE.DrawImageAlpha(canvas, X, Y, Canvas);
         }
-        public Bitmap Box(Bitmap Canvas, int X, int Y)
+        public void Box(Bitmap Canvas, int X, int Y)
         {
             canvas = new Bitmap((uint)Width, (uint)Height, ColorDepth.ColorDepth32);
             canvas_Blank = new Bitmap((uint)Width, (uint)Height, ColorDepth.ColorDepth32);
@@ -136,7 +136,7 @@ namespace CrystalOSAlpha.UI_Elements
                     break;
             }
 
-            return ImprovedVBE.DrawImageAlpha(canvas, X, Y, Canvas);
+            ImprovedVBE.DrawImageAlpha(canvas, X, Y, Canvas);
         }
 
         public bool Clciked(int X, int Y)

@@ -1,4 +1,5 @@
 ﻿using Cosmos.System;
+using Cosmos.System.Graphics;
 using CrystalOSAlpha.Applications;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics.TaskBar;
@@ -16,6 +17,8 @@ namespace CrystalOSAlpha.Graphics
         public static int index = 0;
         public static int x_offset = (int)(TaskManager.Left - TaskManager.X_offset) + 15;
         public static int y_offset = TaskManager.Top - 35;
+
+        public static Bitmap Preview = new Bitmap(13, 13, ColorDepth.ColorDepth32);
 
         public static bool Clicked = false;
         public static bool get_values = true;
@@ -213,11 +216,30 @@ namespace CrystalOSAlpha.Graphics
                     break;
                 case "Nostalgia":
                     int XVal = 10;
-                    int YVal = 5;
+                    int YVal = 10;
                     foreach(var btn in Apps)
                     {
                         if(btn.name != null)
                         {
+                            if(btn.name.Length > 5)
+                            {
+                                btn.name = btn.name.Remove(5);
+                                if (!btn.name.EndsWith("..."))
+                                {
+                                    if (btn.name.EndsWith(".."))
+                                    {
+                                        btn.name += ".";
+                                    }
+                                    else if(btn.name.EndsWith("."))
+                                    {
+                                        btn.name += "..";
+                                    }
+                                    else if (!btn.name.EndsWith("."))
+                                    {
+                                        btn.name += "...";
+                                    }
+                                }
+                            }
                             Button.Button_render(ImprovedVBE.cover, XVal, YVal, 70, 25, 1, btn.name);
                             if(MouseManager.MouseState == MouseState.Left)
                             {
@@ -235,6 +257,28 @@ namespace CrystalOSAlpha.Graphics
                                         {
                                             btn.minimised = false;
                                             Clicked = true;
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (MouseManager.X > XVal && MouseManager.X < XVal + 70)
+                                {
+                                    if (MouseManager.Y > YVal && MouseManager.Y < YVal + 25)
+                                    {
+                                        Button.Button_render(ImprovedVBE.cover, XVal, YVal, 70, 25, ImprovedVBE.colourToNumber(25, 25, 25), btn.name);
+                                        if (Preview.Width == 13 && Preview.Height == 13)
+                                        {
+                                            Preview = Widgets.Base.Widget_Back(300, 180, ImprovedVBE.colourToNumber(Global_integers.TaskBarR, Global_integers.TaskBarG, Global_integers.TaskBarB));
+                                            Preview = ImprovedVBE.EnableTransparencyPreRGB(Preview, XVal, (int)TaskManager.TaskBar.Height + 5, Preview, Global_integers.TaskBarR, Global_integers.TaskBarG, Global_integers.TaskBarB, ImprovedVBE.cover);
+                                        }
+                                        else
+                                        {
+                                            Bitmap Temp = new Bitmap(Preview.Width, Preview.Height, ColorDepth.ColorDepth32);
+                                            Array.Copy(Preview.RawData, Temp.RawData, Preview.RawData.Length);
+                                            ImprovedVBE.DrawImage(ImprovedVBE.ScaleImageStock(btn.window, Temp.Width - 20, Temp.Height - 20), 10, 10, Temp);
+                                            ImprovedVBE.DrawImageAlpha(Temp, XVal, (int)TaskManager.TaskBar.Height + 5, ImprovedVBE.cover);
                                         }
                                     }
                                 }

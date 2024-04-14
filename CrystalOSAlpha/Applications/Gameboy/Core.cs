@@ -32,6 +32,7 @@ namespace CrystalOSAlpha.Applications.Gameboy
         public bool clicked = false;
 
         public Bitmap canvas;
+        public Bitmap window { get; set; }
 
         public List<Button_prop> Buttons = new List<Button_prop>();
 
@@ -49,7 +50,7 @@ namespace CrystalOSAlpha.Applications.Gameboy
             if(once == true)
             {
                 Bitmap back = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
-                Bitmap window = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
+                window = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
                 (canvas, back, window) = WindowGenerator.Generate(x, y, width, height, CurrentColor, name);
 
                 foreach (var button in Buttons)

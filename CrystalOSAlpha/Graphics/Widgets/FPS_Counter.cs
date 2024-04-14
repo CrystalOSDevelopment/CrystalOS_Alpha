@@ -33,6 +33,7 @@ namespace CrystalOS_Alpha.Graphics.Widgets
         public bool minimised { get; set; }
         public bool movable { get; set; }
         public Bitmap icon { get; set; }
+        public Bitmap window { get; set; }
 
         public int FPS = 0;
         public int LastS = -1;

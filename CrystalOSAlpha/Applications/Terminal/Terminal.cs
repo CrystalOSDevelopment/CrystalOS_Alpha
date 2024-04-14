@@ -43,7 +43,7 @@ namespace CrystalOSAlpha.Applications.Terminal
         public bool echo_off = false;
 
         public Bitmap canvas;
-        public Bitmap window;
+        public Bitmap window { get; set; }
         public Bitmap Container;
 
         public List<Button_prop> Buttons = new List<Button_prop>();

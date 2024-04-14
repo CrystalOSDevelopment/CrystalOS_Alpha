@@ -30,18 +30,30 @@ namespace CrystalOS_Alpha
             if(VMTools.IsVMWare == true)
             {
                 Sys.FileSystem.VFS.VFSManager.RegisterVFS(fs);
-                Directory.CreateDirectory("0:\\User\\Source");
-                Directory.CreateDirectory("0:\\User\\Documents");
-                Directory.CreateDirectory("0:\\User\\System");
-                File.Create("0:\\User\\System\\FrequentApps.sys");
-                File.WriteAllText("0:\\User\\System\\FrequentApps.sys", "Settings\nGameboy\nMinecraft\nSettings");
-                if (!File.Exists("0:\\User\\System\\Appearance.sys"))
-                {
-                    File.Create("0:\\User\\System\\Appearance.sys");
-                    File.WriteAllText("0:\\User\\System\\Appearance.sys", "Wallpaper=Default");
-                }
-                Directory.CreateDirectory("0:\\Programs");
-                Directory.CreateDirectory("0:\\Programs\\Office");
+                //Insert install here
+                //Problem: Not implemented, so don't even attempt to search after it dear GitHub user!
+                //Until then, this is the block of code that substitutes it
+                #region Config
+                //Create shortcut directories
+                Directory.CreateDirectory("0:\\User\\" + Global_integers.Username + "\\Favorites");
+                Directory.CreateDirectory("0:\\User\\" + Global_integers.Username + "\\Documents");
+                Directory.CreateDirectory("0:\\User\\" + Global_integers.Username + "\\Pictures");
+                Directory.CreateDirectory("0:\\User\\" + Global_integers.Username + "\\Films");
+
+                //System config files
+                //if (!File.Exists("0:\\User\\System\\Appearance.sys"))
+                //{
+                //    File.Create("0:\\System\\Appearance.sys");
+                //    File.WriteAllText("0:\\System\\Appearance.sys", "Wallpaper=Default");
+                //}
+                Directory.CreateDirectory("0:\\System");
+                File.Create("0:\\System\\FrequentApps.sys");
+                File.WriteAllText("0:\\System\\FrequentApps.sys", "Settings\nGameboy\nMinecraft\nFileSystem");
+                ////Applications folder
+                //Directory.CreateDirectory("0:\\Programs");
+                ////CarbonIDE folder
+                //Directory.CreateDirectory("0:\\User\\Source");
+                #endregion Config
             }
 
             FPS_Counter f = new FPS_Counter();
@@ -108,9 +120,18 @@ namespace CrystalOS_Alpha
 
             if(TaskManager.MenuOpened == false)
             {
-                SideNav.Core();
-                TaskManager.Main();
-                TaskScheduler.Exec();
+                if(Global_integers.TaskBarType == "Classic")
+                {
+                    SideNav.Core();
+                    TaskScheduler.Exec();
+                    TaskManager.Main();
+                }
+                else if(Global_integers.TaskBarType == "Nostalgia")
+                {
+                    SideNav.Core();
+                    TaskManager.Main();
+                    TaskScheduler.Exec();
+                }
             }
             else
             {

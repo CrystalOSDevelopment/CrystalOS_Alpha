@@ -42,7 +42,7 @@ namespace CrystalOSAlpha.Applications.WebscapeNavigator
         public string source = "";
 
         public Bitmap canvas;
-        public Bitmap window;
+        public Bitmap window { get; set; }
         public Bitmap Container;
         
         public List<Scrollbar_Values> Scroll = new List<Scrollbar_Values>();

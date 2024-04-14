@@ -18,12 +18,14 @@ namespace CrystalOSAlpha.Applications
         int height { get; set; }
         int desk_ID { get; }
         int AppID { get; set; }
-        string name { get; }
+        string name { get; set; }
 
         bool minimised { get; set; }
         bool movable { get; set; }
 
         Bitmap icon { get; set; }
+
+        Bitmap window { get; set; }
 
     }
 }
