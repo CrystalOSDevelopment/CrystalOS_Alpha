@@ -26,6 +26,8 @@
         <VMWareEdition>Workstation</VMWareEdition>
         <Timeout>0</Timeout>
         <BinFormat>Elf</BinFormat>
+        <ExtractMapFile>False</ExtractMapFile>
+        <UseUEFI>True</UseUEFI>
     </PropertyGroup>
 
     <ItemGroup>
@@ -146,7 +148,7 @@
         <PackageReference Include="Cosmos.HAL2" Version="0.1.0-localbuild20240326042846" />
         <PackageReference Include="Cosmos.System2" Version="0.1.0-localbuild20240202115047" NoWarn="NU1604" />
         <PackageReference Include="Cosmos.Plugs" Version="0.1.0-localbuild20240202115047" NoWarn="NU1604" />
-        <PackageReference Include="IL2CPU.API" Version="0.1.0-localbuild20240326042846" />
+        <PackageReference Include="IL2CPU.API" Version="0.1.0-localbuild20240414074830" />
     </ItemGroup>
 
 </Project>

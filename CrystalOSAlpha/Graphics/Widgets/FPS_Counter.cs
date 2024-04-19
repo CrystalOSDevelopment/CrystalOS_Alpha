@@ -32,6 +32,8 @@ namespace CrystalOS_Alpha.Graphics.Widgets
 
         public bool minimised { get; set; }
         public bool movable { get; set; }
+        public bool once { get; set; }
+
         public Bitmap icon { get; set; }
         public Bitmap window { get; set; }
 
@@ -52,7 +54,11 @@ namespace CrystalOS_Alpha.Graphics.Widgets
             string output = "FPS: " + FPS.ToString();
             if(Get_Back == true)
             {
-                Back = Base.Widget_Back(200 - sizeDec, 200 - sizeDec, ImprovedVBE.colourToNumber(255, 255, 255));
+                if(x >= ImprovedVBE.width)
+                {
+                    sizeDec = 40;
+                }
+                Back = Base.Widget_Back(200 - sizeDec, 200 - sizeDec, ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B));
                 Back = ImprovedVBE.EnableTransparency(Back, x, y, Back);
                 BitFont.DrawBitFontString(Back, "ArialCustomCharset16", Global_integers.c, output, ((100 - sizeDec / 2) - output.Length * 4), (int)(Back.Height / 2 - 8));//92
                 Heap.Collect();

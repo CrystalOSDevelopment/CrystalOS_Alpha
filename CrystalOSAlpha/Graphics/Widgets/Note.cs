@@ -29,6 +29,7 @@ namespace CrystalOSAlpha.Graphics.Widgets
         public string name {get; set; }
         public bool minimised { get; set; }
         public bool movable { get; set; }
+        public bool once { get; set; }
         public Bitmap icon { get; set; }
         public Bitmap window { get; set; }
 
@@ -80,9 +81,13 @@ namespace CrystalOSAlpha.Graphics.Widgets
             }
             if (Get_Back == true)
             {
+                if (x >= ImprovedVBE.width)
+                {
+                    sizeDec = 40;
+                }
                 bool extraction = Buttons[0].Clicked;
                 Buttons[0] = new Button_prop((200 - sizeDec) / 2 - 40, 130, 80, 20, "Convert", 1);
-                Back = Base.Widget_Back(200 - sizeDec, 200 - sizeDec, ImprovedVBE.colourToNumber(255, 255, 255));
+                Back = Base.Widget_Back(200 - sizeDec, 200 - sizeDec, ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B));
                 Back = ImprovedVBE.EnableTransparency(Back, x, y, Back);
 
                 if(MouseManager.MouseState == MouseState.Left && extraction == true)

@@ -25,6 +25,7 @@ namespace CrystalOSAlpha.Applications.Artistic_Stuff.ColorView
         public bool movable { get; set; }
         public Bitmap icon { get; set; }
         public Bitmap window { get; set; }
+        public bool once { get; set; }
         #endregion Window porpeties
         public void App()
         {

@@ -32,7 +32,7 @@ namespace CrystalOSAlpha.SystemApps
 
         public List<Button_prop> Buttons = new List<Button_prop>();
         public bool initial = true;
-        public bool once = true;
+        public bool once { get; set; }
         public bool clicked = false;
 
         public Bitmap canvas;

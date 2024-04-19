@@ -39,6 +39,8 @@ namespace CrystalOS_Alpha
                 Directory.CreateDirectory("0:\\User\\" + Global_integers.Username + "\\Documents");
                 Directory.CreateDirectory("0:\\User\\" + Global_integers.Username + "\\Pictures");
                 Directory.CreateDirectory("0:\\User\\" + Global_integers.Username + "\\Films");
+                Directory.CreateDirectory("0:\\User\\" + Global_integers.Username + "\\Wastebasket");
+                Directory.CreateDirectory("0:\\User\\" + Global_integers.Username + "\\SecurityArea");
 
                 //System config files
                 //if (!File.Exists("0:\\User\\System\\Appearance.sys"))
@@ -50,9 +52,9 @@ namespace CrystalOS_Alpha
                 File.Create("0:\\System\\FrequentApps.sys");
                 File.WriteAllText("0:\\System\\FrequentApps.sys", "Settings\nGameboy\nMinecraft\nFileSystem");
                 ////Applications folder
-                //Directory.CreateDirectory("0:\\Programs");
+                Directory.CreateDirectory("0:\\Programs");
                 ////CarbonIDE folder
-                //Directory.CreateDirectory("0:\\User\\Source");
+                Directory.CreateDirectory("0:\\User\\Source");
                 #endregion Config
             }
 

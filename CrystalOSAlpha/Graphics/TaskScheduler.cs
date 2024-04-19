@@ -1,11 +1,13 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
+using CrystalOS_Alpha;
 using CrystalOSAlpha.Applications;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics.TaskBar;
 using CrystalOSAlpha.UI_Elements;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 
 namespace CrystalOSAlpha.Graphics
 {
@@ -152,6 +154,11 @@ namespace CrystalOSAlpha.Graphics
                     }
                 }
                 counter++;
+                //if(app.width < 900)
+                //{
+                //    app.width = 900;
+                //    app.once = true;
+                //}
             }
             if(MouseManager.MouseState == MouseState.None && TaskManager.disable == true)
             {
@@ -217,37 +224,40 @@ namespace CrystalOSAlpha.Graphics
                 case "Nostalgia":
                     int XVal = 10;
                     int YVal = 10;
+                    bool exists = false;
                     foreach(var btn in Apps)
                     {
                         if(btn.name != null)
                         {
-                            if(btn.name.Length > 5)
+                            string name = btn.name;
+                            string nameTitle = btn.name;
+                            if(nameTitle.Length > 5)
                             {
-                                btn.name = btn.name.Remove(5);
-                                if (!btn.name.EndsWith("..."))
+                                nameTitle = nameTitle.Remove(5);
+                                if (!nameTitle.EndsWith("..."))
                                 {
-                                    if (btn.name.EndsWith(".."))
+                                    if (nameTitle.EndsWith(".."))
                                     {
-                                        btn.name += ".";
+                                        nameTitle += ".";
                                     }
-                                    else if(btn.name.EndsWith("."))
+                                    else if(nameTitle.EndsWith("."))
                                     {
-                                        btn.name += "..";
+                                        nameTitle += "..";
                                     }
-                                    else if (!btn.name.EndsWith("."))
+                                    else if (!nameTitle.EndsWith("."))
                                     {
-                                        btn.name += "...";
+                                        nameTitle += "...";
                                     }
                                 }
                             }
-                            Button.Button_render(ImprovedVBE.cover, XVal, YVal, 70, 25, 1, btn.name);
+                            Button.Button_render(ImprovedVBE.cover, XVal, YVal, 70, 25, 1, nameTitle);
                             if(MouseManager.MouseState == MouseState.Left)
                             {
                                 if(MouseManager.X > XVal && MouseManager.X < XVal + 70)
                                 {
                                     if (MouseManager.Y > YVal && MouseManager.Y < YVal + 25)
                                     {
-                                        Button.Button_render(ImprovedVBE.cover, XVal, YVal, 70, 25, ImprovedVBE.colourToNumber(255, 255, 255), btn.name);
+                                        Button.Button_render(ImprovedVBE.cover, XVal, YVal, 70, 25, ImprovedVBE.colourToNumber(255, 255, 255), nameTitle);
                                         if(btn.minimised == false && Clicked == false)
                                         {
                                             btn.minimised = true;
@@ -267,18 +277,28 @@ namespace CrystalOSAlpha.Graphics
                                 {
                                     if (MouseManager.Y > YVal && MouseManager.Y < YVal + 25)
                                     {
-                                        Button.Button_render(ImprovedVBE.cover, XVal, YVal, 70, 25, ImprovedVBE.colourToNumber(25, 25, 25), btn.name);
+                                        Button.Button_render(ImprovedVBE.cover, XVal, YVal, 70, 25, ImprovedVBE.colourToNumber(25, 25, 25), nameTitle);
                                         if (Preview.Width == 13 && Preview.Height == 13)
                                         {
-                                            Preview = Widgets.Base.Widget_Back(300, 180, ImprovedVBE.colourToNumber(Global_integers.TaskBarR, Global_integers.TaskBarG, Global_integers.TaskBarB));
+                                            Preview = Widgets.Base.Widget_Back((int)(btn.window.Width / 2.5) + 10, (int)(btn.window.Height / 2.5) + 35, ImprovedVBE.colourToNumber(Global_integers.TaskBarR, Global_integers.TaskBarG, Global_integers.TaskBarB));
                                             Preview = ImprovedVBE.EnableTransparencyPreRGB(Preview, XVal, (int)TaskManager.TaskBar.Height + 5, Preview, Global_integers.TaskBarR, Global_integers.TaskBarG, Global_integers.TaskBarB, ImprovedVBE.cover);
+                                            exists = true;
                                         }
                                         else
                                         {
                                             Bitmap Temp = new Bitmap(Preview.Width, Preview.Height, ColorDepth.ColorDepth32);
                                             Array.Copy(Preview.RawData, Temp.RawData, Preview.RawData.Length);
-                                            ImprovedVBE.DrawImage(ImprovedVBE.ScaleImageStock(btn.window, Temp.Width - 20, Temp.Height - 20), 10, 10, Temp);
+                                            int MaxWidth = (int)Temp.Width - 30;
+                                            int Chars = MaxWidth / 12 - 2;
+                                            if (name.Length > Chars)
+                                            {
+                                                name = name.Remove(Chars);
+                                            }
+                                            BitFont.DrawBitFontString(Temp, "VerdanaCustomCharset24", Color.White, name, 28, 3);
+                                            ImprovedVBE.DrawImageAlpha(ImprovedVBE.ScaleImageStock(btn.icon, 20, 20), 3, 3, Temp);
+                                            ImprovedVBE.DrawImage(ImprovedVBE.ScaleImageStock(btn.window, Temp.Width - 10, Temp.Height - 40), 5, 35, Temp);
                                             ImprovedVBE.DrawImageAlpha(Temp, XVal, (int)TaskManager.TaskBar.Height + 5, ImprovedVBE.cover);
+                                            exists = true;
                                         }
                                     }
                                 }
@@ -289,6 +309,10 @@ namespace CrystalOSAlpha.Graphics
                             }
                             XVal += 80;
                         }
+                    }
+                    if (exists == false && Preview.Width != 13 && Preview.Height != 13)
+                    {
+                        Preview = new Bitmap(13, 13, ColorDepth.ColorDepth32);
                     }
                     break;
             }

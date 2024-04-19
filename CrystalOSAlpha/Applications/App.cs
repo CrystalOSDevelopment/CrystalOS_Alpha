@@ -22,6 +22,7 @@ namespace CrystalOSAlpha.Applications
 
         bool minimised { get; set; }
         bool movable { get; set; }
+        bool once { get; set; }
 
         Bitmap icon { get; set; }
 

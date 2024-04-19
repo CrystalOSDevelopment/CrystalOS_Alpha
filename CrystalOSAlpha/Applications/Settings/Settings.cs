@@ -42,7 +42,7 @@ namespace CrystalOSAlpha.Applications.Settings
         
         public bool initial = true;
         public bool clicked = false;
-        public bool once = true;
+        public bool once { get; set; }
 
         public string ActiveD = "Display";
         public string customres = "";

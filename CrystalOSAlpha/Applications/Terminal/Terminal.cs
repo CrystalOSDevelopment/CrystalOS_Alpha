@@ -39,7 +39,7 @@ namespace CrystalOSAlpha.Applications.Terminal
         public bool initial = true;
         public bool clicked = false;
         public bool temp = true;
-        public bool once = true;
+        public bool once { get; set; }
         public bool echo_off = false;
 
         public Bitmap canvas;

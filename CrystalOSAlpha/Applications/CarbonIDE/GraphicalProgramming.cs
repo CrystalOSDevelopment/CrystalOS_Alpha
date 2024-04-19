@@ -38,7 +38,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public Bitmap window { get; set; }
 
         public bool initial = true;
-        public bool once = true;
+        public bool once { get; set; }
         public bool clicked = false;
         #endregion Essential
 

@@ -51,7 +51,7 @@ namespace CrystalOSAlpha.Applications.FileSys
         public string SourceFileTemp = "0:\\";
         
         public bool initial = true;
-        public bool once = true;
+        public bool once { get; set; }
         public bool clicked = false;
         public bool temp = false;
 

@@ -35,7 +35,7 @@ namespace CrystalOSAlpha.Applications.Minecraft
         public bool windowed = true;
         public bool rounded = true;
         public bool fullscreen = true;
-        public bool once = true;
+        public bool once { get; set; }
 
         public string source = "";
         public string command = "";

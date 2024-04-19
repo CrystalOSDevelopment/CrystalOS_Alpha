@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using Kernel = CrystalOS_Alpha.Kernel;
 using TaskScheduler = CrystalOSAlpha.Graphics.TaskScheduler;
 
@@ -51,7 +52,7 @@ namespace CrystalOSAlpha.Applications.FileSys
         public bool initial = true;
         public bool clicked = false;
         public bool temp = true;
-        public bool once = true;
+        public bool once { get; set; }
         public bool Cut = false;
 
         public Bitmap canvas;
@@ -65,11 +66,15 @@ namespace CrystalOSAlpha.Applications.FileSys
 
         public List<string> cmd_history = new List<string>();
         public List<string> MItems = new List<string>();
+        public List<string> History = new List<string>();
+        public List<string> HistoryForward = new List<string>();
         public List<Button_prop> Buttons = new List<Button_prop>();
         public List<VerticalScrollbar> Scroll = new List<VerticalScrollbar>();
         public List<Structure> Items = new List<Structure>();
         public List<RightClick> rightClicks = new List<RightClick>();
         public List<TextBox> TextBoxes = new List<TextBox>();
+
+        public string returnvalue = null;
 
         public void App()
         {
@@ -104,15 +109,50 @@ namespace CrystalOSAlpha.Applications.FileSys
                     {
                         Button.Button_render(canvas, button.X, button.Y, button.Width, button.Height, Color.White.ToArgb(), button.Text);
 
-                        switch (button.Text)
+                        switch (button.ID)
                         {
+                            case "Home":
+                                TextBoxes[1].Text = "0:\\";
+                                Route = "0:\\";
+                                break;
+                            case "Wastebasket":
+                                TextBoxes[1].Text = "0:\\User\\" + Global_integers.Username + "\\Wastebasket";
+                                Route = "0:\\User\\" + Global_integers.Username + "\\Wastebasket";
+                                break;
+                            case "Security Area":
+                                TextBoxes[1].Text = "0:\\User\\" + Global_integers.Username + "\\SecurityArea";
+                                Route = "0:\\User\\" + Global_integers.Username + "\\SecurityArea";
+                                break;
                             case "Back":
-                                if(Route.Length > 3)
+                                if(History.Count > 0)
                                 {
-                                    Route = Route.Remove(Route.LastIndexOf("\\"));
+                                    HistoryForward.Add(History[^1]);
+                                    History.RemoveAt(History.Count - 1);
+                                    if(History.Count > 0)
+                                    {
+                                        TextBoxes[1].Text = History[^1];
+                                        Route = History[^1];
+                                    }
+                                    else
+                                    {
+                                        History.Clear();
+                                        History = new List<string>
+                                        {
+                                            "0:\\"
+                                        };
+                                        TextBoxes[1].Text = History[^1];
+                                        Route = History[^1];
+                                    }
                                 }
                                 break;
                             case "Forward":
+                                if(HistoryForward.Count > 0)
+                                {
+                                    History.Add(HistoryForward[^1]);
+                                    HistoryForward.RemoveAt(HistoryForward.Count - 1);
+                                    TextBoxes[1].Text = History[^1];
+                                    Route = History[^1];
+                                }
                                 break;
                         }
                     }
@@ -152,283 +192,399 @@ namespace CrystalOSAlpha.Applications.FileSys
                 temp = true;
             }
 
-            foreach (var button in Buttons)
+            if(TaskScheduler.Apps.FindAll(d => d.name.Contains("Error")).Count == 0)
             {
-                if (MouseManager.MouseState == MouseState.Left)
+                foreach (var button in Buttons)
                 {
-                    if (MouseManager.X > x + button.X && MouseManager.X < x + button.X + button.Width)
+                    if (MouseManager.MouseState == MouseState.Left)
                     {
-                        if (MouseManager.Y > y + button.Y && MouseManager.Y < y + button.Y + button.Height)
+                        if (MouseManager.X > x + button.X && MouseManager.X < x + button.X + button.Width)
                         {
-                            if (clicked == false)
+                            if (MouseManager.Y > y + button.Y && MouseManager.Y < y + button.Y + button.Height)
                             {
-                                button.Clicked = true;
-                                once = true;
-                                clicked = true;
+                                if (clicked == false)
+                                {
+                                    button.Clicked = true;
+                                    once = true;
+                                    clicked = true;
+                                }
                             }
                         }
                     }
-                }
-                else if(MouseManager.MouseState == MouseState.None)
-                {
-                    if(button.Clicked == true)
+                    else if(MouseManager.MouseState == MouseState.None)
                     {
-                        button.Clicked = false;
-                        once = true;
+                        if(button.Clicked == true)
+                        {
+                            button.Clicked = false;
+                            once = true;
+                        }
+
                     }
-
                 }
-            }
 
-            foreach (var vscroll in Scroll)
-            {
-                if (vscroll.CheckClick((int)MouseManager.X - x, (int)MouseManager.Y - y))
+                foreach (var vscroll in Scroll)
                 {
-                    temp = true;
-                }
-            }
-
-            foreach (var Box in TextBoxes)
-            {
-                if (Box.Clciked(x + Box.X, y + Box.Y) == true && clicked == false)
-                {
-                    foreach (var box2 in TextBoxes)
+                    if (vscroll.CheckClick((int)MouseManager.X - x, (int)MouseManager.Y - y))
                     {
-                        box2.Selected = false;
+                        temp = true;
                     }
-                    clicked = true;
-                    Box.Selected = true;
                 }
-            }
 
-            if (MouseManager.MouseState == MouseState.None && clicked == true)
-            {
-                once = true;
-                clicked = false;
-            }
-
-            if (TaskScheduler.Apps[^1] == this)
-            {
-                KeyEvent key;
-                if (KeyboardManager.TryReadKey(out key))
+                foreach (var Box in TextBoxes)
                 {
-                    if (key.Key == ConsoleKeyEx.Enter)
+                    if (Box.Clciked(x + Box.X, y + Box.Y) == true && clicked == false)
                     {
-                        Route = TextBoxes[1].Text;
+                        foreach (var box2 in TextBoxes)
+                        {
+                            box2.Selected = false;
+                        }
+                        clicked = true;
+                        Box.Selected = true;
+                    }
+                }
+
+                if (MouseManager.MouseState == MouseState.None && clicked == true)
+                {
+                    once = true;
+                    clicked = false;
+                }
+
+                if (TaskScheduler.Apps[^1] == this)
+                {
+                    KeyEvent key;
+                    if (KeyboardManager.TryReadKey(out key))
+                    {
+                        if (key.Key == ConsoleKeyEx.Enter)
+                        {
+                            Route = TextBoxes[1].Text;
+                        }
+                        else
+                        {
+                            foreach (var box in TextBoxes)
+                            {
+                                if (box.Selected == true)
+                                {
+                                    box.Text = Keyboard.HandleKeyboard(box.Text, key);
+                                    temp = true;
+                                }
+                            }
+                        }
+                        Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
+                        temp = true;
+                    }
+                }
+                if(temp == true)
+                {
+                    Items.Clear();
+                    try
+                    {
+                        foreach (DirectoryEntry d in Kernel.fs.GetDirectoryListing(Route))
+                        {
+                            if (d.mEntryType == DirectoryEntryTypeEnum.Directory)
+                            {
+                                //Selecting if the file/directory matches the criteria of textbox 0
+                                if (TextBoxes[0].Text == "")
+                                {
+                                    Items.Add(new Structure(d.mName, d.mFullPath, Opt.Folder));
+                                }
+                                else if(TextBoxes[0].Text != "" && !TextBoxes[0].Text.Contains("."))
+                                {
+                                    if (d.mName.ToLower().Contains(TextBoxes[0].Text.ToLower()))
+                                    {
+                                        Items.Add(new Structure(d.mName, d.mFullPath, Opt.Folder));
+                                    }
+                                }
+                            }
+                        }
+                        foreach (DirectoryEntry d in Kernel.fs.GetDirectoryListing(Route))
+                        {
+                            if (d.mEntryType == DirectoryEntryTypeEnum.File)
+                            {
+                                //Selecting if the file/directory matches the criteria of textbox 0
+                                if (TextBoxes[0].Text == "" || TextBoxes[0].Text.StartsWith("*") && !TextBoxes[0].Text.Contains("."))
+                                {
+                                    Items.Add(new Structure(d.mName, d.mFullPath, Opt.File));
+                                }
+                                else if (TextBoxes[0].Text.Contains("."))
+                                {
+                                    string[] sides = TextBoxes[0].Text.Split(".");
+                                    if (sides[0] == "*" && d.mName.ToLower().Contains("." + sides[1].ToLower()))
+                                    {
+                                        Items.Add(new Structure(d.mName, d.mFullPath, Opt.File));
+                                    }
+                                    else if (d.mName.ToLower().Contains(sides[0]) && d.mName.ToLower().Contains("." + sides[1].ToLower()))
+                                    {
+                                        Items.Add(new Structure(d.mName, d.mFullPath, Opt.File));
+                                    }
+                                }
+                                else
+                                {
+                                    if (d.mName.ToLower().Contains(TextBoxes[0].Text.ToLower()))
+                                    {
+                                        Items.Add(new Structure(d.mName, d.mFullPath, Opt.File));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        TaskScheduler.Apps.Add(new MsgBox(999, ImprovedVBE.width / 2 - 200, ImprovedVBE.height / 2 - 100, 400, 200, "Error!", ex.Message, icon));
+                        Route = "0:\\";
+                        TextBoxes[1].Text = "0:\\";
+                    }
+                    Array.Fill(Main.RawData, ImprovedVBE.colourToNumber(36, 36, 36));
+
+                    Bitmap Folder = new Bitmap(30, 30, ColorDepth.ColorDepth32);
+                    Array.Fill(Folder.RawData, ImprovedVBE.colourToNumber(36, 36, 36));
+                    ImprovedVBE.DrawImageAlpha(ImprovedVBE.ScaleImageStock(Resources.Folder, 28, 28), 0, 0, Folder);
+
+                    Bitmap File = new Bitmap(30, 30, ColorDepth.ColorDepth32);
+                    Array.Fill(File.RawData, ImprovedVBE.colourToNumber(36, 36, 36));
+                    ImprovedVBE.DrawImageAlpha(ImprovedVBE.ScaleImageStock(Resources.File, 28, 28), 0, 0, File);
+
+                    int x_off = 14;
+                    int y_off = 9 - Scroll[0].Value;
+                    int indicator = 0;
+                    foreach(var entry in Items)
+                    {
+                        entry.X = x_off;
+                        entry.Y = y_off;
+                        if (entry.fullPath == Selected.fullPath)
+                        {
+                            ImprovedVBE.DrawFilledRectangle(Main, ImprovedVBE.colourToNumber(69, 69, 69), x_off - 5, y_off - 5, 65, 65, false);
+                        }
+                        if (entry.type == Opt.Folder)
+                        {
+                            ImprovedVBE.DrawImage(Folder, x_off, y_off, Main);
+                            if(entry.name.Length > 5)
+                            {
+                                BitFont.DrawBitFontString(Main, "ArialCustomCharset16", Color.White, entry.name.Remove(5) + "...", x_off, y_off + 38);
+                            }
+                            else
+                            {
+                                BitFont.DrawBitFontString(Main, "ArialCustomCharset16", Color.White, entry.name, x_off, y_off + 38);
+                            }
+                        }
+                        if(entry.type == Opt.File)
+                        {
+                            ImprovedVBE.DrawImage(File, x_off, y_off, Main);
+                            if (entry.name.Length > 5)
+                            {
+                                BitFont.DrawBitFontString(Main, "ArialCustomCharset16", Color.White, entry.name.Remove(5) + "...", x_off, y_off + 38);
+                            }
+                            else
+                            {
+                                BitFont.DrawBitFontString(Main, "ArialCustomCharset16", Color.White, entry.name.Remove(entry.name.Length - 4), x_off, y_off + 38);
+                            }
+                        }
+                        x_off += 62;
+                        if(x_off / 62 >= 7)
+                        {
+                            y_off += 60;
+                            x_off = 9;
+                        }
+                        indicator++;
+                    }
+                    ImprovedVBE.DrawImage(Main, 126, 77, window);
+                    //Render scrollbar
+                    foreach (var vscroll in Scroll)
+                    {
+                        vscroll.Render(window);
+                    }
+                    foreach(var Box in TextBoxes)
+                    {
+                        Box.Box(window, Box.X, Box.Y);
+                    }
+                    ImprovedVBE.DrawImageAlpha(Logo, 615, 24, window);
+                    temp = false;
+                }
+
+                #region Rename & Create file
+                var Rename = WindowMessenger.Recieve("Rename", "FileSystem");
+                var Create = WindowMessenger.Recieve("Create", "FileSystem");
+                if (Rename != null)
+                {
+                    returnvalue = Rename.Message;
+                    WindowMessenger.Message.RemoveAll(d => d.Message == Rename.Message);
+                    Create = null;
+                }
+                if (Create != null)
+                {
+                    returnvalue = Create.Message;
+                    WindowMessenger.Message.RemoveAll(d => d.Message == Create.Message);
+                    Rename = null;
+                }
+                if (Rename != null)
+                {
+                    if(Rename.Message != "")
+                    {
+                        byte[] content = File.ReadAllBytes(Selected.fullPath);
+                        File.Delete(Selected.fullPath);
+                        string s = Selected.fullPath.Replace(Selected.name, "");
+                        File.Create(s + returnvalue);
+                        File.WriteAllBytes(s + returnvalue, content);
                     }
                     else
                     {
-                        foreach (var box in TextBoxes)
-                        {
-                            if (box.Selected == true)
-                            {
-                                box.Text = Keyboard.HandleKeyboard(box.Text, key);
-                                temp = true;
-                            }
-                        }
+                        TaskScheduler.Apps.Add(new MsgBox(999, ImprovedVBE.width / 2 - 200, ImprovedVBE.height / 2 - 100, 400, 200, "Error", "Failed to rename file:\n    Wrong filename format", icon));
                     }
-                    Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
                     temp = true;
                 }
-            }
-            if(temp == true)
-            {
-                Items.Clear();
-                foreach (DirectoryEntry d in Kernel.fs.GetDirectoryListing(Route))
+                else if (Create != null)
                 {
-                    if (d.mEntryType == DirectoryEntryTypeEnum.Directory)
+                    if(Create.Message != "")
                     {
-                        Items.Add(new Structure(d.mName, d.mFullPath, Opt.Folder));
-                    }
-                }
-                foreach (DirectoryEntry d in Kernel.fs.GetDirectoryListing(Route))
-                {
-                    if (d.mEntryType == DirectoryEntryTypeEnum.File)
-                    {
-                        Items.Add(new Structure(d.mName, d.mFullPath, Opt.File));
-                    }
-                }
-                Array.Fill(Main.RawData, ImprovedVBE.colourToNumber(36, 36, 36));
-
-                Bitmap Folder = new Bitmap(30, 30, ColorDepth.ColorDepth32);
-                Array.Fill(Folder.RawData, ImprovedVBE.colourToNumber(36, 36, 36));
-                ImprovedVBE.DrawImageAlpha(ImprovedVBE.ScaleImageStock(Resources.Folder, 28, 28), 0, 0, Folder);
-
-                Bitmap File = new Bitmap(30, 30, ColorDepth.ColorDepth32);
-                Array.Fill(File.RawData, ImprovedVBE.colourToNumber(36, 36, 36));
-                ImprovedVBE.DrawImageAlpha(ImprovedVBE.ScaleImageStock(Resources.File, 28, 28), 0, 0, File);
-
-                int x_off = 14;
-                int y_off = 9 - Scroll[0].Value;
-                int indicator = 0;
-                foreach(var entry in Items)
-                {
-                    entry.X = x_off;
-                    entry.Y = y_off;
-                    if (entry.fullPath == Selected.fullPath)
-                    {
-                        ImprovedVBE.DrawFilledRectangle(Main, ImprovedVBE.colourToNumber(69, 69, 69), x_off - 5, y_off - 5, 65, 65, false);
-                    }
-                    if (entry.type == Opt.Folder)
-                    {
-                        ImprovedVBE.DrawImage(Folder, x_off, y_off, Main);
-                        if(entry.name.Length > 5)
+                        if (Route.EndsWith("\\"))
                         {
-                            BitFont.DrawBitFontString(Main, "ArialCustomCharset16", Color.White, entry.name.Remove(5) + "...", x_off, y_off + 38);
+                            File.Create(Route + Create.Message);
                         }
                         else
                         {
-                            BitFont.DrawBitFontString(Main, "ArialCustomCharset16", Color.White, entry.name, x_off, y_off + 38);
+                            File.Create(Route + "\\" + Create.Message);
                         }
                     }
-                    if(entry.type == Opt.File)
+                    else
                     {
-                        ImprovedVBE.DrawImage(File, x_off, y_off, Main);
-                        if (entry.name.Length > 5)
-                        {
-                            BitFont.DrawBitFontString(Main, "ArialCustomCharset16", Color.White, entry.name.Remove(5) + "...", x_off, y_off + 38);
-                        }
-                        else
-                        {
-                            BitFont.DrawBitFontString(Main, "ArialCustomCharset16", Color.White, entry.name.Remove(entry.name.Length - 4), x_off, y_off + 38);
-                        }
+                        TaskScheduler.Apps.Add(new MsgBox(999, ImprovedVBE.width / 2 - 200, ImprovedVBE.height / 2 - 100, 400, 200, "Error", "Failed to create file:\n    Wrong filename format", icon));
                     }
-                    x_off += 62;
-                    if(x_off / 62 >= 7)
-                    {
-                        y_off += 60;
-                        x_off = 9;
-                    }
-                    indicator++;
+                    temp = true;
                 }
-                ImprovedVBE.DrawImage(Main, 126, 77, window);
-                //Render scrollbar
-                foreach (var vscroll in Scroll)
-                {
-                    vscroll.Render(window);
-                }
-                foreach(var Box in TextBoxes)
-                {
-                    Box.Box(window, Box.X, Box.Y);
-                }
-                ImprovedVBE.DrawImageAlpha(Logo, 615, 24, window);
-                temp = false;
-            }
+                returnvalue = null;
+                #endregion Rename & Create file
 
-            //Click Detection:
-            if(MouseManager.MouseState == MouseState.Left)
-            {
-                //Going thru every item in Items
-                foreach(var entry in Items)
+                //Click Detection:
+                if (MouseManager.MouseState == MouseState.Left)
                 {
-                    if(MouseManager.X > x + 126 + entry.X && MouseManager.X < x + 126 + entry.X + 35)
+                    //Going thru every item in Items
+                    foreach(var entry in Items)
                     {
-                        if (MouseManager.Y > y + 77 + entry.Y && MouseManager.Y < y + 77 + entry.Y + 50 && entry.Y > 0 && entry.Y < Main.Height - 50)
+                        if(MouseManager.X > x + 126 + entry.X && MouseManager.X < x + 126 + entry.X + 35)
                         {
-                            if(clicked == false)
+                            if (MouseManager.Y > y + 77 + entry.Y && MouseManager.Y < y + 77 + entry.Y + 50 && entry.Y > 0 && entry.Y < Main.Height - 50)
                             {
-                                foreach(var v in Items)
+                                if(clicked == false)
                                 {
-                                    v.Selected = false;
-                                }
-                                if(entry.type == Opt.File)
-                                {
-                                    if (entry.name.ToLower().EndsWith(".html"))
+                                    foreach(var v in Items)
                                     {
-                                        WebscapeNavigator.Webscape wn = new WebscapeNavigator.Webscape();
-                                        wn.content = File.ReadAllText(entry.fullPath);
-                                        wn.x = 100;
-                                        wn.y = 100;
-                                        wn.width = 700;
-                                        wn.height = 420;
-                                        wn.z = 999;
-                                        wn.source = entry.fullPath;
-                                        wn.icon = ImprovedVBE.ScaleImageStock(Resources.Notepad, 56, 56);
-                                        wn.name = "Webs... - " + entry.name;
+                                        v.Selected = false;
+                                    }
+                                    if(entry.type == Opt.File)
+                                    {
+                                        if (entry.name.ToLower().EndsWith(".html"))
+                                        {
+                                            WebscapeNavigator.Webscape wn = new WebscapeNavigator.Webscape();
+                                            wn.content = File.ReadAllText(entry.fullPath);
+                                            wn.x = 100;
+                                            wn.y = 100;
+                                            wn.width = 700;
+                                            wn.height = 420;
+                                            wn.z = 999;
+                                            wn.source = entry.fullPath;
+                                            wn.icon = ImprovedVBE.ScaleImageStock(Resources.Notepad, 56, 56);
+                                            wn.name = "Webs... - " + entry.name;
 
-                                        TaskScheduler.Apps.Add(wn);
-                                    }
-                                    else if (entry.name.ToLower().EndsWith(".cmd"))
-                                    {
-                                        CSharp c = new CSharp();
-                                        c.Executor(File.ReadAllText(entry.fullPath));
-                                    }
-                                    else if (entry.name.ToLower().EndsWith(".app"))
-                                    {
-                                        TaskScheduler.Apps.Add(new Window(100, 100, 999, 350, 200, 0, "Untitled", false, icon, File.ReadAllText(entry.fullPath)));
-                                    }
-                                    else if (entry.name.ToLower().EndsWith(".bin"))
-                                    {
+                                            TaskScheduler.Apps.Add(wn);
+                                        }
+                                        else if (entry.name.ToLower().EndsWith(".cmd"))
+                                        {
+                                            CSharp c = new CSharp();
+                                            c.Executor(File.ReadAllText(entry.fullPath));
+                                        }
+                                        else if (entry.name.ToLower().EndsWith(".app"))
+                                        {
+                                            TaskScheduler.Apps.Add(new Window(100, 100, 999, 350, 200, 0, "Untitled", false, icon, File.ReadAllText(entry.fullPath)));
+                                        }
+                                        else if (entry.name.ToLower().EndsWith(".bin"))
+                                        {
 
-                                    }
-                                    else if (entry.name.ToLower().EndsWith(".bmp"))
-                                    {
-                                        //Time to write an image viewer app!
-                                        //Not today loser!
-                                    }
-                                    else
-                                    {
-                                        Applications.Notepad.Notepad n = new Notepad.Notepad();
-                                        n.content = File.ReadAllText(entry.fullPath);
-                                        n.x = 100;
-                                        n.y = 100;
-                                        n.width = 700;
-                                        n.height = 420;
-                                        n.z = 999;
-                                        n.source = entry.fullPath;
-                                        n.icon = ImprovedVBE.ScaleImageStock(Resources.Notepad, 56, 56);
-                                        n.name = "Note... - " + entry.name;
+                                        }
+                                        else if (entry.name.ToLower().EndsWith(".bmp"))
+                                        {
+                                            //Time to write an image viewer app!
+                                            //Not today loser!
+                                        }
+                                        else
+                                        {
+                                            Applications.Notepad.Notepad n = new Notepad.Notepad();
+                                            n.content = File.ReadAllText(entry.fullPath);
+                                            n.x = 100;
+                                            n.y = 100;
+                                            n.width = 700;
+                                            n.height = 420;
+                                            n.z = 999;
+                                            n.source = entry.fullPath;
+                                            n.icon = ImprovedVBE.ScaleImageStock(Resources.Notepad, 56, 56);
+                                            n.name = "Note... - " + entry.name;
 
-                                        TaskScheduler.Apps.Add(n);
+                                            TaskScheduler.Apps.Add(n);
+                                        }
                                     }
-                                }
-                                else if(entry.type == Opt.Folder)
-                                {
-                                    TextBoxes[1].Text = entry.fullPath;
-                                    Route = entry.fullPath;
+                                    else if(entry.type == Opt.Folder)
+                                    {
+                                        TextBoxes[1].Text = entry.fullPath;
+                                        Route = entry.fullPath;
+                                        HistoryForward.Clear();
+                                        History.Add(entry.fullPath);
+                                        temp = true;
+                                    }
+                                    entry.Selected = true;
+                                    clicked = true;
                                     temp = true;
                                 }
-                                entry.Selected = true;
-                                clicked = true;
+                            }
+                        }
+                    }
+                    //Click on disk entries
+                    int Top = 120;
+                    for (int i = 0; i < Kernel.fs.GetDisks().Count; i++)
+                    {
+                        if(MouseManager.X > x + 3 + 37 && MouseManager.X < x + 3 + side.Width)
+                        {
+                            if (MouseManager.Y > y + 77 + Top && MouseManager.Y < y + 77 + Top + 22)
+                            {
+                                TextBoxes[1].Text = i + ":\\";
+                                Route = i + ":\\";
                                 temp = true;
                             }
                         }
+                        Top += 22;
                     }
-                }
-                //Click on disk entries
-                int Top = 120;
-                for (int i = 0; i < Kernel.fs.GetDisks().Count; i++)
-                {
-                    if(MouseManager.X > x + 3 + 37 && MouseManager.X < x + 3 + side.Width)
+                    //Click on shortcuts
+                    Top = 27;
+                    for (int i = 0; i < 4; i++)
                     {
-                        if (MouseManager.Y > y + 77 + Top && MouseManager.Y < y + 77 + Top + 22)
+                        if (MouseManager.X > x + 3 + 37 && MouseManager.X < x + 3 + side.Width)
                         {
-                            TextBoxes[1].Text = i + ":\\";
-                            Route = i + ":\\";
-                            temp = true;
-                        }
-                    }
-                    Top += 22;
-                }
-                //Click on shortcuts
-                Top = 104;
-                for (int i = 0; i < 4; i++)
-                {
-                    if (MouseManager.X > x + 3 + 37 && MouseManager.X < x + 3 + side.Width)
-                    {
-                        if (MouseManager.Y > y + 77 + Top && MouseManager.Y < y + 77 + Top + 22)
-                        {
-                            switch (i)
+                            if (MouseManager.Y > y + 77 + Top && MouseManager.Y < y + 77 + Top + 22)
                             {
-                                case 0:
-                                    TextBoxes[1].Text = "0:\\User\\" + Global_integers.Username + "\\Favorites";
-                                    Route = "0:\\User\\" + Global_integers.Username + "\\Favorites";
-                                    temp = true;
-                                    break;
+                                switch (i)
+                                {
+                                    case 0:
+                                        TextBoxes[1].Text = "0:\\User\\" + Global_integers.Username + "\\Favorites";
+                                        Route = "0:\\User\\" + Global_integers.Username + "\\Favorites";
+                                        temp = true;
+                                        break;
+                                    case 1:
+                                        TextBoxes[1].Text = "0:\\User\\" + Global_integers.Username + "\\Documents";
+                                        Route = "0:\\User\\" + Global_integers.Username + "\\Documents";
+                                        temp = true;
+                                        break;
+                                    case 2:
+                                        TextBoxes[1].Text = "0:\\User\\" + Global_integers.Username + "\\Pictures";
+                                        Route = "0:\\User\\" + Global_integers.Username + "\\Pictures";
+                                        temp = true;
+                                        break;
+                                    case 3:
+                                        TextBoxes[1].Text = "0:\\User\\" + Global_integers.Username + "\\Films";
+                                        Route = "0:\\User\\" + Global_integers.Username + "\\Films";
+                                        temp = true;
+                                        break;
+                                }
                             }
                         }
+                        Top += 15;
                     }
-                    Top += 22;
                 }
             }
             ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
@@ -561,9 +717,9 @@ namespace CrystalOSAlpha.Applications.FileSys
                                         "Copy",
                                         "Paste",
                                         "Cut",
-                                        "Move",
                                         "Rename",
-                                        "Delete"
+                                        "Delete",
+                                        "Create"
                                     };
                                     if (!rightClicks.Exists(d => d.ID == "FIFSOPerations"))
                                     {
@@ -600,6 +756,7 @@ namespace CrystalOSAlpha.Applications.FileSys
                                 case 0:
                                     //Copy file name and path
                                     ToCopy = Selected.fullPath;
+                                    Found = true;
                                     break;
                                 case 1:
                                     //Paste a file
@@ -623,15 +780,24 @@ namespace CrystalOSAlpha.Applications.FileSys
                                             Cut = false;
                                         }
                                     }
+                                    Found = true;
                                     break;
                                 case 2:
                                     //Cut out a file
                                     ToCopy = Selected.fullPath;
                                     Cut = true;
+                                    Found = true;
                                     break;
-                                case 5:
+                                case 3:
+                                    TaskScheduler.Apps.Add(new Rename(ImprovedVBE.width / 2 - 200, ImprovedVBE.height / 2 - 100, 400, 200, "Rename", "Rename file: " + Selected.name, icon));
+                                    break;
+                                case 4:
                                     //TODO: Ask the user if he actually wants to deleate it. And to place it into Wastebasket or to remove it entirely.
                                     File.Delete(Selected.fullPath);
+                                    Found = true;
+                                    break;
+                                case 5:
+                                    TaskScheduler.Apps.Add(new Rename(ImprovedVBE.width / 2 - 200, ImprovedVBE.height / 2 - 100, 400, 200, "Create", "File name: ", icon));
                                     break;
                             }
                             break;
@@ -640,16 +806,13 @@ namespace CrystalOSAlpha.Applications.FileSys
                     {
                         Found = true;
                     }
-                    else
-                    {
-                        Found = false;
-                    }
                 }
                 Pointer++;
             }
             if(Found == true)
             {
                 rightClicks.Clear();
+                temp = true;
             }
         }
     }

@@ -35,7 +35,7 @@ namespace CrystalOSAlpha.Applications.WebscapeNavigator
 
         public bool initial = true;
         public bool clicked = false;
-        public bool once = true;
+        public bool once { get; set; }
         public bool temp = true;
 
         public string content = "";

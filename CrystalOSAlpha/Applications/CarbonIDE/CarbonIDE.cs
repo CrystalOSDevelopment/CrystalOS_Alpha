@@ -93,7 +93,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
         public bool initial = true;
         public bool clicked = false;
-        public bool once = true;
+        public bool once { get; set; }
         public bool temp = true;
 
         public List<Button_prop> Buttons = new List<Button_prop>();

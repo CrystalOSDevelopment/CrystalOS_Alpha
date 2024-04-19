@@ -26,7 +26,7 @@ namespace CrystalOSAlpha.Applications.Gameboy
 
         public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
 
-        public bool once = true;
+        public bool once { get; set; }
         public bool Power_on = true;
         public bool initial = true;
         public bool clicked = false;

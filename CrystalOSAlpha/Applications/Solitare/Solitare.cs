@@ -15,6 +15,7 @@ namespace CrystalOSAlpha.Applications.Solitare
         public string name { get; set; }
         public bool minimised { get; set; }
         public bool movable { get; set; }
+        public bool once { get; set; }
         public Bitmap icon { get; set; }
         public Bitmap window { get; set; }
         #endregion core_values

@@ -31,7 +31,7 @@ namespace CrystalOSAlpha.Applications.Calculator
         
         public bool initial = true;
         public bool clicked = false;
-        public bool once = true;
+        public bool once { get; set; }
 
         public Bitmap canvas;
         public Bitmap back_canvas;

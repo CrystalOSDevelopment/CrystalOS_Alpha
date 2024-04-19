@@ -1234,7 +1234,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                     c.y = 100;
                     c.width = 200;
                     c.height = 380;
-                    c.name = "Calc...";
+                    c.name = "Calculator";
                     c.z = 999;
                     c.icon = Icon;
                     TaskScheduler.Apps.Add(c);
@@ -1246,7 +1246,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                     d.y = 100;
                     d.width = 650;
                     d.height = 380;
-                    d.name = "File...";
+                    d.name = "File Explorer";
                     d.z = 999;
                     d.icon = Icon;
                     TaskScheduler.Apps.Add(d);
@@ -1271,7 +1271,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                     r.desk_ID = 0;
                     r.width = 800;
                     r.height = 420;
-                    r.name = "Mine...";
+                    r.name = "Minecraft";
                     r.minimised = false;
                     r.z = 999;
                     r.Layers.Add(layer);
@@ -1297,7 +1297,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                     settings.y = 100;
                     settings.width = 550;
                     settings.height = 380;
-                    settings.name = "Sett...";
+                    settings.name = "Settings";
                     settings.z = 999;
                     settings.icon = Icon;
                     TaskScheduler.Apps.Add(settings);
@@ -1321,7 +1321,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                     Notepad.y = 100;
                     Notepad.width = 700;
                     Notepad.height = 420;
-                    Notepad.name = "Note...";
+                    Notepad.name = "Notepad";
                     Notepad.z = 999;
                     Notepad.icon = Icon;
                     TaskScheduler.Apps.Add(Notepad);
@@ -1333,7 +1333,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                     Terminal.y = 100;
                     Terminal.width = 700;
                     Terminal.height = 420;
-                    Terminal.name = "Term...";
+                    Terminal.name = "Terminal";
                     Terminal.z = 999;
                     Terminal.icon = Icon;
                     TaskScheduler.Apps.Add(Terminal);
@@ -1365,11 +1365,15 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                     WebscapeNavigator.z = 999;
                     WebscapeNavigator.source = "example.com/index.html";
                     WebscapeNavigator.icon = ImprovedVBE.ScaleImageStock(Resources.Web, 56, 56);
-                    WebscapeNavigator.name = "Webs... - " + "example.com/index.html";
+                    WebscapeNavigator.name = "Webscape Navigator";
 
                     TaskScheduler.Apps.Add(WebscapeNavigator);
                     MenuOpened = false;
                     break;
+            }
+            if (MenuOpened == false)
+            {
+                TaskScheduler.Apps[^1].once = true;
             }
 
         }
