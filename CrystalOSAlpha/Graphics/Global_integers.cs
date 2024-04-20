@@ -14,7 +14,7 @@ namespace CrystalOSAlpha.Graphics
         public static int G = 60;
         public static int B = 60;
 
-        //
+        //Taskbar color
         public static int TaskBarR = 60;
         public static int TaskBarG = 60;
         public static int TaskBarB = 60;

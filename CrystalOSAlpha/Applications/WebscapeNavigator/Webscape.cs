@@ -45,8 +45,9 @@ namespace CrystalOSAlpha.Applications.WebscapeNavigator
         public Bitmap window { get; set; }
         public Bitmap Container;
         
-        public List<Scrollbar_Values> Scroll = new List<Scrollbar_Values>();
+        public List<VerticalScrollbar> Scroll = new List<VerticalScrollbar>();
         public List<Button_prop> Buttons = new List<Button_prop>();
+        public List<TextBox> TextBoxes = new List<TextBox>();
 
         public void App()
         {
@@ -54,7 +55,9 @@ namespace CrystalOSAlpha.Applications.WebscapeNavigator
             {
                 Buttons.Add(new Button_prop(5, 27, 50, 20, "Go", 1));
 
-                Scroll.Add(new Scrollbar_Values(width - 22, 30, 20, height - 60, 0));
+                Scroll.Add(new VerticalScrollbar(width - 22, 52, 20, height - 60, 20, 0, 500));
+
+                TextBoxes.Add(new TextBox(60, 27, width - 84, 20, ImprovedVBE.colourToNumber(60, 60, 60), "", "Url:", TextBox.Options.left, "URL"));
 
                 initial = false;
             }
@@ -91,8 +94,6 @@ namespace CrystalOSAlpha.Applications.WebscapeNavigator
                     }
                 }
 
-                canvas = Scrollbar.Render(canvas, Scroll[0]);
-
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
                 
                 Array.Copy(Container.RawData, 0, Webrendering.Render(Container, content).RawData, 0, Container.RawData.Length);
@@ -125,50 +126,24 @@ namespace CrystalOSAlpha.Applications.WebscapeNavigator
                 }
             }
 
-            foreach (var scv in Scroll)
+            foreach (var vscroll in Scroll)
             {
-                if (MouseManager.MouseState == MouseState.Left)
-                {
-
-                    if (MouseManager.Y > y + scv.y + 42 + scv.Pos && MouseManager.Y < y + scv.y + scv.Pos + 62)
-                    {
-                        if (MouseManager.X > x + scv.x + 2 && MouseManager.X < x + scv.x + scv.Width)
-                        {
-                            if (scv.Clicked == false)
-                            {
-                                scv.Clicked = true;
-                                Reg_Y = (int)MouseManager.Y - y - scv.y - 42 - scv.Pos;
-                            }
-                        }
-                        temp = true;
-                    }
-                }
-                if (MouseManager.MouseState == MouseState.None && scv.Clicked == true)
+                if (vscroll.CheckClick((int)MouseManager.X - x, (int)MouseManager.Y - y))
                 {
                     temp = true;
-                    scv.Clicked = false;
                 }
-                if (scv.Clicked == true && MouseManager.MouseState == MouseState.None)
+            }
+
+            foreach (var Box in TextBoxes)
+            {
+                if (Box.Clciked(x + Box.X, y + Box.Y) == true && clicked == false)
                 {
-                    scv.Clicked = false;
-                }
-                if (MouseManager.Y > y + scv.y + 48 && MouseManager.Y < y + height - 42 && scv.Clicked == true)
-                {
-                    if (scv.Pos >= 0 && scv.Pos <= scv.Height - 44)
+                    foreach (var box2 in TextBoxes)
                     {
-                        scv.Pos = (int)MouseManager.Y - y - scv.y - 42 - Reg_Y;
+                        box2.Selected = false;
                     }
-                    else
-                    {
-                        if (scv.Pos < 0)
-                        {
-                            scv.Pos = 1;
-                        }
-                        else
-                        {
-                            scv.Pos = scv.Height - 44;
-                        }
-                    }
+                    clicked = true;
+                    Box.Selected = true;
                 }
             }
 
@@ -196,8 +171,17 @@ namespace CrystalOSAlpha.Applications.WebscapeNavigator
             if (temp == true)
             {
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
-                window = Scrollbar.Render(window, Scroll[0]);
-                TextBox.Box(window, 60, 27, 331, 20, ImprovedVBE.colourToNumber(60, 60, 60), source, "Url:", TextBox.Options.left);
+                foreach (var vscroll in Scroll)
+                {
+                    vscroll.x = width - 22;
+                    vscroll.Height = height - 60;
+                    vscroll.Render(window);
+                }
+                foreach (var Box in TextBoxes)
+                {
+                    Box.Width = width - 84;
+                    Box.Box(window, Box.X, Box.Y);
+                }
                 ImprovedVBE.DrawImageAlpha(Container, 5, 52, window);
 
                 temp = false;

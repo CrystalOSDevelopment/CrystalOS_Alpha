@@ -43,31 +43,31 @@ namespace CrystalOSAlpha.Applications.Calculator
         {
             if(initial == true)
             {
-                Buttons.Add(new Button_prop(5, 75, 40, 40, "C", 1));
-                Buttons.Add(new Button_prop(50, 75, 40, 40, "Del", 1));
-                Buttons.Add(new Button_prop(95, 75, 40, 40, "+", 1));
-                Buttons.Add(new Button_prop(140, 75, 40, 40, "-", 1));
+                Buttons.Add(new Button_prop(5, 75, 40, 40, "C", 1, "C"));
+                Buttons.Add(new Button_prop(50, 75, 40, 40, "Del", 1, "Del"));
+                Buttons.Add(new Button_prop(95, 75, 40, 40, "+", 1, "+"));
+                Buttons.Add(new Button_prop(140, 75, 40, 40, "-", 1, "-"));
 
-                Buttons.Add(new Button_prop(5, 120, 40, 40, "7", 1));
-                Buttons.Add(new Button_prop(50, 120, 40, 40, "8", 1));
-                Buttons.Add(new Button_prop(95, 120, 40, 40, "9", 1));
-                Buttons.Add(new Button_prop(140, 120, 40, 40, "*", 1));
+                Buttons.Add(new Button_prop(5, 120, 40, 40, "7", 1, "7"));
+                Buttons.Add(new Button_prop(50, 120, 40, 40, "8", 1, "8"));
+                Buttons.Add(new Button_prop(95, 120, 40, 40, "9", 1, "9"));
+                Buttons.Add(new Button_prop(140, 120, 40, 40, "*", 1, "*"));
 
-                Buttons.Add(new Button_prop(5, 165, 40, 40, "4", 1));
-                Buttons.Add(new Button_prop(50, 165, 40, 40, "5", 1));
-                Buttons.Add(new Button_prop(95, 165, 40, 40, "6", 1));
-                Buttons.Add(new Button_prop(140, 165, 40, 40, "/", 1));
+                Buttons.Add(new Button_prop(5, 165, 40, 40, "4", 1, "4"));
+                Buttons.Add(new Button_prop(50, 165, 40, 40, "5", 1, "5"));
+                Buttons.Add(new Button_prop(95, 165, 40, 40, "6", 1, "6"));
+                Buttons.Add(new Button_prop(140, 165, 40, 40, "/", 1, "/"));
 
-                Buttons.Add(new Button_prop(5, 210, 40, 40, "1", 1));
-                Buttons.Add(new Button_prop(50, 210, 40, 40, "2", 1));
-                Buttons.Add(new Button_prop(95, 210, 40, 40, "3", 1));
-                Buttons.Add(new Button_prop(140, 210, 40, 85, "Enter", 1));
+                Buttons.Add(new Button_prop(5, 210, 40, 40, "1", 1, "1"));
+                Buttons.Add(new Button_prop(50, 210, 40, 40, "2", 1, "2"));
+                Buttons.Add(new Button_prop(95, 210, 40, 40, "3", 1, "3"));
+                Buttons.Add(new Button_prop(140, 210, 40, 85, "Enter", 1, "Enter"));
 
-                Buttons.Add(new Button_prop(5, 255, 40, 40, "0", 1));
-                Buttons.Add(new Button_prop(50, 255, 40, 40, ",", 1));
-                Buttons.Add(new Button_prop(95, 255, 40, 40, ")", 1));
+                Buttons.Add(new Button_prop(5, 255, 40, 40, "0", 1, "0"));
+                Buttons.Add(new Button_prop(50, 255, 40, 40, ",", 1, ","));
+                Buttons.Add(new Button_prop(95, 255, 40, 40, ")", 1, ")"));
 
-                Buttons.Add(new Button_prop(5, 300, 40, 40, "(", 1));
+                Buttons.Add(new Button_prop(5, 300, 40, 40, "(", 1, ")"));
 
                 width = 185;
 
@@ -77,8 +77,34 @@ namespace CrystalOSAlpha.Applications.Calculator
             {
                 (canvas, back_canvas, window) = WindowGenerator.Generate(x, y, width, height, CurrentColor, name);
 
+                int ButtonWidth = (width - 25) / 4;
+                int ButtonHeight = (height - 123) / 5;
+                int i = 0;
+                int Line = 0;
                 foreach(var button in Buttons)
                 {
+                    button.Width = ButtonWidth;
+                    if(i == 0)
+                    {
+                        button.X = 5 + ButtonWidth * i;//Buttons[i - 1].X + Buttons[i - 1].Width + 5
+                    }
+                    else
+                    {
+                        button.X = (ButtonWidth + 5) * i + 5;
+                    }
+
+                    button.Height = ButtonHeight;
+                    button.Y = 98 + (ButtonHeight + 5) * Line;
+                    if(i == 3)
+                    {
+                        i = 0;
+                        Line++;
+                    }
+                    else
+                    {
+                        i++;
+                    }
+
                     if(button.Clicked == true)
                     {
                         Button.Button_render(canvas, button.X, button.Y, button.Width, button.Height, Color.White.ToArgb(), button.Text);

@@ -11,6 +11,7 @@ using CrystalOSAlpha.Graphics.Widgets;
 using CrystalOSAlpha.UI_Elements;
 using IL2CPU.API.Attribs;
 using System.Data;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using Sys = Cosmos.System;
@@ -51,6 +52,104 @@ namespace CrystalOS_Alpha
                 Directory.CreateDirectory("0:\\System");
                 File.Create("0:\\System\\FrequentApps.sys");
                 File.WriteAllText("0:\\System\\FrequentApps.sys", "Settings\nGameboy\nMinecraft\nFileSystem");
+                //Customization file
+                if (!File.Exists("0:\\System\\Layout.sys"))
+                {
+                    File.Create("0:\\System\\Layout.sys");
+                    string Layout =
+                        "WindowR=" + Global_integers.R +
+                        "\nWindowG=" + Global_integers.G +
+                        "\nWindowB=" + Global_integers.B +
+                        "\nTaskbarR=" + Global_integers.TaskBarR +
+                        "\nTaskbarG=" + Global_integers.TaskBarG +
+                        "\nTaskbarB=" + Global_integers.TaskBarB +
+                        "\nTaskbarType=" + Global_integers.TaskBarType +
+                        "\nUsername=" + Global_integers.Username +
+                        "\nIconR=" + Global_integers.IconR +
+                        "\nIconG=" + Global_integers.IconG +
+                        "\nIconB=" + Global_integers.IconB +
+                        "\nIconwidth=" + Global_integers.IconWidth +
+                        "\nIconheight=" + Global_integers.IconHeight +
+                        "\nStartcolor=" + Global_integers.StartColor.ToArgb() +
+                        "\nEndcolor=" + Global_integers.EndColor.ToArgb() +
+                        "\nBakground=" + Global_integers.Background_type +
+                        "\nBackgroundcolor=" + Global_integers.Background_color +
+                        "\nTransparency=" + Global_integers.LevelOfTransparency;
+                    File.WriteAllText("0:\\System\\Layout.sys", Layout);
+                }
+                else
+                {
+                    string[] Lines = File.ReadAllLines("0:\\System\\Layout.sys");
+                    foreach(string s in Lines)
+                    {
+                        string[] Split = s.Split('=');
+                        switch(Split[0])
+                        {
+                            case "WindowR":
+                                Global_integers.R = int.Parse(Split[1]);
+                                break;
+                            case "WindowG":
+                                Global_integers.G = int.Parse(Split[1]);
+                                break;
+                            case "WindowB":
+                                Global_integers.B = int.Parse(Split[1]);
+                                break;
+
+                            case "TaskbarR":
+                                Global_integers.TaskBarR = int.Parse(Split[1]);
+                                break;
+                            case "TaskbarG":
+                                Global_integers.TaskBarG = int.Parse(Split[1]);
+                                break;
+                            case "TaskbarB":
+                                Global_integers.TaskBarB = int.Parse(Split[1]);
+                                break;
+
+                            case "TaskbarType":
+                                Global_integers.TaskBarType = Split[1];
+                                break;
+
+                            case "Username":
+                                Global_integers.Username = Split[1];
+                                break;
+
+                            case "IconR":
+                                Global_integers.IconR = int.Parse(Split[1]);
+                                break;
+                            case "IconG":
+                                Global_integers.IconG = int.Parse(Split[1]);
+                                break;
+                            case "IconB":
+                                Global_integers.IconB = int.Parse(Split[1]);
+                                break;
+
+                            case "Iconwidth":
+                                Global_integers.IconWidth = uint.Parse(Split[1]);
+                                break;
+                            case "Iconheight":
+                                Global_integers.IconHeight = uint.Parse(Split[1]);
+                                break;
+
+                            case "Startcolor":
+                                Global_integers.StartColor = Color.FromArgb(int.Parse(Split[1]));
+                                break;
+                            case "Endcolor":
+                                Global_integers.EndColor = Color.FromArgb(int.Parse(Split[1]));
+                                break;
+
+                            case "Bakground":
+                                Global_integers.Background_type = Split[1];
+                                break;
+                            case "Backgroundcolor":
+                                Global_integers.Background_color = Split[1];
+                                break;
+
+                            case "Transparency":
+                                Global_integers.LevelOfTransparency = int.Parse(Split[1]);
+                                break;
+                        }
+                    }
+                }
                 ////Applications folder
                 Directory.CreateDirectory("0:\\Programs");
                 ////CarbonIDE folder
@@ -145,7 +244,6 @@ namespace CrystalOS_Alpha
             ImprovedVBE.DrawImageAlpha(C, (int)MouseManager.X, (int)MouseManager.Y, ImprovedVBE.cover);
 
             ImprovedVBE.display(vbe);
-            vbe.Display();
         }
     }
 }

@@ -19,11 +19,14 @@ namespace CrystalOSAlpha.Graphics
         public static int index = 0;
         public static int x_offset = (int)(TaskManager.Left - TaskManager.X_offset) + 15;
         public static int y_offset = TaskManager.Top - 35;
+        public static int FromX = 0;
+        public static int FromY = 0;
 
         public static Bitmap Preview = new Bitmap(13, 13, ColorDepth.ColorDepth32);
 
         public static bool Clicked = false;
         public static bool get_values = true;
+        public static bool isResizing = false;
 
         public static List<App> Apps = new List<App>();
         public static List<App> AppsQuick = new List<App>();
@@ -50,9 +53,10 @@ namespace CrystalOSAlpha.Graphics
             }
             foreach (var app in Apps)
             {
-                if (app.AppID.ToString().Length == 0)
+                if (app.AppID < 1000)
                 {
                     app.AppID = rnd.Next(1000, 10000);
+                    app.once = true;
                 }
                 if (app.y <= 1)
                 {
@@ -132,12 +136,14 @@ namespace CrystalOSAlpha.Graphics
                 }
                 if(app.movable == true)
                 {
+                    ImprovedVBE.isMoving = true;
                     app.x = (int)MouseManager.X - neg_x;
                     app.y = (int)MouseManager.Y - neg_y;
                     if(MouseManager.MouseState == MouseState.None)
                     {
                         app.movable = false;
                         get_values = true;
+                        ImprovedVBE.isMoving = false;
                     }
                 }
                 index++;
@@ -152,13 +158,54 @@ namespace CrystalOSAlpha.Graphics
                     {
 
                     }
+                    //Resize if every requirement checks out
+                    if(MouseManager.MouseState == MouseState.Left)
+                    {
+                        if(MouseManager.X > app.x + app.width - 10 && MouseManager.X < app.x + app.width)
+                        {
+                            if(MouseManager.Y > app.y + app.height - 10 && MouseManager.Y < app.y + app.height)
+                            {
+                                bool Found = false;
+                                for(int i = counter + 1; i < Apps.Count; i++)
+                                {
+                                    if (Apps[i].minimised == false)
+                                    {
+                                        if(Apps[i].x + Apps[i].width > app.width - 10)
+                                        {
+                                            if(Apps[i].y + Apps[i].height > app.height - 10)
+                                            {
+                                                Found = true;
+                                            }
+                                        }
+                                    }
+                                }
+                                if(Found == false)
+                                {
+                                    FromX = app.x;
+                                    FromY = app.y;
+                                    isResizing = true;
+                                }
+                            }
+                        }
+                        if(isResizing == true)
+                        {
+                            ImprovedVBE.DrawRectangle(ImprovedVBE.cover, FromX, FromY, (int)MouseManager.X - FromX, (int)MouseManager.Y - FromY, 0);
+                        }
+                    }
+                    else if(MouseManager.MouseState == MouseState.None && isResizing == true)
+                    {
+                        if(app.x == FromX && app.y == FromY)
+                        {
+                            app.width = (int)MouseManager.X - FromX;
+                            app.height = (int)MouseManager.Y - FromY;
+                            app.once = true;
+                            FromX = 0;
+                            FromY = 0;
+                            isResizing = false;
+                        }
+                    }
                 }
                 counter++;
-                //if(app.width < 900)
-                //{
-                //    app.width = 900;
-                //    app.once = true;
-                //}
             }
             if(MouseManager.MouseState == MouseState.None && TaskManager.disable == true)
             {

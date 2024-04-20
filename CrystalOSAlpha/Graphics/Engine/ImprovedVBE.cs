@@ -26,29 +26,70 @@ namespace CrystalOSAlpha
         #endregion Wallpaper & Resolution
 
         #region Render to the screen and Clear
+        public static int Counter = 0;
+        public static bool isMoving = false;
         public static void display(VBECanvas c)
         {
-            c.DrawImage(cover, 0, 0);
-            Clear(0);
-            if(Res == true)
+            if(isMoving == false)
             {
-                try
+                c.DrawImage(cover, 0, 0);
+                Clear(0);
+                if (Res == true)
                 {
-                    data = ScaleImageStock(Temp, (uint)width, (uint)height);
-                    cover = ScaleImageStock(Temp, (uint)width, (uint)height);
+                    try
+                    {
+                        data = ScaleImageStock(Temp, (uint)width, (uint)height);
+                        cover = ScaleImageStock(Temp, (uint)width, (uint)height);
 
-                    MouseManager.ScreenWidth = (uint)width;
-                    MouseManager.ScreenHeight = (uint)height;
+                        MouseManager.ScreenWidth = (uint)width;
+                        MouseManager.ScreenHeight = (uint)height;
 
-                    TaskManager.Top = height;
-                    TaskManager.Left = width / 2 + 60;
+                        TaskManager.Top = height;
+                        TaskManager.Left = width / 2 + 60;
+                    }
+                    catch
+                    {
+
+                    }
+
+                    Res = false;
                 }
-                catch
+                c.Display();
+            }
+            else
+            {
+                //This is an artificial delay part which only gets activated when a window is being dragged to avoid tearing
+                if(Counter == 5)
                 {
+                    if(Res == true)
+                    {
+                        try
+                        {
+                            data = ScaleImageStock(Temp, (uint)width, (uint)height);
+                            cover = ScaleImageStock(Temp, (uint)width, (uint)height);
 
+                            MouseManager.ScreenWidth = (uint)width;
+                            MouseManager.ScreenHeight = (uint)height;
+
+                            TaskManager.Top = height;
+                            TaskManager.Left = width / 2 + 60;
+                        }
+                        catch
+                        {
+
+                        }
+
+                        Res = false;
+                    }
+                    c.DrawImage(cover, 0, 0);
+                    c.Display();
+                    Counter = 0;
                 }
-
-                Res = false;
+                else
+                {
+                    Counter++;
+                }
+                Clear(0);
             }
         }
         public static void Clear(int col)
@@ -81,6 +122,15 @@ namespace CrystalOSAlpha
             {
                 DrawPixel(Canvas, (int)(x1 + Math.Cos(angle) * i), (int)(y1 + Math.Sin(angle) * i), color);
             }
+        }
+
+        //Draw a non-filled rectangle
+        public static void DrawRectangle(Bitmap Canvas, int x, int y, int width, int height, int Color)
+        {
+            DrawLine(Canvas, x, y, x + width, y, Color);
+            DrawLine(Canvas, x, y, x, y + height, Color);
+            DrawLine(Canvas, x, y + height, x + width, y + height, Color);
+            DrawLine(Canvas, x + width, y + height, x + width, y, Color);
         }
 
         //Draws a filled recatngle to a given canvas

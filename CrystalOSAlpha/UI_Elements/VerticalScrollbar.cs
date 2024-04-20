@@ -50,6 +50,7 @@ namespace CrystalOSAlpha.UI_Elements
             {
                 ImprovedVBE.DrawFilledRectangle(canvas, ImprovedVBE.colourToNumber(100, 100, 100), x + 2, y + Pos, Width - 4, 20, false);
             }
+            Sensitivity = (float)(((float)MaxVal - (float)MinVal) / ((float)this.Height - 60.0));
             Value = (int)((Pos - 20) * Sensitivity);
         }
         public bool CheckClick(int X, int Y)

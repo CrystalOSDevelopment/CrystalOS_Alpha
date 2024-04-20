@@ -43,6 +43,7 @@ namespace CrystalOSAlpha.Applications.Settings
         public bool initial = true;
         public bool clicked = false;
         public bool once { get; set; }
+        public bool temp = true;
 
         public string ActiveD = "Display";
         public string customres = "";
@@ -158,11 +159,92 @@ namespace CrystalOSAlpha.Applications.Settings
             {
                 (canvas, back_canvas, window) = WindowGenerator.Generate(x, y, width, height, CurrentColor, name);
 
+                Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
+                once = false;
+                temp = true;
+            }
+
+            foreach (var button in Buttons)
+            {
+                if (MouseManager.MouseState == MouseState.Left)
+                {
+                    if (MouseManager.X > x + button.X && MouseManager.X < x + button.X + button.Width)
+                    {
+                        if (MouseManager.Y > y + button.Y && MouseManager.Y < y + button.Y + button.Height)
+                        {
+                            if (clicked == false)
+                            {
+                                button.Clicked = true;
+                                temp = true;
+                                clicked = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            foreach (var button in Res)
+            {
+                if (MouseManager.MouseState == MouseState.Left)
+                {
+                    if (MouseManager.X > x + button.X + 128 && MouseManager.X < x + button.X + button.Width + 128)
+                    {
+                        if (MouseManager.Y > y + button.Y + 100 && MouseManager.Y < y + button.Y + button.Height + 100)
+                        {
+                            if (clicked == false)
+                            {
+                                button.Clicked = true;
+                                temp = true;
+                                clicked = true;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    if(button.Clicked == true && MouseManager.MouseState == MouseState.None)
+                    {
+                        button.Clicked = false;
+                        temp = true;
+                    }
+                }
+            }
+
+            foreach (var vscroll in VerticalScrollbar)
+            {
+                vscroll.Height = height - 72;
+                vscroll.x = width - 34;
+                if (vscroll.CheckClick((int)MouseManager.X - x, (int)MouseManager.Y - y))
+                {
+                    temp = true;
+                }
+            }
+
+            if (TaskScheduler.counter == TaskScheduler.Apps.Count - 1)
+            {
+                KeyEvent key;
+                if (KeyboardManager.TryReadKey(out key))
+                {
+                    customres = Keyboard.HandleKeyboard(customres, key);
+                    temp = true;
+                }
+            }
+
+            if (MouseManager.MouseState == MouseState.None && clicked == true)
+            {
+                temp = true;
+                clicked = false;
+            }
+
+            if(temp == true)
+            {
+                Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
+
                 foreach (var button in Buttons)
                 {
                     if (button.Clicked == true)
                     {
-                        Button.Button_render(canvas, button.X, button.Y, button.Width, button.Height, Color.White.ToArgb(), button.Text);
+                        Button.Button_render(window, button.X, button.Y, button.Width, button.Height, Color.White.ToArgb(), button.Text);
                         switch (button.Text)
                         {
                             case "Display":
@@ -190,7 +272,7 @@ namespace CrystalOSAlpha.Applications.Settings
                     }
                     else
                     {
-                        Button.Button_render(canvas, button.X, button.Y, button.Width, button.Height, button.Color, button.Text);
+                        Button.Button_render(window, button.X, button.Y, button.Width, button.Height, button.Color, button.Text);
                     }
                     if (MouseManager.MouseState == MouseState.None)
                     {
@@ -201,19 +283,20 @@ namespace CrystalOSAlpha.Applications.Settings
                 switch (ActiveD)
                 {
                     case "Display":
-                        BitFont.DrawBitFontString(canvas, "VerdanaCustomCharset24", Color.White, ActiveD, width - BitFont.DrawBitFontString(back_canvas, "VerdanaCustomCharset24", Color.White, ActiveD, 0, 0) - 5, 24);
-                        
-                        BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, "Current resolution: " + ImprovedVBE.width + "x" + ImprovedVBE.height + "x32", 128, 48);
-                        BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, "Available resolutions:", 128, 73);
+                        BitFont.DrawBitFontString(window, "VerdanaCustomCharset24", Color.White, ActiveD, width - BitFont.DrawBitFontString(back_canvas, "VerdanaCustomCharset24", Color.White, ActiveD, 0, 0) - 5, 24);
+
+                        BitFont.DrawBitFontString(window, "ArialCustomCharset16", Color.White, "Current resolution: " + ImprovedVBE.width + "x" + ImprovedVBE.height + "x32", 128, 48);
+                        BitFont.DrawBitFontString(window, "ArialCustomCharset16", Color.White, "Available resolutions:", 128, 73);
                         //Add a resolution selector here
 
-                        Bitmap res = new Bitmap(400, 210, ColorDepth.ColorDepth32);
+                        Bitmap res = new Bitmap((uint)width - 150, 210, ColorDepth.ColorDepth32);
                         Array.Fill(res.RawData, ImprovedVBE.colourToNumber(36, 36, 36));
                         ImprovedVBE.DrawFilledRectangle(res, ImprovedVBE.colourToNumber(60, 60, 60), 2, 2, (int)(res.Width - 4), (int)(res.Height - 4), false);
 
                         #region res buttons
-                        foreach(var button in Res)
+                        foreach (var button in Res)
                         {
+                            button.Width = (int)res.Width - 3;
                             if (button.Clicked == true)
                             {
                                 Button.Button_render(res, button.X, button.Y, button.Width, button.Height, Color.White.ToArgb(), button.Text);
@@ -281,19 +364,19 @@ namespace CrystalOSAlpha.Applications.Settings
                         }
                         #endregion
 
-                        ImprovedVBE.DrawImageAlpha(res, 128, 100, canvas);
+                        ImprovedVBE.DrawImageAlpha(res, 128, 100, window);
 
-                        BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, " Use custom resolution:", 128, 317);
+                        BitFont.DrawBitFontString(window, "ArialCustomCharset16", Color.White, "Use custom resolution:", 128, 317);
 
-                        TextBox.Box(canvas, 128, 338, 157, 20, ImprovedVBE.colourToNumber(60, 60, 60), customres, "Example: 800x600x32", TextBox.Options.left);
+                        TextBox.Box(window, 128, 338, 157, 20, ImprovedVBE.colourToNumber(60, 60, 60), customres, "Example: 800x600x32", TextBox.Options.left);
 
                         break;
                     case "Appearance":
-                        BitFont.DrawBitFontString(canvas, "VerdanaCustomCharset24", Color.White, ActiveD, width - BitFont.DrawBitFontString(back_canvas, "VerdanaCustomCharset24", Color.White, ActiveD, 0, 0) - 5, 24);
+                        BitFont.DrawBitFontString(window, "VerdanaCustomCharset24", Color.White, ActiveD, width - BitFont.DrawBitFontString(back_canvas, "VerdanaCustomCharset24", Color.White, ActiveD, 0, 0) - 5, 24);
 
-                        Bitmap Container = new Bitmap(408, 308, ColorDepth.ColorDepth32);
+                        Bitmap Container = new Bitmap((uint)width - 162, (uint)height - 72, ColorDepth.ColorDepth32);
                         //Copy a clear chunk from canvas
-                        for(int i = 0; i < Container.Height; i++)
+                        for (int i = 0; i < Container.Height; i++)
                         {
                             Array.Copy(canvas.RawData, (62 + i) * canvas.Width + 128, Container.RawData, Container.Width * i, Container.Width);
                         }
@@ -328,13 +411,13 @@ namespace CrystalOSAlpha.Applications.Settings
                             {
                                 button.Y = 212 - VerticalScrollbar[0].Value;
                             }
-                            if(button.Color == ImprovedVBE.data.RawData[^1])
+                            if (button.Color == ImprovedVBE.data.RawData[^1])
                             {
                                 button.Text = "X";
                             }
                             else
                             {
-                                if(button.Text.Length < 2)
+                                if (button.Text.Length < 2)
                                 {
                                     button.Text = "";
                                 }
@@ -361,7 +444,7 @@ namespace CrystalOSAlpha.Applications.Settings
                         BitFont.DrawBitFontString(Container, "VerdanaCustomCharset24", Color.White, "Global color settings", 6, 316 - VerticalScrollbar[0].Value);
                         BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Window color", 6, 344 - VerticalScrollbar[0].Value);
                         //Render every slider
-                        foreach(var v in Slider)
+                        foreach (var v in Slider)
                         {
                             switch (v.ID)
                             {
@@ -454,177 +537,68 @@ namespace CrystalOSAlpha.Applications.Settings
                         BitFont.DrawBitFontString(Container, "VerdanaCustomCharset24", Color.White, "Menubar options", 6, 909 - VerticalScrollbar[0].Value);
                         #endregion Menubar options
                         //Render the Container
-                        ImprovedVBE.DrawImage(Container, 128, 62, canvas);
+                        ImprovedVBE.DrawImage(Container, 128, 62, window);
                         //Render the vertical scrollbar on the window
                         foreach (var vscroll in VerticalScrollbar)
                         {
-                            vscroll.Render(canvas);
+                            vscroll.Render(window);
                         }
                         break;
                     case "Sound":
-                        BitFont.DrawBitFontString(canvas, "VerdanaCustomCharset24", Color.White, ActiveD, width - BitFont.DrawBitFontString(back_canvas, "VerdanaCustomCharset24", Color.White, ActiveD, 0, 0) - 5, 24);
+                        BitFont.DrawBitFontString(window, "VerdanaCustomCharset24", Color.White, ActiveD, width - BitFont.DrawBitFontString(back_canvas, "VerdanaCustomCharset24", Color.White, ActiveD, 0, 0) - 5, 24);
                         break;
                     case "Networking":
-                        BitFont.DrawBitFontString(canvas, "VerdanaCustomCharset24", Color.White, ActiveD, width - BitFont.DrawBitFontString(back_canvas, "VerdanaCustomCharset24", Color.White, ActiveD, 0, 0) - 5, 24);
+                        BitFont.DrawBitFontString(window, "VerdanaCustomCharset24", Color.White, ActiveD, width - BitFont.DrawBitFontString(back_canvas, "VerdanaCustomCharset24", Color.White, ActiveD, 0, 0) - 5, 24);
 
-                        BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, "Not implemented or not in working condition", 128, 75);
-                        //BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, "Attempting to ping google.com - 8.8.8.8", 128, 75);
-
-                        //if(VMTools.IsVMWare == true)
-                        //{
-                        //    int PacketSent = 0;
-                        //    int PacketReceived = 0;
-                        //    int PacketLost = 0;
-                        //    int PercentLoss;
-
-                        //    Address source;
-                        //    Address destination = Address.Parse("8.8.8.8");
-
-                        //    if (destination != null)
-                        //    {
-                        //        source = IPConfig.FindNetwork(destination);
-                        //    }
-                        //    else //Make a DNS request if it's not an IP
-                        //    {
-                        //        var xClient = new DnsClient();
-                        //        xClient.Connect(DNSConfig.DNSNameservers[0]);
-                        //        xClient.SendAsk("google.com");
-                        //        destination = xClient.Receive();
-                        //        xClient.Close();
-
-                        //        if (destination == null)
-                        //        {
-                                
-                        //        }
-
-                        //        source = IPConfig.FindNetwork(destination);
-                        //    }
-                        //    try
-                        //    {
-                        //        var xClient = new ICMPClient();
-                        //        xClient.Connect(destination);
-
-                        //        for (int i = 0; i < 4; i++)
-                        //        {
-                        //            xClient.SendEcho();
-
-                        //            PacketSent++;
-
-                        //            var endpoint = new EndPoint(Address.Zero, 0);
-
-                        //            int second = xClient.Receive(ref endpoint, 4000);
-
-                        //            if (second == -1)
-                        //            {
-                        //                BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, "Failed to recieve ICMP packet: Timeout\n\nNetwork status: Offline", 128, 102);
-                        //                PacketLost++;
-                        //            }
-                        //            else
-                        //            {
-                        //                if (second < 1)
-                        //                {
-                        //                    BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, "Successfuly recieved ICMP packet: " + second + "\n\nNetwork status: Online", 128, 102);
-                        //                }
-                        //                else if (second >= 1)
-                        //                {
-                        //                    BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, "Successfuly recieved ICMP packet: " + second + "\n\nNetwork status: Online", 128, 102);
-                        //                }
-
-                        //                PacketReceived++;
-                        //            }
-                        //        }
-
-                        //        xClient.Close();
-                        //    }
-                        //    catch
-                        //    {
-                            
-                        //    }
-
-                        //    PercentLoss = 25 * PacketLost;
-                        //}
-                        //BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, NetworkConfiguration.CurrentAddress.ToString(), 128, 48);
+                        BitFont.DrawBitFontString(window, "ArialCustomCharset16", Color.White, "Not implemented or not in working condition", 128, 75);
+                        
                         break;
                     case "About OS":
-                        BitFont.DrawBitFontString(canvas, "VerdanaCustomCharset24", Color.White, ActiveD, width - BitFont.DrawBitFontString(back_canvas, "VerdanaCustomCharset24", Color.White, ActiveD, 0, 0) - 5, 24);
-                        
-                        BitFont.DrawBitFontString(canvas, "VerdanaCustomCharset24", Color.White, "CrystalOS Alpha Edition", 128, 58);
+                        BitFont.DrawBitFontString(window, "VerdanaCustomCharset24", Color.White, ActiveD, width - BitFont.DrawBitFontString(back_canvas, "VerdanaCustomCharset24", Color.White, ActiveD, 0, 0) - 5, 24);
 
-                        BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, "Build release: 2024032714", 128, 95);
+                        BitFont.DrawBitFontString(window, "VerdanaCustomCharset24", Color.White, "CrystalOS Alpha Edition", 128, 58);
+
+                        BitFont.DrawBitFontString(window, "ArialCustomCharset16", Color.White, "Build release: 2024032714", 128, 95);
                         string cpuname = CPU.GetCPUBrandString();
-                        if(cpuname.Length > 20)
+                        if (cpuname.Length > 20)
                         {
                             cpuname = cpuname.Insert(20, "\n");
                         }
-                        BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, "System Processor: " + cpuname, 128, 122);
-                        BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, "Amount of RAM: " + CPU.GetAmountOfRAM() + "MB", 128, 155);
+                        BitFont.DrawBitFontString(window, "ArialCustomCharset16", Color.White, "System Processor: " + cpuname, 128, 122);
+                        BitFont.DrawBitFontString(window, "ArialCustomCharset16", Color.White, "Amount of RAM: " + CPU.GetAmountOfRAM() + "MB", 128, 155);
                         break;
                 }
 
-                Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
-                once = false;
-            }
-
-            foreach (var button in Buttons)
-            {
-                if (MouseManager.MouseState == MouseState.Left)
+                //Save changed style
+                if(VMTools.IsVMWare == true)
                 {
-                    if (MouseManager.X > x + button.X && MouseManager.X < x + button.X + button.Width)
+                    string Layout =
+                    "WindowR=" + Global_integers.R +
+                    "\nWindowG=" + Global_integers.G +
+                    "\nWindowB=" + Global_integers.B +
+                    "\nTaskbarR=" + Global_integers.TaskBarR +
+                    "\nTaskbarG=" + Global_integers.TaskBarG +
+                    "\nTaskbarB=" + Global_integers.TaskBarB +
+                    "\nTaskbarType=" + Global_integers.TaskBarType +
+                    "\nUsername=" + Global_integers.Username +
+                    "\nIconR=" + Global_integers.IconR +
+                    "\nIconG=" + Global_integers.IconG +
+                    "\nIconB=" + Global_integers.IconB +
+                    "\nIconwidth=" + Global_integers.IconWidth +
+                    "\nIconheight=" + Global_integers.IconHeight +
+                    "\nStartcolor=" + Global_integers.StartColor.ToArgb() +
+                    "\nEndcolor=" + Global_integers.EndColor.ToArgb() +
+                    "\nBakground=" + Global_integers.Background_type +
+                    "\nBackgroundcolor=" + Global_integers.Background_color +
+                    "\nTransparency=" + Global_integers.LevelOfTransparency;
+
+                    string s = File.ReadAllText("0:\\System\\Layout.sys");
+                    if(s != Layout)
                     {
-                        if (MouseManager.Y > y + button.Y && MouseManager.Y < y + button.Y + button.Height)
-                        {
-                            if (clicked == false)
-                            {
-                                button.Clicked = true;
-                                once = true;
-                                clicked = true;
-                            }
-                        }
+                        File.WriteAllText("0:\\System\\Layout.sys", Layout);
                     }
                 }
-            }
-
-            foreach (var button in Res)
-            {
-                if (MouseManager.MouseState == MouseState.Left)
-                {
-                    if (MouseManager.X > x + button.X + 128 && MouseManager.X < x + button.X + button.Width + 128)
-                    {
-                        if (MouseManager.Y > y + button.Y + 100 && MouseManager.Y < y + button.Y + button.Height + 100)
-                        {
-                            if (clicked == false)
-                            {
-                                button.Clicked = true;
-                                once = true;
-                                clicked = true;
-                            }
-                        }
-                    }
-                }
-            }
-
-            foreach (var vscroll in VerticalScrollbar)
-            {
-                if (vscroll.CheckClick((int)MouseManager.X - x, (int)MouseManager.Y - y))
-                {
-                    once = true;
-                }
-            }
-
-            if (TaskScheduler.counter == TaskScheduler.Apps.Count - 1)
-            {
-                KeyEvent key;
-                if (KeyboardManager.TryReadKey(out key))
-                {
-                    customres = Keyboard.HandleKeyboard(customres, key);
-                    once = true;
-                }
-            }
-
-            if (MouseManager.MouseState == MouseState.None && clicked == true)
-            {
-                once = true;
-                clicked = false;
+                temp = false;
             }
 
             ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
@@ -644,7 +618,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, Color.Green.ToArgb());
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
-                                    once = true;
+                                    temp = true;
                                     break;
                                 case "CrystalBlue":
                                     Global_integers.Background_type = "Monocolor";
@@ -652,7 +626,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, Color.Blue.ToArgb());
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
-                                    once = true;
+                                    temp = true;
                                     break;
                                 case "CrystalYellow":
                                     Global_integers.Background_type = "Monocolor";
@@ -660,7 +634,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, Color.Yellow.ToArgb());
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
-                                    once = true;
+                                    temp = true;
                                     break;
                                 case "CrystalOrange":
                                     Global_integers.Background_type = "Monocolor";
@@ -668,7 +642,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, Color.Orange.ToArgb());
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
-                                    once = true;
+                                    temp = true;
                                     break;
                                 case "CrystalRed":
                                     Global_integers.Background_type = "Monocolor";
@@ -676,7 +650,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, Color.Red.ToArgb());
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
-                                    once = true;
+                                    temp = true;
                                     break;
                                 case "CrystalBlack":
                                     Global_integers.Background_type = "Monocolor";
@@ -684,7 +658,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, Color.Black.ToArgb());
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
-                                    once = true;
+                                    temp = true;
                                     break;
                                 case "CrystalPink":
                                     Global_integers.Background_type = "Monocolor";
@@ -692,7 +666,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, Color.Pink.ToArgb());
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
-                                    once = true;
+                                    temp = true;
                                     break;
                                 case "CrystalPurple":
                                     Global_integers.Background_type = "Monocolor";
@@ -700,7 +674,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, Color.Purple.ToArgb());
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
-                                    once = true;
+                                    temp = true;
                                     break;
                                 case "CrystalAqua":
                                     Global_integers.Background_type = "Monocolor";
@@ -708,7 +682,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, Color.Aqua.ToArgb());
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
-                                    once = true;
+                                    temp = true;
                                     break;
                                 case "CrystalWhite":
                                     Global_integers.Background_type = "Monocolor";
@@ -716,7 +690,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, Color.White.ToArgb());
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
-                                    once = true;
+                                    temp = true;
                                     break;
 
                                 case "GoldenSunshine":
@@ -725,7 +699,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, button.Color);
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
-                                    once = true;
+                                    temp = true;
                                     break;
                                 case "CoralOrange":
                                     Global_integers.Background_type = "Monocolor";
@@ -733,7 +707,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, button.Color);
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
-                                    once = true;
+                                    temp = true;
                                     break;
                                 case "PeachPink":
                                     Global_integers.Background_type = "Monocolor";
@@ -741,7 +715,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, button.Color);
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
-                                    once = true;
+                                    temp = true;
                                     break;
                                 case "SkyBlue":
                                     Global_integers.Background_type = "Monocolor";
@@ -749,7 +723,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, button.Color);
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
-                                    once = true;
+                                    temp = true;
                                     break;
                                 case "OceanBlue":
                                     Global_integers.Background_type = "Monocolor";
@@ -757,7 +731,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, button.Color);
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
-                                    once = true;
+                                    temp = true;
                                     break;
                                 case "TurquoiseTeal":
                                     Global_integers.Background_type = "Monocolor";
@@ -765,7 +739,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, button.Color);
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
-                                    once = true;
+                                    temp = true;
                                     break;
                                 case "EmeraldGreen":
                                     Global_integers.Background_type = "Monocolor";
@@ -773,7 +747,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, button.Color);
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
-                                    once = true;
+                                    temp = true;
                                     break;
                                 case "MintGreen":
                                     Global_integers.Background_type = "Monocolor";
@@ -781,7 +755,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, button.Color);
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
-                                    once = true;
+                                    temp = true;
                                     break;
                                 case "LavenderPurple":
                                     Global_integers.Background_type = "Monocolor";
@@ -789,7 +763,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, button.Color);
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
-                                    once = true;
+                                    temp = true;
                                     break;
                                 case "SoothingGray":
                                     Global_integers.Background_type = "Monocolor";
@@ -797,7 +771,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     Array.Fill(ImprovedVBE.data.RawData, button.Color);
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
-                                    once = true;
+                                    temp = true;
                                     break;
                                 case "LoadFile":
                                     if (VMTools.IsVMWare == true)
@@ -839,7 +813,7 @@ namespace CrystalOSAlpha.Applications.Settings
             {
                 if(v.CheckForClick(x + 128, y + 62))
                 {
-                    once = true;
+                    temp = true;
                     v.UpdateValue(x + 128);
                     switch (v.ID)
                     {

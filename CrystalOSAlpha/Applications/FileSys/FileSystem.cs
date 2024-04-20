@@ -89,8 +89,8 @@ namespace CrystalOSAlpha.Applications.FileSys
 
                 Scroll.Add(new VerticalScrollbar(width - 30, 77, 20, height - 85, 20, 0, 800));
 
-                TextBoxes.Add(new TextBox(283, 24, 330, 25, ImprovedVBE.colourToNumber(60, 60, 60), "", "Type here to search...", TextBox.Options.left, "Search"));
-                TextBoxes.Add(new TextBox(99, 53, 541, 20, ImprovedVBE.colourToNumber(60, 60, 60), "0:\\", "0:\\", TextBox.Options.left, "Path"));
+                TextBoxes.Add(new TextBox(283, 24, width - 320, 25, ImprovedVBE.colourToNumber(60, 60, 60), "", "Type here to search...", TextBox.Options.left, "Search"));
+                TextBoxes.Add(new TextBox(99, 53, width - 109, 20, ImprovedVBE.colourToNumber(60, 60, 60), "0:\\", "0:\\", TextBox.Options.left, "Path"));
 
                 Logo = ImprovedVBE.ScaleImageStock(new Bitmap(TaskManager.Elephant), 25, 25);
 
@@ -101,7 +101,7 @@ namespace CrystalOSAlpha.Applications.FileSys
                 Bitmap back = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
                 (canvas, back, window) = WindowGenerator.Generate(x, y, width, height, CurrentColor, name);
                 side = new Bitmap(118, (uint)height - 85, ColorDepth.ColorDepth32);
-                Main = new Bitmap(487, (uint)height - 85, ColorDepth.ColorDepth32);
+                Main = new Bitmap((uint)width - 163, (uint)height - 85, ColorDepth.ColorDepth32);
 
                 foreach (var button in Buttons)
                 {
@@ -379,7 +379,7 @@ namespace CrystalOSAlpha.Applications.FileSys
                             }
                         }
                         x_off += 62;
-                        if(x_off / 62 >= 7)
+                        if(x_off >= Main.Width - 62)//x_off / 62 >= 7
                         {
                             y_off += 60;
                             x_off = 9;
@@ -390,13 +390,24 @@ namespace CrystalOSAlpha.Applications.FileSys
                     //Render scrollbar
                     foreach (var vscroll in Scroll)
                     {
+                        vscroll.x = width - 30;
+                        vscroll.Height = height - 85;
                         vscroll.Render(window);
                     }
                     foreach(var Box in TextBoxes)
                     {
+                        switch (Box.ID)
+                        {
+                            case "Search":
+                                Box.Width = width - 320;
+                                break;
+                            case "Path":
+                                Box.Width = width - 109;
+                                break;
+                        }
                         Box.Box(window, Box.X, Box.Y);
                     }
-                    ImprovedVBE.DrawImageAlpha(Logo, 615, 24, window);
+                    ImprovedVBE.DrawImageAlpha(Logo, width - (int)Logo.Width - 5, 24, window);
                     temp = false;
                 }
 

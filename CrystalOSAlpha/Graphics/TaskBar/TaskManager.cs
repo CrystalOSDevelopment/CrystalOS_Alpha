@@ -1046,7 +1046,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                             }
                         }
                         //- Vertical scrollbar
-                        Itemunified.Add(new ItemUnifier(375, 68, 20, 310, 20, 0, Helper));
+                        Itemunified.Add(new ItemUnifier(375, 68, 20, 310, 20, 0, Helper - (int)Buffer.Height));
                     }
                     else
                     {
