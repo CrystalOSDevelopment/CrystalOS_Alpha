@@ -2,16 +2,9 @@
 using Cosmos.System;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics.TaskBar;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CrystalOSAlpha.UI_Elements;
-using CrystalOSAlpha.Applications.Calculator;
 using System.Drawing;
-using System.Reflection.Metadata;
-using Cosmos.HAL.Drivers.Video.SVGAII;
 using CrystalOSAlpha.Applications;
 
 namespace CrystalOSAlpha.Graphics.Widgets
@@ -87,7 +80,7 @@ namespace CrystalOSAlpha.Graphics.Widgets
                 }
                 bool extraction = Buttons[0].Clicked;
                 Buttons[0] = new Button_prop((200 - sizeDec) / 2 - 40, 130, 80, 20, "Convert", 1);
-                Back = Base.Widget_Back(200 - sizeDec, 200 - sizeDec, ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B));
+                Back = Base.Widget_Back(200 - sizeDec, 200 - sizeDec, ImprovedVBE.colourToNumber(GlobalValues.R, GlobalValues.G, GlobalValues.B));
                 Back = ImprovedVBE.EnableTransparency(Back, x, y, Back);
 
                 if(MouseManager.MouseState == MouseState.Left && extraction == true)
@@ -173,11 +166,11 @@ namespace CrystalOSAlpha.Graphics.Widgets
                     }
                 }
 
-                BitFont.DrawBitFontString(Back, "ArialCustomCharset16", Global_integers.c, "From: ", 10, 30);
+                BitFont.DrawBitFontString(Back, "ArialCustomCharset16", GlobalValues.c, "From: ", 10, 30);
                 TextBox.Box(Back, 10, 55, 180 - sizeDec, 20, ImprovedVBE.colourToNumber(60, 60, 60), input, "Input", TextBox.Options.left);
-                BitFont.DrawBitFontString(Back, "ArialCustomCharset16", Global_integers.c, "To: ", 10, 80);
+                BitFont.DrawBitFontString(Back, "ArialCustomCharset16", GlobalValues.c, "To: ", 10, 80);
                 TextBox.Box(Back, 10, 105, 180 - sizeDec, 20, ImprovedVBE.colourToNumber(60, 60, 60), result, "Output", TextBox.Options.left);
-                BitFont.DrawBitFontString(Back, "ArialCustomCharset16", Global_integers.c, output, ((100 - sizeDec / 2) - output.Length * 4), 3);
+                BitFont.DrawBitFontString(Back, "ArialCustomCharset16", GlobalValues.c, output, ((100 - sizeDec / 2) - output.Length * 4), 3);
                 int ind = 0;
                 foreach (var Dropd in dropdowns)
                 {

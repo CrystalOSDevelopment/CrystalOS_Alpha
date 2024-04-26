@@ -1,5 +1,6 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
+using CrystalOSAlpha.Applications.CarbonIDE;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.UI_Elements;
@@ -31,8 +32,10 @@ namespace CrystalOSAlpha.Applications.Notepad
         public Bitmap icon { get; set; }
         #endregion important
 
-        public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
+        public int CurrentColor = ImprovedVBE.colourToNumber(GlobalValues.R, GlobalValues.G, GlobalValues.B);
         public int Reg_Y = 0;
+        public int CursorX = 0;
+        public int CursorY = 0;
 
         public bool initial = true;
         public bool clicked = false;
@@ -40,6 +43,7 @@ namespace CrystalOSAlpha.Applications.Notepad
         public bool temp = true;
 
         public string content = "";
+        public string Buffered_Content = "";
         public string source = "";
 
         public Bitmap canvas;
@@ -47,7 +51,7 @@ namespace CrystalOSAlpha.Applications.Notepad
         public Bitmap Container;
 
         public List<Button_prop> Buttons = new List<Button_prop>();
-        public List<Scrollbar_Values> Scroll = new List<Scrollbar_Values>();
+        public List<VerticalScrollbar> Scroll = new List<VerticalScrollbar>();
 
         public void App()
         {
@@ -57,7 +61,7 @@ namespace CrystalOSAlpha.Applications.Notepad
                 Buttons.Add(new Button_prop(100, 27, 170, 20, "Generate Lorem Ipsum", 1));
                 Buttons.Add(new Button_prop(280, 27, 90, 20, "Save", 1));
 
-                Scroll.Add(new Scrollbar_Values(width - 22, 30, 20, height - 60, 0));
+                Scroll.Add(new VerticalScrollbar(width - 22, 52, 20, height - 60, 20, 0, content.Split('\n').Length * 16));
 
                 initial = false;
             }
@@ -82,6 +86,7 @@ namespace CrystalOSAlpha.Applications.Notepad
                                 break;
                             case "Generate Lorem Ipsum":
                                 content = LoremIpsum(20, 80, 5, 20, 1);
+                                (content, Buffered_Content, CursorX, CursorY) = CoreEditor.Update(content, Buffered_Content, CursorX, CursorY);
                                 temp = true;
                                 break;
                             case "Save":
@@ -99,11 +104,45 @@ namespace CrystalOSAlpha.Applications.Notepad
                     }
                 }
 
-                canvas = Scrollbar.Render(canvas, Scroll[0]);
-
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
                 once = false;
                 temp = true;
+            }
+
+            if (TaskScheduler.counter == TaskScheduler.Apps.Count - 1)
+            {
+                KeyEvent key;
+                if (KeyboardManager.TryReadKey(out key))
+                {
+                    (content, Buffered_Content, CursorX, CursorY) = CoreEditor.Editor(content, Buffered_Content, CursorX, CursorY, key);
+
+                    Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
+                    switch (key.Key)
+                    {
+                        case ConsoleKeyEx.DownArrow:
+                            if(CursorY * 16 >= Container.Height - 10)
+                            {
+                                Scroll[0].Value = Math.Clamp((CursorY - (int)Container.Height / 17) * 16, Scroll[0].MinVal, Scroll[0].MaxVal);
+                                Scroll[0].Pos = (int)(Scroll[0].Value / Scroll[0].Sensitivity) + 20;
+                            }
+                            break;
+                        case ConsoleKeyEx.UpArrow:
+                            if(CursorY * 16 < Scroll[0].Value)
+                            {
+                                Scroll[0].Value = Math.Clamp(CursorY * 16, Scroll[0].MinVal, Scroll[0].MaxVal);
+                                Scroll[0].Pos = (int)(Scroll[0].Value / Scroll[0].Sensitivity) + 20;
+                            }
+                            break;
+                        case ConsoleKeyEx.Enter:
+                            if (CursorY * 16 >= Container.Height - 10)
+                            {
+                                Scroll[0].Value = Math.Clamp(CursorY * 16, Scroll[0].MinVal, Scroll[0].MaxVal);
+                                Scroll[0].Pos = (int)(Scroll[0].Value / Scroll[0].Sensitivity) + 20;
+                            }
+                            break;
+                    }
+                    temp = true;
+                }
             }
 
             foreach (var button in Buttons)
@@ -131,63 +170,21 @@ namespace CrystalOSAlpha.Applications.Notepad
                 }
             }
 
-            foreach (var scv in Scroll)
+            foreach (var vscroll in Scroll)
             {
-                if (MouseManager.MouseState == MouseState.Left)
+                vscroll.Height = height - 60;
+                vscroll.x = width - 22;
+                if(content.Split('\n').Length * 16 > Container.Height)
                 {
-                    
-                    if (MouseManager.Y > y + scv.y + 42 + scv.Pos && MouseManager.Y < y + scv.y + scv.Pos + 62)
-                    {
-                        if (MouseManager.X > x + scv.x + 2 && MouseManager.X < x + scv.x + scv.Width)
-                        {
-                            if (scv.Clicked == false)
-                            {
-                                scv.Clicked = true;
-                                Reg_Y = (int)MouseManager.Y - y - scv.y - 42 - scv.Pos;
-                            }
-                        }
-                        temp = true;
-                    }
-                }
-                if (MouseManager.MouseState == MouseState.None && scv.Clicked == true)
-                {
+                    vscroll.MaxVal = content.Split('\n').Length * 16 - (int)Container.Height;
                     temp = true;
-                    scv.Clicked = false;
                 }
-                if (scv.Clicked == true && MouseManager.MouseState == MouseState.None)
+                else
                 {
-                    scv.Clicked = false;
+                    vscroll.MaxVal = 0;
                 }
-                if(MouseManager.Y > y + scv.y + 48 && MouseManager.Y < y + height - 42 && scv.Clicked == true)
+                if (vscroll.CheckClick((int)MouseManager.X - x, (int)MouseManager.Y - y))
                 {
-                    if (scv.Pos >= 0 && scv.Pos <= scv.Height - 44)
-                    {
-                        scv.Pos = (int)MouseManager.Y - y - scv.y - 42 - Reg_Y;
-                    }
-                    else
-                    {
-                        if (scv.Pos < 0)
-                        {
-                            scv.Pos = 1;
-                        }
-                        else
-                        {
-                            scv.Pos = scv.Height - 44;
-                        }
-                    }
-                }
-            }
-
-            if (TaskScheduler.counter == TaskScheduler.Apps.Count - 1)
-            {
-                KeyEvent key;
-                if (KeyboardManager.TryReadKey(out key))
-                {
-                    int length = content.Length;
-                    content = Keyboard.HandleKeyboard(content, key);
-                    int length2 = content.Length;
-
-                    Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
                     temp = true;
                 }
             }
@@ -196,27 +193,21 @@ namespace CrystalOSAlpha.Applications.Notepad
             {
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
                 Array.Fill(Container.RawData, ImprovedVBE.colourToNumber(36, 36, 36));
-                window = Scrollbar.Render(window, Scroll[0]);
-
-                string output = "";
-
-                output = content;
-                if(output.Split('\n').Length > 23)
+                if(Scroll[0].Value > 0)
                 {
-                    int h = Scroll[0].Pos / 8;
-                    for(int i = 0; i < h; i++)
-                    {
-                        int index = output.IndexOf('\n');
-                        output = output.Remove(0, index + 1);
-                    }
+                    BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, Buffered_Content, 5, 0 - Scroll[0].Value);
                 }
-                if(output.Split('\n').Length > 23)
+                else
                 {
-                    output = output.Remove(Get_index_of_char(output, '\n', 23));
+                    BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, Buffered_Content, 5, 5 - Scroll[0].Value);
                 }
-                BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, output, 5, 5 - Scroll[0].Pos);
                 ImprovedVBE.DrawImageAlpha(Container, 5, 52, window);
-                
+
+                foreach (var vscroll in Scroll)
+                {
+                    vscroll.Render(window);
+                }
+
                 temp = false;
             }
             ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);

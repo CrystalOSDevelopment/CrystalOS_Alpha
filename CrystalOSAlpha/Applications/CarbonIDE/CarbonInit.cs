@@ -34,7 +34,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public Bitmap icon { get; set; }
         #endregion important
 
-        public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
+        public int CurrentColor = ImprovedVBE.colourToNumber(GlobalValues.R, GlobalValues.G, GlobalValues.B);
         public int Reg_Y = 0;
         public int memory = 0;
 

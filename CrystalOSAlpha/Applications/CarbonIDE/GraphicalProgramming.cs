@@ -32,7 +32,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public bool movable { get; set; }
         public Bitmap icon { get; set; }
 
-        public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
+        public int CurrentColor = ImprovedVBE.colourToNumber(GlobalValues.R, GlobalValues.G, GlobalValues.B);
         
         public Bitmap canvas;
         public Bitmap window { get; set; }

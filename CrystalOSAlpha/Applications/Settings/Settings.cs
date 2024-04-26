@@ -1,25 +1,14 @@
 ﻿using Cosmos.Core;
 using Cosmos.System;
 using Cosmos.System.Graphics;
-using Cosmos.System.Network.Config;
-using Cosmos.System.Network.IPv4;
-using Cosmos.System.Network.IPv4.TCP;
-using Cosmos.System.Network.IPv4.UDP.DNS;
-using CrystalOSAlpha.Applications.Calculator;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics.TaskBar;
 using CrystalOSAlpha.UI_Elements;
-using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
 using TaskScheduler = CrystalOSAlpha.Graphics.TaskScheduler;
 
 namespace CrystalOSAlpha.Applications.Settings
@@ -38,7 +27,7 @@ namespace CrystalOSAlpha.Applications.Settings
         public bool movable { get; set; }
         public Bitmap icon { get; set; }
 
-        public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
+        public int CurrentColor = ImprovedVBE.colourToNumber(GlobalValues.R, GlobalValues.G, GlobalValues.B);
         
         public bool initial = true;
         public bool clicked = false;
@@ -116,27 +105,27 @@ namespace CrystalOSAlpha.Applications.Settings
                         Colors.Add(new Button_prop(6, 243, 110, 25, "Load from file", 1, "LoadFile"));
 
                         //Add 3 sliders for color settings
-                        Slider.Add(new Slider(6, 356, 290, 1, 255, Global_integers.R, "WindowRed"));
-                        Slider.Add(new Slider(6, 380, 290, 1, 255, Global_integers.G, "WindowGreen"));
-                        Slider.Add(new Slider(6, 404, 290, 1, 255, Global_integers.B, "WindowBlue"));
+                        Slider.Add(new Slider(6, 356, 290, 1, 255, GlobalValues.R, "WindowRed"));
+                        Slider.Add(new Slider(6, 380, 290, 1, 255, GlobalValues.G, "WindowGreen"));
+                        Slider.Add(new Slider(6, 404, 290, 1, 255, GlobalValues.B, "WindowBlue"));
 
-                        Slider.Add(new Slider(6, 457, 290, 1, 255, Global_integers.TaskBarR, "TaskbarRed"));
-                        Slider.Add(new Slider(6, 481, 290, 1, 255, Global_integers.TaskBarG, "TaskbarGreen"));
-                        Slider.Add(new Slider(6, 505, 290, 1, 255, Global_integers.TaskBarB, "TaskbarBlue"));
+                        Slider.Add(new Slider(6, 457, 290, 1, 255, GlobalValues.TaskBarR, "TaskbarRed"));
+                        Slider.Add(new Slider(6, 481, 290, 1, 255, GlobalValues.TaskBarG, "TaskbarGreen"));
+                        Slider.Add(new Slider(6, 505, 290, 1, 255, GlobalValues.TaskBarB, "TaskbarBlue"));
 
-                        Slider.Add(new Slider(6, 563, 290, 1, 255, Global_integers.StartColor.R, "SatrtRed"));
-                        Slider.Add(new Slider(6, 587, 290, 1, 255, Global_integers.StartColor.G, "StartGreen"));
-                        Slider.Add(new Slider(6, 611, 290, 1, 255, Global_integers.StartColor.B, "StartBlue"));
+                        Slider.Add(new Slider(6, 563, 290, 1, 255, GlobalValues.StartColor.R, "SatrtRed"));
+                        Slider.Add(new Slider(6, 587, 290, 1, 255, GlobalValues.StartColor.G, "StartGreen"));
+                        Slider.Add(new Slider(6, 611, 290, 1, 255, GlobalValues.StartColor.B, "StartBlue"));
 
-                        Slider.Add(new Slider(6, 660, 290, 1, 255, Global_integers.EndColor.R, "EndRed"));
-                        Slider.Add(new Slider(6, 684, 290, 1, 255, Global_integers.EndColor.G, "EndGreen"));
-                        Slider.Add(new Slider(6, 708, 290, 1, 255, Global_integers.EndColor.B, "EndBlue"));
+                        Slider.Add(new Slider(6, 660, 290, 1, 255, GlobalValues.EndColor.R, "EndRed"));
+                        Slider.Add(new Slider(6, 684, 290, 1, 255, GlobalValues.EndColor.G, "EndGreen"));
+                        Slider.Add(new Slider(6, 708, 290, 1, 255, GlobalValues.EndColor.B, "EndBlue"));
 
-                        Slider.Add(new Slider(6, 763, 290, 0, 100, Global_integers.LevelOfTransparency, "Transparency"));
+                        Slider.Add(new Slider(6, 763, 290, 0, 100, GlobalValues.LevelOfTransparency, "Transparency"));
 
-                        Slider.Add(new Slider(6, 856, 290, 0, 255, Global_integers.IconR, "IconR"));
-                        Slider.Add(new Slider(6, 880, 290, 0, 255, Global_integers.IconG, "IconG"));
-                        Slider.Add(new Slider(6, 904, 290, 0, 255, Global_integers.IconB, "IconB"));
+                        Slider.Add(new Slider(6, 856, 290, 0, 255, GlobalValues.IconR, "IconR"));
+                        Slider.Add(new Slider(6, 880, 290, 0, 255, GlobalValues.IconG, "IconG"));
+                        Slider.Add(new Slider(6, 904, 290, 0, 255, GlobalValues.IconB, "IconB"));
 
                         Colors.Add(new Button_prop(6, 921, 130, 25, "Nostalgia", 1, "Old"));
                         Colors.Add(new Button_prop(151, 921, 130, 25, "Float-up", 1, "Animated"));
@@ -573,24 +562,24 @@ namespace CrystalOSAlpha.Applications.Settings
                 if(VMTools.IsVMWare == true)
                 {
                     string Layout =
-                    "WindowR=" + Global_integers.R +
-                    "\nWindowG=" + Global_integers.G +
-                    "\nWindowB=" + Global_integers.B +
-                    "\nTaskbarR=" + Global_integers.TaskBarR +
-                    "\nTaskbarG=" + Global_integers.TaskBarG +
-                    "\nTaskbarB=" + Global_integers.TaskBarB +
-                    "\nTaskbarType=" + Global_integers.TaskBarType +
-                    "\nUsername=" + Global_integers.Username +
-                    "\nIconR=" + Global_integers.IconR +
-                    "\nIconG=" + Global_integers.IconG +
-                    "\nIconB=" + Global_integers.IconB +
-                    "\nIconwidth=" + Global_integers.IconWidth +
-                    "\nIconheight=" + Global_integers.IconHeight +
-                    "\nStartcolor=" + Global_integers.StartColor.ToArgb() +
-                    "\nEndcolor=" + Global_integers.EndColor.ToArgb() +
-                    "\nBakground=" + Global_integers.Background_type +
-                    "\nBackgroundcolor=" + Global_integers.Background_color +
-                    "\nTransparency=" + Global_integers.LevelOfTransparency;
+                    "WindowR=" + GlobalValues.R +
+                    "\nWindowG=" + GlobalValues.G +
+                    "\nWindowB=" + GlobalValues.B +
+                    "\nTaskbarR=" + GlobalValues.TaskBarR +
+                    "\nTaskbarG=" + GlobalValues.TaskBarG +
+                    "\nTaskbarB=" + GlobalValues.TaskBarB +
+                    "\nTaskbarType=" + GlobalValues.TaskBarType +
+                    "\nUsername=" + GlobalValues.Username +
+                    "\nIconR=" + GlobalValues.IconR +
+                    "\nIconG=" + GlobalValues.IconG +
+                    "\nIconB=" + GlobalValues.IconB +
+                    "\nIconwidth=" + GlobalValues.IconWidth +
+                    "\nIconheight=" + GlobalValues.IconHeight +
+                    "\nStartcolor=" + GlobalValues.StartColor.ToArgb() +
+                    "\nEndcolor=" + GlobalValues.EndColor.ToArgb() +
+                    "\nBakground=" + GlobalValues.Background_type +
+                    "\nBackgroundcolor=" + GlobalValues.Background_color +
+                    "\nTransparency=" + GlobalValues.LevelOfTransparency;
 
                     string s = File.ReadAllText("0:\\System\\Layout.sys");
                     if(s != Layout)
@@ -613,80 +602,80 @@ namespace CrystalOSAlpha.Applications.Settings
                             switch (button.ID)
                             {
                                 case "CrystalGreen":
-                                    Global_integers.Background_type = "Monocolor";
-                                    Global_integers.Background_color = button.ID;
+                                    GlobalValues.Background_type = "Monocolor";
+                                    GlobalValues.Background_color = button.ID;
                                     Array.Fill(ImprovedVBE.data.RawData, Color.Green.ToArgb());
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
                                     temp = true;
                                     break;
                                 case "CrystalBlue":
-                                    Global_integers.Background_type = "Monocolor";
-                                    Global_integers.Background_color = button.ID;
+                                    GlobalValues.Background_type = "Monocolor";
+                                    GlobalValues.Background_color = button.ID;
                                     Array.Fill(ImprovedVBE.data.RawData, Color.Blue.ToArgb());
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
                                     temp = true;
                                     break;
                                 case "CrystalYellow":
-                                    Global_integers.Background_type = "Monocolor";
-                                    Global_integers.Background_color = button.ID;
+                                    GlobalValues.Background_type = "Monocolor";
+                                    GlobalValues.Background_color = button.ID;
                                     Array.Fill(ImprovedVBE.data.RawData, Color.Yellow.ToArgb());
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
                                     temp = true;
                                     break;
                                 case "CrystalOrange":
-                                    Global_integers.Background_type = "Monocolor";
-                                    Global_integers.Background_color = button.ID;
+                                    GlobalValues.Background_type = "Monocolor";
+                                    GlobalValues.Background_color = button.ID;
                                     Array.Fill(ImprovedVBE.data.RawData, Color.Orange.ToArgb());
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
                                     temp = true;
                                     break;
                                 case "CrystalRed":
-                                    Global_integers.Background_type = "Monocolor";
-                                    Global_integers.Background_color = button.ID;
+                                    GlobalValues.Background_type = "Monocolor";
+                                    GlobalValues.Background_color = button.ID;
                                     Array.Fill(ImprovedVBE.data.RawData, Color.Red.ToArgb());
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
                                     temp = true;
                                     break;
                                 case "CrystalBlack":
-                                    Global_integers.Background_type = "Monocolor";
-                                    Global_integers.Background_color = button.ID;
+                                    GlobalValues.Background_type = "Monocolor";
+                                    GlobalValues.Background_color = button.ID;
                                     Array.Fill(ImprovedVBE.data.RawData, Color.Black.ToArgb());
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
                                     temp = true;
                                     break;
                                 case "CrystalPink":
-                                    Global_integers.Background_type = "Monocolor";
-                                    Global_integers.Background_color = button.ID;
+                                    GlobalValues.Background_type = "Monocolor";
+                                    GlobalValues.Background_color = button.ID;
                                     Array.Fill(ImprovedVBE.data.RawData, Color.Pink.ToArgb());
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
                                     temp = true;
                                     break;
                                 case "CrystalPurple":
-                                    Global_integers.Background_type = "Monocolor";
-                                    Global_integers.Background_color = button.ID;
+                                    GlobalValues.Background_type = "Monocolor";
+                                    GlobalValues.Background_color = button.ID;
                                     Array.Fill(ImprovedVBE.data.RawData, Color.Purple.ToArgb());
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
                                     temp = true;
                                     break;
                                 case "CrystalAqua":
-                                    Global_integers.Background_type = "Monocolor";
-                                    Global_integers.Background_color = button.ID;
+                                    GlobalValues.Background_type = "Monocolor";
+                                    GlobalValues.Background_color = button.ID;
                                     Array.Fill(ImprovedVBE.data.RawData, Color.Aqua.ToArgb());
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
                                     temp = true;
                                     break;
                                 case "CrystalWhite":
-                                    Global_integers.Background_type = "Monocolor";
-                                    Global_integers.Background_color = button.ID;
+                                    GlobalValues.Background_type = "Monocolor";
+                                    GlobalValues.Background_color = button.ID;
                                     Array.Fill(ImprovedVBE.data.RawData, Color.White.ToArgb());
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
@@ -694,80 +683,80 @@ namespace CrystalOSAlpha.Applications.Settings
                                     break;
 
                                 case "GoldenSunshine":
-                                    Global_integers.Background_type = "Monocolor";
-                                    Global_integers.Background_color = button.ID;
+                                    GlobalValues.Background_type = "Monocolor";
+                                    GlobalValues.Background_color = button.ID;
                                     Array.Fill(ImprovedVBE.data.RawData, button.Color);
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
                                     temp = true;
                                     break;
                                 case "CoralOrange":
-                                    Global_integers.Background_type = "Monocolor";
-                                    Global_integers.Background_color = button.ID;
+                                    GlobalValues.Background_type = "Monocolor";
+                                    GlobalValues.Background_color = button.ID;
                                     Array.Fill(ImprovedVBE.data.RawData, button.Color);
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
                                     temp = true;
                                     break;
                                 case "PeachPink":
-                                    Global_integers.Background_type = "Monocolor";
-                                    Global_integers.Background_color = button.ID;
+                                    GlobalValues.Background_type = "Monocolor";
+                                    GlobalValues.Background_color = button.ID;
                                     Array.Fill(ImprovedVBE.data.RawData, button.Color);
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
                                     temp = true;
                                     break;
                                 case "SkyBlue":
-                                    Global_integers.Background_type = "Monocolor";
-                                    Global_integers.Background_color = button.ID;
+                                    GlobalValues.Background_type = "Monocolor";
+                                    GlobalValues.Background_color = button.ID;
                                     Array.Fill(ImprovedVBE.data.RawData, button.Color);
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
                                     temp = true;
                                     break;
                                 case "OceanBlue":
-                                    Global_integers.Background_type = "Monocolor";
-                                    Global_integers.Background_color = button.ID;
+                                    GlobalValues.Background_type = "Monocolor";
+                                    GlobalValues.Background_color = button.ID;
                                     Array.Fill(ImprovedVBE.data.RawData, button.Color);
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
                                     temp = true;
                                     break;
                                 case "TurquoiseTeal":
-                                    Global_integers.Background_type = "Monocolor";
-                                    Global_integers.Background_color = button.ID;
+                                    GlobalValues.Background_type = "Monocolor";
+                                    GlobalValues.Background_color = button.ID;
                                     Array.Fill(ImprovedVBE.data.RawData, button.Color);
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
                                     temp = true;
                                     break;
                                 case "EmeraldGreen":
-                                    Global_integers.Background_type = "Monocolor";
-                                    Global_integers.Background_color = button.ID;
+                                    GlobalValues.Background_type = "Monocolor";
+                                    GlobalValues.Background_color = button.ID;
                                     Array.Fill(ImprovedVBE.data.RawData, button.Color);
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
                                     temp = true;
                                     break;
                                 case "MintGreen":
-                                    Global_integers.Background_type = "Monocolor";
-                                    Global_integers.Background_color = button.ID;
+                                    GlobalValues.Background_type = "Monocolor";
+                                    GlobalValues.Background_color = button.ID;
                                     Array.Fill(ImprovedVBE.data.RawData, button.Color);
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
                                     temp = true;
                                     break;
                                 case "LavenderPurple":
-                                    Global_integers.Background_type = "Monocolor";
-                                    Global_integers.Background_color = button.ID;
+                                    GlobalValues.Background_type = "Monocolor";
+                                    GlobalValues.Background_color = button.ID;
                                     Array.Fill(ImprovedVBE.data.RawData, button.Color);
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
                                     temp = true;
                                     break;
                                 case "SoothingGray":
-                                    Global_integers.Background_type = "Monocolor";
-                                    Global_integers.Background_color = button.ID;
+                                    GlobalValues.Background_type = "Monocolor";
+                                    GlobalValues.Background_color = button.ID;
                                     Array.Fill(ImprovedVBE.data.RawData, button.Color);
                                     TaskManager.resize = true;
                                     TaskManager.Time = 99;
@@ -782,13 +771,13 @@ namespace CrystalOSAlpha.Applications.Settings
                                     }
                                     break;
                                 case "Old":
-                                    Global_integers.TaskBarType = "Nostalgia";
+                                    GlobalValues.TaskBarType = "Nostalgia";
                                     TaskManager.ClearLists();
                                     TaskManager.initial = true;
                                     TaskManager.resize = true;
                                     break;
                                 case "Animated":
-                                    Global_integers.TaskBarType = "Classic";
+                                    GlobalValues.TaskBarType = "Classic";
                                     TaskManager.ClearLists();
                                     TaskManager.initial = true;
                                     TaskManager.resize = true;
@@ -801,7 +790,7 @@ namespace CrystalOSAlpha.Applications.Settings
                     {
                         if(MouseManager.Y > y + 125 - VerticalScrollbar[0].Value && MouseManager.Y < y + 125 - VerticalScrollbar[0].Value + MiniWallp.Height && MouseManager.Y > y + 62)
                         {
-                            Global_integers.Background_type = "Default";
+                            GlobalValues.Background_type = "Default";
                             ImprovedVBE.Temp.RawData.CopyTo(ImprovedVBE.data.RawData, 0);
                             TaskManager.resize = true;
                             TaskManager.Time = 99;
@@ -818,64 +807,64 @@ namespace CrystalOSAlpha.Applications.Settings
                     switch (v.ID)
                     {
                         case "WindowRed":
-                            Global_integers.R = v.Value;
+                            GlobalValues.R = v.Value;
                             break;
                         case "WindowGreen":
-                            Global_integers.G = v.Value;
+                            GlobalValues.G = v.Value;
                             break;
                         case "WindowBlue":
-                            Global_integers.B = v.Value;
+                            GlobalValues.B = v.Value;
                             break;
                         case "TaskbarRed":
-                            Global_integers.TaskBarR = v.Value;
+                            GlobalValues.TaskBarR = v.Value;
                             TaskManager.resize = true;
                             break;
                         case "TaskbarGreen":
-                            Global_integers.TaskBarG = v.Value;
+                            GlobalValues.TaskBarG = v.Value;
                             TaskManager.resize = true;
                             break;
                         case "TaskbarBlue":
-                            Global_integers.TaskBarB = v.Value;
+                            GlobalValues.TaskBarB = v.Value;
                             TaskManager.resize = true;
                             break;
                         case "SatrtRed":
-                            Color StartR = Color.FromArgb(v.Value, Global_integers.StartColor.G, Global_integers.StartColor.B);
-                            Global_integers.StartColor = StartR;
+                            Color StartR = Color.FromArgb(v.Value, GlobalValues.StartColor.G, GlobalValues.StartColor.B);
+                            GlobalValues.StartColor = StartR;
                             break;
                         case "StartGreen":
-                            Color StartG = Color.FromArgb(Global_integers.StartColor.R, v.Value, Global_integers.StartColor.B);
-                            Global_integers.StartColor = StartG;
+                            Color StartG = Color.FromArgb(GlobalValues.StartColor.R, v.Value, GlobalValues.StartColor.B);
+                            GlobalValues.StartColor = StartG;
                             break;
                         case "StartBlue":
-                            Color StartB = Color.FromArgb(Global_integers.StartColor.R, Global_integers.StartColor.G, v.Value);
-                            Global_integers.StartColor = StartB;
+                            Color StartB = Color.FromArgb(GlobalValues.StartColor.R, GlobalValues.StartColor.G, v.Value);
+                            GlobalValues.StartColor = StartB;
                             break;
                         case "EndRed":
-                            Color EndR = Color.FromArgb(v.Value, Global_integers.EndColor.G, Global_integers.EndColor.B);
-                            Global_integers.EndColor = EndR;
+                            Color EndR = Color.FromArgb(v.Value, GlobalValues.EndColor.G, GlobalValues.EndColor.B);
+                            GlobalValues.EndColor = EndR;
                             break;
                         case "EndGreen":
-                            Color EndG = Color.FromArgb(Global_integers.EndColor.R, v.Value, Global_integers.EndColor.B);
-                            Global_integers.EndColor = EndG;
+                            Color EndG = Color.FromArgb(GlobalValues.EndColor.R, v.Value, GlobalValues.EndColor.B);
+                            GlobalValues.EndColor = EndG;
                             break;
                         case "EndBlue":
-                            Color EndB = Color.FromArgb(Global_integers.EndColor.R, Global_integers.EndColor.G, v.Value);
-                            Global_integers.EndColor = EndB;
+                            Color EndB = Color.FromArgb(GlobalValues.EndColor.R, GlobalValues.EndColor.G, v.Value);
+                            GlobalValues.EndColor = EndB;
                             break;
                         case "IconR":
-                            Global_integers.IconR = v.Value;
+                            GlobalValues.IconR = v.Value;
                             break;
                         case "IconG":
-                            Global_integers.IconG = v.Value;
+                            GlobalValues.IconG = v.Value;
                             break;
                         case "IconB":
-                            Global_integers.IconB = v.Value;
+                            GlobalValues.IconB = v.Value;
                             break;
                         case "Transparency":
                             if(v.Value > 40)
                             {
                                 TaskManager.resize = true;
-                                Global_integers.LevelOfTransparency = v.Value;
+                                GlobalValues.LevelOfTransparency = v.Value;
                             }
                             break;
                     }

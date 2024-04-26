@@ -1,20 +1,15 @@
 ﻿using Cosmos.Core;
-using Cosmos.Core.Memory;
-using Cosmos.HAL;
 using Cosmos.System;
-using CrystalOS_Alpha;
+using CrystalOSAlpha.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Kernel = CrystalOS_Alpha.Kernel;
 
 namespace CrystalOSAlpha.Applications.Terminal
 {
     class CommandLibrary
     {
-        public static int offset = 0;
         public static string output = "";
 
         public static List<Value_Cases> memory = new List<Value_Cases>();
@@ -23,7 +18,20 @@ namespace CrystalOSAlpha.Applications.Terminal
             if (input.ToLower().StartsWith("echo "))
             {
                 output = input.Remove(0, 5);
-                offset = 1;
+            }
+            else if (input.ToLower().StartsWith("help"))
+            {
+                output =
+                    "Echo {text} - Prints out the text to the console\n" +
+                    "Clear - Clears the screen\n" +
+                    "Help - Show the full help list\n" +
+                    "Date - Prints out the current date to the console(YYYY.MM.DD)\n" +
+                    "Time - Prints out the current time to the console(HH.MM.SS)\n" +
+                    "Version - Displays information about computer(Ex.: Neofetch in Linux)\n" +
+                    "Mem - For details, check out the source code\n" +
+                    "Diskspace - Shows how much diskspace is available\n" +
+                    "Reboot/rbt - Reboot the machine\n" +
+                    "Shutdown/std - Turn off the computer\n";
             }
             else if (input.ToLower().StartsWith("date"))
             {
@@ -33,7 +41,6 @@ namespace CrystalOSAlpha.Applications.Terminal
                 output += ". ";
                 output += DateTime.Now.Day.ToString();
                 output += ".";
-                offset = 1;
             }
             else if (input.ToLower().StartsWith("time"))
             {
@@ -42,17 +49,88 @@ namespace CrystalOSAlpha.Applications.Terminal
                 output += DateTime.Now.Minute.ToString();
                 output += ":";
                 output += DateTime.Now.Second.ToString();
-                offset = 1;
             }
             else if (input.ToLower().StartsWith("version"))
             {
-                output = "CrystalOS Alpha Edition\n";
-                output += "Release date: 2023. 11. 21.\n\n";
-                output += "About System:\n";
-                output += "    Processor: " + CPU.GetCPUBrandString() + "\n";
-                output += "    Available RAM: " + CPU.GetAmountOfRAM() + "MB\n";
-                output += "    Used RAM: " + (CPU.GetEndOfKernel() + 1024) / 1048576 + "MB\n";
-                offset = 3;
+                StringBuilder sb = new StringBuilder();
+                sb.Append("                                                            \n");
+                sb.Append("                             .                              \n");
+                sb.Append("                          ./((/,                            \n");
+                sb.Append("                        ,///(((((/.                         \n");
+                sb.Append("                     *((/////(((((((*                       \n");
+                sb.Append("                   ,///////////(((((((/.                    \n");
+                sb.Append("                .****////////////(((((((/*                  CrystalOS Alpha Edition \n");
+                sb.Append("             .,..,**///////////////((((((((/.               Release date: 2024. 04. 25. \n");
+                sb.Append("           ,*////,..*////////////////((#%%#(/,              \n");
+                sb.Append("        .*//////////,.,//////////////(//((*..,,,,.          About System: \n");
+                sb.Append("      ,****/((((((((/*. .*/////////////*..,******,,.            Processor: " + CPU.GetCPUBrandString() + " \n");
+                sb.Append("   .,******///((((/,,(###*.,////////*,.,**********,,,,.         Available RAM: " + CPU.GetAmountOfRAM() + "MB \n");
+                sb.Append("    ,****///////*.*########(..////*..*//////********,,          Used RAM: " + (CPU.GetEndOfKernel() + 1024) / 1048576 + "MB \n");
+                sb.Append("      .*/////*,,*((###########*...*/(((////////****.            Resolution: " + ImprovedVBE.width.ToString() + "x" + ImprovedVBE.height.ToString() + "x32 \n");
+                sb.Append("         ,*,.,////(((((#########(.,/((((((//////*                   Video driver: VESA BIOS Extension (VBE) \n");
+                sb.Append("           .*/////////(((((########*.*(((((((/,             \n");
+                sb.Append("              ,*/////////////(((#####/,,/((*.                   Username: " + GlobalValues.Username + " \n");
+                sb.Append("                .*///////////((/(//(((((*                   \n");
+                sb.Append("                   ,*/////////((#((///,                     \n");
+                sb.Append("                     .*****/****///*.                       \n");
+                sb.Append("                        ,********,                          \n");
+                sb.Append("                          .,***.                            \n");
+                sb.Append("                                                            \n");
+                sb.Append("                                                            ");
+
+                //output =
+                //    "                                                            \n" +
+                //    "                             .                              \n" +
+                //    "                          ./((/,                            \n" +
+                //    "                        ,///(((((/.                         \n" +
+                //    "                     *((/////(((((((*                       \n" +
+                //    "                   ,///////////(((((((/.                    \n" +
+                //    "                .****////////////(((((((/*                  CrystalOS Alpha Edition \n" +
+                //    "             .,..,**///////////////((((((((/.               Release date: 2024. 04. 25. \n" +
+                //    "           ,*////,..*////////////////((#%%#(/,              \n" +
+                //    "        .*//////////,.,//////////////(//((*..,,,,.          About System: \n" +
+                //    "      ,****/((((((((/*. .*/////////////*..,******,,.            Processor: " + CPU.GetCPUBrandString()  + " \n" +
+                //    "   .,******///((((/,,(###*.,////////*,.,**********,,,,.         Available RAM: " + CPU.GetAmountOfRAM() + "MB \n" +
+                //    "    ,****///////*.*########(..////*..*//////********,,          Used RAM: " + (CPU.GetEndOfKernel() + 1024) / 1048576 + "MB \n" +
+                //    "      .*/////*,,*((###########*...*/(((////////****.            Resolution: " + ImprovedVBE.width.ToString() + "x" + ImprovedVBE.height.ToString() + "x32 \n" +
+                //    "         ,*,.,////(((((#########(.,/((((((//////*                   Video dirver: VESA BIOS Extension (VBE)\n" +
+                //    "           .*/////////(((((########*.*(((((((/,             \n" +
+                //    "              ,*/////////////(((#####/,,/((*.                   Username: " + GlobalValues.Username + " \n" +
+                //    "                .*///////////((/(//(((((*                   \n" +
+                //    "                   ,*/////////((#((///,                     \n" +
+                //    "                     .*****/****///*.                       \n" +
+                //    "                        ,********,                          \n" +
+                //    "                          .,***.                            \n" +
+                //    "                                                            \n" +
+                //    "                                                            ";
+
+                output = sb.ToString();
+                if (VMTools.IsVMWare == true)
+                {
+                    output += "\nPowered by: VMWare\n" +
+                        "                   (((((((((((((((((((((((((((((((((((      \n" +
+                        "                 (((((((((((((((((((((((((((((((((((((((    \n" +
+                        "                 (((((((((((((((((((((((((((((((((((((((,   \n" +
+                        "                 (((((((((                     /((((((((,   \n" +
+                        "                 ((((((((                       .(((((((,   \n" +
+                        "      .**********************************,      .(((((((,   \n" +
+                        "     **************************************,    .(((((((,   \n" +
+                        "    /**************************************/    .(((((((,   \n" +
+                        "    /********.   ######((          ********/    .(((((((,   \n" +
+                        "    /*******     ((((((((           *******/    .(((((((,   \n" +
+                        "    /*******     ((((((((           *******/    .(((((((,   \n" +
+                        "    /*******     ((((((((           *******/    .(((((((,   \n" +
+                        "    /*******     (((((((((.         *******/   (((((((((,   \n" +
+                        "    /*******     (((((((((((((((((((((((((((((((((((((((,   \n" +
+                        "    /*******     /((((((((((((((((((((((((((((((((((((((    \n" +
+                        "    /*******       ,(((((((((((((((((((((((((((((((((/      \n" +
+                        "    /*******                        ***/((((                \n" +
+                        "    /*********                    ,********/                \n" +
+                        "    /**************************************/                \n" +
+                        "     **************************************.                \n" +
+                        "       *********************************/                   \n" +
+                        "                                                           ";
+                }
             }
             else if (input.ToLower().StartsWith("mem "))
             {
@@ -77,12 +155,12 @@ namespace CrystalOSAlpha.Applications.Terminal
                     if (temp.StartsWith("string "))
                     {
                         temp = temp.Remove(0, 7).TrimStart();
-                        output = memory.First(d => d.Name == temp).StringValue;
+                        output = memory.FindAll(d => d.Name == temp)[0].StringValue;
                     }
                     else if (temp.StartsWith("int "))
                     {
                         temp = temp.Remove(0, 4).TrimStart();
-                        output = memory.First(d => d.Name == temp).IntValue.ToString();
+                        output = memory.FindAll(d => d.Name == temp)[0].IntValue.ToString();
                     }
                 }
                 else if(temp.ToLower().StartsWith("clear"))
@@ -90,12 +168,10 @@ namespace CrystalOSAlpha.Applications.Terminal
                     memory.Clear();
                     output = "Memory cleared successfuly!";
                 }
-                offset = 1;
             }
             else if (input.ToLower().StartsWith("diskspace"))
             {
                 output = "Free space: " + Kernel.fs.GetAvailableFreeSpace(@"0:\") / (1024 * 1024) + "MB";
-                offset = 1;
             }
             else if (input.ToLower().StartsWith("reboot") || input.ToLower().StartsWith("rbt"))
             {
@@ -108,7 +184,6 @@ namespace CrystalOSAlpha.Applications.Terminal
             else
             {
                 output = "Cannot recognize command.";
-                offset = 1;
             }
             return output;
         }

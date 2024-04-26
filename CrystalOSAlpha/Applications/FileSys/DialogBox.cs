@@ -43,7 +43,7 @@ namespace CrystalOSAlpha.Applications.FileSys
         #endregion UI_Elements
 
         #region Extra
-        public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
+        public int CurrentColor = ImprovedVBE.colourToNumber(GlobalValues.R, GlobalValues.G, GlobalValues.B);
         
         public string message = "";
         public string Path = "0:\\";
@@ -89,9 +89,9 @@ namespace CrystalOSAlpha.Applications.FileSys
                 Buttons.Add(new Button_prop(686, 502, 90, 25, "Open/Create", 1));
                 Buttons.Add(new Button_prop(783, 502, 90, 25, "Cancel", 1));
 
-                TextBox.Add(new UI_Elements.TextBox(230, 40, 440, 25, ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B), SourceFileTemp, "", UI_Elements.TextBox.Options.left, "Main"));
-                TextBox.Add(new UI_Elements.TextBox(680, 40, 193, 25, ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B), "", "Search", UI_Elements.TextBox.Options.left, "SearchBox"));
-                TextBox.Add(new UI_Elements.TextBox(332, 502, 338, 25, ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B), "", "Name", UI_Elements.TextBox.Options.left, "Fname"));
+                TextBox.Add(new UI_Elements.TextBox(230, 40, 440, 25, ImprovedVBE.colourToNumber(GlobalValues.R, GlobalValues.G, GlobalValues.B), SourceFileTemp, "", UI_Elements.TextBox.Options.left, "Main"));
+                TextBox.Add(new UI_Elements.TextBox(680, 40, 193, 25, ImprovedVBE.colourToNumber(GlobalValues.R, GlobalValues.G, GlobalValues.B), "", "Search", UI_Elements.TextBox.Options.left, "SearchBox"));
+                TextBox.Add(new UI_Elements.TextBox(332, 502, 338, 25, ImprovedVBE.colourToNumber(GlobalValues.R, GlobalValues.G, GlobalValues.B), "", "Name", UI_Elements.TextBox.Options.left, "Fname"));
 
                 initial = false;
             }

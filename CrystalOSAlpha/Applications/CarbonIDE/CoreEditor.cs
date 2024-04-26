@@ -89,5 +89,27 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
             return (text, textWithCursor, cursorIndex, lineIndex);
         }
+
+        public static (string, string, int, int) Update(string text, string textWithCursor, int cursorIndex, int lineIndex)
+        {
+            string[] lines = text.Split('\n');
+
+            text = string.Join("\n", lines);
+            StringBuilder sbWithCursor = new StringBuilder();
+            for (int i = 0; i < lines.Length; i++)
+            {
+                if (i == lineIndex)
+                {
+                    sbWithCursor.AppendLine(lines[i].Insert(cursorIndex, "|"));
+                }
+                else
+                {
+                    sbWithCursor.AppendLine(lines[i]);
+                }
+            }
+            textWithCursor = sbWithCursor.ToString().TrimEnd('\n');
+
+            return (text, textWithCursor, cursorIndex, lineIndex);
+        }
     }
 }

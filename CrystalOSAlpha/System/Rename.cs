@@ -49,7 +49,7 @@ namespace CrystalOSAlpha.SystemApps
         public bool initial = true;
         public bool temp = true;
         public bool clicked = false;
-        public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
+        public int CurrentColor = ImprovedVBE.colourToNumber(GlobalValues.R, GlobalValues.G, GlobalValues.B);
         public string Content = "";
         public Bitmap canvas;
         public Bitmap back_canvas;

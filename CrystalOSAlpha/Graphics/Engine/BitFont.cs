@@ -59,11 +59,22 @@ namespace CrystalOSAlpha.Graphics.Engine
             int UsedX = 0;
             for (int l = 0; l < Lines.Length; l++)
             {
-                UsedX = 0;
-                for (int i = 0; i < Lines[l].Length; i++)
+                if(Y + bitFontDescriptor.Size * l >= -8 && Y + bitFontDescriptor.Size * l <= Canvas.Height)
                 {
-                    char c = Lines[l][i];
-                    UsedX += DrawBitFontChar(Canvas, bitFontDescriptor.MS, bitFontDescriptor.Size, color, bitFontDescriptor.Charset.Impl_Str_IndexOf(c), UsedX + X, Y + bitFontDescriptor.Size * l, !DisableAntiAliasing) + Devide;
+                    UsedX = 0;
+                    for (int i = 0; i < Lines[l].Length; i++)
+                    {
+                        char c = Lines[l][i];
+                        if(Lines[l].Length >= 60 && i < 60 && Lines[l][0] == ' ' && Lines[l][^1] == ' ')
+                        {
+                            int ja = DrawBitFontChar(Canvas, bitFontDescriptor.MS, bitFontDescriptor.Size, color, bitFontDescriptor.Charset.Impl_Str_IndexOf(c), UsedX + X, Y + bitFontDescriptor.Size * l, !DisableAntiAliasing) + Devide;
+                            UsedX += 8;
+                        }
+                        else
+                        {
+                            UsedX += DrawBitFontChar(Canvas, bitFontDescriptor.MS, bitFontDescriptor.Size, color, bitFontDescriptor.Charset.Impl_Str_IndexOf(c), UsedX + X, Y + bitFontDescriptor.Size * l, !DisableAntiAliasing) + Devide;
+                        }
+                    }
                 }
             }
             return UsedX;

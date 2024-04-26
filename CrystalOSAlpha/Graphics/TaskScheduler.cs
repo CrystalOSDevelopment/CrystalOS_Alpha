@@ -51,6 +51,12 @@ namespace CrystalOSAlpha.Graphics
             {
                 Apps[i].z = i;
             }
+
+            if (MouseManager.MouseState == MouseState.None)
+            {
+                Clicked = false;
+            }
+
             foreach (var app in Apps)
             {
                 if (app.AppID < 1000)
@@ -68,7 +74,28 @@ namespace CrystalOSAlpha.Graphics
                     {
                         if(MouseManager.Y > app.y + 2 && MouseManager.Y < app.y + 18)
                         {
-                            Apps.Remove(app);
+                            if (Clicked == false)
+                            {
+                                bool found = false;
+                                for(int i = index + 1; i < Apps.Count; ++i)
+                                {
+                                    if (Apps[i].x + Apps[i].width >= app.x + app.width - 21 && Apps[i].x + Apps[i].width <= app.x + app.width + 21)
+                                    {
+                                        if (Apps[i].y >= app.y - 22 && Apps[i].y <= app.y + 22)
+                                        {
+                                            if (Apps[i].minimised == false)
+                                            {
+                                                found = true;
+                                            }
+                                        }
+                                    }
+                                }
+                                if(found == false)
+                                {
+                                    Apps.Remove(app);
+                                    Clicked = true;
+                                }
+                            }
                         }
                     }
                     if (MouseManager.X < app.x + app.width - 26 && MouseManager.X > app.x + app.width - 42)
@@ -189,7 +216,7 @@ namespace CrystalOSAlpha.Graphics
                         }
                         if(isResizing == true)
                         {
-                            ImprovedVBE.DrawRectangle(ImprovedVBE.cover, FromX, FromY, (int)MouseManager.X - FromX, (int)MouseManager.Y - FromY, 0);
+                            ImprovedVBE.DrawRectangle(ImprovedVBE.cover, FromX, FromY, (int)MouseManager.X - FromX, (int)MouseManager.Y - FromY, ImprovedVBE.colourToNumber(255, 255, 255));
                         }
                     }
                     else if(MouseManager.MouseState == MouseState.None && isResizing == true)
@@ -202,6 +229,14 @@ namespace CrystalOSAlpha.Graphics
                             FromX = 0;
                             FromY = 0;
                             isResizing = false;
+                            if(app.width < 150)
+                            {
+                                app.width = 150;
+                            }
+                            if(app.height < 150)
+                            {
+                                app.height = 150;
+                            }
                         }
                     }
                 }
@@ -217,7 +252,7 @@ namespace CrystalOSAlpha.Graphics
 
         public static void Render_Icons()
         {
-            switch (Global_integers.TaskBarType)
+            switch (GlobalValues.TaskBarType)
             {
                 case "Classic":
                     foreach(var app in Apps)
@@ -327,8 +362,8 @@ namespace CrystalOSAlpha.Graphics
                                         Button.Button_render(ImprovedVBE.cover, XVal, YVal, 70, 25, ImprovedVBE.colourToNumber(25, 25, 25), nameTitle);
                                         if (Preview.Width == 13 && Preview.Height == 13)
                                         {
-                                            Preview = Widgets.Base.Widget_Back((int)(btn.window.Width / 2.5) + 10, (int)(btn.window.Height / 2.5) + 35, ImprovedVBE.colourToNumber(Global_integers.TaskBarR, Global_integers.TaskBarG, Global_integers.TaskBarB));
-                                            Preview = ImprovedVBE.EnableTransparencyPreRGB(Preview, XVal, (int)TaskManager.TaskBar.Height + 5, Preview, Global_integers.TaskBarR, Global_integers.TaskBarG, Global_integers.TaskBarB, ImprovedVBE.cover);
+                                            Preview = Widgets.Base.Widget_Back((int)(btn.window.Width / 2.5) + 10, (int)(btn.window.Height / 2.5) + 35, ImprovedVBE.colourToNumber(GlobalValues.TaskBarR, GlobalValues.TaskBarG, GlobalValues.TaskBarB));
+                                            Preview = ImprovedVBE.EnableTransparencyPreRGB(Preview, XVal, (int)TaskManager.TaskBar.Height + 5, Preview, GlobalValues.TaskBarR, GlobalValues.TaskBarG, GlobalValues.TaskBarB, ImprovedVBE.cover);
                                             exists = true;
                                         }
                                         else

@@ -4,11 +4,6 @@ using CrystalOSAlpha.Applications;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics.TaskBar;
 using IL2CPU.API.Attribs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CrystalOSAlpha.Graphics.Widgets
 {
@@ -51,7 +46,7 @@ namespace CrystalOSAlpha.Graphics.Widgets
                 {
                     sizeDec = 40;
                 }
-                Back = Base.Widget_Back(200 - sizeDec, 200 - sizeDec, ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B));
+                Back = Base.Widget_Back(200 - sizeDec, 200 - sizeDec, ImprovedVBE.colourToNumber(GlobalValues.R, GlobalValues.G, GlobalValues.B));
                 Back = ImprovedVBE.EnableTransparency(Back, x, y, Back);
                 Bitmap bmp = new Bitmap(Elephant);
                 Nr1 = ImprovedVBE.ScaleImageStock(bmp, (uint)(175 - sizeDec), (uint)(150 - sizeDec));

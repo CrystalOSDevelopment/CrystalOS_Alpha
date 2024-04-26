@@ -304,7 +304,7 @@ namespace CrystalOSAlpha
                         }
                         if (found == false)
                         {
-                            if (_y < into.Height - 1)
+                            if (_y < into.Height - 1 && _y > 0)
                             {
                                 if(x < 0)
                                 {
@@ -333,7 +333,7 @@ namespace CrystalOSAlpha
                                         }
                                         else
                                         {
-                                            into.RawData[_y * into.Width + _x] = image.RawData[counter];
+                                            DrawPixel(into, _x, _y, image.RawData[counter]);
                                             counter++;
                                         }
                                     }
@@ -476,11 +476,11 @@ namespace CrystalOSAlpha
         //Used to make windows(canvases) slightly transparent
         public static Bitmap EnableTransparency(Bitmap image, int x, int y, Bitmap output)
         {
-            int r = Global_integers.R;
-            int g = Global_integers.G;
-            int b = Global_integers.B;
+            int r = GlobalValues.R;
+            int g = GlobalValues.G;
+            int b = GlobalValues.B;
 
-            float blendFactor = (float)Global_integers.LevelOfTransparency / 100.0f;//0.85f
+            float blendFactor = (float)GlobalValues.LevelOfTransparency / 100.0f;//0.85f
             float inverseBlendFactor = 1 - blendFactor;
 
             int counter = 0;
@@ -536,13 +536,13 @@ namespace CrystalOSAlpha
         }
 
         //Does the same thing as EnableTransparency, except with pre-existing RGB values
-        public static Bitmap EnableTransparencyPreRGB(Bitmap image, int x, int y, Bitmap output, int R, int G, int B, Bitmap back)
+        public static Bitmap EnableTransparencyPreRGB(Bitmap image, int x, int y, Bitmap output, int R, int G, int B, Bitmap back, bool Bluring = true)
         {
             int r = R;
             int g = G;
             int b = B;
 
-            float blendFactor = (float)Global_integers.LevelOfTransparency / 100.0f;
+            float blendFactor = (float)GlobalValues.LevelOfTransparency / 100.0f;
             float inverseBlendFactor = 1 - blendFactor;
 
             int counter = 0;
@@ -591,7 +591,7 @@ namespace CrystalOSAlpha
                     }
                 }
             }
-            if (y > 5 && y + output.Height < height)
+            if (y > 5 && y + output.Height < height && Bluring == true)
             {
                 output = Blur(output, 5);
             }
@@ -752,8 +752,8 @@ namespace CrystalOSAlpha
         {
             int x_1 = 0;
 
-            int gradientColorStart = GetGradientColor(0, 0, (int)Input.Width, (int)Input.Height, Global_integers.StartColor, Global_integers.EndColor);
-            int gradientColorEnd = GetGradientColor((int)Input.Width, 0, (int)Input.Width, (int)Input.Height, Global_integers.StartColor, Global_integers.EndColor);
+            int gradientColorStart = GetGradientColor(0, 0, (int)Input.Width, (int)Input.Height, GlobalValues.StartColor, GlobalValues.EndColor);
+            int gradientColorEnd = GetGradientColor((int)Input.Width, 0, (int)Input.Width, (int)Input.Height, GlobalValues.StartColor, GlobalValues.EndColor);
 
             int rStart = Color.FromArgb(gradientColorStart).R;
             int gStart = Color.FromArgb(gradientColorStart).G;

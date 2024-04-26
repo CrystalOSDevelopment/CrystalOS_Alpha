@@ -1,10 +1,5 @@
 ﻿using Cosmos.System.Graphics;
 using IL2CPU.API.Attribs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CrystalOSAlpha.Graphics.Icons
 {
@@ -31,7 +26,7 @@ namespace CrystalOSAlpha.Graphics.Icons
         [ManifestResourceStream(ResourceName = "CrystalOSAlpha.Graphics.Icons.IDE.bmp")] public static byte[] ide;
         public static Bitmap IDE = new Bitmap(ide);
 
-        [ManifestResourceStream(ResourceName = "CrystalOSAlpha.SystemApps.celebrate.bmp")] public static byte[] Celeb;
+        [ManifestResourceStream(ResourceName = "CrystalOSAlpha.Graphics.Icons.celebrate.bmp")] public static byte[] Celeb;
         public static Bitmap Celebration = new Bitmap(Celeb);
     }
 }

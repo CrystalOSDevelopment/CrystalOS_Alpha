@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 
 namespace CrystalOSAlpha.Graphics
 {
-    class Global_integers
+    class GlobalValues
     {
         //Window color
         public static int R = 60;

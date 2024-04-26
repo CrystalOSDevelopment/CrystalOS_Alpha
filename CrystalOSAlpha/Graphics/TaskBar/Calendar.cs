@@ -4,11 +4,7 @@ using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.UI_Elements;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CrystalOSAlpha.Graphics.TaskBar
 {
@@ -79,8 +75,8 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                         break;
                 }
 
-                render = Widgets.Base.Widget_Back(340, 320, ImprovedVBE.colourToNumber(Global_integers.TaskBarR, Global_integers.TaskBarG, Global_integers.TaskBarB));
-                render = ImprovedVBE.EnableTransparencyPreRGB(render, X, Y, render, Global_integers.TaskBarR, Global_integers.TaskBarG, Global_integers.TaskBarB, ImprovedVBE.cover);
+                render = Widgets.Base.Widget_Back(340, 320, ImprovedVBE.colourToNumber(GlobalValues.TaskBarR, GlobalValues.TaskBarG, GlobalValues.TaskBarB));
+                render = ImprovedVBE.EnableTransparencyPreRGB(render, X, Y, render, GlobalValues.TaskBarR, GlobalValues.TaskBarG, GlobalValues.TaskBarB, ImprovedVBE.cover);
                 BitFont.DrawBitFontString(render, "ArialCustomCharset16", Color.White, Year + ". " + Month_In_String, 20, 15);
 
                 //For looping the dates

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ProjectDMG.Utils {
+﻿namespace ProjectDMG.Utils {
     public static class Constants {
         public const int DMG_4Mhz = 4194304;
         public const float REFRESH_RATE = 59.7275f;

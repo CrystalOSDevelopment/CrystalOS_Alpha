@@ -1,4 +1,5 @@
 ﻿using Cosmos.System;
+using CrystalOSAlpha.Graphics;
 using Kernel = CrystalOS_Alpha.Kernel;
 
 namespace CrystalOSAlpha.UI_Elements
@@ -26,6 +27,12 @@ namespace CrystalOSAlpha.UI_Elements
                         break;
                     case ConsoleKeyEx.F1:
                         Kernel.Is_KeyboardMouse = true;
+                        break;
+                    case ConsoleKeyEx.LWin:
+                        foreach (var v in TaskScheduler.Apps)
+                        {
+                            v.minimised = true;
+                        }
                         break;
                     default:
                         temp += Keyboard_HU(key);

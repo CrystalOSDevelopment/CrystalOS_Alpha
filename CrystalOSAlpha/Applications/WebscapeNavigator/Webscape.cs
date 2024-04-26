@@ -31,7 +31,7 @@ namespace CrystalOSAlpha.Applications.WebscapeNavigator
         #endregion important
 
         public int Reg_Y = 0;
-        public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
+        public int CurrentColor = ImprovedVBE.colourToNumber(GlobalValues.R, GlobalValues.G, GlobalValues.B);
 
         public bool initial = true;
         public bool clicked = false;
@@ -160,7 +160,7 @@ namespace CrystalOSAlpha.Applications.WebscapeNavigator
                     }
                     else
                     {
-                        source = Keyboard.HandleKeyboard(source, key);
+                        TextBoxes[0].Text = Keyboard.HandleKeyboard(TextBoxes[0].Text, key);
                     }
 
                     Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);

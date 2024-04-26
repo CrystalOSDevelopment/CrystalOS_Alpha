@@ -10,10 +10,8 @@ using CrystalOSAlpha.Graphics.TaskBar;
 using CrystalOSAlpha.Graphics.Widgets;
 using CrystalOSAlpha.UI_Elements;
 using IL2CPU.API.Attribs;
-using System.Data;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using Sys = Cosmos.System;
 
 namespace CrystalOS_Alpha
@@ -21,7 +19,7 @@ namespace CrystalOS_Alpha
     public class Kernel : Sys.Kernel
     {
         public static VBECanvas vbe = new VBECanvas(new Mode(1920, 1080, ColorDepth.ColorDepth32));
-        [ManifestResourceStream(ResourceName = "CrystalOSAlpha.Graphics.Engine.Cursor.bmp")] public static byte[] Cursor;
+        [ManifestResourceStream(ResourceName = "CrystalOSAlpha.Graphics.Icons.Cursor.bmp")] public static byte[] Cursor;
         public static Bitmap C = new Bitmap(Cursor);
         public static CosmosVFS fs = new CosmosVFS();
         public static bool Is_KeyboardMouse = false;
@@ -36,12 +34,12 @@ namespace CrystalOS_Alpha
                 //Until then, this is the block of code that substitutes it
                 #region Config
                 //Create shortcut directories
-                Directory.CreateDirectory("0:\\User\\" + Global_integers.Username + "\\Favorites");
-                Directory.CreateDirectory("0:\\User\\" + Global_integers.Username + "\\Documents");
-                Directory.CreateDirectory("0:\\User\\" + Global_integers.Username + "\\Pictures");
-                Directory.CreateDirectory("0:\\User\\" + Global_integers.Username + "\\Films");
-                Directory.CreateDirectory("0:\\User\\" + Global_integers.Username + "\\Wastebasket");
-                Directory.CreateDirectory("0:\\User\\" + Global_integers.Username + "\\SecurityArea");
+                Directory.CreateDirectory("0:\\User\\" + GlobalValues.Username + "\\Favorites");
+                Directory.CreateDirectory("0:\\User\\" + GlobalValues.Username + "\\Documents");
+                Directory.CreateDirectory("0:\\User\\" + GlobalValues.Username + "\\Pictures");
+                Directory.CreateDirectory("0:\\User\\" + GlobalValues.Username + "\\Films");
+                Directory.CreateDirectory("0:\\User\\" + GlobalValues.Username + "\\Wastebasket");
+                Directory.CreateDirectory("0:\\User\\" + GlobalValues.Username + "\\SecurityArea");
 
                 //System config files
                 //if (!File.Exists("0:\\User\\System\\Appearance.sys"))
@@ -57,24 +55,24 @@ namespace CrystalOS_Alpha
                 {
                     File.Create("0:\\System\\Layout.sys");
                     string Layout =
-                        "WindowR=" + Global_integers.R +
-                        "\nWindowG=" + Global_integers.G +
-                        "\nWindowB=" + Global_integers.B +
-                        "\nTaskbarR=" + Global_integers.TaskBarR +
-                        "\nTaskbarG=" + Global_integers.TaskBarG +
-                        "\nTaskbarB=" + Global_integers.TaskBarB +
-                        "\nTaskbarType=" + Global_integers.TaskBarType +
-                        "\nUsername=" + Global_integers.Username +
-                        "\nIconR=" + Global_integers.IconR +
-                        "\nIconG=" + Global_integers.IconG +
-                        "\nIconB=" + Global_integers.IconB +
-                        "\nIconwidth=" + Global_integers.IconWidth +
-                        "\nIconheight=" + Global_integers.IconHeight +
-                        "\nStartcolor=" + Global_integers.StartColor.ToArgb() +
-                        "\nEndcolor=" + Global_integers.EndColor.ToArgb() +
-                        "\nBakground=" + Global_integers.Background_type +
-                        "\nBackgroundcolor=" + Global_integers.Background_color +
-                        "\nTransparency=" + Global_integers.LevelOfTransparency;
+                        "WindowR=" + GlobalValues.R +
+                        "\nWindowG=" + GlobalValues.G +
+                        "\nWindowB=" + GlobalValues.B +
+                        "\nTaskbarR=" + GlobalValues.TaskBarR +
+                        "\nTaskbarG=" + GlobalValues.TaskBarG +
+                        "\nTaskbarB=" + GlobalValues.TaskBarB +
+                        "\nTaskbarType=" + GlobalValues.TaskBarType +
+                        "\nUsername=" + GlobalValues.Username +
+                        "\nIconR=" + GlobalValues.IconR +
+                        "\nIconG=" + GlobalValues.IconG +
+                        "\nIconB=" + GlobalValues.IconB +
+                        "\nIconwidth=" + GlobalValues.IconWidth +
+                        "\nIconheight=" + GlobalValues.IconHeight +
+                        "\nStartcolor=" + GlobalValues.StartColor.ToArgb() +
+                        "\nEndcolor=" + GlobalValues.EndColor.ToArgb() +
+                        "\nBakground=" + GlobalValues.Background_type +
+                        "\nBackgroundcolor=" + GlobalValues.Background_color +
+                        "\nTransparency=" + GlobalValues.LevelOfTransparency;
                     File.WriteAllText("0:\\System\\Layout.sys", Layout);
                 }
                 else
@@ -86,66 +84,66 @@ namespace CrystalOS_Alpha
                         switch(Split[0])
                         {
                             case "WindowR":
-                                Global_integers.R = int.Parse(Split[1]);
+                                GlobalValues.R = int.Parse(Split[1]);
                                 break;
                             case "WindowG":
-                                Global_integers.G = int.Parse(Split[1]);
+                                GlobalValues.G = int.Parse(Split[1]);
                                 break;
                             case "WindowB":
-                                Global_integers.B = int.Parse(Split[1]);
+                                GlobalValues.B = int.Parse(Split[1]);
                                 break;
 
                             case "TaskbarR":
-                                Global_integers.TaskBarR = int.Parse(Split[1]);
+                                GlobalValues.TaskBarR = int.Parse(Split[1]);
                                 break;
                             case "TaskbarG":
-                                Global_integers.TaskBarG = int.Parse(Split[1]);
+                                GlobalValues.TaskBarG = int.Parse(Split[1]);
                                 break;
                             case "TaskbarB":
-                                Global_integers.TaskBarB = int.Parse(Split[1]);
+                                GlobalValues.TaskBarB = int.Parse(Split[1]);
                                 break;
 
                             case "TaskbarType":
-                                Global_integers.TaskBarType = Split[1];
+                                GlobalValues.TaskBarType = Split[1];
                                 break;
 
                             case "Username":
-                                Global_integers.Username = Split[1];
+                                GlobalValues.Username = Split[1];
                                 break;
 
                             case "IconR":
-                                Global_integers.IconR = int.Parse(Split[1]);
+                                GlobalValues.IconR = int.Parse(Split[1]);
                                 break;
                             case "IconG":
-                                Global_integers.IconG = int.Parse(Split[1]);
+                                GlobalValues.IconG = int.Parse(Split[1]);
                                 break;
                             case "IconB":
-                                Global_integers.IconB = int.Parse(Split[1]);
+                                GlobalValues.IconB = int.Parse(Split[1]);
                                 break;
 
                             case "Iconwidth":
-                                Global_integers.IconWidth = uint.Parse(Split[1]);
+                                GlobalValues.IconWidth = uint.Parse(Split[1]);
                                 break;
                             case "Iconheight":
-                                Global_integers.IconHeight = uint.Parse(Split[1]);
+                                GlobalValues.IconHeight = uint.Parse(Split[1]);
                                 break;
 
                             case "Startcolor":
-                                Global_integers.StartColor = Color.FromArgb(int.Parse(Split[1]));
+                                GlobalValues.StartColor = Color.FromArgb(int.Parse(Split[1]));
                                 break;
                             case "Endcolor":
-                                Global_integers.EndColor = Color.FromArgb(int.Parse(Split[1]));
+                                GlobalValues.EndColor = Color.FromArgb(int.Parse(Split[1]));
                                 break;
 
                             case "Bakground":
-                                Global_integers.Background_type = Split[1];
+                                GlobalValues.Background_type = Split[1];
                                 break;
                             case "Backgroundcolor":
-                                Global_integers.Background_color = Split[1];
+                                GlobalValues.Background_color = Split[1];
                                 break;
 
                             case "Transparency":
-                                Global_integers.LevelOfTransparency = int.Parse(Split[1]);
+                                GlobalValues.LevelOfTransparency = int.Parse(Split[1]);
                                 break;
                         }
                     }
@@ -194,7 +192,7 @@ namespace CrystalOS_Alpha
         public static string Clipboard = "";
         protected override void Run()
         {
-            if (TaskScheduler.Apps.Where(d => d.width > 800).Count() != 0)
+            if (TaskScheduler.Apps.FindAll(d => d.width > 800).Count != 0)
             {
                 if (collect >= 2)
                 {
@@ -219,15 +217,15 @@ namespace CrystalOS_Alpha
                 }
             }
 
-            if(TaskManager.MenuOpened == false)
+            if(TaskManager.MenuOpened == false && TaskManager.calendar == false)
             {
-                if(Global_integers.TaskBarType == "Classic")
+                if(GlobalValues.TaskBarType == "Classic")
                 {
                     SideNav.Core();
                     TaskScheduler.Exec();
                     TaskManager.Main();
                 }
-                else if(Global_integers.TaskBarType == "Nostalgia")
+                else if(GlobalValues.TaskBarType == "Nostalgia")
                 {
                     SideNav.Core();
                     TaskManager.Main();

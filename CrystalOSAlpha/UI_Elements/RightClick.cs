@@ -5,10 +5,6 @@ using CrystalOSAlpha.Graphics.Engine;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CrystalOSAlpha.UI_Elements
 {
@@ -43,7 +39,7 @@ namespace CrystalOSAlpha.UI_Elements
             //Graphical appearance
             Bitmap Canvas = new Bitmap((uint)Width, (uint)Height, ColorDepth.ColorDepth32);
             Array.Fill(Canvas.RawData, 1);
-            ImprovedVBE.DrawFilledRectangle(Canvas, ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B), 2, 2, Width - 4, Height - 4, false);
+            ImprovedVBE.DrawFilledRectangle(Canvas, ImprovedVBE.colourToNumber(GlobalValues.R, GlobalValues.G, GlobalValues.B), 2, 2, Width - 4, Height - 4, false);
             //Render MenuItems
             for(int i = 0; i < TextLines.Count; i++)
             {

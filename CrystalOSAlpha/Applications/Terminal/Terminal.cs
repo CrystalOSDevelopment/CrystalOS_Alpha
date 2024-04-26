@@ -31,7 +31,7 @@ namespace CrystalOSAlpha.Applications.Terminal
         public int offset2 = 0;
         public int index = 0;
         public int Reg_Y = 0;
-        public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
+        public int CurrentColor = ImprovedVBE.colourToNumber(GlobalValues.R, GlobalValues.G, GlobalValues.B);
 
         public string content = "Crystal-PC> ";
 
@@ -47,7 +47,7 @@ namespace CrystalOSAlpha.Applications.Terminal
         public Bitmap Container;
 
         public List<Button_prop> Buttons = new List<Button_prop>();
-        public List<Scrollbar_Values> Scroll = new List<Scrollbar_Values>();
+        public List<VerticalScrollbar> Scroll = new List<VerticalScrollbar>();
         public List<string> cmd_history = new List<string>();
 
         public void App()
@@ -56,7 +56,7 @@ namespace CrystalOSAlpha.Applications.Terminal
             {
                 Buttons.Add(new Button_prop(5, 27, 90, 20, "Clear", 1));
 
-                Scroll.Add(new Scrollbar_Values(width - 22, 30, 20, height - 60, 0));
+                Scroll.Add(new VerticalScrollbar(width - 22, 52, 20, height - 60, 20, 0, 1000));
 
                 initial = false;
             }
@@ -94,8 +94,6 @@ namespace CrystalOSAlpha.Applications.Terminal
                     }
                 }
 
-                canvas = Scrollbar.Render(canvas, Scroll[0]);
-
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
                 once = false;
                 temp = true;
@@ -126,50 +124,23 @@ namespace CrystalOSAlpha.Applications.Terminal
                 }
             }
 
-            foreach (var scv in Scroll)
+            foreach (var vscroll in Scroll)
             {
-                if (MouseManager.MouseState == MouseState.Left)
+                vscroll.Height = height - 60;
+                vscroll.x = width - 22;
+                if (content.Split('\n').Length * 16 > Container.Height)
                 {
-
-                    if (MouseManager.Y > y + scv.y + 42 + scv.Pos && MouseManager.Y < y + scv.y + scv.Pos + 62)
-                    {
-                        if (MouseManager.X > x + scv.x + 2 && MouseManager.X < x + scv.x + scv.Width)
-                        {
-                            if (scv.Clicked == false)
-                            {
-                                scv.Clicked = true;
-                                Reg_Y = (int)MouseManager.Y - y - scv.y - 42 - scv.Pos;
-                            }
-                        }
-                        temp = true;
-                    }
+                    vscroll.MaxVal = content.Split('\n').Length * 16 - (int)Container.Height;
+                    vscroll.Pos = (int)(Scroll[0].MaxVal / Scroll[0].Sensitivity) + 20;
+                    temp = true;
                 }
-                if (MouseManager.MouseState == MouseState.None && scv.Clicked == true)
+                else
+                {
+                    vscroll.MaxVal = 0;
+                }
+                if (vscroll.CheckClick((int)MouseManager.X - x, (int)MouseManager.Y - y))
                 {
                     temp = true;
-                    scv.Clicked = false;
-                }
-                if (scv.Clicked == true && MouseManager.MouseState == MouseState.None)
-                {
-                    scv.Clicked = false;
-                }
-                if (MouseManager.Y > y + scv.y + 48 && MouseManager.Y < y + height - 42 && scv.Clicked == true)
-                {
-                    if (scv.Pos >= 0 && scv.Pos <= scv.Height - 44)
-                    {
-                        scv.Pos = (int)MouseManager.Y - y - scv.y - 42 - Reg_Y;
-                    }
-                    else
-                    {
-                        if (scv.Pos < 0)
-                        {
-                            scv.Pos = 1;
-                        }
-                        else
-                        {
-                            scv.Pos = scv.Height - 44;
-                        }
-                    }
                 }
             }
 
@@ -209,18 +180,17 @@ namespace CrystalOSAlpha.Applications.Terminal
                             {
                                 cmd_history.RemoveAt(0);
                             }
-                            if(Scroll[0].Pos < Scroll[0].Height - 48 && content.Split("\n").Length > 21)
-                            {
-                                Scroll[0].Pos += CommandLibrary.offset * 8;
-                            }
-                            else if(Scroll[0].Pos < Scroll[0].Height - 48 == false)
-                            {
-                                offset2 += CommandLibrary.offset * 8;
-                                offset += CommandLibrary.offset;
-                            }
-                            CommandLibrary.offset = 0;
                         }
                         command = "";
+                        while(content.Split('\n').Length * 16 > Container.Height * 5)
+                        {
+                            content = content.Remove(0, content.IndexOf("\n") + 1);
+                        }
+                        if (content.Split('\n').Length * 16 >= Container.Height - 10)
+                        {
+                            Scroll[0].Value = Math.Clamp(content.Split('\n').Length * 16, Scroll[0].MinVal, Scroll[0].MaxVal);
+                            Scroll[0].Pos = (int)(Scroll[0].Value / Scroll[0].Sensitivity) + 20;
+                        }
                     }
                     else if(key.Key == ConsoleKeyEx.UpArrow)
                     {
@@ -267,14 +237,18 @@ namespace CrystalOSAlpha.Applications.Terminal
             {
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
                 Array.Fill(Container.RawData, ImprovedVBE.colourToNumber(36, 36, 36));
-                window = Scrollbar.Render(window, Scroll[0]);
-
-                if(content.Split('\n').Length > 21)
+                foreach (var vscroll in Scroll)
                 {
-                    content = content.Remove(0, Get_index_of_char(content, '\n', offset));
+                    vscroll.Render(window);
                 }
-                BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, content, 5, 5 - (Scroll[0].Pos + offset2) * 4);
-                offset = 0;
+                if (Scroll[0].Value > 0)
+                {
+                    BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, content, 5, (-3) - Scroll[0].Value);
+                }
+                else
+                {
+                    BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, content, 5, 5 - Scroll[0].Value);
+                }
                 ImprovedVBE.DrawImageAlpha(Container, 5, 52, window);
 
                 temp = false;

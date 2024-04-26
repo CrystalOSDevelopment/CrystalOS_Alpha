@@ -28,6 +28,7 @@ namespace CrystalOSAlpha.Applications.Minecraft
         public Bitmap icon { get; set; }
         public Bitmap canvas;
         public Bitmap window { get; set; }
+        public Bitmap back;
 
         public List<bool> Statements_Cond = new List<bool> { false };
 
@@ -240,11 +241,12 @@ namespace CrystalOSAlpha.Applications.Minecraft
 
             if (once == true)
             {
-                if (update == true)
+                if (update == true || window.Width != width)
                 {
-                    Bitmap back = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
                     (canvas, back, window) = WindowGenerator.Generate(x, y, width, height, CurrentColor, name);
+                    update = false;
                 }
+                Array.Copy(canvas.RawData, window.RawData, canvas.RawData.Length);
 
                 int pos_y = 0;
                 int pos_x = 0;
@@ -350,24 +352,16 @@ namespace CrystalOSAlpha.Applications.Minecraft
                         temp_x += 8;
                         temp_y += 4;
                     }
-                    BlockCounter = 0;
-
-                    pos_y = -8 * (c + 1);
-                    pos_x = -4 * (c + 1);
-                    temp_x = -8 * (c + 1);
-                    temp_y = -4 * (c + 1);
                     DriftUp += 8.5;
                 }
 
                 if (inventory == true)
                 {
                     Inventory inv = new Inventory();
-                    Inv = inv.Render(width - 40, height - 60, canvas.RawData, Health, Hunger, Level);
-                    EnableTransparency(Inv, 20, 40);
-
+                    Inv = inv.Render(width - 40, height - 60, window, Health, Hunger, Level);
+                    ImprovedVBE.DrawImageAlpha(Inv, 20, 40, window);
                 }
 
-                window.RawData = canvas.RawData;
                 if (dist_x < width / 2 || dist_y < height / 2)
                 {
                     x_offset += width / 2 - dist_x;
@@ -415,7 +409,7 @@ namespace CrystalOSAlpha.Applications.Minecraft
                                 }
                                 else
                                 {
-                                    canvas.RawData[_y * width - (width - _x)] = image.RawData[counter];
+                                    window.RawData[_y * width - (width - _x)] = image.RawData[counter];
                                     counter++;
                                 }
                             }

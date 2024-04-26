@@ -1,12 +1,7 @@
 ﻿using Cosmos.System.Graphics;
 using CrystalOSAlpha.Graphics;
 using IL2CPU.API.Attribs;
-using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CrystalOSAlpha.Applications.Minecraft
 {
@@ -69,7 +64,7 @@ namespace CrystalOSAlpha.Applications.Minecraft
         public int width = 300;
         public int height = 300;
 
-        public Bitmap Render(int Width, int Height, int[] back, int health, int hunger, int level)
+        public Bitmap Render(int Width, int Height, Bitmap back, int health, int hunger, int level)
         {
             width = Width;
             height = Height;
@@ -84,19 +79,19 @@ namespace CrystalOSAlpha.Applications.Minecraft
             ImprovedVBE.DrawFilledRectangle(Inv, ImprovedVBE.colourToNumber(114, 114, 114), 5, 0, width - 10, 15, false);
             ImprovedVBE.DrawFilledRectangle(Inv, ImprovedVBE.colourToNumber(114, 114, 114), 5, height - 15, width - 10, 15, false);
 
-            Apply_Transparency(back, ImprovedVBE.colourToNumber(114, 114, 114));
+            ImprovedVBE.EnableTransparencyPreRGB(Inv, 20, 40, Inv, 114, 114, 114, back, false);
 
             //The Title.
 
-            Graphics.Engine.BitFont.DrawBitFontString(Inv, "ArialCustomCharset16", Global_integers.c, "INVENTORY", width / 2 - 9 * 13 / 2, 5);
-            Graphics.Engine.BitFont.DrawBitFontString(Inv, "ArialCustomCharset16", Global_integers.c, "PLAYER", width - 150, 30);
-            Graphics.Engine.BitFont.DrawBitFontString(Inv, "ArialCustomCharset16", Global_integers.c, "Steve", width - 142, 50);
+            Graphics.Engine.BitFont.DrawBitFontString(Inv, "ArialCustomCharset16", GlobalValues.c, "INVENTORY", width / 2 - 9 * 13 / 2, 5);
+            Graphics.Engine.BitFont.DrawBitFontString(Inv, "ArialCustomCharset16", GlobalValues.c, "PLAYER", width - 150, 30);
+            Graphics.Engine.BitFont.DrawBitFontString(Inv, "ArialCustomCharset16", GlobalValues.c, "Steve", width - 142, 50);
 
-            EnableTransparency(Player, width - 145, 65);
+            ImprovedVBE.DrawImageAlpha(Player, width - 145, 65, Inv);
 
-            Graphics.Engine.BitFont.DrawBitFontString(Inv, "ArialCustomCharset16", Global_integers.c, "Health: " + health, width - 185, 180);
-            Graphics.Engine.BitFont.DrawBitFontString(Inv, "ArialCustomCharset16", Global_integers.c, "Food:  " + hunger, width - 185, 200);
-            Graphics.Engine.BitFont.DrawBitFontString(Inv, "ArialCustomCharset16", Global_integers.c, "Level:  " + level, width - 185, 220);
+            Graphics.Engine.BitFont.DrawBitFontString(Inv, "ArialCustomCharset16", GlobalValues.c, "Health: " + health, width - 185, 180);
+            Graphics.Engine.BitFont.DrawBitFontString(Inv, "ArialCustomCharset16", GlobalValues.c, "Food:  " + hunger, width - 185, 200);
+            Graphics.Engine.BitFont.DrawBitFontString(Inv, "ArialCustomCharset16", GlobalValues.c, "Level:  " + level, width - 185, 220);
 
             //The grid array using for loops
 
@@ -169,44 +164,6 @@ namespace CrystalOSAlpha.Applications.Minecraft
                 {
                     counter += (int)image.Width;
                 }
-            }
-        }
-
-        public void Apply_Transparency(int[] input2, int color)
-        {
-            int r = (color & 0xff0000) >> 16;
-            int g = (color & 0x00ff00) >> 8;
-            int b = color & 0x0000ff;
-
-            float blendFactor = 0.8f;
-            float inverseBlendFactor = 1 - blendFactor;
-
-            for (int j = 0; j < height; j++)
-            {
-                for (int i = 0; i < width; i++)
-                {
-                    if (Inv.RawData[j * width + i] != 0)
-                    {
-                        int r3 = (input2[(j + 41) * 800 + i + 20] & 0xff0000) >> 16;
-                        int g3 = (input2[(j + 41) * 800 + i + 20] & 0x00ff00) >> 8;
-                        int b3 = input2[(j + 41) * 800 + i + 20] & 0x0000ff;
-
-                        int r2 = (int)(inverseBlendFactor * r3 + blendFactor * r);
-                        int g2 = (int)(inverseBlendFactor * g3 + blendFactor * g);
-                        int b2 = (int)(inverseBlendFactor * b3 + blendFactor * b);
-
-                        DrawPixel(i, j, ImprovedVBE.colourToNumber(r2, g2, b2));
-                    }
-                }
-            }
-        }
-
-        public void DrawPixel(int x, int y, int color)
-        {
-            //16777215 white
-            if (x > 0 && x < width && y > 0 && y < height)
-            {
-                Inv.RawData[y * width + x] = color;
             }
         }
     }

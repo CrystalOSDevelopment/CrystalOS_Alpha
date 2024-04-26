@@ -34,7 +34,7 @@ namespace CrystalOSAlpha.SystemApps
         public Bitmap icon { get; set; }
 
         public int Counter = 0;
-        public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
+        public int CurrentColor = ImprovedVBE.colourToNumber(GlobalValues.R, GlobalValues.G, GlobalValues.B);
         public int part = 0;
         public int CycleCount = 0;
 

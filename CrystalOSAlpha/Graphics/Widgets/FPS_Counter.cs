@@ -8,11 +8,6 @@ using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics.TaskBar;
 using CrystalOSAlpha.Graphics.Widgets;
 using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CrystalOS_Alpha.Graphics.Widgets
 {
@@ -58,9 +53,9 @@ namespace CrystalOS_Alpha.Graphics.Widgets
                 {
                     sizeDec = 40;
                 }
-                Back = Base.Widget_Back(200 - sizeDec, 200 - sizeDec, ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B));
+                Back = Base.Widget_Back(200 - sizeDec, 200 - sizeDec, ImprovedVBE.colourToNumber(GlobalValues.R, GlobalValues.G, GlobalValues.B));
                 Back = ImprovedVBE.EnableTransparency(Back, x, y, Back);
-                BitFont.DrawBitFontString(Back, "ArialCustomCharset16", Global_integers.c, output, ((100 - sizeDec / 2) - output.Length * 4), (int)(Back.Height / 2 - 8));//92
+                BitFont.DrawBitFontString(Back, "ArialCustomCharset16", GlobalValues.c, output, ((100 - sizeDec / 2) - output.Length * 4), (int)(Back.Height / 2 - 8));//92
                 Heap.Collect();
                 Get_Back = false;
             }

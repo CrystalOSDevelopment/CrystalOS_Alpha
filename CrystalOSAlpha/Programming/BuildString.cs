@@ -1,10 +1,4 @@
-﻿using Cosmos.System;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kernel = CrystalOS_Alpha.Kernel;
+﻿using System.Collections.Generic;
 
 namespace CrystalOSAlpha.Programming
 {
@@ -47,7 +41,7 @@ namespace CrystalOSAlpha.Programming
             List<char> Operands = new List<char>();
             for(int i = 0; i < Input.Length; i++)
             {
-                if(new char[] { '+', '-', '*', '/' }.Contains(Input[i]))
+                if(new List<char> { '+', '-', '*', '/' }.Contains(Input[i]))
                 {
                     Operands.Add(Input[i]);
                 }

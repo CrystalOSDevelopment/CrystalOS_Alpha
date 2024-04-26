@@ -29,7 +29,7 @@ namespace CrystalOSAlpha.Applications.Terminal
         #endregion Core_Values
 
         public int Reg_Y = 0;
-        public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
+        public int CurrentColor = ImprovedVBE.colourToNumber(GlobalValues.R, GlobalValues.G, GlobalValues.B);
         public int offset = 0;
         public int offset2 = 0;
         public int index = 0;

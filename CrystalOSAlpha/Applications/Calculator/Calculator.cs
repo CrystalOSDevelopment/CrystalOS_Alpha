@@ -25,7 +25,7 @@ namespace CrystalOSAlpha.Applications.Calculator
         public Bitmap icon { get; set; }
         #endregion Window porpeties
 
-        public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
+        public int CurrentColor = ImprovedVBE.colourToNumber(GlobalValues.R, GlobalValues.G, GlobalValues.B);
         
         public string Content = "";
         
@@ -65,9 +65,9 @@ namespace CrystalOSAlpha.Applications.Calculator
 
                 Buttons.Add(new Button_prop(5, 255, 40, 40, "0", 1, "0"));
                 Buttons.Add(new Button_prop(50, 255, 40, 40, ",", 1, ","));
-                Buttons.Add(new Button_prop(95, 255, 40, 40, ")", 1, ")"));
+                Buttons.Add(new Button_prop(95, 255, 40, 40, "(", 1, "("));
 
-                Buttons.Add(new Button_prop(5, 300, 40, 40, "(", 1, ")"));
+                Buttons.Add(new Button_prop(5, 300, 40, 40, ")", 1, ")"));
 
                 width = 185;
 

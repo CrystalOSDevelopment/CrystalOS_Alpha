@@ -12,7 +12,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using Kernel = CrystalOS_Alpha.Kernel;
 using TaskScheduler = CrystalOSAlpha.Graphics.TaskScheduler;
 
@@ -37,7 +36,7 @@ namespace CrystalOSAlpha.Applications.FileSys
         public Bitmap icon { get; set; }
         #endregion important
 
-        public int CurrentColor = ImprovedVBE.colourToNumber(Global_integers.R, Global_integers.G, Global_integers.B);
+        public int CurrentColor = ImprovedVBE.colourToNumber(GlobalValues.R, GlobalValues.G, GlobalValues.B);
         public int Reg_Y = 0;
         public int offset = 0;
         public int index = 0;
@@ -116,12 +115,12 @@ namespace CrystalOSAlpha.Applications.FileSys
                                 Route = "0:\\";
                                 break;
                             case "Wastebasket":
-                                TextBoxes[1].Text = "0:\\User\\" + Global_integers.Username + "\\Wastebasket";
-                                Route = "0:\\User\\" + Global_integers.Username + "\\Wastebasket";
+                                TextBoxes[1].Text = "0:\\User\\" + GlobalValues.Username + "\\Wastebasket";
+                                Route = "0:\\User\\" + GlobalValues.Username + "\\Wastebasket";
                                 break;
                             case "Security Area":
-                                TextBoxes[1].Text = "0:\\User\\" + Global_integers.Username + "\\SecurityArea";
-                                Route = "0:\\User\\" + Global_integers.Username + "\\SecurityArea";
+                                TextBoxes[1].Text = "0:\\User\\" + GlobalValues.Username + "\\SecurityArea";
+                                Route = "0:\\User\\" + GlobalValues.Username + "\\SecurityArea";
                                 break;
                             case "Back":
                                 if(History.Count > 0)
@@ -572,23 +571,23 @@ namespace CrystalOSAlpha.Applications.FileSys
                                 switch (i)
                                 {
                                     case 0:
-                                        TextBoxes[1].Text = "0:\\User\\" + Global_integers.Username + "\\Favorites";
-                                        Route = "0:\\User\\" + Global_integers.Username + "\\Favorites";
+                                        TextBoxes[1].Text = "0:\\User\\" + GlobalValues.Username + "\\Favorites";
+                                        Route = "0:\\User\\" + GlobalValues.Username + "\\Favorites";
                                         temp = true;
                                         break;
                                     case 1:
-                                        TextBoxes[1].Text = "0:\\User\\" + Global_integers.Username + "\\Documents";
-                                        Route = "0:\\User\\" + Global_integers.Username + "\\Documents";
+                                        TextBoxes[1].Text = "0:\\User\\" + GlobalValues.Username + "\\Documents";
+                                        Route = "0:\\User\\" + GlobalValues.Username + "\\Documents";
                                         temp = true;
                                         break;
                                     case 2:
-                                        TextBoxes[1].Text = "0:\\User\\" + Global_integers.Username + "\\Pictures";
-                                        Route = "0:\\User\\" + Global_integers.Username + "\\Pictures";
+                                        TextBoxes[1].Text = "0:\\User\\" + GlobalValues.Username + "\\Pictures";
+                                        Route = "0:\\User\\" + GlobalValues.Username + "\\Pictures";
                                         temp = true;
                                         break;
                                     case 3:
-                                        TextBoxes[1].Text = "0:\\User\\" + Global_integers.Username + "\\Films";
-                                        Route = "0:\\User\\" + Global_integers.Username + "\\Films";
+                                        TextBoxes[1].Text = "0:\\User\\" + GlobalValues.Username + "\\Films";
+                                        Route = "0:\\User\\" + GlobalValues.Username + "\\Films";
                                         temp = true;
                                         break;
                                 }
