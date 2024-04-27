@@ -59,7 +59,7 @@
       <None Remove="Graphics\Icons\WebBrowser.bmp" />
       <None Remove="Graphics\TaskBar\Icon.bmp" />
       <None Remove="Graphics\Widgets\Elephant.bmp" />
-      <None Remove="SystemApps\celebrate.bmp" />
+      <None Remove="System\celebrate.bmp" />
     </ItemGroup>
 
     <ItemGroup>
@@ -73,7 +73,7 @@
       <EmbeddedResource Include="Applications\Gameboy\Tetris.gb" />
       <EmbeddedResource Include="Applications\Gameboy\Zelda.gb" />
       <EmbeddedResource Include="Graphics\Engine\Arial_16.btf" />
-      <EmbeddedResource Include="Graphics\Engine\Cursor.bmp" />
+      <EmbeddedResource Include="Graphics\Icons\Cursor.bmp" />
       <EmbeddedResource Include="Graphics\Engine\Wallp1.bmp" />
       <EmbeddedResource Include="Graphics\Icons\Calculator.bmp" />
       <EmbeddedResource Include="Graphics\Icons\Explorer.bmp" />
@@ -87,7 +87,7 @@
 		<EmbeddedResource Include="Graphics\Icons\IDE.bmp" />
       <EmbeddedResource Include="Graphics\TaskBar\Icon.bmp" />
       <EmbeddedResource Include="Graphics\Widgets\Elephant.bmp" />
-      <EmbeddedResource Include="SystemApps\celebrate.bmp" />
+      <EmbeddedResource Include="Graphics\Icons\celebrate.bmp" />
     </ItemGroup>
 
     <ItemGroup>

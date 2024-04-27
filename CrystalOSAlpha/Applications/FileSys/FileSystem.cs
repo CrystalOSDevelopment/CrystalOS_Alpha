@@ -355,7 +355,8 @@ namespace CrystalOSAlpha.Applications.FileSys
                         }
                         if (entry.type == Opt.Folder)
                         {
-                            ImprovedVBE.DrawImage(Folder, x_off, y_off, Main);
+                            TransportedIcons.FirstFolder(Main, x_off, y_off);
+                            //ImprovedVBE.DrawImage(Folder, x_off, y_off, Main);
                             if(entry.name.Length > 5)
                             {
                                 BitFont.DrawBitFontString(Main, "ArialCustomCharset16", Color.White, entry.name.Remove(5) + "...", x_off, y_off + 38);
@@ -367,7 +368,8 @@ namespace CrystalOSAlpha.Applications.FileSys
                         }
                         if(entry.type == Opt.File)
                         {
-                            ImprovedVBE.DrawImage(File, x_off, y_off, Main);
+                            //ImprovedVBE.DrawImage(File, x_off, y_off, Main);
+                            TransportedIcons.FirstIcon(Main, x_off, y_off);
                             if (entry.name.Length > 5)
                             {
                                 BitFont.DrawBitFontString(Main, "ArialCustomCharset16", Color.White, entry.name.Remove(5) + "...", x_off, y_off + 38);
@@ -378,9 +380,9 @@ namespace CrystalOSAlpha.Applications.FileSys
                             }
                         }
                         x_off += 62;
-                        if(x_off >= Main.Width - 62)//x_off / 62 >= 7
+                        if(x_off >= Main.Width - 72)
                         {
-                            y_off += 60;
+                            y_off += 70;
                             x_off = 9;
                         }
                         indicator++;

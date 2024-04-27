@@ -68,112 +68,114 @@ namespace CrystalOSAlpha.Graphics
                 {
                     app.y = 1;
                 }
-                if (MouseManager.MouseState == MouseState.Left)
+                if((TaskManager.MenuOpened == false || TaskManager.calendar == false) && TaskManager.clicked == false)
                 {
-                    if(MouseManager.X < app.x + app.width && MouseManager.X > app.x + app.width - 21)
+                    if (MouseManager.MouseState == MouseState.Left)
                     {
-                        if(MouseManager.Y > app.y + 2 && MouseManager.Y < app.y + 18)
+                        if(MouseManager.X < app.x + app.width && MouseManager.X > app.x + app.width - 21)
                         {
-                            if (Clicked == false)
+                            if(MouseManager.Y > app.y + 2 && MouseManager.Y < app.y + 18)
+                            {
+                                if (Clicked == false)
+                                {
+                                    bool found = false;
+                                    for(int i = index + 1; i < Apps.Count; ++i)
+                                    {
+                                        if (Apps[i].x + Apps[i].width >= app.x + app.width - 21 && Apps[i].x + Apps[i].width <= app.x + app.width + 21)
+                                        {
+                                            if (Apps[i].y >= app.y - 22 && Apps[i].y <= app.y + 22)
+                                            {
+                                                if (Apps[i].minimised == false)
+                                                {
+                                                    found = true;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    if(found == false)
+                                    {
+                                        Apps.Remove(app);
+                                        Clicked = true;
+                                    }
+                                }
+                            }
+                        }
+                        if (MouseManager.X < app.x + app.width - 26 && MouseManager.X > app.x + app.width - 42)
+                        {
+                            if (MouseManager.Y > app.y + 2 && MouseManager.Y < app.y + 18)
+                            {
+                                app.minimised = true;
+                            }
+                        }
+                        if (MouseManager.X < app.x + app.width - 21 && MouseManager.X > app.x)
+                        {
+                            if (MouseManager.Y > app.y && MouseManager.Y < app.y + 21)
                             {
                                 bool found = false;
-                                for(int i = index + 1; i < Apps.Count; ++i)
+                                for (int i = index + 1; i < Apps.Count; i++)
                                 {
-                                    if (Apps[i].x + Apps[i].width >= app.x + app.width - 21 && Apps[i].x + Apps[i].width <= app.x + app.width + 21)
+                                    if (MouseManager.X > Apps[i].x && MouseManager.X < Apps[i].x + Apps[i].width)
                                     {
-                                        if (Apps[i].y >= app.y - 22 && Apps[i].y <= app.y + 22)
+                                        if (MouseManager.Y > Apps[i].y && MouseManager.Y < Apps[i].y + Apps[i].height)
                                         {
-                                            if (Apps[i].minimised == false)
+                                            if(Apps[i].minimised == false)
                                             {
                                                 found = true;
                                             }
                                         }
                                     }
                                 }
-                                if(found == false)
+                                if (found == false)
                                 {
-                                    Apps.Remove(app);
-                                    Clicked = true;
+                                    if (get_values == true)
+                                    {
+                                        neg_x = (int)MouseManager.X - app.x;
+                                        neg_y = (int)MouseManager.Y - app.y;
+                                        app.movable = true;
+                                        get_values = false;
+                                    }
                                 }
                             }
                         }
-                    }
-                    if (MouseManager.X < app.x + app.width - 26 && MouseManager.X > app.x + app.width - 42)
-                    {
-                        if (MouseManager.Y > app.y + 2 && MouseManager.Y < app.y + 18)
+                        if(MouseManager.X > app.x && MouseManager.X < app.x + app.width)
                         {
-                            app.minimised = true;
-                        }
-                    }
-                    if (MouseManager.X < app.x + app.width - 21 && MouseManager.X > app.x)
-                    {
-                        if (MouseManager.Y > app.y && MouseManager.Y < app.y + 21)
-                        {
-                            bool found = false;
-                            for (int i = index + 1; i < Apps.Count; i++)
+                            if (MouseManager.Y > app.y && MouseManager.Y < app.y + app.height)
                             {
-                                if (MouseManager.X > Apps[i].x && MouseManager.X < Apps[i].x + Apps[i].width)
+                                bool found = false;
+                                for (int i = index + 1; i < Apps.Count; i++)
                                 {
-                                    if (MouseManager.Y > Apps[i].y && MouseManager.Y < Apps[i].y + Apps[i].height)
+                                    if (MouseManager.X > Apps[i].x && MouseManager.X < Apps[i].x + Apps[i].width)
                                     {
-                                        if(Apps[i].minimised == false)
+                                        if (MouseManager.Y > Apps[i].y && MouseManager.Y < Apps[i].y + Apps[i].height)
                                         {
                                             found = true;
                                         }
                                     }
                                 }
-                            }
-                            if (found == false)
-                            {
-                                if (get_values == true)
+                                if (found == false)
                                 {
-                                    neg_x = (int)MouseManager.X - app.x;
-                                    neg_y = (int)MouseManager.Y - app.y;
-                                    app.movable = true;
-                                    get_values = false;
-                                }
-                            }
-                        }
-                    }
-                    if(MouseManager.X > app.x && MouseManager.X < app.x + app.width)
-                    {
-                        if (MouseManager.Y > app.y && MouseManager.Y < app.y + app.height)
-                        {
-                            bool found = false;
-                            for (int i = index + 1; i < Apps.Count; i++)
-                            {
-                                if (MouseManager.X > Apps[i].x && MouseManager.X < Apps[i].x + Apps[i].width)
-                                {
-                                    if (MouseManager.Y > Apps[i].y && MouseManager.Y < Apps[i].y + Apps[i].height)
+                                    if(TaskManager.disable == false)
                                     {
-                                        found = true;
+                                        app.z = 999;
+                                        TaskManager.disable = true;
                                     }
                                 }
                             }
-                            if (found == false)
-                            {
-                                if(TaskManager.disable == false)
-                                {
-                                    app.z = 999;
-                                    TaskManager.disable = true;
-                                }
-                            }
+                        }
+                    }
+                    if(app.movable == true)
+                    {
+                        ImprovedVBE.isMoving = true;
+                        app.x = (int)MouseManager.X - neg_x;
+                        app.y = (int)MouseManager.Y - neg_y;
+                        if(MouseManager.MouseState == MouseState.None)
+                        {
+                            app.movable = false;
+                            get_values = true;
+                            ImprovedVBE.isMoving = false;
                         }
                     }
                 }
-                if(app.movable == true)
-                {
-                    ImprovedVBE.isMoving = true;
-                    app.x = (int)MouseManager.X - neg_x;
-                    app.y = (int)MouseManager.Y - neg_y;
-                    if(MouseManager.MouseState == MouseState.None)
-                    {
-                        app.movable = false;
-                        get_values = true;
-                        ImprovedVBE.isMoving = false;
-                    }
-                }
-                index++;
                 if(app.minimised == false)
                 {
                     try
@@ -240,6 +242,7 @@ namespace CrystalOSAlpha.Graphics
                         }
                     }
                 }
+                index++;
                 counter++;
             }
             if(MouseManager.MouseState == MouseState.None && TaskManager.disable == true)

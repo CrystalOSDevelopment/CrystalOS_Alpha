@@ -13,12 +13,22 @@ namespace CrystalOSAlpha
     public class ImprovedVBE
     {
         #region Wallpaper & Resolution
+        //Change this if you want to change wallpapers!!! Also, make sure that it matches your current selected resolution!!! (Most cases it's 1920x1080x32)
         [ManifestResourceStream(ResourceName = "CrystalOSAlpha.Graphics.Engine.Wallp1.bmp")] public static byte[] VBECanvas;
 
         //These are black images matching the size exacly the resolution
-        public static Bitmap cover = new Bitmap(VBECanvas);//The base canvas
-        public static Bitmap data = new Bitmap(VBECanvas);//To reset the base canvas
-        public static Bitmap Temp = new Bitmap(VBECanvas);//To reset the base canvas
+        /// <summary>
+        /// The base canvas
+        /// </summary>
+        public static Bitmap cover = new Bitmap(VBECanvas);
+        /// <summary>
+        /// To reset the base canvas
+        /// </summary>
+        public static Bitmap data = new Bitmap(VBECanvas);
+        /// <summary>
+        /// To reset the base canvas
+        /// </summary>
+        public static Bitmap Temp = new Bitmap(VBECanvas);
 
         public static int width = 1920;
         public static int height = 1080;
@@ -28,12 +38,17 @@ namespace CrystalOSAlpha
         #region Render to the screen and Clear
         public static int Counter = 0;
         public static bool isMoving = false;
-        public static void display(VBECanvas c)
+
+        /// <summary>
+        /// To display the rendered frame.
+        /// </summary>
+        /// <param name="c"></param>
+        public static void Display(VBECanvas c)
         {
             if(isMoving == false)
             {
                 c.DrawImage(cover, 0, 0);
-                Clear(0);
+                Clear();
                 if (Res == true)
                 {
                     try
@@ -89,17 +104,28 @@ namespace CrystalOSAlpha
                 {
                     Counter++;
                 }
-                Clear(0);
+                Clear();
             }
         }
-        public static void Clear(int col)
+
+        /// <summary>
+        /// Clear the frame by copying a fresh version from the backbuffer onto the main canvas.
+        /// </summary>
+        /// <param name="col"></param>
+        public static void Clear()
         {
-            data.RawData.CopyTo(cover.RawData, col);
+            data.RawData.CopyTo(cover.RawData, 0);
         }
         #endregion Render to the screen and Clear
-        
+
         #region Graphics
-        //Draws a pixel to a specific location
+        /// <summary>
+        /// Draws a pixel to a specific location
+        /// </summary>
+        /// <param name="Canvas">The image you want to draw the pixel onto</param>
+        /// <param name="x">X coordinate</param>
+        /// <param name="y">Y coordinate</param>
+        /// <param name="color">Color of the pixel in integer</param>
         public static void DrawPixel(Bitmap Canvas, int x, int y, int color)
         {
             if (x > 0 && x < Canvas.Width && y >= 0 && y < Canvas.Height)
@@ -108,7 +134,15 @@ namespace CrystalOSAlpha
             }
         }
 
-        //Draws a line to the screen
+        /// <summary>
+        /// Draws a line to the screen
+        /// </summary>
+        /// <param name="Canvas">The image you want to draw the line onto</param>
+        /// <param name="x1">Starting X coordinate</param>
+        /// <param name="y1">Starting Y coordinate</param>
+        /// <param name="x2">Ending X coordinate</param>
+        /// <param name="y2">Ending Y coordinate</param>
+        /// <param name="color">Color of the line in integer</param>
         public static void DrawLine(Bitmap Canvas, float x1, float y1, float x2, float y2, int color)
         {
             float dx = x2 - x1;
@@ -124,7 +158,15 @@ namespace CrystalOSAlpha
             }
         }
 
-        //Draw a non-filled rectangle
+        /// <summary>
+        /// Draw a non-filled rectangle
+        /// </summary>
+        /// <param name="Canvas">The image you want to draw the non-filled rectangle onto</param>
+        /// <param name="x">X coordiante (on canvas)</param>
+        /// <param name="y">Y coordiante (on canvas)</param>
+        /// <param name="width">Width of the non-filled rectangle</param>
+        /// <param name="height">Height of the non-filled rectangle</param>
+        /// <param name="Color">Color of the non-filled rectangle in integer</param>
         public static void DrawRectangle(Bitmap Canvas, int x, int y, int width, int height, int Color)
         {
             DrawLine(Canvas, x, y, x + width, y, Color);
@@ -133,9 +175,18 @@ namespace CrystalOSAlpha
             DrawLine(Canvas, x + width, y + height, x + width, y, Color);
         }
 
-        //Draws a filled recatngle to a given canvas
-        //NOTE: if transparent parameter is true, it may cause severe performance loss
-        public static void DrawFilledRectangle(Bitmap Canvas, int color, int X, int Y, int Width, int Height, bool transparent)
+        /// <summary>
+        /// Draws a filled recatngle to a given canvas<br></br>
+        /// NOTE: If transparent parameter is true, it may cause severe performance loss
+        /// </summary>
+        /// <param name="Canvas">The image you want to draw the filled rectangle onto</param>
+        /// <param name="color">Color of the filled rectangle in integer</param>
+        /// <param name="X">X coordiante (on canvas)</param>
+        /// <param name="Y">Y coordiante (on canvas)</param>
+        /// <param name="Width">Width of the filled rectangle</param>
+        /// <param name="Height">Height of the filled rectangle</param>
+        /// <param name="transparent"></param>
+        public static void DrawFilledRectangle(Bitmap Canvas, int color, int X, int Y, int Width, int Height, bool transparent = false)
         {
             if (transparent == true)
             {
@@ -153,7 +204,6 @@ namespace CrystalOSAlpha
                         int r3 = (cover.RawData[j * width + i] & 0xff0000) >> 16;
                         int g3 = (cover.RawData[j * width + i] & 0x00ff00) >> 8;
                         int b3 = (cover.RawData[j * width + i] & 0x0000ff);
-                        //Color c = Color.FromArgb(cover.RawData[j * width + i]);
 
                         int r2 = (int)(inverseBlendFactor * r3 + blendFactor * r);
                         int g2 = (int)(inverseBlendFactor * g3 + blendFactor * g);
@@ -189,7 +239,16 @@ namespace CrystalOSAlpha
             }
         }
 
-        //Draws a filled Ellipse to the screen
+        /// <summary>
+        /// Draws a filled ellipse to the screen
+        /// </summary>
+        /// <param name="input">The image you want your ellipse to be rendered onto</param>
+        /// <param name="xCenter">X coordinate on input image (x center of ellipse)</param>
+        /// <param name="yCenter">Y coordinate on input image (y center of ellipse)</param>
+        /// <param name="yR">Height of the ellipse (into both directions)</param>
+        /// <param name="xR">Width of the ellipse (into both directions)</param>
+        /// <param name="color">Color of the ellipse in integer</param>
+        /// <returns></returns>
         public static Bitmap DrawFilledEllipse(Bitmap input, int xCenter, int yCenter, int yR, int xR, int color)
         {
             for (int y = -yR; y <= yR; y++)
@@ -208,8 +267,15 @@ namespace CrystalOSAlpha
             return input;
         }
 
-        //Draws an image to a given canvas
-        //NOTE: This method ignores Alpha values
+        /// <summary>
+        /// Draws an image to a given canvas
+        /// <br></br>
+        /// NOTE: This method ignores Alpha values
+        /// </summary>
+        /// <param name="image">The image you want to draw out</param>
+        /// <param name="x">X coordinate (on into image)</param>
+        /// <param name="y">Y coordinate (on into image)</param>
+        /// <param name="into">The image you want your image to be rendered onto</param>
         public static void DrawImage(Bitmap image, int x, int y, Bitmap into)
         {
             int TempX = x;
@@ -262,8 +328,16 @@ namespace CrystalOSAlpha
             }
         }
 
-        //Draws an image to a given canvas
-        //NOTE: Not actually blending colors by their alpha value! Works like this: if RGB value is 0, 0, 0 => pixel is not rendered(transparent)
+        /// <summary>
+        /// Draws an image to a given canvas
+        /// <br></br>
+        /// NOTE: Not actually blending colors by their alpha value! Works like this: if RGB value is 0, 0, 0 => pixel is not rendered(transparent)
+        /// </summary>
+        /// <param name="image">The alpha image you want to draw out</param>
+        /// <param name="x">X coordinate (on into image)</param>
+        /// <param name="y">Y coordinate (on into image)</param>
+        /// <param name="into">The image you want your alpha image to be rendered onto</param>
+        /// <returns></returns>
         public static Bitmap DrawImageAlpha(Bitmap image, int x, int y, Bitmap into)
         {
             int TempX = x;
@@ -358,8 +432,15 @@ namespace CrystalOSAlpha
             return into;
         }
 
-        //Scale an image
-        //NOTE: This image scaler comes with COSMOS by default
+        /// <summary>
+        /// Scale an image
+        /// <br></br>
+        /// NOTE: This image scaler comes with COSMOS by default
+        /// </summary>
+        /// <param name="image">Image you want to resize</param>
+        /// <param name="newWidth">New width</param>
+        /// <param name="newHeight">New height</param>
+        /// <returns></returns>
         public static Bitmap ScaleImageStock(Bitmap image, uint newWidth, uint newHeight)
         {
             Bitmap pixels = image;
@@ -384,7 +465,16 @@ namespace CrystalOSAlpha
             return temp;
         }
 
-        //Scale image(my not so great, but faster implementation)
+        /// <summary>
+        /// Scale image, but you can only go bigger and actually just multiply the sides
+        /// <br></br>
+        /// Example: 400 width image can only scale up to 800; 1200; 1600 etc.
+        /// <br></br>
+        /// Renders on main canvas only
+        /// </summary>
+        /// <param name="image">Image you want to scale</param>
+        /// <param name="x">X coordinate (on main canvas)</param>
+        /// <param name="y">Y coordinate (on main canvas)</param>
         public static void ScaleImage(Image image, int x, int y)
         {
             int counter = 0;
@@ -473,14 +563,23 @@ namespace CrystalOSAlpha
             }
         }
 
-        //Used to make windows(canvases) slightly transparent
+        /// <summary>
+        /// Used to make windows(canvases) slightly transparent
+        /// <br></br>
+        /// If you plan to use this outside of CrystalOS Alpha (why?) blendFactor is normally equal to 0.85f.
+        /// </summary>
+        /// <param name="image">Image you want to make transparent</param>
+        /// <param name="x">X coordinate (on main canvas)</param>
+        /// <param name="y">Y coordinate (on main canvas)</param>
+        /// <param name="output">The image you want as output</param>
+        /// <returns></returns>
         public static Bitmap EnableTransparency(Bitmap image, int x, int y, Bitmap output)
         {
             int r = GlobalValues.R;
             int g = GlobalValues.G;
             int b = GlobalValues.B;
 
-            float blendFactor = (float)GlobalValues.LevelOfTransparency / 100.0f;//0.85f
+            float blendFactor = (float)GlobalValues.LevelOfTransparency / 100.0f;
             float inverseBlendFactor = 1 - blendFactor;
 
             int counter = 0;
@@ -535,7 +634,19 @@ namespace CrystalOSAlpha
             return output;
         }
 
-        //Does the same thing as EnableTransparency, except with pre-existing RGB values
+        /// <summary>
+        /// Does the same thing as EnableTransparency, except with pre-existing RGB values
+        /// </summary>
+        /// <param name="image">The image you want to add transparency to</param>
+        /// <param name="x">X coordinate (on the back image)</param>
+        /// <param name="y">Y coordinate (on the back image)</param>
+        /// <param name="output">The image you want as output</param>
+        /// <param name="R">Red</param>
+        /// <param name="G">Green</param>
+        /// <param name="B">Blue</param>
+        /// <param name="back">The back canvas from where it takes the pixel data from before blending</param>
+        /// <param name="Bluring">Enable bluring is on by default, because of windows</param>
+        /// <returns></returns>
         public static Bitmap EnableTransparencyPreRGB(Bitmap image, int x, int y, Bitmap output, int R, int G, int B, Bitmap back, bool Bluring = true)
         {
             int r = R;
@@ -598,8 +709,13 @@ namespace CrystalOSAlpha
             return output;
         }
 
-        //Blurs an image
-        public static Bitmap Blur(Bitmap image, int blurAmount)
+        /// <summary>
+        /// Blurs an image
+        /// </summary>
+        /// <param name="image">The image you want to blur</param>
+        /// <param name="blurAmount">Level of bluring</param>
+        /// <returns></returns>
+        private static Bitmap Blur(Bitmap image, int blurAmount)
         {
             for(int x = blurAmount; x < image.Width - blurAmount; x++)
             {
@@ -630,13 +746,24 @@ namespace CrystalOSAlpha
             return image;
         }
 
-        //Converts a color to it's integer value
+        /// <summary>
+        /// Converts a color to it's integer value
+        /// </summary>
+        /// <param name="r">Red</param>
+        /// <param name="g">Green</param>
+        /// <param name="b">Blue</param>
+        /// <returns></returns>
         public static int colourToNumber(int r, int g, int b)
         {
             return (r << 16) + (g << 8) + (b);
         }
 
-        //For 3D rendering in the future
+        /// <summary>
+        /// For 3D rendering in the future
+        /// </summary>
+        /// <param name="Canvas">The canvas you want to render it on</param>
+        /// <param name="Points">A list of points</param>
+        /// <param name="Color">Color of the sides</param>
         public static void DrawPollygonFrame(Bitmap Canvas, List<Point> Points, int Color)
         {
             int XMax = 0;
@@ -668,8 +795,13 @@ namespace CrystalOSAlpha
             }
             ImprovedVBE.DrawImageAlpha(Temp, 10, 10, Canvas);
         }
-        
-        //For 3D rendering in the future
+
+        /// <summary>
+        /// For 3D rendering in the future
+        /// </summary>
+        /// <param name="Canvas">The canvas you want to render it on</param>
+        /// <param name="Points">A list of points</param>
+        /// <param name="Color">Color of the filled pollygon</param>
         public static void DrawFilledPollygon(Bitmap Canvas, List<Point> Points, int Color)
         {
             int XMax = 0;

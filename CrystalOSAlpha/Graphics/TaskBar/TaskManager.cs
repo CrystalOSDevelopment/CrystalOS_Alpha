@@ -1377,6 +1377,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
             if (MenuOpened == false)
             {
                 TaskScheduler.Apps[^1].once = true;
+                clicked = true;
             }
 
         }

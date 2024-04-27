@@ -25,7 +25,7 @@ namespace CrystalOS_Alpha
         public static bool Is_KeyboardMouse = false;
         protected override void BeforeRun()
         {
-            ImprovedVBE.display(vbe);
+            ImprovedVBE.Display(vbe);
             if(VMTools.IsVMWare == true)
             {
                 Sys.FileSystem.VFS.VFSManager.RegisterVFS(fs);
@@ -155,6 +155,7 @@ namespace CrystalOS_Alpha
                 #endregion Config
             }
 
+            #region Widgets
             FPS_Counter f = new FPS_Counter();
             f.x = 200;
             f.y = 200;
@@ -181,14 +182,29 @@ namespace CrystalOS_Alpha
             n.icon = ImprovedVBE.ScaleImageStock(Resources.Web, 56, 56);
             TaskScheduler.Apps.Add(n);
 
+            #endregion Widgets
+
+            #region Mouse
             MouseManager.ScreenWidth = 1920;
             MouseManager.ScreenHeight = 1080;
 
+            MouseManager.X = (uint)ImprovedVBE.width / 2;
+            MouseManager.Y = (uint)ImprovedVBE.height / 2;
+            #endregion Mouse
+
+            #region Font Registering
             Fonts.RegisterFonts();
+            #endregion Font Registering
         }
 
+        /// <summary>
+        ///When an app with a width over 800 pixels is present, this integer is used to call Helap.Collect() every second kernel cycle.
+        /// </summary>
         public static int collect = 0;
 
+        /// <summary>
+        /// Used for debugging purpose only
+        /// </summary>
         public static string Clipboard = "";
         protected override void Run()
         {
@@ -241,7 +257,7 @@ namespace CrystalOS_Alpha
 
             ImprovedVBE.DrawImageAlpha(C, (int)MouseManager.X, (int)MouseManager.Y, ImprovedVBE.cover);
 
-            ImprovedVBE.display(vbe);
+            ImprovedVBE.Display(vbe);
         }
     }
 }
