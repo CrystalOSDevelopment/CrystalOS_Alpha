@@ -73,8 +73,8 @@
       <EmbeddedResource Include="Applications\Gameboy\Tetris.gb" />
       <EmbeddedResource Include="Applications\Gameboy\Zelda.gb" />
       <EmbeddedResource Include="Graphics\Engine\Arial_16.btf" />
-      <EmbeddedResource Include="Graphics\Icons\Cursor.bmp" />
       <EmbeddedResource Include="Graphics\Engine\Wallp1.bmp" />
+      <EmbeddedResource Include="Graphics\Icons\Cursor.bmp" />
       <EmbeddedResource Include="Graphics\Icons\Calculator.bmp" />
       <EmbeddedResource Include="Graphics\Icons\Explorer.bmp" />
       <EmbeddedResource Include="Graphics\Icons\File.bmp" />

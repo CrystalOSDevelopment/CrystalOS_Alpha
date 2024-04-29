@@ -375,6 +375,21 @@ namespace CrystalOSAlpha
                             {
                                 found = true;
                             }
+                            else
+                            {
+                                i = line.Length;
+                                for(int j = line.Length - 1; j >= 0; j--)
+                                {
+                                    if (line[j] == 0)
+                                    {
+                                        found = true;
+                                    }
+                                    else
+                                    {
+                                        j = -1;
+                                    }
+                                }
+                            }
                         }
                         if (found == false)
                         {

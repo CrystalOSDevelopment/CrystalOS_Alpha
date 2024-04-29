@@ -65,11 +65,11 @@ namespace CrystalOS_Alpha.Graphics.Widgets
             {
                 LastS = DateTime.UtcNow.Second;
             }
-            if (DateTime.UtcNow.Second - LastS != 0)
+            if (DateTime.UtcNow.Second != LastS)
             {
                 if (DateTime.UtcNow.Second > LastS)
                 {
-                    FPS = Ticken / (DateTime.UtcNow.Second - LastS);
+                    FPS = Ticken;
                     Get_Back = true;
                 }
                 LastS = DateTime.UtcNow.Second;

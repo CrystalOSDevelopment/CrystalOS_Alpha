@@ -46,6 +46,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
         [ManifestResourceStream(ResourceName = "CrystalOSAlpha.Graphics.TaskBar.Icon.bmp")] public static byte[] Elephant;
         public static Bitmap icon;
         public static Bitmap Back;
+        public static Bitmap Back_Buffer = null;
         public static Bitmap TaskBar;
         public static Bitmap Extension_Dock;
         public static Bitmap Search_Box;
@@ -872,9 +873,18 @@ namespace CrystalOSAlpha.Graphics.TaskBar
         {
             if(update == true)
             {
-                //Get the Menu
-                Back = Base.Widget_Back(Width, Height, ImprovedVBE.colourToNumber(255, 255, 255));
-                Back = ImprovedVBE.EnableTransparencyPreRGB(Back, X, Y, Back, GlobalValues.TaskBarR, GlobalValues.TaskBarG, GlobalValues.TaskBarB, ImprovedVBE.cover);
+                if(Back_Buffer == null)
+                {
+                    //Get the Menu
+                    Back = Base.Widget_Back(Width, Height, ImprovedVBE.colourToNumber(255, 255, 255));
+                    Back = ImprovedVBE.EnableTransparencyPreRGB(Back, X, Y, Back, GlobalValues.TaskBarR, GlobalValues.TaskBarG, GlobalValues.TaskBarB, ImprovedVBE.cover);
+                    Back_Buffer = Base.Widget_Back(Width, Height, ImprovedVBE.colourToNumber(255, 255, 255));
+                    Back_Buffer = ImprovedVBE.EnableTransparencyPreRGB(Back_Buffer, X, Y, Back_Buffer, GlobalValues.TaskBarR, GlobalValues.TaskBarG, GlobalValues.TaskBarB, ImprovedVBE.cover);
+                }
+                else
+                {
+                    Array.Copy(Back_Buffer.RawData, Back.RawData, Back_Buffer.RawData.Length);
+                }
                 //Render Main Menu only
                 if(ExtendedMenu == false)
                 {
@@ -1034,10 +1044,17 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                                 if (Helper + Items[i].Icon.Height > 0 && Helper < Buffer.Height)
                                 {
                                     Bitmap bmp = new Bitmap(Items[i].Icon.Width, Items[i].Icon.Height, ColorDepth.ColorDepth32);
-                                    Array.Fill(bmp.RawData, ImprovedVBE.colourToNumber(GlobalValues.IconR, GlobalValues.IconG, GlobalValues.IconB));
-                                    ImprovedVBE.DrawImageAlpha(Items[i].Icon, 0, 0, bmp);
-
-                                    ImprovedVBE.DrawImage(bmp, 10, Helper - 10, Buffer);
+                                    if (GlobalValues.IconR + GlobalValues.IconG + GlobalValues.IconB != 0)
+                                    {
+                                        Array.Fill(bmp.RawData, ImprovedVBE.colourToNumber(GlobalValues.IconR, GlobalValues.IconG, GlobalValues.IconB));
+                                        ImprovedVBE.DrawImageAlpha(Items[i].Icon, 0, 0, bmp);
+                                        ImprovedVBE.DrawImage(bmp, 10, Helper - 10, Buffer);
+                                    }
+                                    else
+                                    {
+                                        Array.Copy(Items[i].Icon.RawData, bmp.RawData, bmp.RawData.Length);
+                                        ImprovedVBE.DrawImageAlpha(bmp, 10, Helper - 10, Buffer);
+                                    }
                                     BitFont.DrawBitFontString(Buffer, "ArialCustomCharset16", Color.White, Items[i].Name, 80, Helper + 10);
                                 }
                                 Items[i].X = 10;
@@ -1073,10 +1090,17 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                                 if(Helper + Items[i].Icon.Height > 0 && Helper < Buffer.Height)
                                 {
                                     Bitmap bmp = new Bitmap(Items[i].Icon.Width, Items[i].Icon.Height, ColorDepth.ColorDepth32);
-                                    Array.Fill(bmp.RawData, ImprovedVBE.colourToNumber(GlobalValues.IconR, GlobalValues.IconG, GlobalValues.IconB));
-                                    ImprovedVBE.DrawImageAlpha(Items[i].Icon, 0, 0, bmp);
-
-                                    ImprovedVBE.DrawImage(bmp, 10, Helper - 10, Buffer);
+                                    if(GlobalValues.IconR + GlobalValues.IconG + GlobalValues.IconB != 0)
+                                    {
+                                        Array.Fill(bmp.RawData, ImprovedVBE.colourToNumber(GlobalValues.IconR, GlobalValues.IconG, GlobalValues.IconB));
+                                        ImprovedVBE.DrawImageAlpha(Items[i].Icon, 0, 0, bmp);
+                                        ImprovedVBE.DrawImage(bmp, 10, Helper - 10, Buffer);
+                                    }
+                                    else
+                                    {
+                                        Array.Copy(Items[i].Icon.RawData, bmp.RawData, bmp.RawData.Length);
+                                        ImprovedVBE.DrawImageAlpha(bmp, 10, Helper - 10, Buffer);
+                                    }
                                     BitFont.DrawBitFontString(Buffer, "ArialCustomCharset16", Color.White, Items[i].Name, 80, Helper + 10);
                                 }
                                 Items[i].X = 10;
