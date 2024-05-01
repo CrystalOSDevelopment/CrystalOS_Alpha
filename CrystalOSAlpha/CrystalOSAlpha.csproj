@@ -48,6 +48,7 @@
       <None Remove="Graphics\Engine\Cursor.bmp" />
       <None Remove="Graphics\Engine\Wallp1.bmp" />
       <None Remove="Graphics\Icons\Calculator.bmp" />
+      <None Remove="Graphics\Icons\Clock.bmp" />
       <None Remove="Graphics\Icons\Explorer.bmp" />
       <None Remove="Graphics\Icons\File.bmp" />
       <None Remove="Graphics\Icons\Folder.bmp" />
@@ -74,6 +75,7 @@
       <EmbeddedResource Include="Applications\Gameboy\Zelda.gb" />
       <EmbeddedResource Include="Graphics\Engine\Arial_16.btf" />
       <EmbeddedResource Include="Graphics\Engine\Wallp1.bmp" />
+      <EmbeddedResource Include="Graphics\Icons\Clock.bmp" />
       <EmbeddedResource Include="Graphics\Icons\Cursor.bmp" />
       <EmbeddedResource Include="Graphics\Icons\Calculator.bmp" />
       <EmbeddedResource Include="Graphics\Icons\Explorer.bmp" />

@@ -4,7 +4,7 @@ using Cosmos.System.FileSystem;
 using Cosmos.System.Graphics;
 using CrystalOS_Alpha.Graphics.Widgets;
 using CrystalOSAlpha;
-using CrystalOSAlpha.Applications.Solitare;
+using CrystalOSAlpha.Applications.Clock;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Icons;
 using CrystalOSAlpha.Graphics.TaskBar;
@@ -196,6 +196,17 @@ namespace CrystalOS_Alpha
             //sol.icon = ImprovedVBE.ScaleImageStock(Resources.Web, 56, 56);
             //TaskScheduler.Apps.Add(sol);
 
+            Clock clock = new Clock();
+            clock.x = 500;
+            clock.y = 50;
+            clock.z = 999;
+            clock.width = 800;
+            clock.height = 500;
+            clock.name = "Clock";
+            clock.minimised = false;
+            clock.once = true;
+            clock.icon = ImprovedVBE.ScaleImageStock(Resources.Web, 56, 56);
+            TaskScheduler.Apps.Add(clock);
             #endregion Widgets
 
             #region Mouse
@@ -271,6 +282,11 @@ namespace CrystalOS_Alpha
             ImprovedVBE.DrawImageAlpha(C, (int)MouseManager.X, (int)MouseManager.Y, ImprovedVBE.cover);
 
             ImprovedVBE.Display(vbe);
+
+            if(collect % 2 == 0)
+            {
+                MouseManager.ResetScrollDelta();
+            }
         }
     }
 }

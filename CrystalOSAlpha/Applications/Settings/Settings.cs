@@ -207,6 +207,10 @@ namespace CrystalOSAlpha.Applications.Settings
                 {
                     temp = true;
                 }
+                else if(MouseManager.ScrollWheelPresent == true && MouseManager.ScrollDelta != 0 && TaskScheduler.Apps[^1] == this)
+                {
+                    temp = true;
+                }
             }
 
             if (TaskScheduler.counter == TaskScheduler.Apps.Count - 1)
@@ -530,6 +534,11 @@ namespace CrystalOSAlpha.Applications.Settings
                         //Render the vertical scrollbar on the window
                         foreach (var vscroll in VerticalScrollbar)
                         {
+                            if(MouseManager.ScrollDelta != 0)
+                            {
+                                vscroll.Value = Math.Clamp(vscroll.Value + MouseManager.ScrollDelta * 10, vscroll.MinVal, vscroll.MaxVal);
+                                vscroll.Pos = (int)(vscroll.Value / vscroll.Sensitivity) + 20;
+                            }
                             vscroll.Render(window);
                         }
                         break;

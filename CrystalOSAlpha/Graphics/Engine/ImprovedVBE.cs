@@ -255,15 +255,21 @@ namespace CrystalOSAlpha
             {
                 for (int x = -xR; x <= xR; x++)
                 {
-                    if ((x * x * yR * yR) + (y * y * xR * xR) <= yR * yR * xR * xR)
+                    double ellipseEquation = ((double)(x * x) / (xR * xR)) + ((double)(y * y) / (yR * yR));
+                    if (ellipseEquation <= 1.0)
                     {
-                        if (xCenter + x > 0 && xCenter + x < input.Width - 1 && yCenter + y > 0 && yCenter + y < input.Height)
+                        // Set pixel ensuring it's within bounds
+                        int pixelX = xCenter + x;
+                        int pixelY = yCenter + y;
+
+                        if (pixelX >= 0 && pixelX < input.Width && pixelY >= 0 && pixelY < input.Height)
                         {
-                            input.RawData[(yCenter + y) * input.Width + xCenter + x] = color;
+                            DrawPixel(input, pixelX, pixelY, color); // Change color as desired
                         }
                     }
                 }
             }
+
             return input;
         }
 

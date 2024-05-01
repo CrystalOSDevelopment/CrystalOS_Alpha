@@ -2,6 +2,7 @@
 using Cosmos.System.Graphics;
 using CrystalOSAlpha.Applications.Calculator;
 using CrystalOSAlpha.Applications.CarbonIDE;
+using CrystalOSAlpha.Applications.Clock;
 using CrystalOSAlpha.Applications.Gameboy;
 using CrystalOSAlpha.Applications.Minecraft;
 using CrystalOSAlpha.Applications.Notepad;
@@ -429,7 +430,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                             }
                             if (MouseManager.X > ImprovedVBE.width - 100 && MouseManager.X < ImprovedVBE.width)
                             {
-                                if(MouseManager.Y > 0 && MouseManager.Y < Backup.Height)
+                                if(MouseManager.Y > Backup.Height / 2 && MouseManager.Y < Backup.Height)
                                 {
                                     if (calendar == false && clicked == false)
                                     {
@@ -445,7 +446,32 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                                     }
                                 }
                             }
+                        if (MouseManager.X > ImprovedVBE.width - 100 && MouseManager.X < ImprovedVBE.width)
+                        {
+                            if (MouseManager.Y > 0 && MouseManager.Y < Backup.Height / 2)
+                            {
+                                calendar = false;
+                                MenuOpened = false;
+                                if (TaskScheduler.Apps.FindAll(d => d.name == "Clock").Count == 0)
+                                {
+                                    Clock clock = new Clock();
+                                    clock.x = ImprovedVBE.width - 305;
+                                    clock.y = (int)Backup.Height + 5;
+                                    clock.z = 999;
+                                    clock.width = 300;
+                                    clock.height = 300;
+                                    clock.name = "Clock";
+                                    clock.minimised = false;
+                                    clock.once = true;
+                                    clock.icon = ImprovedVBE.ScaleImageStock(Resources.Clock, 56, 56);
+                                    TaskScheduler.Apps.Add(clock);
+
+                                    TaskScheduler.Apps[^1].once = true;
+                                    clicked = true;
+                                }
+                            }
                         }
+                    }
                         else if(MouseManager.MouseState == MouseState.None)
                         {
                             clicked = false;
@@ -1010,6 +1036,12 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                             Name = "WebscapeNavigator",
                             Source = "WebscapeNavigator",
                             Icon = ImprovedVBE.ScaleImageStock(Resources.Web, GlobalValues.IconWidth, GlobalValues.IconHeight)
+                        },
+                        new Menu_Items
+                        {
+                            Name = "Clock",
+                            Source = "Clock",
+                            Icon = ImprovedVBE.ScaleImageStock(Resources.Clock, GlobalValues.IconWidth, GlobalValues.IconHeight)
                         }
                     };
 
@@ -1396,6 +1428,23 @@ namespace CrystalOSAlpha.Graphics.TaskBar
 
                     TaskScheduler.Apps.Add(WebscapeNavigator);
                     MenuOpened = false;
+                    break;
+                case "Clock":
+                    if (TaskScheduler.Apps.FindAll(d => d.name == "Clock").Count == 0)
+                    {
+                        Clock clock = new Clock();
+                        clock.x = ImprovedVBE.width - 305;
+                        clock.y = (int)Backup.Height + 5;
+                        clock.z = 999;
+                        clock.width = 300;
+                        clock.height = 300;
+                        clock.name = "Clock";
+                        clock.minimised = false;
+                        clock.once = true;
+                        clock.icon = ImprovedVBE.ScaleImageStock(Resources.Clock, 56, 56);
+                        TaskScheduler.Apps.Add(clock);
+                        MenuOpened = false;
+                    }
                     break;
             }
             if (MenuOpened == false)
