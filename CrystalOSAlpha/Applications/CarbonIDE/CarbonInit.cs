@@ -252,7 +252,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                 break;
                             case "Create":
                                 //Create the file structure
-                                if(VMTools.IsVMWare == true)
+                                if(VMTools.IsVMWare == true && Kernel.fs.Disks.Count != 0)
                                 {
                                     Directory.CreateDirectory(SourceofProject + "\\" + namedProject);
                                     File.Create(SourceofProject + "\\" + namedProject + "\\" + namedProject + ".sln");

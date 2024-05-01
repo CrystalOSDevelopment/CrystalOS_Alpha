@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using Kernel = CrystalOS_Alpha.Kernel;
 
 namespace CrystalOSAlpha.Graphics.TaskBar
 {
@@ -927,7 +928,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                         Itemunified.Add(new ItemUnifier(11, 359, ImprovedVBE.colourToNumber(255, 255, 255), $"Hello, {GlobalValues.Username}!", "ArialCustomCharset16", "Uname"));
                     }
                     //Recently used apps if the used machine is under vmware
-                    if(VMTools.IsVMWare == true)
+                    if(VMTools.IsVMWare == true && Kernel.fs.Disks.Count != 0)
                     {
                         Items = new List<Menu_Items>();
                         string FrequentApps = File.ReadAllText("0:\\System\\FrequentApps.sys");

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using TaskScheduler = CrystalOSAlpha.Graphics.TaskScheduler;
+using Kernel = CrystalOS_Alpha.Kernel;
 
 namespace CrystalOSAlpha.Applications.Settings
 {
@@ -568,7 +569,7 @@ namespace CrystalOSAlpha.Applications.Settings
                 }
 
                 //Save changed style
-                if(VMTools.IsVMWare == true)
+                if(VMTools.IsVMWare == true && Kernel.fs.Disks.Count != 0)
                 {
                     string Layout =
                     "WindowR=" + GlobalValues.R +
@@ -772,7 +773,7 @@ namespace CrystalOSAlpha.Applications.Settings
                                     temp = true;
                                     break;
                                 case "LoadFile":
-                                    if (VMTools.IsVMWare == true)
+                                    if (VMTools.IsVMWare == true && Kernel.fs.Disks.Count != 0)
                                     {
                                         //RequestFile via WindowMessenger
                                         //Write data to config file

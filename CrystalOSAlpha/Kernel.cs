@@ -27,7 +27,7 @@ namespace CrystalOS_Alpha
         protected override void BeforeRun()
         {
             ImprovedVBE.Display(vbe);
-            if(VMTools.IsVMWare == true)
+            if(VMTools.IsVMWare == true && fs.Disks.Count != 0)
             {
                 Sys.FileSystem.VFS.VFSManager.RegisterVFS(fs);
                 //Insert install here
