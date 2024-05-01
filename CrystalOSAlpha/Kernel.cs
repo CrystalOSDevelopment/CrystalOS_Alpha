@@ -195,18 +195,6 @@ namespace CrystalOS_Alpha
             //sol.once = true;
             //sol.icon = ImprovedVBE.ScaleImageStock(Resources.Web, 56, 56);
             //TaskScheduler.Apps.Add(sol);
-
-            Clock clock = new Clock();
-            clock.x = 500;
-            clock.y = 50;
-            clock.z = 999;
-            clock.width = 800;
-            clock.height = 500;
-            clock.name = "Clock";
-            clock.minimised = false;
-            clock.once = true;
-            clock.icon = ImprovedVBE.ScaleImageStock(Resources.Web, 56, 56);
-            TaskScheduler.Apps.Add(clock);
             #endregion Widgets
 
             #region Mouse
