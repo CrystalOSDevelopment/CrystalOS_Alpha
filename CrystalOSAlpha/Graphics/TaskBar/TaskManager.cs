@@ -447,32 +447,32 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                                     }
                                 }
                             }
-                        if (MouseManager.X > ImprovedVBE.width - 100 && MouseManager.X < ImprovedVBE.width)
-                        {
-                            if (MouseManager.Y > 0 && MouseManager.Y < Backup.Height / 2)
+                            if (MouseManager.X > ImprovedVBE.width - 100 && MouseManager.X < ImprovedVBE.width)
                             {
-                                calendar = false;
-                                MenuOpened = false;
-                                if (TaskScheduler.Apps.FindAll(d => d.name == "Clock").Count == 0)
+                                if (MouseManager.Y > 0 && MouseManager.Y < Backup.Height / 2)
                                 {
-                                    Clock clock = new Clock();
-                                    clock.x = ImprovedVBE.width - 305;
-                                    clock.y = (int)Backup.Height + 5;
-                                    clock.z = 999;
-                                    clock.width = 300;
-                                    clock.height = 300;
-                                    clock.name = "Clock";
-                                    clock.minimised = false;
-                                    clock.once = true;
-                                    clock.icon = ImprovedVBE.ScaleImageStock(Resources.Clock, 56, 56);
-                                    TaskScheduler.Apps.Add(clock);
+                                    calendar = false;
+                                    MenuOpened = false;
+                                    if (TaskScheduler.Apps.FindAll(d => d.name == "Clock").Count == 0)
+                                    {
+                                        Clock clock = new Clock();
+                                        clock.x = ImprovedVBE.width - 305;
+                                        clock.y = (int)Backup.Height + 5;
+                                        clock.z = 999;
+                                        clock.width = 300;
+                                        clock.height = 300;
+                                        clock.name = "Clock";
+                                        clock.minimised = false;
+                                        clock.once = true;
+                                        clock.icon = ImprovedVBE.ScaleImageStock(Resources.Clock, 56, 56);
+                                        TaskScheduler.Apps.Add(clock);
 
-                                    TaskScheduler.Apps[^1].once = true;
-                                    clicked = true;
+                                        TaskScheduler.Apps[^1].once = true;
+                                        clicked = true;
+                                    }
                                 }
                             }
                         }
-                    }
                         else if(MouseManager.MouseState == MouseState.None)
                         {
                             clicked = false;
@@ -898,6 +898,45 @@ namespace CrystalOSAlpha.Graphics.TaskBar
         }
         public static void Dynamic_Menu(int X, int Y, int Width, int Height)
         {
+            //Activate click on MenuItems
+            if(MouseManager.MouseState == MouseState.Left && clicked == false)
+            {
+                update = true;
+                foreach(var v in Items)
+                {
+                    switch (ExtendedMenu)
+                    {
+                        case true:
+                            if(Scroll[0].Clicked == false)
+                            {
+                                if (MouseManager.X > X + v.X + 10 && (MouseManager.X < X + Width - v.X - 20 || MouseManager.X < X + v.X + v.Icon.Width))
+                                {
+                                    if (MouseManager.Y > Y + v.Y + 68 && MouseManager.Y < Y + v.Y + v.Icon.Height + 68 && v.Y > 0 && v.Y < Buffer.Height)
+                                    {
+                                        AppDecider(v.Source, v.Icon);
+                                        ExtendedMenu = false;
+                                        ClearLists();
+                                    }
+                                }
+                            }
+                            break;
+                        case false:
+                                if (MouseManager.X > X + v.X && MouseManager.X < X + v.X + v.Icon.Width)
+                                {
+                                    if (MouseManager.Y > Y + v.Y && MouseManager.Y < Y + v.Y + v.Icon.Height + 18)
+                                    {
+                                        AppDecider(v.Source, v.Icon);
+                                    }
+                                }
+                            break;
+                    }
+                }
+            }
+            else if(MouseManager.MouseState == MouseState.None)
+            {
+                clicked = false;
+            }
+
             if(update == true)
             {
                 if(Back_Buffer == null)
@@ -1163,7 +1202,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
             }
             //NOTE: So why is this necessary? COSMOS keeps tossing out the content of the Items list for some unknown reason and this has been happening for a while now... I'm getting mad...
             //If you know why is this happening or what am I doing wrong please let me know!
-            if(Items.Count == 0 && Scroll.Count != 0)
+            if(Items.Count == 0 || Scroll.Count != 0)
             {
                 //Adding all MenuItems
                 Items = BackUP;
@@ -1179,6 +1218,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                         if (MouseManager.Y > Y + button.Y && MouseManager.Y < Y + button.Y + button.Height)
                         {
                             button.Clicked = true;
+                            clicked = true;
                         }
                     }
                 }
@@ -1231,42 +1271,11 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                 }
             }
 
-            //Activate click on MenuItems
-            if(MouseManager.MouseState == MouseState.Left)
+            //Render the menu if it's opened
+            if(MenuOpened == true)
             {
-                foreach(var v in Items)
-                {
-                    switch (ExtendedMenu)
-                    {
-                        case true:
-                            if(Scroll[0].Clicked == false)
-                            {
-                                if (MouseManager.X > X + v.X + 10 && (MouseManager.X < X + Width - v.X - 20 || MouseManager.X < X + v.X + v.Icon.Width))
-                                {
-                                    if (MouseManager.Y > Y + v.Y + 68 && MouseManager.Y < Y + v.Y + v.Icon.Height + 68 && v.Y > 0 && v.Y < Buffer.Height)
-                                    {
-                                        AppDecider(v.Source, v.Icon);
-                                        ExtendedMenu = false;
-                                        ClearLists();
-                                    }
-                                }
-                            }
-                            break;
-                        case false:
-                                if (MouseManager.X > X + v.X && MouseManager.X < X + v.X + v.Icon.Width)
-                                {
-                                    if (MouseManager.Y > Y + v.Y && MouseManager.Y < Y + v.Y + v.Icon.Height + 18)
-                                    {
-                                        AppDecider(v.Source, v.Icon);
-                                    }
-                                }
-                            break;
-                    }
-                }
+                ImprovedVBE.DrawImageAlpha(Back, X, Y, ImprovedVBE.cover);
             }
-
-            //Render the menu
-            ImprovedVBE.DrawImageAlpha(Back, X, Y, ImprovedVBE.cover);
         }
 
         public static void ClearLists()
@@ -1436,12 +1445,10 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                         Clock clock = new Clock();
                         clock.x = ImprovedVBE.width - 305;
                         clock.y = (int)Backup.Height + 5;
-                        clock.z = 999;
                         clock.width = 300;
                         clock.height = 300;
+                        clock.z = 999;
                         clock.name = "Clock";
-                        clock.minimised = false;
-                        clock.once = true;
                         clock.icon = ImprovedVBE.ScaleImageStock(Resources.Clock, 56, 56);
                         TaskScheduler.Apps.Add(clock);
                         MenuOpened = false;

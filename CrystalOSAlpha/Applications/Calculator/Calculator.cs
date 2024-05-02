@@ -86,7 +86,7 @@ namespace CrystalOSAlpha.Applications.Calculator
                     button.Width = ButtonWidth;
                     if(i == 0)
                     {
-                        button.X = 5 + ButtonWidth * i;//Buttons[i - 1].X + Buttons[i - 1].Width + 5
+                        button.X = 5 + ButtonWidth * i;
                     }
                     else
                     {

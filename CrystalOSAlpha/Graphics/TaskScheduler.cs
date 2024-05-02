@@ -3,7 +3,9 @@ using Cosmos.System.Graphics;
 using CrystalOS_Alpha;
 using CrystalOSAlpha.Applications;
 using CrystalOSAlpha.Graphics.Engine;
+using CrystalOSAlpha.Graphics.Icons;
 using CrystalOSAlpha.Graphics.TaskBar;
+using CrystalOSAlpha.SystemApps;
 using CrystalOSAlpha.UI_Elements;
 using System;
 using System.Collections.Generic;
@@ -68,7 +70,7 @@ namespace CrystalOSAlpha.Graphics
                 {
                     app.y = 1;
                 }
-                if((TaskManager.MenuOpened == false || TaskManager.calendar == false) && TaskManager.clicked == false)
+                if ((TaskManager.MenuOpened == false || TaskManager.calendar == false) && TaskManager.clicked == false)
                 {
                     if (MouseManager.MouseState == MouseState.Left)
                     {
@@ -185,7 +187,15 @@ namespace CrystalOSAlpha.Graphics
                     }
                     catch (Exception e)
                     {
-
+                        if(e.Message.Length > 5)
+                        {
+                            Apps.Add(new MsgBox(999, ImprovedVBE.width / 2 - 200, ImprovedVBE.height / 2 - 100, 400, 200, "Error!", e.Message, Resources.Celebration));
+                        }
+                        else
+                        {
+                            Apps.Add(new MsgBox(999, ImprovedVBE.width / 2 - 300, ImprovedVBE.height / 2 - 100, 600, 200, "Error!", "An unknown error occoured!\nIf restarting the app doesn't help, open a github issue at:\nhttps://github.com/CrystalOSDevelopment/CrystalOS_Alpha", Resources.Celebration));
+                        }
+                        Apps.Remove(app);
                     }
                     //Resize if every requirement checks out
                     if(MouseManager.MouseState == MouseState.Left)

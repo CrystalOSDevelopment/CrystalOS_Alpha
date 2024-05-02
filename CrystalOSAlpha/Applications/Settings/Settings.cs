@@ -232,6 +232,8 @@ namespace CrystalOSAlpha.Applications.Settings
 
             if(temp == true)
             {
+                temp = false;
+
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
 
                 foreach (var button in Buttons)
@@ -366,181 +368,184 @@ namespace CrystalOSAlpha.Applications.Settings
 
                         break;
                     case "Appearance":
-                        BitFont.DrawBitFontString(window, "VerdanaCustomCharset24", Color.White, ActiveD, width - BitFont.DrawBitFontString(back_canvas, "VerdanaCustomCharset24", Color.White, ActiveD, 0, 0) - 5, 24);
-
-                        Bitmap Container = new Bitmap((uint)width - 162, (uint)height - 72, ColorDepth.ColorDepth32);
-                        //Copy a clear chunk from canvas
-                        for (int i = 0; i < Container.Height; i++)
+                        if(VerticalScrollbar.Count != 0 && Slider.Count != 0)
                         {
-                            Array.Copy(canvas.RawData, (62 + i) * canvas.Width + 128, Container.RawData, Container.Width * i, Container.Width);
-                        }
+                            BitFont.DrawBitFontString(window, "VerdanaCustomCharset24", Color.White, ActiveD, width - BitFont.DrawBitFontString(back_canvas, "VerdanaCustomCharset24", Color.White, ActiveD, 0, 0) - 5, 24);
 
-                        #region Wallpapers
-                        //Render the header texts to the screen
-                        BitFont.DrawBitFontString(Container, "VerdanaCustomCharset24", Color.White, "Wallpapers", 6, 7 - VerticalScrollbar[0].Value);
-                        //Render stock wallpaper with type
-                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Use default", 6, 40 - VerticalScrollbar[0].Value);
-                        ImprovedVBE.DrawImage(MiniWallp, 6, 63 - VerticalScrollbar[0].Value, Container);
-                        //Render buttons with type
-                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Use monocolor presets", 6, 154 - VerticalScrollbar[0].Value);
-                        foreach (var button in Colors)
-                        {
-                            if (button.ID.StartsWith("Crystal"))
+                            Bitmap Container = new Bitmap((uint)width - 162, (uint)height - 72, ColorDepth.ColorDepth32);
+                            //Copy a clear chunk from canvas
+                            for (int i = 0; i < Container.Height; i++)
                             {
-                                button.Y = 182 - VerticalScrollbar[0].Value;
+                                Array.Copy(canvas.RawData, (62 + i) * canvas.Width + 128, Container.RawData, Container.Width * i, Container.Width);
                             }
-                            else if (button.ID.StartsWith("LoadFile"))
+
+                            #region Wallpapers
+                            //Render the header texts to the screen
+                            BitFont.DrawBitFontString(Container, "VerdanaCustomCharset24", Color.White, "Wallpapers", 6, 7 - VerticalScrollbar[0].Value);
+                            //Render stock wallpaper with type
+                            BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Use default", 6, 40 - VerticalScrollbar[0].Value);
+                            ImprovedVBE.DrawImage(MiniWallp, 6, 63 - VerticalScrollbar[0].Value, Container);
+                            //Render buttons with type
+                            BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Use monocolor presets", 6, 154 - VerticalScrollbar[0].Value);
+                            foreach (var button in Colors)
                             {
-                                button.Y = 265 - VerticalScrollbar[0].Value;
-                            }
-                            else if (button.ID.StartsWith("Old"))
-                            {
-                                button.Y = 943 - VerticalScrollbar[0].Value;
-                            }
-                            else if (button.ID.StartsWith("Animated"))
-                            {
-                                button.Y = 943 - VerticalScrollbar[0].Value;
-                            }
-                            else
-                            {
-                                button.Y = 212 - VerticalScrollbar[0].Value;
-                            }
-                            if (button.Color == ImprovedVBE.data.RawData[^1])
-                            {
-                                button.Text = "X";
-                            }
-                            else
-                            {
-                                if (button.Text.Length < 2)
+                                if (button.ID.StartsWith("Crystal"))
                                 {
-                                    button.Text = "";
+                                    button.Y = 182 - VerticalScrollbar[0].Value;
+                                }
+                                else if (button.ID.StartsWith("LoadFile"))
+                                {
+                                    button.Y = 265 - VerticalScrollbar[0].Value;
+                                }
+                                else if (button.ID.StartsWith("Old"))
+                                {
+                                    button.Y = 943 - VerticalScrollbar[0].Value;
+                                }
+                                else if (button.ID.StartsWith("Animated"))
+                                {
+                                    button.Y = 943 - VerticalScrollbar[0].Value;
+                                }
+                                else
+                                {
+                                    button.Y = 212 - VerticalScrollbar[0].Value;
+                                }
+                                if (button.Color == ImprovedVBE.data.RawData[^1])
+                                {
+                                    button.Text = "X";
+                                }
+                                else
+                                {
+                                    if (button.Text.Length < 2)
+                                    {
+                                        button.Text = "";
+                                    }
+                                }
+                                if (button.Clicked == true)
+                                {
+                                    Button.Button_render(Container, button.X, button.Y, button.Width, button.Height, Color.White.ToArgb(), button.Text);
+                                }
+                                else
+                                {
+                                    Button.Button_render(Container, button.X, button.Y, button.Width, button.Height, button.Color, button.Text);
+                                }
+                                if (MouseManager.MouseState == MouseState.None)
+                                {
+                                    button.Clicked = false;
                                 }
                             }
-                            if (button.Clicked == true)
+                            //Render LoadfromFile button
+                            BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Load from file", 6, 242 - VerticalScrollbar[0].Value);
+                            #endregion Wallpapers
+
+                            #region Global color settings
+                            //Render the header texts to the screen
+                            BitFont.DrawBitFontString(Container, "VerdanaCustomCharset24", Color.White, "Global color settings", 6, 316 - VerticalScrollbar[0].Value);
+                            BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Window color", 6, 344 - VerticalScrollbar[0].Value);
+                            //Render every slider
+                            foreach (var v in Slider)
                             {
-                                Button.Button_render(Container, button.X, button.Y, button.Width, button.Height, Color.White.ToArgb(), button.Text);
+                                switch (v.ID)
+                                {
+                                    case "WindowRed":
+                                        v.Y = 378 - VerticalScrollbar[0].Value;
+                                        break;
+                                    case "WindowGreen":
+                                        v.Y = 402 - VerticalScrollbar[0].Value;
+                                        break;
+                                    case "WindowBlue":
+                                        v.Y = 426 - VerticalScrollbar[0].Value;
+                                        break;
+                                    case "TaskbarRed":
+                                        v.Y = 479 - VerticalScrollbar[0].Value;
+                                        break;
+                                    case "TaskbarGreen":
+                                        v.Y = 503 - VerticalScrollbar[0].Value;
+                                        break;
+                                    case "TaskbarBlue":
+                                        v.Y = 527 - VerticalScrollbar[0].Value;
+                                        break;
+                                    case "SatrtRed":
+                                        v.Y = 585 - VerticalScrollbar[0].Value;
+                                        break;
+                                    case "StartGreen":
+                                        v.Y = 609 - VerticalScrollbar[0].Value;
+                                        break;
+                                    case "StartBlue":
+                                        v.Y = 633 - VerticalScrollbar[0].Value;
+                                        break;
+
+                                    case "EndRed":
+                                        v.Y = 682 - VerticalScrollbar[0].Value;
+                                        break;
+                                    case "EndGreen":
+                                        v.Y = 706 - VerticalScrollbar[0].Value;
+                                        break;
+                                    case "EndBlue":
+                                        v.Y = 730 - VerticalScrollbar[0].Value;
+                                        break;
+                                    case "Transparency":
+                                        v.Y = 785 - VerticalScrollbar[0].Value;
+                                        break;
+
+                                    case "IconR":
+                                        v.Y = 834 - VerticalScrollbar[0].Value;
+                                        break;
+                                    case "IconG":
+                                        v.Y = 858 - VerticalScrollbar[0].Value;
+                                        break;
+                                    case "IconB":
+                                        v.Y = 882 - VerticalScrollbar[0].Value;
+                                        break;
+                                }
+                                v.Render(Container);
                             }
-                            else
+                            //Draw out the color values
+                            BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Red: " + Slider[0].Value, 308, 372 - VerticalScrollbar[0].Value);
+                            BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Green: " + Slider[1].Value, 308, 396 - VerticalScrollbar[0].Value);
+                            BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Blue: " + Slider[2].Value, 308, 420 - VerticalScrollbar[0].Value);
+
+                            BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Taskbar color", 6, 449 - VerticalScrollbar[0].Value);
+
+                            BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Red: " + Slider[3].Value, 308, 473 - VerticalScrollbar[0].Value);
+                            BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Green: " + Slider[4].Value, 308, 497 - VerticalScrollbar[0].Value);
+                            BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Blue: " + Slider[5].Value, 308, 521 - VerticalScrollbar[0].Value);
+
+                            BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Start color(titlebar)", 6, 555 - VerticalScrollbar[0].Value);
+
+                            BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Red: " + Slider[6].Value, 308, 579 - VerticalScrollbar[0].Value);
+                            BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Green: " + Slider[7].Value, 308, 603 - VerticalScrollbar[0].Value);
+                            BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Blue: " + Slider[8].Value, 308, 627 - VerticalScrollbar[0].Value);
+
+                            BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "End color(titlebar)", 6, 652 - VerticalScrollbar[0].Value);
+
+                            BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Red: " + Slider[9].Value, 308, 676 - VerticalScrollbar[0].Value);
+                            BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Green: " + Slider[10].Value, 308, 700 - VerticalScrollbar[0].Value);
+                            BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Blue: " + Slider[11].Value, 308, 724 - VerticalScrollbar[0].Value);
+
+                            BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Transparency", 6, 754 - VerticalScrollbar[0].Value);
+                            BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Level: " + (100 - Slider[12].Value) / 100.0f, 308, 779 - VerticalScrollbar[0].Value);
+
+                            BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Icon background", 6, 804 - VerticalScrollbar[0].Value);
+                            BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Red: " + Slider[13].Value, 308, 828 - VerticalScrollbar[0].Value);
+                            BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Green: " + Slider[14].Value, 308, 852 - VerticalScrollbar[0].Value);
+                            BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Blue: " + Slider[15].Value, 308, 876 - VerticalScrollbar[0].Value);
+                            #endregion Global color settings
+
+                            #region Menubar options
+                            BitFont.DrawBitFontString(Container, "VerdanaCustomCharset24", Color.White, "Menubar options", 6, 909 - VerticalScrollbar[0].Value);
+                            #endregion Menubar options
+                            //Render the Container
+                            ImprovedVBE.DrawImage(Container, 128, 62, window);
+                            //Render the vertical scrollbar on the window
+                            foreach (var vscroll in VerticalScrollbar)
                             {
-                                Button.Button_render(Container, button.X, button.Y, button.Width, button.Height, button.Color, button.Text);
+                                if(MouseManager.ScrollDelta != 0)
+                                {
+                                    vscroll.Value = Math.Clamp(vscroll.Value + MouseManager.ScrollDelta * 10, vscroll.MinVal, vscroll.MaxVal);
+                                    vscroll.Pos = (int)(vscroll.Value / vscroll.Sensitivity) + 20;
+                                }
+                                vscroll.Render(window);
                             }
-                            if (MouseManager.MouseState == MouseState.None)
-                            {
-                                button.Clicked = false;
-                            }
-                        }
-                        //Render LoadfromFile button
-                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Load from file", 6, 242 - VerticalScrollbar[0].Value);
-                        #endregion Wallpapers
-
-                        #region Global color settings
-                        //Render the header texts to the screen
-                        BitFont.DrawBitFontString(Container, "VerdanaCustomCharset24", Color.White, "Global color settings", 6, 316 - VerticalScrollbar[0].Value);
-                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Window color", 6, 344 - VerticalScrollbar[0].Value);
-                        //Render every slider
-                        foreach (var v in Slider)
-                        {
-                            switch (v.ID)
-                            {
-                                case "WindowRed":
-                                    v.Y = 378 - VerticalScrollbar[0].Value;
-                                    break;
-                                case "WindowGreen":
-                                    v.Y = 402 - VerticalScrollbar[0].Value;
-                                    break;
-                                case "WindowBlue":
-                                    v.Y = 426 - VerticalScrollbar[0].Value;
-                                    break;
-                                case "TaskbarRed":
-                                    v.Y = 479 - VerticalScrollbar[0].Value;
-                                    break;
-                                case "TaskbarGreen":
-                                    v.Y = 503 - VerticalScrollbar[0].Value;
-                                    break;
-                                case "TaskbarBlue":
-                                    v.Y = 527 - VerticalScrollbar[0].Value;
-                                    break;
-                                case "SatrtRed":
-                                    v.Y = 585 - VerticalScrollbar[0].Value;
-                                    break;
-                                case "StartGreen":
-                                    v.Y = 609 - VerticalScrollbar[0].Value;
-                                    break;
-                                case "StartBlue":
-                                    v.Y = 633 - VerticalScrollbar[0].Value;
-                                    break;
-
-                                case "EndRed":
-                                    v.Y = 682 - VerticalScrollbar[0].Value;
-                                    break;
-                                case "EndGreen":
-                                    v.Y = 706 - VerticalScrollbar[0].Value;
-                                    break;
-                                case "EndBlue":
-                                    v.Y = 730 - VerticalScrollbar[0].Value;
-                                    break;
-                                case "Transparency":
-                                    v.Y = 785 - VerticalScrollbar[0].Value;
-                                    break;
-
-                                case "IconR":
-                                    v.Y = 834 - VerticalScrollbar[0].Value;
-                                    break;
-                                case "IconG":
-                                    v.Y = 858 - VerticalScrollbar[0].Value;
-                                    break;
-                                case "IconB":
-                                    v.Y = 882 - VerticalScrollbar[0].Value;
-                                    break;
-                            }
-                            v.Render(Container);
-                        }
-                        //Draw out the color values
-                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Red: " + Slider[0].Value, 308, 372 - VerticalScrollbar[0].Value);
-                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Green: " + Slider[1].Value, 308, 396 - VerticalScrollbar[0].Value);
-                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Blue: " + Slider[2].Value, 308, 420 - VerticalScrollbar[0].Value);
-
-                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Taskbar color", 6, 449 - VerticalScrollbar[0].Value);
-
-                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Red: " + Slider[3].Value, 308, 473 - VerticalScrollbar[0].Value);
-                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Green: " + Slider[4].Value, 308, 497 - VerticalScrollbar[0].Value);
-                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Blue: " + Slider[5].Value, 308, 521 - VerticalScrollbar[0].Value);
-
-                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Start color(titlebar)", 6, 555 - VerticalScrollbar[0].Value);
-
-                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Red: " + Slider[6].Value, 308, 579 - VerticalScrollbar[0].Value);
-                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Green: " + Slider[7].Value, 308, 603 - VerticalScrollbar[0].Value);
-                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Blue: " + Slider[8].Value, 308, 627 - VerticalScrollbar[0].Value);
-
-                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "End color(titlebar)", 6, 652 - VerticalScrollbar[0].Value);
-
-                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Red: " + Slider[9].Value, 308, 676 - VerticalScrollbar[0].Value);
-                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Green: " + Slider[10].Value, 308, 700 - VerticalScrollbar[0].Value);
-                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Blue: " + Slider[11].Value, 308, 724 - VerticalScrollbar[0].Value);
-
-                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Transparency", 6, 754 - VerticalScrollbar[0].Value);
-                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Level: " + (100 - Slider[12].Value) / 100.0f, 308, 779 - VerticalScrollbar[0].Value);
-
-                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Icon background", 6, 804 - VerticalScrollbar[0].Value);
-                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Red: " + Slider[13].Value, 308, 828 - VerticalScrollbar[0].Value);
-                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Green: " + Slider[14].Value, 308, 852 - VerticalScrollbar[0].Value);
-                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Blue: " + Slider[15].Value, 308, 876 - VerticalScrollbar[0].Value);
-                        #endregion Global color settings
-
-                        #region Menubar options
-                        BitFont.DrawBitFontString(Container, "VerdanaCustomCharset24", Color.White, "Menubar options", 6, 909 - VerticalScrollbar[0].Value);
-                        #endregion Menubar options
-                        //Render the Container
-                        ImprovedVBE.DrawImage(Container, 128, 62, window);
-                        //Render the vertical scrollbar on the window
-                        foreach (var vscroll in VerticalScrollbar)
-                        {
-                            if(MouseManager.ScrollDelta != 0)
-                            {
-                                vscroll.Value = Math.Clamp(vscroll.Value + MouseManager.ScrollDelta * 10, vscroll.MinVal, vscroll.MaxVal);
-                                vscroll.Pos = (int)(vscroll.Value / vscroll.Sensitivity) + 20;
-                            }
-                            vscroll.Render(window);
                         }
                         break;
                     case "Sound":
@@ -569,7 +574,7 @@ namespace CrystalOSAlpha.Applications.Settings
                 }
 
                 //Save changed style
-                if(VMTools.IsVMWare == true && Kernel.fs.Disks.Count != 0)
+                if(VMTools.IsVMWare == true && Kernel.IsDiskSupport == true)
                 {
                     string Layout =
                     "WindowR=" + GlobalValues.R +
@@ -597,7 +602,6 @@ namespace CrystalOSAlpha.Applications.Settings
                         File.WriteAllText("0:\\System\\Layout.sys", Layout);
                     }
                 }
-                temp = false;
             }
 
             ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);

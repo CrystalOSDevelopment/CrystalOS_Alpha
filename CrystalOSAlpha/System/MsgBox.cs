@@ -96,7 +96,6 @@ namespace CrystalOSAlpha.SystemApps
                 BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, message, (int)(Resources.Celebration.Width + 60), (int)(height / 2 - Resources.Celebration.Height / 2 + 10));
 
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
-                back_canvas = canvas;
                 once = false;
             }
 

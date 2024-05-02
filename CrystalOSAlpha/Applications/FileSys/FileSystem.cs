@@ -79,6 +79,10 @@ namespace CrystalOSAlpha.Applications.FileSys
         {
             if (initial == true)
             {
+                if(Kernel.IsDiskSupport == false)
+                {
+                    throw new Exception("Failed to open FileManager:\nFilesystem not initialized!");
+                }
                 Buttons.Add(new Button_prop(3, 2, 49, 25, "Home", 1, "Home"));
                 Buttons.Add(new Button_prop(59, 2, 105, 25, "Wastebasket", 1, "Wastebasket"));
                 Buttons.Add(new Button_prop(171, 2, 105, 25, "Security Area", 1, "Security Area"));
