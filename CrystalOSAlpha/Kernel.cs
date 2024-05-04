@@ -4,7 +4,6 @@ using Cosmos.System.FileSystem;
 using Cosmos.System.Graphics;
 using CrystalOS_Alpha.Graphics.Widgets;
 using CrystalOSAlpha;
-using CrystalOSAlpha.Applications.Clock;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics.Icons;
@@ -176,6 +175,9 @@ namespace CrystalOS_Alpha
 
                                 case "Transparency":
                                     GlobalValues.LevelOfTransparency = int.Parse(Split[1]);
+                                    TaskManager.update = true;
+                                    TaskManager.resize = true;
+                                    SideNav.Get_Back = true;
                                     break;
                             }
                         }
@@ -187,6 +189,8 @@ namespace CrystalOS_Alpha
                     #endregion Config
                 }
             }
+
+            ImprovedVBE.Display(vbe);
 
             #region Widgets
             FPS_Counter f = new FPS_Counter();
@@ -214,19 +218,6 @@ namespace CrystalOS_Alpha
             i.minimised = false;
             n.icon = ImprovedVBE.ScaleImageStock(Resources.Web, 56, 56);
             TaskScheduler.Apps.Add(n);
-
-            //Testing section
-            //Solitare sol = new Solitare();
-            //sol.x = 10;
-            //sol.y = 100;
-            //sol.width = 500;
-            //sol.height = 400;
-            //sol.z = 999;
-            //sol.name = "Solitare";
-            //sol.minimised = false;
-            //sol.once = true;
-            //sol.icon = ImprovedVBE.ScaleImageStock(Resources.Web, 56, 56);
-            //TaskScheduler.Apps.Add(sol);
             #endregion Widgets
 
             #region Mouse
@@ -249,6 +240,15 @@ namespace CrystalOS_Alpha
         public static string Clipboard = "";
         protected override void Run()
         {
+            if(Is_KeyboardMouse == true)
+            {
+                KeyEvent k;
+                if(KeyboardManager.TryReadKey(out k))
+                {
+                    Keyboard.HandleKeyboard("", k);
+                }
+            }
+
             if (TaskScheduler.Apps.FindAll(d => d.width > 800).Count != 0)
             {
                 if (collect >= 2)
@@ -296,6 +296,8 @@ namespace CrystalOS_Alpha
             }
 
             ImprovedVBE.DrawImageAlpha(C, (int)MouseManager.X, (int)MouseManager.Y, ImprovedVBE.cover);
+
+            BitFont.DrawBitFontString(ImprovedVBE.cover, "ArialCustomCharset16", Color.White, Clipboard, 2, 60);
 
             ImprovedVBE.Display(vbe);
 

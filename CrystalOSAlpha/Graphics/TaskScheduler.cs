@@ -72,7 +72,7 @@ namespace CrystalOSAlpha.Graphics
                 }
                 if ((TaskManager.MenuOpened == false || TaskManager.calendar == false) && TaskManager.clicked == false)
                 {
-                    if (MouseManager.MouseState == MouseState.Left)
+                    if (MouseManager.MouseState == MouseState.Left && app.movable == false && ImprovedVBE.isMoving == false)
                     {
                         if(MouseManager.X < app.x + app.width && MouseManager.X > app.x + app.width - 21)
                         {

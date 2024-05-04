@@ -136,7 +136,7 @@ namespace CrystalOSAlpha.UI_Elements
                     break;
             }
 
-            ImprovedVBE.DrawImageAlpha(canvas, X, Y, Canvas);
+            ImprovedVBE.DrawImage(canvas, X, Y, Canvas);
         }
 
         public bool Clciked(int X, int Y)

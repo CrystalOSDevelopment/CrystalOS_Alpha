@@ -6,6 +6,7 @@ using CrystalOSAlpha.Applications.Clock;
 using CrystalOSAlpha.Applications.Gameboy;
 using CrystalOSAlpha.Applications.Minecraft;
 using CrystalOSAlpha.Applications.Notepad;
+using CrystalOSAlpha.Applications.PatternGenerator;
 using CrystalOSAlpha.Applications.Settings;
 using CrystalOSAlpha.Applications.Solitare;
 using CrystalOSAlpha.Applications.Terminal;
@@ -69,6 +70,8 @@ namespace CrystalOSAlpha.Graphics.TaskBar
         public static List<Table> Tables = new List<Table>();
         public static List<PictureBox> Picturebox = new List<PictureBox>();
         #endregion UI_Elements
+
+        public static int Count = -1;
 
         public static void Main()
         {
@@ -418,13 +421,16 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                                     {
                                         update = true;
                                         MenuOpened = true;
-                                        clicked = true;
+                                        //clicked = true;
                                         ExtendedMenu = false;
+                                        Back_Buffer = null;
                                         ClearLists();
                                     }
                                     else if(MenuOpened == true && clicked == false)
                                     {
                                         MenuOpened = false;
+                                        update = true;
+                                        Back_Buffer = null;
                                         clicked = true;
                                     }
                                 }
@@ -899,10 +905,16 @@ namespace CrystalOSAlpha.Graphics.TaskBar
         public static void Dynamic_Menu(int X, int Y, int Width, int Height)
         {
             //Activate click on MenuItems
-            if(MouseManager.MouseState == MouseState.Left && clicked == false)
+            if(MouseManager.MouseState == MouseState.Left)
             {
-                update = true;
-                foreach(var v in Items)
+                if(MouseManager.X > ImprovedVBE.width / 2 - icon.Width / 2 && MouseManager.X < ImprovedVBE.width / 2 + icon.Width)
+                {
+                    if (MouseManager.Y > 0 && MouseManager.Y < TaskBar.Height)
+                    {
+                        Count = 0;
+                    }
+                }
+                foreach (var v in Items)
                 {
                     switch (ExtendedMenu)
                     {
@@ -932,9 +944,26 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                     }
                 }
             }
-            else if(MouseManager.MouseState == MouseState.None)
+            else if(MouseManager.MouseState == MouseState.None && clicked == true)
             {
+                update = true;
+                Back_Buffer = null;
                 clicked = false;
+                Count = 0;
+            }
+
+            if(Count > 0)
+            {
+                update = true;
+                Back_Buffer = null;
+                Count = -1;
+            }
+            else
+            {
+                if(Count != -1)
+                {
+                    Count++;
+                }
             }
 
             if(update == true)
@@ -1082,6 +1111,12 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                             Name = "Clock",
                             Source = "Clock",
                             Icon = ImprovedVBE.ScaleImageStock(Resources.Clock, GlobalValues.IconWidth, GlobalValues.IconHeight)
+                        },
+                        new Menu_Items
+                        {
+                            Name = "Pattern Generator",
+                            Source = "PatternGenerator",
+                            Icon = ImprovedVBE.ScaleImageStock(Resources.PTG, GlobalValues.IconWidth, GlobalValues.IconHeight)
                         }
                     };
 
@@ -1272,7 +1307,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
             }
 
             //Render the menu if it's opened
-            if(MenuOpened == true)
+            if(MenuOpened == true && Count == -1)
             {
                 ImprovedVBE.DrawImageAlpha(Back, X, Y, ImprovedVBE.cover);
             }
@@ -1453,6 +1488,20 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                         TaskScheduler.Apps.Add(clock);
                         MenuOpened = false;
                     }
+                    break;
+                case "PatternGenerator":
+                    PatternGenerator PTG = new PatternGenerator();
+                    PTG.x = 10;
+                    PTG.y = 100;
+                    PTG.width = 375;
+                    PTG.height = 307;
+                    PTG.z = 999;
+                    PTG.name = "Pattern Generator";
+                    PTG.minimised = false;
+                    PTG.once = true;
+                    PTG.icon = ImprovedVBE.ScaleImageStock(Resources.PTG, 56, 56);
+                    TaskScheduler.Apps.Add(PTG);
+                    MenuOpened = false;
                     break;
             }
             if (MenuOpened == false)

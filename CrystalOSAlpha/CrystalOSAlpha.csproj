@@ -27,7 +27,7 @@
         <Timeout>0</Timeout>
         <BinFormat>Elf</BinFormat>
         <ExtractMapFile>False</ExtractMapFile>
-        <UseUEFI>True</UseUEFI>
+        <UseUEFI>False</UseUEFI>
     </PropertyGroup>
 
     <ItemGroup>
@@ -55,6 +55,7 @@
       <None Remove="Graphics\Icons\Gameboy.bmp" />
       <None Remove="Graphics\Icons\IDE.bmp" />
       <None Remove="Graphics\Icons\Notepad.bmp" />
+      <None Remove="Graphics\Icons\Patterngenerator.bmp" />
       <None Remove="Graphics\Icons\Settings.bmp" />
       <None Remove="Graphics\Icons\Terminal.bmp" />
       <None Remove="Graphics\Icons\WebBrowser.bmp" />
@@ -83,6 +84,7 @@
       <EmbeddedResource Include="Graphics\Icons\Folder.bmp" />
       <EmbeddedResource Include="Graphics\Icons\Gameboy.bmp" />
       <EmbeddedResource Include="Graphics\Icons\Notepad.bmp" />
+      <EmbeddedResource Include="Graphics\Icons\Patterngenerator.bmp" />
       <EmbeddedResource Include="Graphics\Icons\Settings.bmp" />
       <EmbeddedResource Include="Graphics\Icons\Terminal.bmp" />
       <EmbeddedResource Include="Graphics\Icons\WebBrowser.bmp" />

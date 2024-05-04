@@ -31,7 +31,10 @@ namespace CrystalOSAlpha.UI_Elements
                     case ConsoleKeyEx.LWin:
                         foreach (var v in TaskScheduler.Apps)
                         {
-                            v.minimised = true;
+                            if(v.name.Length > 2)
+                            {
+                                v.minimised = true;
+                            }
                         }
                         break;
                     default:

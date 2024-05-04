@@ -798,6 +798,8 @@ namespace CrystalOSAlpha.Applications.Settings
                                     break;
                             }
                             clicked = true;
+                            TaskManager.update = true;
+                            TaskManager.Back_Buffer = null;
                         }
                     }
                     if(MouseManager.X > x + 134 && MouseManager.X < x + 134 + MiniWallp.Width)
@@ -808,6 +810,8 @@ namespace CrystalOSAlpha.Applications.Settings
                             ImprovedVBE.Temp.RawData.CopyTo(ImprovedVBE.data.RawData, 0);
                             TaskManager.resize = true;
                             TaskManager.Time = 99;
+                            TaskManager.update = true;
+                            TaskManager.Back_Buffer = null;
                         }
                     }
                 }
@@ -877,7 +881,9 @@ namespace CrystalOSAlpha.Applications.Settings
                         case "Transparency":
                             if(v.Value > 40)
                             {
+                                TaskManager.update = true;
                                 TaskManager.resize = true;
+                                SideNav.Get_Back = true;
                                 GlobalValues.LevelOfTransparency = v.Value;
                             }
                             break;
