@@ -58,6 +58,12 @@ namespace CrystalOSAlpha.UI_Elements
                     case ConsoleKeyEx.D:
                         MouseManager.X += 4;
                         break;
+                    case ConsoleKeyEx.Q:
+                        if(MouseManager.MouseState == MouseState.None)
+                        {
+                            MouseManager.MouseState = MouseState.Left;
+                        }
+                        break;
                     case ConsoleKeyEx.F1:
                         Kernel.Is_KeyboardMouse = false;
                         break;

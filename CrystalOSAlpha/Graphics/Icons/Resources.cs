@@ -32,5 +32,8 @@ namespace CrystalOSAlpha.Graphics.Icons
 
         [ManifestResourceStream(ResourceName = "CrystalOSAlpha.Graphics.Icons.celebrate.bmp")] public static byte[] Celeb;
         public static Bitmap Celebration = new Bitmap(Celeb);
+
+        //Uncomment this to add video
+        [ManifestResourceStream(ResourceName = "CrystalOSAlpha.Applications.Video_Player.compressed_video.dat")] public static byte[] TotalBytes;
     }
 }

@@ -10,6 +10,7 @@ using CrystalOSAlpha.Applications.PatternGenerator;
 using CrystalOSAlpha.Applications.Settings;
 using CrystalOSAlpha.Applications.Solitare;
 using CrystalOSAlpha.Applications.Terminal;
+using CrystalOSAlpha.Applications.Video_Player;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics.Icons;
 using CrystalOSAlpha.Graphics.Widgets;
@@ -944,15 +945,15 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                     }
                 }
             }
-            else if(MouseManager.MouseState == MouseState.None && clicked == true)
-            {
-                update = true;
-                Back_Buffer = null;
-                clicked = false;
-                Count = 0;
-            }
+            //else if(MouseManager.MouseState == MouseState.None)
+            //{
+            //    update = true;
+            //    Back_Buffer = null;
+            //    clicked = false;
+            //    Count = 0;
+            //}
 
-            if(Count > 0)
+            if(Count == 0)
             {
                 update = true;
                 Back_Buffer = null;
@@ -1116,6 +1117,12 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                         {
                             Name = "Pattern Generator",
                             Source = "PatternGenerator",
+                            Icon = ImprovedVBE.ScaleImageStock(Resources.PTG, GlobalValues.IconWidth, GlobalValues.IconHeight)
+                        },
+                        new Menu_Items
+                        {
+                            Name = "Entertainment",
+                            Source = "Entertainment",
                             Icon = ImprovedVBE.ScaleImageStock(Resources.PTG, GlobalValues.IconWidth, GlobalValues.IconHeight)
                         }
                     };
@@ -1501,6 +1508,20 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                     PTG.once = true;
                     PTG.icon = ImprovedVBE.ScaleImageStock(Resources.PTG, 56, 56);
                     TaskScheduler.Apps.Add(PTG);
+                    MenuOpened = false;
+                    break;
+                case "Entertainment":
+                    CrystalVideo cv = new CrystalVideo();
+                    cv.x = 10;
+                    cv.y = 100;
+                    cv.width = 640;
+                    cv.height = 379;
+                    cv.z = 999;
+                    cv.name = "CrystalVideo";
+                    cv.minimised = false;
+                    cv.once = true;
+                    cv.icon = ImprovedVBE.ScaleImageStock(Resources.PTG, 56, 56);
+                    TaskScheduler.Apps.Add(cv);
                     MenuOpened = false;
                     break;
             }

@@ -57,136 +57,131 @@ namespace CrystalOS_Alpha
                 {
                     Sys.FileSystem.VFS.VFSManager.RegisterVFS(fs);
                     IsDiskSupport = true;
-                }
-                //Insert install here
-                //Problem: Not implemented, so don't even attempt to search after it dear GitHub user!
-                //Until then, this is the block of code that substitutes it
-                if(fs.Disks.Count != 0)
-                {
-                    #region Config
-                    //Create shortcut directories
-                    Directory.CreateDirectory("0:\\User\\" + GlobalValues.Username + "\\Favorites");
-                    Directory.CreateDirectory("0:\\User\\" + GlobalValues.Username + "\\Documents");
-                    Directory.CreateDirectory("0:\\User\\" + GlobalValues.Username + "\\Pictures");
-                    Directory.CreateDirectory("0:\\User\\" + GlobalValues.Username + "\\Films");
-                    Directory.CreateDirectory("0:\\User\\" + GlobalValues.Username + "\\Wastebasket");
-                    Directory.CreateDirectory("0:\\User\\" + GlobalValues.Username + "\\SecurityArea");
+                    //Insert install here
+                    //Problem: Not implemented, so don't even attempt to search after it dear GitHub user!
+                    //Until then, this is the block of code that substitutes it
+                    if(fs.Disks.Count != 0)
+                    {
+                        #region Config
+                        //Create shortcut directories
+                        Directory.CreateDirectory("0:\\User\\" + GlobalValues.Username + "\\Favorites");
+                        Directory.CreateDirectory("0:\\User\\" + GlobalValues.Username + "\\Documents");
+                        Directory.CreateDirectory("0:\\User\\" + GlobalValues.Username + "\\Pictures");
+                        Directory.CreateDirectory("0:\\User\\" + GlobalValues.Username + "\\Films");
+                        Directory.CreateDirectory("0:\\User\\" + GlobalValues.Username + "\\Wastebasket");
+                        Directory.CreateDirectory("0:\\User\\" + GlobalValues.Username + "\\SecurityArea");
 
-                    //System config files
-                    //if (!File.Exists("0:\\User\\System\\Appearance.sys"))
-                    //{
-                    //    File.Create("0:\\System\\Appearance.sys");
-                    //    File.WriteAllText("0:\\System\\Appearance.sys", "Wallpaper=Default");
-                    //}
-                    Directory.CreateDirectory("0:\\System");
-                    File.Create("0:\\System\\FrequentApps.sys");
-                    File.WriteAllText("0:\\System\\FrequentApps.sys", "Settings\nGameboy\nMinecraft\nFileSystem");
-                    //Customization file
-                    if (!File.Exists("0:\\System\\Layout.sys"))
-                    {
-                        File.Create("0:\\System\\Layout.sys");
-                        string Layout =
-                            "WindowR=" + GlobalValues.R +
-                            "\nWindowG=" + GlobalValues.G +
-                            "\nWindowB=" + GlobalValues.B +
-                            "\nTaskbarR=" + GlobalValues.TaskBarR +
-                            "\nTaskbarG=" + GlobalValues.TaskBarG +
-                            "\nTaskbarB=" + GlobalValues.TaskBarB +
-                            "\nTaskbarType=" + GlobalValues.TaskBarType +
-                            "\nUsername=" + GlobalValues.Username +
-                            "\nIconR=" + GlobalValues.IconR +
-                            "\nIconG=" + GlobalValues.IconG +
-                            "\nIconB=" + GlobalValues.IconB +
-                            "\nIconwidth=" + GlobalValues.IconWidth +
-                            "\nIconheight=" + GlobalValues.IconHeight +
-                            "\nStartcolor=" + GlobalValues.StartColor.ToArgb() +
-                            "\nEndcolor=" + GlobalValues.EndColor.ToArgb() +
-                            "\nBakground=" + GlobalValues.Background_type +
-                            "\nBackgroundcolor=" + GlobalValues.Background_color +
-                            "\nTransparency=" + GlobalValues.LevelOfTransparency;
-                        File.WriteAllText("0:\\System\\Layout.sys", Layout);
-                    }
-                    else
-                    {
-                        string[] Lines = File.ReadAllLines("0:\\System\\Layout.sys");
-                        foreach(string s in Lines)
+                        //System config files
+                        Directory.CreateDirectory("0:\\System");
+                        File.Create("0:\\System\\FrequentApps.sys");
+                        File.WriteAllText("0:\\System\\FrequentApps.sys", "Settings\nGameboy\nMinecraft\nFileSystem");
+                        //Customization file
+                        if (!File.Exists("0:\\System\\Layout.sys"))
                         {
-                            string[] Split = s.Split('=');
-                            switch(Split[0])
+                            File.Create("0:\\System\\Layout.sys");
+                            string Layout =
+                                "WindowR=" + GlobalValues.R +
+                                "\nWindowG=" + GlobalValues.G +
+                                "\nWindowB=" + GlobalValues.B +
+                                "\nTaskbarR=" + GlobalValues.TaskBarR +
+                                "\nTaskbarG=" + GlobalValues.TaskBarG +
+                                "\nTaskbarB=" + GlobalValues.TaskBarB +
+                                "\nTaskbarType=" + GlobalValues.TaskBarType +
+                                "\nUsername=" + GlobalValues.Username +
+                                "\nIconR=" + GlobalValues.IconR +
+                                "\nIconG=" + GlobalValues.IconG +
+                                "\nIconB=" + GlobalValues.IconB +
+                                "\nIconwidth=" + GlobalValues.IconWidth +
+                                "\nIconheight=" + GlobalValues.IconHeight +
+                                "\nStartcolor=" + GlobalValues.StartColor.ToArgb() +
+                                "\nEndcolor=" + GlobalValues.EndColor.ToArgb() +
+                                "\nBakground=" + GlobalValues.Background_type +
+                                "\nBackgroundcolor=" + GlobalValues.Background_color +
+                                "\nTransparency=" + GlobalValues.LevelOfTransparency;
+                            File.WriteAllText("0:\\System\\Layout.sys", Layout);
+                        }
+                        else
+                        {
+                            string[] Lines = File.ReadAllLines("0:\\System\\Layout.sys");
+                            foreach(string s in Lines)
                             {
-                                case "WindowR":
-                                    GlobalValues.R = int.Parse(Split[1]);
-                                    break;
-                                case "WindowG":
-                                    GlobalValues.G = int.Parse(Split[1]);
-                                    break;
-                                case "WindowB":
-                                    GlobalValues.B = int.Parse(Split[1]);
-                                    break;
+                                string[] Split = s.Split('=');
+                                switch(Split[0])
+                                {
+                                    case "WindowR":
+                                        GlobalValues.R = int.Parse(Split[1]);
+                                        break;
+                                    case "WindowG":
+                                        GlobalValues.G = int.Parse(Split[1]);
+                                        break;
+                                    case "WindowB":
+                                        GlobalValues.B = int.Parse(Split[1]);
+                                        break;
 
-                                case "TaskbarR":
-                                    GlobalValues.TaskBarR = int.Parse(Split[1]);
-                                    break;
-                                case "TaskbarG":
-                                    GlobalValues.TaskBarG = int.Parse(Split[1]);
-                                    break;
-                                case "TaskbarB":
-                                    GlobalValues.TaskBarB = int.Parse(Split[1]);
-                                    break;
+                                    case "TaskbarR":
+                                        GlobalValues.TaskBarR = int.Parse(Split[1]);
+                                        break;
+                                    case "TaskbarG":
+                                        GlobalValues.TaskBarG = int.Parse(Split[1]);
+                                        break;
+                                    case "TaskbarB":
+                                        GlobalValues.TaskBarB = int.Parse(Split[1]);
+                                        break;
 
-                                case "TaskbarType":
-                                    GlobalValues.TaskBarType = Split[1];
-                                    break;
+                                    case "TaskbarType":
+                                        GlobalValues.TaskBarType = Split[1];
+                                        break;
 
-                                case "Username":
-                                    GlobalValues.Username = Split[1];
-                                    break;
+                                    case "Username":
+                                        GlobalValues.Username = Split[1];
+                                        break;
 
-                                case "IconR":
-                                    GlobalValues.IconR = int.Parse(Split[1]);
-                                    break;
-                                case "IconG":
-                                    GlobalValues.IconG = int.Parse(Split[1]);
-                                    break;
-                                case "IconB":
-                                    GlobalValues.IconB = int.Parse(Split[1]);
-                                    break;
+                                    case "IconR":
+                                        GlobalValues.IconR = int.Parse(Split[1]);
+                                        break;
+                                    case "IconG":
+                                        GlobalValues.IconG = int.Parse(Split[1]);
+                                        break;
+                                    case "IconB":
+                                        GlobalValues.IconB = int.Parse(Split[1]);
+                                        break;
 
-                                case "Iconwidth":
-                                    GlobalValues.IconWidth = uint.Parse(Split[1]);
-                                    break;
-                                case "Iconheight":
-                                    GlobalValues.IconHeight = uint.Parse(Split[1]);
-                                    break;
+                                    case "Iconwidth":
+                                        GlobalValues.IconWidth = uint.Parse(Split[1]);
+                                        break;
+                                    case "Iconheight":
+                                        GlobalValues.IconHeight = uint.Parse(Split[1]);
+                                        break;
 
-                                case "Startcolor":
-                                    GlobalValues.StartColor = Color.FromArgb(int.Parse(Split[1]));
-                                    break;
-                                case "Endcolor":
-                                    GlobalValues.EndColor = Color.FromArgb(int.Parse(Split[1]));
-                                    break;
+                                    case "Startcolor":
+                                        GlobalValues.StartColor = Color.FromArgb(int.Parse(Split[1]));
+                                        break;
+                                    case "Endcolor":
+                                        GlobalValues.EndColor = Color.FromArgb(int.Parse(Split[1]));
+                                        break;
 
-                                case "Bakground":
-                                    GlobalValues.Background_type = Split[1];
-                                    break;
-                                case "Backgroundcolor":
-                                    GlobalValues.Background_color = Split[1];
-                                    break;
+                                    case "Bakground":
+                                        GlobalValues.Background_type = Split[1];
+                                        break;
+                                    case "Backgroundcolor":
+                                        GlobalValues.Background_color = Split[1];
+                                        break;
 
-                                case "Transparency":
-                                    GlobalValues.LevelOfTransparency = int.Parse(Split[1]);
-                                    TaskManager.update = true;
-                                    TaskManager.resize = true;
-                                    SideNav.Get_Back = true;
-                                    break;
+                                    case "Transparency":
+                                        GlobalValues.LevelOfTransparency = int.Parse(Split[1]);
+                                        TaskManager.update = true;
+                                        TaskManager.resize = true;
+                                        SideNav.Get_Back = true;
+                                        break;
+                                }
                             }
                         }
+                        ////Applications folder
+                        Directory.CreateDirectory("0:\\Programs");
+                        ////CarbonIDE folder
+                        Directory.CreateDirectory("0:\\User\\Source");
+                        #endregion Config
                     }
-                    ////Applications folder
-                    Directory.CreateDirectory("0:\\Programs");
-                    ////CarbonIDE folder
-                    Directory.CreateDirectory("0:\\User\\Source");
-                    #endregion Config
                 }
             }
 
