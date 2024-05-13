@@ -50,6 +50,8 @@
       <None Remove="Graphics\Engine\Wallp1.bmp" />
       <None Remove="Graphics\Icons\Calculator.bmp" />
       <None Remove="Graphics\Icons\Clock.bmp" />
+      <None Remove="Graphics\Icons\CrystalMusic.bmp" />
+      <None Remove="Graphics\Icons\CrystalVideo.bmp" />
       <None Remove="Graphics\Icons\Explorer.bmp" />
       <None Remove="Graphics\Icons\File.bmp" />
       <None Remove="Graphics\Icons\Folder.bmp" />
@@ -79,6 +81,8 @@
       <EmbeddedResource Include="Graphics\Engine\Arial_16.btf" />
       <EmbeddedResource Include="Graphics\Engine\Wallp1.bmp" />
       <EmbeddedResource Include="Graphics\Icons\Clock.bmp" />
+      <EmbeddedResource Include="Graphics\Icons\CrystalMusic.bmp" />
+      <EmbeddedResource Include="Graphics\Icons\CrystalVideo.bmp" />
       <EmbeddedResource Include="Graphics\Icons\Cursor.bmp" />
       <EmbeddedResource Include="Graphics\Icons\Calculator.bmp" />
       <EmbeddedResource Include="Graphics\Icons\Explorer.bmp" />

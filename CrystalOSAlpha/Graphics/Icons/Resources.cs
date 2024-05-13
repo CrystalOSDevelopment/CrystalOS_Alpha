@@ -29,6 +29,10 @@ namespace CrystalOSAlpha.Graphics.Icons
         public static Bitmap Clock = new Bitmap(clock);
         [ManifestResourceStream(ResourceName = "CrystalOSAlpha.Graphics.Icons.Patterngenerator.bmp")] public static byte[] ptg;
         public static Bitmap PTG = new Bitmap(ptg);
+        [ManifestResourceStream(ResourceName = "CrystalOSAlpha.Graphics.Icons.CrystalMusic.bmp")] public static byte[] CM;
+        public static Bitmap CrystalMusic = new Bitmap(CM);
+        [ManifestResourceStream(ResourceName = "CrystalOSAlpha.Graphics.Icons.CrystalVideo.bmp")] public static byte[] CV;
+        public static Bitmap CrystalVideo = new Bitmap(CV);
 
         [ManifestResourceStream(ResourceName = "CrystalOSAlpha.Graphics.Icons.celebrate.bmp")] public static byte[] Celeb;
         public static Bitmap Celebration = new Bitmap(Celeb);

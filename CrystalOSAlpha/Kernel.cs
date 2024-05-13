@@ -4,6 +4,7 @@ using Cosmos.System.FileSystem;
 using Cosmos.System.Graphics;
 using CrystalOS_Alpha.Graphics.Widgets;
 using CrystalOSAlpha;
+using CrystalOSAlpha.Applications.WebscapeNavigator;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics.Icons;
@@ -288,6 +289,11 @@ namespace CrystalOS_Alpha
                 SideNav.Core();
                 TaskScheduler.Exec();
                 TaskManager.Main();
+            }
+
+            if(TaskManager.MenuOpened == true)
+            {
+                TaskManager.Dynamic_Menu(ImprovedVBE.width / 2 - 200, 50, 400, 400);
             }
 
             ImprovedVBE.DrawImageAlpha(C, (int)MouseManager.X, (int)MouseManager.Y, ImprovedVBE.cover);

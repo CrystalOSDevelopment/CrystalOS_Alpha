@@ -267,10 +267,18 @@ namespace CrystalOSAlpha.Applications.Video_Player
                     }
                     ImprovedVBE.DrawImage(previousFrame, 5, 27, window);
                 }
-                //temp = false;
+                else
+                {
+                    AllowPlay = false;
+                }
+                temp = false;
             }
             ImprovedVBE.DrawImage(window, x, y, ImprovedVBE.cover);
-            Thread.Sleep(40);
+            if(AllowPlay == true)
+            {
+                Thread.Sleep(40);
+                temp = true;
+            }
             if(MouseManager.MouseState == MouseState.None && clicked == true)
             {
                 clicked = false;

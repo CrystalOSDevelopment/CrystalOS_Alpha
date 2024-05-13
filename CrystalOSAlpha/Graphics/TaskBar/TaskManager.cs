@@ -4,6 +4,7 @@ using CrystalOSAlpha.Applications.Calculator;
 using CrystalOSAlpha.Applications.CarbonIDE;
 using CrystalOSAlpha.Applications.Clock;
 using CrystalOSAlpha.Applications.Gameboy;
+using CrystalOSAlpha.Applications.MediaCenter;
 using CrystalOSAlpha.Applications.Minecraft;
 using CrystalOSAlpha.Applications.Notepad;
 using CrystalOSAlpha.Applications.PatternGenerator;
@@ -422,7 +423,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                                     {
                                         update = true;
                                         MenuOpened = true;
-                                        //clicked = true;
+                                        clicked = true;
                                         ExtendedMenu = false;
                                         Back_Buffer = null;
                                         ClearLists();
@@ -486,7 +487,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                         }
                         if(MenuOpened == true)
                         {
-                            Dynamic_Menu(ImprovedVBE.width / 2 - 200, 50, 400, 400);
+                            //Dynamic_Menu(ImprovedVBE.width / 2 - 200, 50, 400, 400);
                             calendar = false;
                         }
                         //Add calendar here
@@ -912,7 +913,8 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                 {
                     if (MouseManager.Y > 0 && MouseManager.Y < TaskBar.Height)
                     {
-                        Count = 0;
+                        update = true;
+                        Back_Buffer = null;
                     }
                 }
                 foreach (var v in Items)
@@ -943,27 +945,6 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                                 }
                             break;
                     }
-                }
-            }
-            //else if(MouseManager.MouseState == MouseState.None)
-            //{
-            //    update = true;
-            //    Back_Buffer = null;
-            //    clicked = false;
-            //    Count = 0;
-            //}
-
-            if(Count == 0)
-            {
-                update = true;
-                Back_Buffer = null;
-                Count = -1;
-            }
-            else
-            {
-                if(Count != -1)
-                {
-                    Count++;
                 }
             }
 
@@ -1511,17 +1492,17 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                     MenuOpened = false;
                     break;
                 case "Entertainment":
-                    CrystalVideo cv = new CrystalVideo();
-                    cv.x = 10;
-                    cv.y = 100;
-                    cv.width = 640;
-                    cv.height = 379;
-                    cv.z = 999;
-                    cv.name = "CrystalVideo";
-                    cv.minimised = false;
-                    cv.once = true;
-                    cv.icon = ImprovedVBE.ScaleImageStock(Resources.PTG, 56, 56);
-                    TaskScheduler.Apps.Add(cv);
+                    MediaCenter mc = new MediaCenter();
+                    mc.x = 10;
+                    mc.y = 100;
+                    mc.width = 862;
+                    mc.height = 490;
+                    mc.z = 999;
+                    mc.name = "Media center";
+                    mc.minimised = false;
+                    mc.once = true;
+                    mc.icon = ImprovedVBE.ScaleImageStock(Resources.PTG, 56, 56);
+                    TaskScheduler.Apps.Add(mc);
                     MenuOpened = false;
                     break;
             }
