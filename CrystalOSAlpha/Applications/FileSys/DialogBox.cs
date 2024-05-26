@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using TaskScheduler = CrystalOSAlpha.Graphics.TaskScheduler;
 using Kernel = CrystalOS_Alpha.Kernel;
+using CrystalOSAlpha.System32;
 
 namespace CrystalOSAlpha.Applications.FileSys
 {
@@ -33,13 +34,7 @@ namespace CrystalOSAlpha.Applications.FileSys
         #endregion Essential
 
         #region UI_Elements
-        public List<Button_prop> Buttons = new List<Button_prop>();
-        public List<Slider> Slider = new List<Slider>();
-        public List<CheckBox> CheckBox = new List<CheckBox>();
-        public List<Dropdown> Dropdown = new List<Dropdown>();
-        public List<Scrollbar_Values> Scroll = new List<Scrollbar_Values>();
-        public List<TextBox> TextBox = new List<TextBox>();
-        public List<label> Label = new List<label>();
+        public List<UIElementHandler> UIElements = new List<UIElementHandler>();
         #endregion UI_Elements
 
         #region Extra
@@ -84,14 +79,14 @@ namespace CrystalOSAlpha.Applications.FileSys
             }
             if (initial == true)
             {
-                Buttons.Add(new Button_prop(11, 40, 90, 25, "Back", 1));
-                Buttons.Add(new Button_prop(108, 40, 90, 25, "Forward", 1));
-                Buttons.Add(new Button_prop(686, 502, 90, 25, "Open/Create", 1));
-                Buttons.Add(new Button_prop(783, 502, 90, 25, "Cancel", 1));
+                UIElements.Add(new Button(11, 40, 90, 25, "Back", 1));
+                UIElements.Add(new Button(108, 40, 90, 25, "Forward", 1));
+                UIElements.Add(new Button(686, 502, 90, 25, "Open/Create", 1));
+                UIElements.Add(new Button(783, 502, 90, 25, "Cancel", 1));
 
-                TextBox.Add(new UI_Elements.TextBox(230, 40, 440, 25, ImprovedVBE.colourToNumber(GlobalValues.R, GlobalValues.G, GlobalValues.B), SourceFileTemp, "", UI_Elements.TextBox.Options.left, "Main"));
-                TextBox.Add(new UI_Elements.TextBox(680, 40, 193, 25, ImprovedVBE.colourToNumber(GlobalValues.R, GlobalValues.G, GlobalValues.B), "", "Search", UI_Elements.TextBox.Options.left, "SearchBox"));
-                TextBox.Add(new UI_Elements.TextBox(332, 502, 338, 25, ImprovedVBE.colourToNumber(GlobalValues.R, GlobalValues.G, GlobalValues.B), "", "Name", UI_Elements.TextBox.Options.left, "Fname"));
+                UIElements.Add(new UI_Elements.TextBox(230, 40, 440, 25, ImprovedVBE.colourToNumber(GlobalValues.R, GlobalValues.G, GlobalValues.B), "0:\\", "", UI_Elements.TextBox.Options.left, "Main"));
+                UIElements.Add(new UI_Elements.TextBox(680, 40, 193, 25, ImprovedVBE.colourToNumber(GlobalValues.R, GlobalValues.G, GlobalValues.B), "", "Search", UI_Elements.TextBox.Options.left, "SearchBox"));
+                UIElements.Add(new UI_Elements.TextBox(332, 502, 338, 25, ImprovedVBE.colourToNumber(GlobalValues.R, GlobalValues.G, GlobalValues.B), "", "Name", UI_Elements.TextBox.Options.left, "Fname"));
 
                 initial = false;
             }
@@ -134,41 +129,58 @@ namespace CrystalOSAlpha.Applications.FileSys
                 temp = true;
             }
 
-            foreach (var button in Buttons)
+            foreach (var elements in UIElements)
             {
                 if (MouseManager.MouseState == MouseState.Left)
                 {
-                    if (MouseManager.X > x + button.X && MouseManager.X < x + button.X + button.Width)
+                    if (MouseManager.X > x + elements.X && MouseManager.X < x + elements.X + elements.Width)
                     {
-                        if (MouseManager.Y > y + button.Y && MouseManager.Y < y + button.Y + button.Height)
-                        {
-                            if (clicked == false)
+                        if (MouseManager.Y > y + elements.Y && MouseManager.Y < y + elements.Y + elements.Height)
+                        {       
+                            switch (elements.TypeOfElement)
                             {
-                                button.Clicked = true;
+                                case TypeOfElement.Button:
+                                    if (clicked == false)
+                                    {
+                                        elements.Clicked = true;
+                                        temp = true;
+                                        clicked = true;
+                                    }
+                                    break;
+                                case TypeOfElement.TextBox:
+                                    foreach(var v in UIElements)
+                                    {
+                                        v.Clicked = false;
+                                    }
+                                    elements.Clicked = true;
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            if(elements.Clicked == true)
+                            {
                                 temp = true;
-                                clicked = true;
+                                elements.Clicked = false;
+                                clicked = false;
                             }
                         }
                     }
+                    else
+                    {
+                        if (elements.Clicked == true)
+                        {
+                            temp = true;
+                            elements.Clicked = false;
+                            clicked = false;
+                        }
+                    }
                 }
-                if (button.Clicked == true && MouseManager.MouseState == MouseState.None)
+                if(elements.TypeOfElement == TypeOfElement.Button && elements.Clicked == true && MouseManager.MouseState == MouseState.None)
                 {
                     temp = true;
-                    button.Clicked = false;
+                    elements.Clicked = false;
                     clicked = false;
-                }
-            }
-
-            foreach (var Box in TextBox)
-            {
-                Box.Box(window, Box.X, Box.Y);
-                if (Box.Clciked(x + Box.X, y + Box.Y) == true)
-                {
-                    foreach (var box2 in TextBox)
-                    {
-                        box2.Selected = false;
-                    }
-                    Box.Selected = true;
                 }
             }
 
@@ -189,23 +201,23 @@ namespace CrystalOSAlpha.Applications.FileSys
                                         if (entry.name.EndsWith(".cs"))
                                         {
                                             //Send the values to the CarbonIDE
-                                            SourceFileTemp = entry.fullPath;
+                                            UIElements.Find(d => d.ID == "Fname").Text = entry.fullPath;
                                         }
                                         else if (entry.name.EndsWith(".cmd"))
                                         {
-                                            SourceFileTemp = entry.fullPath;
+                                            UIElements.Find(d => d.ID == "Fname").Text = entry.fullPath;
                                         }
                                         else if (entry.name.EndsWith(".app"))
                                         {
-                                            SourceFileTemp = entry.fullPath;
+                                            UIElements.Find(d => d.ID == "Fname").Text = entry.fullPath;
                                         }
                                         else if (entry.name.EndsWith(".html"))
                                         {
-                                            SourceFileTemp = entry.fullPath;
+                                            UIElements.Find(d => d.ID == "Fname").Text = entry.fullPath;
                                         }
                                         else if (entry.name.EndsWith(".txt"))
                                         {
-                                            SourceFileTemp = entry.fullPath;
+                                            UIElements.Find(d => d.ID == "Fname").Text = entry.fullPath;
                                         }
                                         else
                                         {
@@ -215,7 +227,7 @@ namespace CrystalOSAlpha.Applications.FileSys
                                     }
                                     else if (entry.type == Opt.Folder)
                                     {
-                                        Path = entry.fullPath;
+                                        UIElements.Find(d => d.ID == "Main").Text = entry.fullPath;
                                         temp = true;
                                     }
                                 }
@@ -229,28 +241,30 @@ namespace CrystalOSAlpha.Applications.FileSys
                 {
                     if(key.Key == ConsoleKeyEx.Enter)
                     {
-                        if(TextBox.Find(d => d.ID == "Main").Selected == true)
+                        if(UIElements.Find(d => d.ID == "Main").Clicked == true)
                         {
-                            Path = TextBox.Find(d => d.ID == "Main").Text;
+                            Path = UIElements.Find(d => d.ID == "Main").Text;
+                            UIElements.Find(d => d.ID == "Main").Clicked = false;
                             temp = true;
                         }
-                        else if (TextBox.Find(d => d.ID == "SearchBox").Selected == true)
+                        else if (UIElements.Find(d => d.ID == "SearchBox").Clicked == true)
                         {
                             
                         }
-                        else if (TextBox.Find(d => d.ID == "Fname").Selected == true)
+                        else if (UIElements.Find(d => d.ID == "Fname").Clicked == true)
                         {
-                            WindowMessenger.Send(new WindowMessage(Path + "\\" + TextBox.Find(d => d.ID == "Fname").Text, "Create new", "CarbonIDE"));
+                            WindowMessenger.Send(new WindowMessage(UIElements.Find(d => d.ID == "Main").Text + "\\" + UIElements.Find(d => d.ID == "Fname").Text, "Create new", "CarbonIDE"));
                             TaskScheduler.Apps.Remove(this);
                         }
                     }
                     else
                     {
-                        foreach (var box in TextBox)
+                        foreach (var element in UIElements)
                         {
-                            if (box.Selected == true)
+                            if (element.Clicked == true)
                             {
-                                box.Text = Keyboard.HandleKeyboard(box.Text, key);
+                                element.Text = Keyboard.HandleKeyboard(element.Text, key);
+                                temp = true;
                             }
                         }
                     }
@@ -267,27 +281,33 @@ namespace CrystalOSAlpha.Applications.FileSys
                 Array.Fill(Container.RawData, ImprovedVBE.colourToNumber(36, 36, 36));
                 ImprovedVBE.DrawFilledRectangle(Container, ImprovedVBE.colourToNumber(50, 50, 50), 2, 2, (int)Container.Width - 4, (int)Container.Height - 4, false);
 
-                Items.Clear();
-                foreach (DirectoryEntry d in Kernel.fs.GetDirectoryListing(Path))
+                if(UIElements.Find(d => d.ID == "Main").Clicked == false)
                 {
-                    if (d.mEntryType == DirectoryEntryTypeEnum.Directory)
+                    Items.Clear();
+                    foreach (DirectoryEntry d in Kernel.fs.GetDirectoryListing(UIElements.Find(d => d.ID == "Main").Text))
                     {
-                        Items.Add(new Structure(d.mName, d.mFullPath, Opt.Folder));
+                        if (d.mEntryType == DirectoryEntryTypeEnum.Directory)
+                        {
+                            Items.Add(new Structure(d.mName, d.mFullPath, Opt.Folder));
+                        }
                     }
-                }
-                foreach (DirectoryEntry d in Kernel.fs.GetDirectoryListing(Path))
-                {
-                    if (d.mEntryType == DirectoryEntryTypeEnum.File)
+                    foreach (DirectoryEntry d in Kernel.fs.GetDirectoryListing(UIElements.Find(d => d.ID == "Main").Text))
                     {
-                        Items.Add(new Structure(d.mName, d.mFullPath, Opt.File));
+                        if (d.mEntryType == DirectoryEntryTypeEnum.File)
+                        {
+                            Items.Add(new Structure(d.mName, d.mFullPath, Opt.File));
+                        }
                     }
                 }
 
-                foreach (var button in Buttons)
+                foreach (var button in UIElements)
                 {
-                    if (button.Clicked == true)
+                    if (button.Clicked == true && button.TypeOfElement == TypeOfElement.Button)
                     {
-                        Button.Button_render(window, button.X, button.Y, button.Width, button.Height, Color.White.ToArgb(), button.Text);
+                        int Col = button.Color;
+                        button.Color = Color.White.ToArgb();
+                        button.Render(window);
+                        button.Color = Col;
 
                         switch (button.Text)
                         {
@@ -295,7 +315,7 @@ namespace CrystalOSAlpha.Applications.FileSys
                                 TaskScheduler.Apps.Remove(this);
                                 break;
                             case "Open/Create":
-                                WindowMessenger.Send(new WindowMessage(Path + "\\" + TextBox.Find(d => d.ID == "Fname").Text, "Create new", "CarbonIDE"));
+                                WindowMessenger.Send(new WindowMessage(Path + "\\" + UIElements.Find(d => d.ID == "Fname").Text, "Create new", "CarbonIDE"));
                                 TaskScheduler.Apps.Remove(this);
                                 break;
                             case "Back":
@@ -306,23 +326,22 @@ namespace CrystalOSAlpha.Applications.FileSys
                                 break;
                         }
                     }
+                    //else if(button.TypeOfElement == TypeOfElement.TextBox)
+                    //{
+                    //    if (button.ID == "Fname")
+                    //    {
+                    //        //button.Text = SourceFileTemp.Remove(0, SourceFileTemp.LastIndexOf('\\') + 1);
+                    //    }
+                    //    if (button.ID == "Main")
+                    //    {
+                    //        //button.Text = Path;
+                    //    }
+                    //    button.Render(window);
+                    //}
                     else
                     {
-                        Button.Button_render(window, button.X, button.Y, button.Width, button.Height, button.Color, button.Text);
+                        button.Render(window);
                     }
-                }
-
-                foreach (var Box in TextBox)
-                {
-                    if(Box.ID == "Fname")
-                    {
-                        Box.Text = SourceFileTemp.Remove(0, SourceFileTemp.LastIndexOf('\\') + 1);
-                    }
-                    if (Box.ID == "Main")
-                    {
-                        Box.Text = Path;
-                    }
-                    Box.Box(window, Box.X, Box.Y);
                 }
 
                 int x_off = 15;

@@ -3,6 +3,7 @@ using Cosmos.System.Graphics;
 using CrystalOSAlpha.Applications;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
+using CrystalOSAlpha.System32;
 using CrystalOSAlpha.UI_Elements;
 using System;
 using System.Collections.Generic;
@@ -28,7 +29,7 @@ namespace CrystalOSAlpha.SystemApps
         #endregion Essential
 
         #region UI_Elements
-        public List<Button_prop> Buttons = new List<Button_prop>();
+        public List<Button> Buttons = new List<Button>();
         public List<TextBox> TextBoxes = new List<TextBox>();
         #endregion UI_Elements
 
@@ -59,8 +60,8 @@ namespace CrystalOSAlpha.SystemApps
         {
             if(initial == true)
             {
-                Buttons.Add(new Button_prop(230, 147, 75, 25, "Ok", 1, "Ok"));
-                Buttons.Add(new Button_prop(316, 147, 75, 25, "Abort", 1, "Abort"));
+                Buttons.Add(new Button(230, 147, 75, 25, "Ok", 1, "Ok"));
+                Buttons.Add(new Button(316, 147, 75, 25, "Abort", 1, "Abort"));
 
                 TextBoxes.Add(new TextBox(50, 100, 300, 25, ImprovedVBE.colourToNumber(60, 60, 60), "", "Ex.: TestFile.txt", TextBox.Options.left, "NewName"));
                 initial = false;
@@ -103,14 +104,14 @@ namespace CrystalOSAlpha.SystemApps
 
             foreach (var Box in TextBoxes)
             {
-                if (Box.Clciked(x + Box.X, y + Box.Y) == true && clicked == false)
+                if (Box.CheckClick(x + Box.X, y + Box.Y) == true && clicked == false)
                 {
                     foreach (var box2 in TextBoxes)
                     {
-                        box2.Selected = false;
+                        box2.Clicked = false;
                     }
                     clicked = true;
-                    Box.Selected = true;
+                    Box.Clicked = true;
                 }
             }
 
@@ -128,7 +129,7 @@ namespace CrystalOSAlpha.SystemApps
                     {
                         foreach (var box in TextBoxes)
                         {
-                            if (box.Selected == true)
+                            if (box.Clicked == true)
                             {
                                 box.Text = Keyboard.HandleKeyboard(box.Text, key);
                             }
@@ -145,7 +146,10 @@ namespace CrystalOSAlpha.SystemApps
                 {
                     if (button.Clicked == true)
                     {
-                        Button.Button_render(window, button.X, button.Y, button.Width, button.Height, Color.White.ToArgb(), button.Text);
+                        int Col = button.Color;
+                        button.Color = Color.White.ToArgb();
+                        button.Render(window);
+                        button.Color = Col;
 
                         switch (button.ID)
                         {
@@ -154,13 +158,13 @@ namespace CrystalOSAlpha.SystemApps
                     }
                     else
                     {
-                        Button.Button_render(window, button.X, button.Y, button.Width, button.Height, button.Color, button.Text);
+                        button.Render(window);
                     }
                 }
 
                 foreach (var Box in TextBoxes)
                 {
-                    Box.Box(window, Box.X, Box.Y);
+                    Box.Render(window);
                 }
                 temp = false;
             }

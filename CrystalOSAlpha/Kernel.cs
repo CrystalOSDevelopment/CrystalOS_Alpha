@@ -4,17 +4,12 @@ using Cosmos.System.FileSystem;
 using Cosmos.System.Graphics;
 using CrystalOS_Alpha.Graphics.Widgets;
 using CrystalOSAlpha;
-using CrystalOSAlpha.Applications.WebscapeNavigator;
 using CrystalOSAlpha.Graphics;
-using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics.Icons;
 using CrystalOSAlpha.Graphics.TaskBar;
 using CrystalOSAlpha.Graphics.Widgets;
-using CrystalOSAlpha.UI_Elements;
+using CrystalOSAlpha.System32;
 using IL2CPU.API.Attribs;
-using System;
-using System.Drawing;
-using System.IO;
 using Sys = Cosmos.System;
 
 namespace CrystalOS_Alpha
@@ -33,160 +28,19 @@ namespace CrystalOS_Alpha
             Fonts.RegisterFonts();
             #endregion Font Registering
 
-            string input = "";
-            while (true)
-            {
-                Array.Fill(ImprovedVBE.cover.RawData, 0);
-                KeyEvent key;
-                if (KeyboardManager.TryReadKey(out key))
-                {
-                    if (key.Key == ConsoleKeyEx.Enter)
-                    {
-                        break;
-                    }
-                    if(input.Length < 10)
-                    {
-                        input = Keyboard.HandleKeyboard(input, key);
-                    }
-                }
-                BitFont.DrawBitFontString(ImprovedVBE.cover, "ArialCustomCharset16", Color.White, "Start up with disk support(Y/N): " + input, 2, 2);
-                ImprovedVBE.Display(vbe);
-            }
-            if(VMTools.IsVMWare == true)
-            {
-                if(input.ToLower() == "y" || input.ToLower() == "yes")
-                {
-                    Sys.FileSystem.VFS.VFSManager.RegisterVFS(fs);
-                    IsDiskSupport = true;
-                    //Insert install here
-                    //Problem: Not implemented, so don't even attempt to search after it dear GitHub user!
-                    //Until then, this is the block of code that substitutes it
-                    if(fs.Disks.Count != 0)
-                    {
-                        #region Config
-                        //Create shortcut directories
-                        Directory.CreateDirectory("0:\\User\\" + GlobalValues.Username + "\\Favorites");
-                        Directory.CreateDirectory("0:\\User\\" + GlobalValues.Username + "\\Documents");
-                        Directory.CreateDirectory("0:\\User\\" + GlobalValues.Username + "\\Pictures");
-                        Directory.CreateDirectory("0:\\User\\" + GlobalValues.Username + "\\Films");
-                        Directory.CreateDirectory("0:\\User\\" + GlobalValues.Username + "\\Wastebasket");
-                        Directory.CreateDirectory("0:\\User\\" + GlobalValues.Username + "\\SecurityArea");
+            #region Mouse
+            MouseManager.ScreenWidth = (uint)ImprovedVBE.width;
+            MouseManager.ScreenHeight = (uint)ImprovedVBE.height;
 
-                        //System config files
-                        Directory.CreateDirectory("0:\\System");
-                        File.Create("0:\\System\\FrequentApps.sys");
-                        File.WriteAllText("0:\\System\\FrequentApps.sys", "Settings\nGameboy\nMinecraft\nFileSystem");
-                        //Customization file
-                        if (!File.Exists("0:\\System\\Layout.sys"))
-                        {
-                            File.Create("0:\\System\\Layout.sys");
-                            string Layout =
-                                "WindowR=" + GlobalValues.R +
-                                "\nWindowG=" + GlobalValues.G +
-                                "\nWindowB=" + GlobalValues.B +
-                                "\nTaskbarR=" + GlobalValues.TaskBarR +
-                                "\nTaskbarG=" + GlobalValues.TaskBarG +
-                                "\nTaskbarB=" + GlobalValues.TaskBarB +
-                                "\nTaskbarType=" + GlobalValues.TaskBarType +
-                                "\nUsername=" + GlobalValues.Username +
-                                "\nIconR=" + GlobalValues.IconR +
-                                "\nIconG=" + GlobalValues.IconG +
-                                "\nIconB=" + GlobalValues.IconB +
-                                "\nIconwidth=" + GlobalValues.IconWidth +
-                                "\nIconheight=" + GlobalValues.IconHeight +
-                                "\nStartcolor=" + GlobalValues.StartColor.ToArgb() +
-                                "\nEndcolor=" + GlobalValues.EndColor.ToArgb() +
-                                "\nBakground=" + GlobalValues.Background_type +
-                                "\nBackgroundcolor=" + GlobalValues.Background_color +
-                                "\nTransparency=" + GlobalValues.LevelOfTransparency;
-                            File.WriteAllText("0:\\System\\Layout.sys", Layout);
-                        }
-                        else
-                        {
-                            string[] Lines = File.ReadAllLines("0:\\System\\Layout.sys");
-                            foreach(string s in Lines)
-                            {
-                                string[] Split = s.Split('=');
-                                switch(Split[0])
-                                {
-                                    case "WindowR":
-                                        GlobalValues.R = int.Parse(Split[1]);
-                                        break;
-                                    case "WindowG":
-                                        GlobalValues.G = int.Parse(Split[1]);
-                                        break;
-                                    case "WindowB":
-                                        GlobalValues.B = int.Parse(Split[1]);
-                                        break;
+            MouseManager.X = (uint)ImprovedVBE.width / 2;
+            MouseManager.Y = (uint)ImprovedVBE.height / 2;
+            #endregion Mouse
 
-                                    case "TaskbarR":
-                                        GlobalValues.TaskBarR = int.Parse(Split[1]);
-                                        break;
-                                    case "TaskbarG":
-                                        GlobalValues.TaskBarG = int.Parse(Split[1]);
-                                        break;
-                                    case "TaskbarB":
-                                        GlobalValues.TaskBarB = int.Parse(Split[1]);
-                                        break;
+            //Questions and setup, if needed
+            Boot.Initialise();
 
-                                    case "TaskbarType":
-                                        GlobalValues.TaskBarType = Split[1];
-                                        break;
-
-                                    case "Username":
-                                        GlobalValues.Username = Split[1];
-                                        break;
-
-                                    case "IconR":
-                                        GlobalValues.IconR = int.Parse(Split[1]);
-                                        break;
-                                    case "IconG":
-                                        GlobalValues.IconG = int.Parse(Split[1]);
-                                        break;
-                                    case "IconB":
-                                        GlobalValues.IconB = int.Parse(Split[1]);
-                                        break;
-
-                                    case "Iconwidth":
-                                        GlobalValues.IconWidth = uint.Parse(Split[1]);
-                                        break;
-                                    case "Iconheight":
-                                        GlobalValues.IconHeight = uint.Parse(Split[1]);
-                                        break;
-
-                                    case "Startcolor":
-                                        GlobalValues.StartColor = Color.FromArgb(int.Parse(Split[1]));
-                                        break;
-                                    case "Endcolor":
-                                        GlobalValues.EndColor = Color.FromArgb(int.Parse(Split[1]));
-                                        break;
-
-                                    case "Bakground":
-                                        GlobalValues.Background_type = Split[1];
-                                        break;
-                                    case "Backgroundcolor":
-                                        GlobalValues.Background_color = Split[1];
-                                        break;
-
-                                    case "Transparency":
-                                        GlobalValues.LevelOfTransparency = int.Parse(Split[1]);
-                                        TaskManager.update = true;
-                                        TaskManager.resize = true;
-                                        SideNav.Get_Back = true;
-                                        break;
-                                }
-                            }
-                        }
-                        ////Applications folder
-                        Directory.CreateDirectory("0:\\Programs");
-                        ////CarbonIDE folder
-                        Directory.CreateDirectory("0:\\User\\Source");
-                        #endregion Config
-                    }
-                }
-            }
-
-            ImprovedVBE.Display(vbe);
+            //Boot animation. Has no purpose, just there for the show. You can adjust the time in seconds. 0 -> Completely skips it 60 -> Plays the animation for 60 seconds(max value)
+            Boot.Animation(5);
 
             #region Widgets
             FPS_Counter f = new FPS_Counter();
@@ -236,6 +90,7 @@ namespace CrystalOS_Alpha
         public static string Clipboard = "";
         protected override void Run()
         {
+            //If keyboard mouse is used (W,A,S,D keys to move the cursor) a readkey is placed in the beginning of every kernel cycle
             if(Is_KeyboardMouse == true)
             {
                 KeyEvent k;
@@ -245,6 +100,7 @@ namespace CrystalOS_Alpha
                 }
             }
 
+            //If there are more than one window open that is over 800 pixel wide, Heap.Collect is called every second frame, providing more stability.
             if (TaskScheduler.Apps.FindAll(d => d.width > 800).Count != 0)
             {
                 if (collect >= 2)
@@ -269,6 +125,7 @@ namespace CrystalOS_Alpha
                 }
             }
 
+            //Layer organising between the menu, taskbar, calendar and apps
             if(TaskManager.MenuOpened == false && TaskManager.calendar == false)
             {
                 if(GlobalValues.TaskBarType == "Classic")
@@ -280,8 +137,8 @@ namespace CrystalOS_Alpha
                 else if(GlobalValues.TaskBarType == "Nostalgia")
                 {
                     SideNav.Core();
-                    TaskManager.Main();
                     TaskScheduler.Exec();
+                    TaskManager.Main();
                 }
             }
             else
@@ -291,18 +148,20 @@ namespace CrystalOS_Alpha
                 TaskManager.Main();
             }
 
-            if(TaskManager.MenuOpened == true)
+            //Layer organising between the menu, taskbar, calendar and apps
+            if(TaskManager.MenuOpened == true && GlobalValues.TaskBarType == "Nostalgia")
             {
                 TaskManager.Dynamic_Menu(ImprovedVBE.width / 2 - 200, 50, 400, 400);
             }
 
+            //Renders the cursor
             ImprovedVBE.DrawImageAlpha(C, (int)MouseManager.X, (int)MouseManager.Y, ImprovedVBE.cover);
 
-            BitFont.DrawBitFontString(ImprovedVBE.cover, "ArialCustomCharset16", Color.White, Clipboard, 2, 60);
-
+            //Display to the screen
             ImprovedVBE.Display(vbe);
 
-            if(collect % 2 == 0)
+            //For more sensitive scrolling, MouseManager.ResetScrollDelta is called in every second kernel cycle
+            if (collect % 2 == 0)
             {
                 MouseManager.ResetScrollDelta();
             }

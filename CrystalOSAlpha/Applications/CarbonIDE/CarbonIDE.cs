@@ -7,6 +7,7 @@ using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Programming;
 using CrystalOSAlpha.SystemApps;
 using CrystalOSAlpha.UI_Elements;
+using CrYstalOSAlpha.UI_Elements;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -96,8 +97,8 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public bool once { get; set; }
         public bool temp = true;
 
-        public List<Button_prop> Buttons = new List<Button_prop>();
-        public List<Scrollbar_Values> Scroll = new List<Scrollbar_Values>();
+        public List<Button> Buttons = new List<Button>();
+        public List<Scrollbar> Scroll = new List<Scrollbar>();
 
         public Bitmap canvas;
         public Bitmap window { get; set; }
@@ -112,18 +113,18 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         {
             if (initial == true)
             {
-                Buttons.Add(new Button_prop(5, 27, 60, 20, "New", 1));
-                Buttons.Add(new Button_prop(195, 27, 60, 20, "Run", 1));
-                Buttons.Add(new Button_prop(270, 27, 60, 20, "Save", 1));
+                Buttons.Add(new Button(5, 27, 60, 20, "New", 1));
+                Buttons.Add(new Button(195, 27, 60, 20, "Run", 1));
+                Buttons.Add(new Button(270, 27, 60, 20, "Save", 1));
 
-                Scroll.Add(new Scrollbar_Values(width - 347, 30, 20, height - 60, 0));
-                Scroll.Add(new Scrollbar_Values(width - 25, 30, 20, height - 267, 0));
+                Scroll.Add(new Scrollbar(width - 347, 30, 20, height - 60, 0));
+                Scroll.Add(new Scrollbar(width - 25, 30, 20, height - 267, 0));
                 
-                Dropdown d = new Dropdown(72, 27, 115, 20, "Type");
-                dropdowns.Add(d);
-
                 value.Add(new values(false, "C# console", "Type"));
                 value.Add(new values(true, "C# GUI", "Type"));
+
+                Dropdown d = new Dropdown(72, 27, 115, 20, "Type", value);
+                dropdowns.Add(d);
 
                 //Starting to init line counting
                 for(int i = 0; i < 278; i++)
@@ -208,8 +209,8 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
                 BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, name, 2, 2);
 
-                canvas = Scrollbar.Render(canvas, Scroll[0]);
-                canvas = Scrollbar.Render(canvas, Scroll[1]);
+                Scroll[0].Render(canvas);
+                Scroll[1].Render(canvas);
 
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
                 once = false;
@@ -248,14 +249,14 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
             {
                 if (MouseManager.MouseState == MouseState.Left)
                 {
-                    if (MouseManager.Y > y + scv.y + 42 + scv.Pos && MouseManager.Y < y + scv.y + scv.Pos + 62)
+                    if (MouseManager.Y > y + scv.Y + 42 + scv.Pos && MouseManager.Y < y + scv.Y + scv.Pos + 62)
                     {
-                        if (MouseManager.X > x + scv.x + 2 && MouseManager.X < x + scv.x + scv.Width)
+                        if (MouseManager.X > x + scv.X + 2 && MouseManager.X < x + scv.X + scv.Width)
                         {
                             if (scv.Clicked == false)
                             {
                                 scv.Clicked = true;
-                                Reg_Y = (int)MouseManager.Y - y - scv.y - 22 - scv.Pos;
+                                Reg_Y = (int)MouseManager.Y - y - scv.Y - 22 - scv.Pos;
                             }
                         }
                         temp = true;
@@ -270,11 +271,11 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 {
                     scv.Clicked = false;
                 }
-                if (MouseManager.Y > y + scv.y + 48 && MouseManager.Y < y + scv.y + scv.Height - 22 && scv.Clicked == true)
+                if (MouseManager.Y > y + scv.Y + 48 && MouseManager.Y < y + scv.Y + scv.Height - 22 && scv.Clicked == true)
                 {
                     if (scv.Pos >= 0 && scv.Pos <= scv.Height - 24)
                     {
-                        scv.Pos = (int)MouseManager.Y - y - scv.y - 22 - Reg_Y;
+                        scv.Pos = (int)MouseManager.Y - y - scv.Y - 22 - Reg_Y;
                     }
                     else
                     {
@@ -366,7 +367,10 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 {
                     if (button.Clicked == true)
                     {
-                        Button.Button_render(window, button.X, button.Y, button.Width, button.Height, Color.White.ToArgb(), button.Text);
+                        int Col = button.Color;
+                        button.Color = Color.White.ToArgb();
+                        button.Render(window);
+                        button.Color = Col;
 
                         switch (button.Text)
                         {
@@ -410,7 +414,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     }
                     else
                     {
-                        Button.Button_render(window, button.X, button.Y, button.Width, button.Height, button.Color, button.Text);
+                        button.Render(window);
                     }
                     if (MouseManager.MouseState == MouseState.None)
                     {
@@ -448,7 +452,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     }
                     if (render == true)
                     {
-                        Dropd.Draw(window, value);
+                        Dropd.Render(window);
                     }
                 }
 
@@ -459,8 +463,9 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 ImprovedVBE.DrawImageAlpha(Container, 5, 52, window);
                 ImprovedVBE.DrawImageAlpha(Strucrure, width - 319, 52, window);
 
-                window = Scrollbar.Render(window, Scroll[0]);
-                window = Scrollbar.Render(window, Scroll[1]);
+
+                Scroll[0].Render(window);
+                Scroll[1].Render(window);
 
                 temp = false;
             }
@@ -590,7 +595,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                         }
                     }
                 }
-                Dropd.Render(x, y);
+                //Dropd.Render(x, y);
             }
         }
 

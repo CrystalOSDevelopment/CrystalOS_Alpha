@@ -1,11 +1,10 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
-using CrystalOSAlpha.Graphics;
 using System;
 
 namespace CrystalOSAlpha.UI_Elements
 {
-    class Slider
+    class Slider : UIElementHandler
     {
         public int X { get; set; }
         public int Y { get; set; }
@@ -14,7 +13,17 @@ namespace CrystalOSAlpha.UI_Elements
         public int MinValue { get; set; }
         public int MaxValue { get; set; }
         public string ID { get; set; }
-        public bool Clicked = false;
+        public int Height { get; set; }
+        public string Text { get; set; }
+        public bool Clicked { get; set; }
+        public int Color { get; set; }
+        public TypeOfElement TypeOfElement { get; set; }
+        public int Pos { get; set; }
+        float UIElementHandler.Sensitivity { get; set; }
+        public int LockedPos { get; set; }
+        public int MinVal { get; set; }
+        public int MaxVal { get; set; }
+
         public float Sensitivity = 0;
 
         public Slider(int x, int y, int width, int value, string ID)
@@ -22,19 +31,23 @@ namespace CrystalOSAlpha.UI_Elements
             X = x;
             Y = y + 22;
             Width = width;
+            Height = 12;
             Value = value;
             this.ID = ID;
+            this.TypeOfElement = TypeOfElement.Slider;
         }
         public Slider(int x, int y, int width, int MinValue, int MaxValue, int value, string ID)
         {
             X = x;
             Y = y + 22;
             Width = width;
+            Height = 12;
             Value = value;
             this.MinValue = MinValue;
             this.MaxValue = MaxValue;
             this.ID = ID;
             Sensitivity = (float)((float)MaxValue - (float)MinValue) / (float)width;
+            this.TypeOfElement = TypeOfElement.Slider;
         }
 
         public void Render(Bitmap Canvas)
@@ -44,7 +57,7 @@ namespace CrystalOSAlpha.UI_Elements
             ImprovedVBE.DrawFilledEllipse(Canvas, (int)(X + Value / Sensitivity), Y + 4, 6, 6, ImprovedVBE.colourToNumber(30, 30, 30));
         }
 
-        public bool CheckForClick(int x, int y)
+        public bool CheckClick(int x, int y)
         {
             if(MouseManager.MouseState == MouseState.Left)
             {
@@ -53,12 +66,14 @@ namespace CrystalOSAlpha.UI_Elements
                     if (MouseManager.Y > y + Y - 6 && MouseManager.Y < y + Y + 6)
                     {
                         Clicked = true;
+                        UpdateValue(x);
                         return true;
                     }
                 }
             }
             if(Clicked == true && MouseManager.MouseState == MouseState.Left && (int)((MouseManager.X - x - X) * Sensitivity) != Value)
             {
+                UpdateValue(x);
                 return true;
             }
             Clicked = false;

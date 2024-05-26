@@ -4,8 +4,10 @@ using CrystalOS_Alpha;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Programming;
+using CrystalOSAlpha.System32;
 using CrystalOSAlpha.SystemApps;
 using CrystalOSAlpha.UI_Elements;
+using CrYstalOSAlpha.UI_Elements;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -43,11 +45,11 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         #endregion Essential
 
         #region App UI
-        public List<Button_prop> Button = new List<Button_prop>();
+        public List<Button> Button = new List<Button>();
         public List<Slider> Slider = new List<Slider>();
         public List<CheckBox> CheckBox = new List<CheckBox>();
         public List<Dropdown> Dropdown = new List<Dropdown>();
-        public List<Scrollbar_Values> Scroll = new List<Scrollbar_Values>();
+        public List<Scrollbar> Scroll = new List<Scrollbar>();
         public List<TextBox> TextBox = new List<TextBox>();
         public List<label> Label = new List<label>();
         public List<HorizontalScrollbar> HZS = new List<HorizontalScrollbar>();
@@ -147,7 +149,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     }
                 }
 
-                Button.Add(new Button_prop(1609, 632, 180, 40, "OnClick", 1, "onclick"));
+                Button.Add(new Button(1609, 632, 180, 40, "OnClick", 1, "onclick"));
 
                 HZS.Add(new HorizontalScrollbar(0, 674 - 20, 540, 20, 20));
                 HZS.Add(new HorizontalScrollbar(0, 674 - 20, 1459 - 540, 20, 20));
@@ -204,11 +206,14 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 {
                     if (button.Clicked == true)
                     {
-                        UI_Elements.Button.Button_render(canvas, button.X, button.Y, button.Width, button.Height, ComplimentaryColor.Generate(button.Color).ToArgb(), button.Text);
+                        int Col = button.Color;
+                        button.Color = Color.White.ToArgb();
+                        button.Render(canvas);
+                        button.Color = Col;
                     }
                     else
                     {
-                        UI_Elements.Button.Button_render(canvas, button.X, button.Y, button.Width, button.Height, button.Color, button.Text);
+                        button.Render(canvas);
                     }
                 }
 
@@ -216,7 +221,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
                 foreach (label l in Label)
                 {
-                    l.Label(window);
+                    l.Render(window);
                 }
 
                 foreach (Slider s in Slider)
@@ -226,7 +231,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
                 foreach (var Box in TextBox)
                 {
-                    Box.Box(window, Box.X, Box.Y);
+                    Box.Render(window);
                 }
 
                 HZS[0].Render(Container);
@@ -266,7 +271,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
             foreach (var slid in Slider)
             {
                 int val = slid.Value;
-                if (slid.CheckForClick(x, y))
+                if (slid.CheckClick(x, y))
                 {
                     slid.Clicked = true;
                 }
@@ -286,20 +291,20 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
             foreach (var Box in TextBox)
             {
-                Box.Box(window, Box.X, Box.Y);
-                if (Box.Clciked(x + Box.X, y + Box.Y) == true)
+                Box.Render(window);
+                if (Box.CheckClick(x + Box.X, y + Box.Y) == true)
                 {
                     foreach (var box2 in TextBox)
                     {
-                        box2.Selected = false;
+                        box2.Clicked = false;
                     }
-                    Box.Selected = true;
+                    Box.Clicked = true;
                 }
                 else
                 {
                     if(MouseManager.MouseState == MouseState.Left)
                     {
-                        Box.Selected = false;
+                        Box.Clicked = false;
                     }
                 }
             }
@@ -738,7 +743,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                     t.SetValue(3, 0, "CheckBox.Height", true);
                                     t.SetValue(3, 1, preview.CheckBox.Find(d => d.ID == Used[i].Name).Height.ToString(), false);
                                     t.SetValue(4, 0, "CheckBox.Value", true);
-                                    t.SetValue(4, 1, preview.CheckBox.Find(d => d.ID == Used[i].Name).Content.ToString(), false);
+                                    t.SetValue(4, 1, preview.CheckBox.Find(d => d.ID == Used[i].Name).Text.ToString(), false);
                                     t.SetValue(5, 0, "CheckBox.State", true);
                                     t.SetValue(5, 1, preview.CheckBox.Find(d => d.ID == Used[i].Name).Value.ToString(), false);
                                     t.SetValue(6, 0, "CheckBox.ID", true);
@@ -830,11 +835,14 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 {
                     if (button.Clicked == true)
                     {
-                        UI_Elements.Button.Button_render(window, button.X, button.Y, button.Width, button.Height, ComplimentaryColor.Generate(button.Color).ToArgb(), button.Text);
+                        int Col = button.Color;
+                        button.Color = Color.White.ToArgb();
+                        button.Render(window);
+                        button.Color = Col;
                     }
                     else
                     {
-                        UI_Elements.Button.Button_render(window, button.X, button.Y, button.Width, button.Height, button.Color, button.Text);
+                        button.Render(window);
                     }
                 }
 

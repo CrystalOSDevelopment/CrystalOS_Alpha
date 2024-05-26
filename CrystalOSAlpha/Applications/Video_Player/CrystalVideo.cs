@@ -47,7 +47,7 @@ namespace CrystalOSAlpha.Applications.Video_Player
         public Bitmap canvas;
         public Bitmap back_canvas;
 
-        public List<Button_prop> Buttons = new List<Button_prop>();
+        public List<UIElementHandler> Buttons = new List<UIElementHandler>();
         #endregion Extras
 
         public void App()
@@ -87,15 +87,15 @@ namespace CrystalOSAlpha.Applications.Video_Player
                 }, ImprovedVBE.colourToNumber(60, 114, 255));
 
                 BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, "Currently Playing: SampleVideo", 14, 513);
-                BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, "Framerate: 25", 14, 530);
+                BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, "Framerate: 50", 14, 530);
                 BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, "Duration: 0:01:00", 215, 530);
 
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
 
                 if(Buttons.Count == 0)
                 {
-                    Buttons.Add(new Button_prop(514, 491, 70, 50, "Reset", 1, "Reset"));
-                    Buttons.Add(new Button_prop(584, 491, 70, 50, "Play/\nPause", 1, "PP"));
+                    Buttons.Add(new Button(514, 491, 70, 50, "Reset", 1, "Reset"));
+                    Buttons.Add(new Button(584, 491, 70, 50, "Play/\nPause", 1, "PP"));
                 }
 
                 once = false;
@@ -139,6 +139,12 @@ namespace CrystalOSAlpha.Applications.Video_Player
                             }
                         }
                     }
+                }
+                else if(MouseManager.MouseState == MouseState.None && button.Clicked == true)
+                {
+                    button.Clicked = false;
+                    clicked = false;
+                    temp = true;
                 }
             }
 
@@ -276,7 +282,7 @@ namespace CrystalOSAlpha.Applications.Video_Player
             ImprovedVBE.DrawImage(window, x, y, ImprovedVBE.cover);
             if(AllowPlay == true)
             {
-                Thread.Sleep(40);
+                Thread.Sleep(1);
                 temp = true;
             }
             if(MouseManager.MouseState == MouseState.None && clicked == true)

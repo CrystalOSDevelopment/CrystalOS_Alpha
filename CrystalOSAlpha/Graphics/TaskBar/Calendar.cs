@@ -4,6 +4,7 @@ using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.UI_Elements;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 
 namespace CrystalOSAlpha.Graphics.TaskBar
@@ -22,7 +23,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
 
         public static Bitmap render;
 
-        public static List<Button_prop> Buttons = new List<Button_prop>();
+        public static List<Button> Buttons = new List<Button>();
         public static void Calendar_Widget(int X, int Y)
         {
             if (get_Render == true)
@@ -30,8 +31,8 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                 if(initial == true)
                 {
                     Buttons.Clear();
-                    Buttons.Add(new Button_prop(280, 270, 20, 20, "<", 1));
-                    Buttons.Add(new Button_prop(310, 270, 20, 20, ">", 1));
+                    Buttons.Add(new Button(280, 270, 20, 20, "<", 1));
+                    Buttons.Add(new Button(310, 270, 20, 20, ">", 1));
                     initial = false;
                 }
 
@@ -172,7 +173,11 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                 {
                     if (button.Clicked == true)
                     {
-                        Button.Button_render(render, button.X, button.Y, button.Width, button.Height, Color.White.ToArgb(), button.Text);
+                        int Col = button.Color;
+                        button.Color = Color.White.ToArgb();
+                        button.Render(render);
+                        button.Color = Col;
+
                         switch (button.Text)
                         {
                             case ">":
@@ -186,7 +191,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                     }
                     else
                     {
-                        Button.Button_render(render, button.X, button.Y, button.Width, button.Height, button.Color, button.Text);
+                        button.Render(render);
                     }
                     if (MouseManager.MouseState == MouseState.None)
                     {

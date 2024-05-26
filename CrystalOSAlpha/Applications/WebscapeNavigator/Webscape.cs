@@ -1,6 +1,7 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
 using CrystalOSAlpha.Graphics;
+using CrystalOSAlpha.System32;
 using CrystalOSAlpha.UI_Elements;
 using System;
 using System.Collections.Generic;
@@ -45,17 +46,17 @@ namespace CrystalOSAlpha.Applications.WebscapeNavigator
         public Bitmap window { get; set; }
         public Bitmap Container;
         
-        public List<VerticalScrollbar> Scroll = new List<VerticalScrollbar>();
-        public List<Button_prop> Buttons = new List<Button_prop>();
-        public List<TextBox> TextBoxes = new List<TextBox>();
+        public List<UIElementHandler> Scroll = new List<UIElementHandler>();
+        public List<UIElementHandler> Buttons = new List<UIElementHandler>();
+        public List<UIElementHandler> TextBoxes = new List<UIElementHandler>();
 
         public void App()
         {
             if (initial == true)
             {
-                Buttons.Add(new Button_prop(5, 27, 50, 20, "Go", 1));
+                Buttons.Add(new Button(5, 27, 50, 20, "Go", 1));
 
-                Scroll.Add(new VerticalScrollbar(width - 22, 52, 20, height - 60, 20, 0, 500));
+                Scroll.Add(new VerticalScrollbar(width - 22, 52, 20, height - 60, 20, 0, 500, ""));
 
                 TextBoxes.Add(new TextBox(60, 27, width - 84, 20, ImprovedVBE.colourToNumber(60, 60, 60), "", "Url:", TextBox.Options.left, "URL"));
 
@@ -73,7 +74,10 @@ namespace CrystalOSAlpha.Applications.WebscapeNavigator
                 {
                     if (button.Clicked == true)
                     {
-                        Button.Button_render(canvas, button.X, button.Y, button.Width, button.Height, Color.White.ToArgb(), button.Text);
+                        int Col = button.Color;
+                        button.Color = Color.White.ToArgb();
+                        button.Render(canvas);
+                        button.Color = Col;
 
                         switch (button.Text)
                         {
@@ -86,7 +90,7 @@ namespace CrystalOSAlpha.Applications.WebscapeNavigator
                     }
                     else
                     {
-                        Button.Button_render(canvas, button.X, button.Y, button.Width, button.Height, button.Color, button.Text);
+                        button.Render(canvas);
                     }
                     if (MouseManager.MouseState == MouseState.None)
                     {
@@ -136,14 +140,14 @@ namespace CrystalOSAlpha.Applications.WebscapeNavigator
 
             foreach (var Box in TextBoxes)
             {
-                if (Box.Clciked(x + Box.X, y + Box.Y) == true && clicked == false)
+                if (Box.CheckClick(x + Box.X, y + Box.Y) == true && clicked == false)
                 {
                     foreach (var box2 in TextBoxes)
                     {
-                        box2.Selected = false;
+                        box2.Clicked = false;
                     }
                     clicked = true;
-                    Box.Selected = true;
+                    Box.Clicked = true;
                 }
             }
 
@@ -173,14 +177,14 @@ namespace CrystalOSAlpha.Applications.WebscapeNavigator
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
                 foreach (var vscroll in Scroll)
                 {
-                    vscroll.x = width - 22;
+                    vscroll.X = width - 22;
                     vscroll.Height = height - 60;
                     vscroll.Render(window);
                 }
                 foreach (var Box in TextBoxes)
                 {
                     Box.Width = width - 84;
-                    Box.Box(window, Box.X, Box.Y);
+                    Box.Render(window);
                 }
                 ImprovedVBE.DrawImageAlpha(Container, 5, 52, window);
 

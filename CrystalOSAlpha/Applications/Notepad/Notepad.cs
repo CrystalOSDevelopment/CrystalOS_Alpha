@@ -1,5 +1,6 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
+using CrystalOS_Alpha;
 using CrystalOSAlpha.Applications.CarbonIDE;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
@@ -50,18 +51,17 @@ namespace CrystalOSAlpha.Applications.Notepad
         public Bitmap window { get; set; }
         public Bitmap Container;
 
-        public List<Button_prop> Buttons = new List<Button_prop>();
-        public List<VerticalScrollbar> Scroll = new List<VerticalScrollbar>();
+        public List<UIElementHandler> UIElements = new List<UIElementHandler>();
 
         public void App()
         {
             if (initial == true)
             {
-                Buttons.Add(new Button_prop(5, 27, 90, 20, "New note", 1));
-                Buttons.Add(new Button_prop(100, 27, 170, 20, "Generate Lorem Ipsum", 1));
-                Buttons.Add(new Button_prop(280, 27, 90, 20, "Save", 1));
+                UIElements.Add(new Button(5, 27, 90, 20, "New note", 1));
+                UIElements.Add(new Button(100, 27, 170, 20, "Generate Lorem Ipsum", 1));
+                UIElements.Add(new Button(280, 27, 90, 20, "Save", 1));
 
-                Scroll.Add(new VerticalScrollbar(width - 22, 52, 20, height - 60, 20, 0, content.Split('\n').Length * 16));
+                UIElements.Add(new VerticalScrollbar(width - 22, 52, 20, height - 60, 20, 0, content.Split('\n').Length * 16, "ScrollRight"));
 
                 initial = false;
             }
@@ -72,37 +72,6 @@ namespace CrystalOSAlpha.Applications.Notepad
 
                 Container = new Bitmap((uint)(width - 29), (uint)(height - 60), ColorDepth.ColorDepth32);
                 Array.Fill(Container.RawData, ImprovedVBE.colourToNumber(60, 60, 60));
-
-                foreach (var button in Buttons)
-                {
-                    if (button.Clicked == true)
-                    {
-                        Button.Button_render(canvas, button.X, button.Y, button.Width, button.Height, Color.White.ToArgb(), button.Text);
-
-                        switch(button.Text)
-                        {
-                            case "New note":
-                                content = "";
-                                break;
-                            case "Generate Lorem Ipsum":
-                                content = LoremIpsum(20, 80, 5, 20, 1);
-                                (content, Buffered_Content, CursorX, CursorY) = CoreEditor.Update(content, Buffered_Content, CursorX, CursorY);
-                                temp = true;
-                                break;
-                            case "Save":
-                                File.WriteAllText(source, content);
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        Button.Button_render(canvas, button.X, button.Y, button.Width, button.Height, button.Color, button.Text);
-                    }
-                    if (MouseManager.MouseState == MouseState.None)
-                    {
-                        button.Clicked = false;
-                    }
-                }
 
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
                 once = false;
@@ -116,28 +85,32 @@ namespace CrystalOSAlpha.Applications.Notepad
                 {
                     (content, Buffered_Content, CursorX, CursorY) = CoreEditor.Editor(content, Buffered_Content, CursorX, CursorY, key);
 
+                    UIElements.Find(d => d.ID == "ScrollRight").MaxVal = content.Split('\n').Length * 16 - (int)Container.Height;
+
                     Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
+                    //Problem that needs to be solved possibly before release: When going down with arrow key, it should go all the way to the bottom first and not just jump there
+                    //Possible fix: IDK honestly...
                     switch (key.Key)
                     {
                         case ConsoleKeyEx.DownArrow:
-                            if(CursorY * 16 >= Container.Height - 10)
+                            if (CursorY * 16 >= Container.Height - 10)
                             {
-                                Scroll[0].Value = Math.Clamp((CursorY - (int)Container.Height / 17) * 16, Scroll[0].MinVal, Scroll[0].MaxVal);
-                                Scroll[0].Pos = (int)(Scroll[0].Value / Scroll[0].Sensitivity) + 20;
+                                UIElements.Find(d => d.ID == "ScrollRight").Value = Math.Clamp((CursorY - (int)Container.Height / 17) * 16, UIElements.Find(d => d.ID == "ScrollRight").MinVal, UIElements.Find(d => d.ID == "ScrollRight").MaxVal);
+                                UIElements.Find(d => d.ID == "ScrollRight").Pos = (int)(UIElements.Find(d => d.ID == "ScrollRight").Value / UIElements.Find(d => d.ID == "ScrollRight").Sensitivity) + 20;
                             }
                             break;
                         case ConsoleKeyEx.UpArrow:
-                            if(CursorY * 16 < Scroll[0].Value)
+                            if (CursorY * 16 < UIElements.Find(d => d.ID == "ScrollRight").Value)
                             {
-                                Scroll[0].Value = Math.Clamp(CursorY * 16, Scroll[0].MinVal, Scroll[0].MaxVal);
-                                Scroll[0].Pos = (int)(Scroll[0].Value / Scroll[0].Sensitivity) + 20;
+                                UIElements.Find(d => d.ID == "ScrollRight").Value = Math.Clamp(CursorY * 16, UIElements.Find(d => d.ID == "ScrollRight").MinVal, UIElements.Find(d => d.ID == "ScrollRight").MaxVal);
+                                UIElements.Find(d => d.ID == "ScrollRight").Pos = (int)(UIElements.Find(d => d.ID == "ScrollRight").Value / UIElements.Find(d => d.ID == "ScrollRight").Sensitivity) + 20;
                             }
                             break;
                         case ConsoleKeyEx.Enter:
                             if (CursorY * 16 >= Container.Height - 10)
                             {
-                                Scroll[0].Value = Math.Clamp(CursorY * 16, Scroll[0].MinVal, Scroll[0].MaxVal);
-                                Scroll[0].Pos = (int)(Scroll[0].Value / Scroll[0].Sensitivity) + 20;
+                                UIElements.Find(d => d.ID == "ScrollRight").Value = Math.Clamp(CursorY * 16, UIElements.Find(d => d.ID == "ScrollRight").MinVal, UIElements.Find(d => d.ID == "ScrollRight").MaxVal);
+                                UIElements.Find(d => d.ID == "ScrollRight").Pos = (int)(UIElements.Find(d => d.ID == "ScrollRight").Value / UIElements.Find(d => d.ID == "ScrollRight").Sensitivity) + 20;
                             }
                             break;
                     }
@@ -145,70 +118,122 @@ namespace CrystalOSAlpha.Applications.Notepad
                 }
             }
 
-            foreach (var button in Buttons)
+            foreach (var elements in UIElements)
             {
                 if (MouseManager.MouseState == MouseState.Left)
                 {
-                    if (MouseManager.X > x + button.X && MouseManager.X < x + button.X + button.Width)
+                    if (MouseManager.X > x + elements.X && MouseManager.X < x + elements.X + elements.Width)
                     {
-                        if (MouseManager.Y > y + button.Y && MouseManager.Y < y + button.Y + button.Height)
+                        if (MouseManager.Y > y + elements.Y && MouseManager.Y < y + elements.Y + elements.Height)
                         {
-                            if (clicked == false)
+                            switch (elements.TypeOfElement)
                             {
-                                button.Clicked = true;
-                                once = true;
-                                clicked = true;
+                                case TypeOfElement.Button:
+                                    if (clicked == false)
+                                    {
+                                        elements.Clicked = true;
+                                        temp = true;
+                                        clicked = true;
+                                    }
+                                    break;
+                                case TypeOfElement.TextBox:
+                                    foreach (var v in UIElements)
+                                    {
+                                        v.Clicked = false;
+                                    }
+                                    elements.Clicked = true;
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            if (elements.Clicked == true)
+                            {
+                                temp = true;
+                                elements.Clicked = false;
+                                clicked = false;
                             }
                         }
                     }
+                    else
+                    {
+                        if (elements.Clicked == true)
+                        {
+                            temp = true;
+                            elements.Clicked = false;
+                            clicked = false;
+                        }
+                    }
                 }
-                if (clicked == true && MouseManager.MouseState == MouseState.None)
+                if (elements.TypeOfElement != TypeOfElement.TextBox && elements.Clicked == true && MouseManager.MouseState == MouseState.None)
                 {
-                    once = true;
-                    button.Clicked = false;
+                    temp = true;
+                    elements.Clicked = false;
                     clicked = false;
                 }
-            }
-
-            foreach (var vscroll in Scroll)
-            {
-                vscroll.Height = height - 60;
-                vscroll.x = width - 22;
-                if(content.Split('\n').Length * 16 > Container.Height)
+                if (elements.TypeOfElement == TypeOfElement.VerticalScrollbar)
                 {
-                    vscroll.MaxVal = content.Split('\n').Length * 16 - (int)Container.Height;
-                    temp = true;
-                }
-                else
-                {
-                    vscroll.MaxVal = 0;
-                }
-                if (vscroll.CheckClick((int)MouseManager.X - x, (int)MouseManager.Y - y))
-                {
-                    temp = true;
+                    if (elements.CheckClick((int)MouseManager.X - x, (int)MouseManager.Y - y))
+                    {
+                        temp = true;
+                    }
                 }
             }
 
-            if(temp == true)
+            if (temp == true)
             {
+                temp = false;
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
                 Array.Fill(Container.RawData, ImprovedVBE.colourToNumber(36, 36, 36));
-                if(Scroll[0].Value > 0)
+                if(UIElements.Find(d => d.ID == "ScrollRight").Value > 0)
                 {
-                    BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, Buffered_Content, 5, 0 - Scroll[0].Value);
+                    BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, Buffered_Content, 5, 0 - UIElements.Find(d => d.ID == "ScrollRight").Value);
                 }
                 else
                 {
-                    BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, Buffered_Content, 5, 5 - Scroll[0].Value);
+                    BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, Buffered_Content, 5, 5 - UIElements.Find(d => d.ID == "ScrollRight").Value);
                 }
                 ImprovedVBE.DrawImageAlpha(Container, 5, 52, window);
 
-                foreach (var vscroll in Scroll)
+                foreach (var Box in UIElements)
                 {
-                    vscroll.Render(window);
-                }
+                    if (Box.Clicked == true && Box.TypeOfElement == TypeOfElement.Button && clicked == false)
+                    {
+                        int Col = Box.Color;
+                        Box.Color = Color.White.ToArgb();
+                        Box.Render(window);
+                        Box.Color = Col;
 
-                temp = false;
+                        switch (Box.Text)
+                        {
+                            case "New note":
+                                content = "";
+                                break;
+                            case "Generate Lorem Ipsum":
+                                content = LoremIpsum(20, 80, 5, 20, 1);
+                                (content, Buffered_Content, CursorX, CursorY) = CoreEditor.Update(content, Buffered_Content, CursorX, CursorY);
+                                temp = true;
+                                break;
+                            case "Save":
+                                if(CrystalOS_Alpha.Kernel.IsDiskSupport == true)
+                                {
+                                    File.WriteAllText(source, content);
+                                }
+                                break;
+                        }
+                        clicked = true;
+                    }
+                    else if (Box.TypeOfElement == TypeOfElement.VerticalScrollbar)
+                    {
+                        Box.X = width - 22;
+                        Box.Height = height - 60;
+                        Box.Render(window);
+                    }
+                    else
+                    {
+                        Box.Render(window);
+                    }
+                }
             }
             ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
         }

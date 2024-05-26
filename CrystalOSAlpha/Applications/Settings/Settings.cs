@@ -11,6 +11,7 @@ using System.Drawing;
 using System.IO;
 using TaskScheduler = CrystalOSAlpha.Graphics.TaskScheduler;
 using Kernel = CrystalOS_Alpha.Kernel;
+using CrystalOSAlpha.System32;
 
 namespace CrystalOSAlpha.Applications.Settings
 {
@@ -43,11 +44,11 @@ namespace CrystalOSAlpha.Applications.Settings
         public Bitmap canvas;
         public Bitmap MiniWallp;
 
-        public List<Button_prop> Res = new List<Button_prop>();
-        public List<Button_prop> Buttons = new List<Button_prop>();
-        public List<Button_prop> Colors = new List<Button_prop>();
-        public List <VerticalScrollbar> VerticalScrollbar = new List<VerticalScrollbar>();
-        public List <Slider> Slider = new List<Slider>();
+        public List<UIElementHandler> Res = new List<UIElementHandler>();
+        public List<UIElementHandler> Buttons = new List<UIElementHandler>();
+        public List<UIElementHandler> Colors = new List<UIElementHandler>();
+        public List <UIElementHandler> VerticalScrollbar = new List<UIElementHandler>();
+        public List <UIElementHandler> Slider = new List<UIElementHandler>();
 
         public void App()
         {
@@ -56,54 +57,54 @@ namespace CrystalOSAlpha.Applications.Settings
                 Buttons.Clear();
                 VerticalScrollbar.Clear();
 
-                Buttons.Add(new Button_prop(5, 32, 98, 30, "Display", 1));
-                Buttons.Add(new Button_prop(5, 73, 98, 30, "Appearance", 1));
-                Buttons.Add(new Button_prop(5, 114, 98, 30, "Sound", 1));
-                Buttons.Add(new Button_prop(5, 155, 98, 30, "Networking", 1));
-                Buttons.Add(new Button_prop(5, 196, 98, 30, "About OS", 1));
+                Buttons.Add(new Button(5, 32, 98, 30, "Display", 1));
+                Buttons.Add(new Button(5, 73, 98, 30, "Appearance", 1));
+                Buttons.Add(new Button(5, 114, 98, 30, "Sound", 1));
+                Buttons.Add(new Button(5, 155, 98, 30, "Networking", 1));
+                Buttons.Add(new Button(5, 196, 98, 30, "About OS", 1));
 
                 switch (ActiveD)
                 {
                     case "Display":
-                        Buttons.Add(new Button_prop(303, 338, 98, 20, "Apply", 1));
+                        Buttons.Add(new Button(303, 338, 98, 20, "Apply", 1));
 
-                        Res.Add(new Button_prop(2, 2, 396, 30, "1920x1080x32", 1));
-                        Res.Add(new Button_prop(2, 32, 396, 30, "1366x768x32", 1));
-                        Res.Add(new Button_prop(2, 62, 396, 30, "1024x768x32", 1));
-                        Res.Add(new Button_prop(2, 92, 396, 30, "800x600x32", 1));
-                        Res.Add(new Button_prop(2, 122, 396, 30, "640x480x32", 1));
+                        Res.Add(new Button(2, 2, 396, 30, "1920x1080x32", 1));
+                        Res.Add(new Button(2, 32, 396, 30, "1366x768x32", 1));
+                        Res.Add(new Button(2, 62, 396, 30, "1024x768x32", 1));
+                        Res.Add(new Button(2, 92, 396, 30, "800x600x32", 1));
+                        Res.Add(new Button(2, 122, 396, 30, "640x480x32", 1));
                         break;
                     case "Appearance":
-                        VerticalScrollbar.Add(new UI_Elements.VerticalScrollbar(516, 62, 20, 308, 20, 0, 800));
+                        VerticalScrollbar.Add(new UI_Elements.VerticalScrollbar(516, 62, 20, 308, 20, 0, 800, ""));
                         MiniWallp = ImprovedVBE.ScaleImageStock(ImprovedVBE.Temp, 140, 78);
 
                         //All these color presets were evacuated from CrystalOS 1.0. Rest In Peace my friend...
-                        Colors.Add(new Button_prop(6, 160, 20, 20, "", Color.Green.ToArgb(), "CrystalGreen"));
-                        Colors.Add(new Button_prop(34, 160, 20, 20, "", Color.Blue.ToArgb(), "CrystalBlue"));
-                        Colors.Add(new Button_prop(62, 160, 20, 20, "", Color.Yellow.ToArgb(), "CrystalYellow"));
-                        Colors.Add(new Button_prop(90, 160, 20, 20, "", Color.Red.ToArgb(), "CrystalRed"));
-                        Colors.Add(new Button_prop(118, 160, 20, 20, "", Color.Orange.ToArgb(), "CrystalOrange"));
-                        Colors.Add(new Button_prop(146, 160, 20, 20, "", 1, "CrystalBlack"));
-                        Colors.Add(new Button_prop(174, 160, 20, 20, "", Color.Pink.ToArgb(), "CrystalPink"));
-                        Colors.Add(new Button_prop(202, 160, 20, 20, "", Color.Purple.ToArgb(), "CrystalPurple"));
-                        Colors.Add(new Button_prop(230, 160, 20, 20, "", Color.Aqua.ToArgb(), "CrystalAqua"));
-                        Colors.Add(new Button_prop(258, 160, 20, 20, "", Color.White.ToArgb(), "CrystalWhite"));
+                        Colors.Add(new Button(6, 160, 20, 20, "", Color.Green.ToArgb(), "CrystalGreen"));
+                        Colors.Add(new Button(34, 160, 20, 20, "", Color.Blue.ToArgb(), "CrystalBlue"));
+                        Colors.Add(new Button(62, 160, 20, 20, "", Color.Yellow.ToArgb(), "CrystalYellow"));
+                        Colors.Add(new Button(90, 160, 20, 20, "", Color.Red.ToArgb(), "CrystalRed"));
+                        Colors.Add(new Button(118, 160, 20, 20, "", Color.Orange.ToArgb(), "CrystalOrange"));
+                        Colors.Add(new Button(146, 160, 20, 20, "", 1, "CrystalBlack"));
+                        Colors.Add(new Button(174, 160, 20, 20, "", Color.Pink.ToArgb(), "CrystalPink"));
+                        Colors.Add(new Button(202, 160, 20, 20, "", Color.Purple.ToArgb(), "CrystalPurple"));
+                        Colors.Add(new Button(230, 160, 20, 20, "", Color.Aqua.ToArgb(), "CrystalAqua"));
+                        Colors.Add(new Button(258, 160, 20, 20, "", Color.White.ToArgb(), "CrystalWhite"));
 
                         //New color palett
                         //Generated by non other than ChatGPT
-                        Colors.Add(new Button_prop(6, 190, 20, 20, "", ImprovedVBE.colourToNumber(255, 215, 0), "GoldenSunshine"));
-                        Colors.Add(new Button_prop(34, 190, 20, 20, "", ImprovedVBE.colourToNumber(255, 127, 80), "CoralOrange"));
-                        Colors.Add(new Button_prop(62, 190, 20, 20, "", ImprovedVBE.colourToNumber(255, 204, 104), "PeachPink"));
-                        Colors.Add(new Button_prop(90, 190, 20, 20, "", Color.SkyBlue.ToArgb(), "SkyBlue"));
-                        Colors.Add(new Button_prop(118, 190, 20, 20, "", ImprovedVBE.colourToNumber(30, 144, 255), "OceanBlue"));
-                        Colors.Add(new Button_prop(146, 190, 20, 20, "", ImprovedVBE.colourToNumber(64, 224, 208), "TurquoiseTeal"));
-                        Colors.Add(new Button_prop(174, 190, 20, 20, "", ImprovedVBE.colourToNumber(0, 128, 0), "EmeraldGreen"));
-                        Colors.Add(new Button_prop(202, 190, 20, 20, "", ImprovedVBE.colourToNumber(152, 255, 152), "MintGreen"));
-                        Colors.Add(new Button_prop(230, 190, 20, 20, "", ImprovedVBE.colourToNumber(204, 204, 255), "LavenderPurple"));
-                        Colors.Add(new Button_prop(258, 190, 20, 20, "", ImprovedVBE.colourToNumber(192, 192, 192), "SoothingGray"));
+                        Colors.Add(new Button(6, 190, 20, 20, "", ImprovedVBE.colourToNumber(255, 215, 0), "GoldenSunshine"));
+                        Colors.Add(new Button(34, 190, 20, 20, "", ImprovedVBE.colourToNumber(255, 127, 80), "CoralOrange"));
+                        Colors.Add(new Button(62, 190, 20, 20, "", ImprovedVBE.colourToNumber(255, 204, 104), "PeachPink"));
+                        Colors.Add(new Button(90, 190, 20, 20, "", Color.SkyBlue.ToArgb(), "SkyBlue"));
+                        Colors.Add(new Button(118, 190, 20, 20, "", ImprovedVBE.colourToNumber(30, 144, 255), "OceanBlue"));
+                        Colors.Add(new Button(146, 190, 20, 20, "", ImprovedVBE.colourToNumber(64, 224, 208), "TurquoiseTeal"));
+                        Colors.Add(new Button(174, 190, 20, 20, "", ImprovedVBE.colourToNumber(0, 128, 0), "EmeraldGreen"));
+                        Colors.Add(new Button(202, 190, 20, 20, "", ImprovedVBE.colourToNumber(152, 255, 152), "MintGreen"));
+                        Colors.Add(new Button(230, 190, 20, 20, "", ImprovedVBE.colourToNumber(204, 204, 255), "LavenderPurple"));
+                        Colors.Add(new Button(258, 190, 20, 20, "", ImprovedVBE.colourToNumber(192, 192, 192), "SoothingGray"));
 
                         //Load from file button
-                        Colors.Add(new Button_prop(6, 243, 110, 25, "Load from file", 1, "LoadFile"));
+                        Colors.Add(new Button(6, 243, 110, 25, "Load from file", 1, "LoadFile"));
 
                         //Add 3 sliders for color settings
                         Slider.Add(new Slider(6, 356, 290, 1, 255, GlobalValues.R, "WindowRed"));
@@ -128,8 +129,8 @@ namespace CrystalOSAlpha.Applications.Settings
                         Slider.Add(new Slider(6, 880, 290, 0, 255, GlobalValues.IconG, "IconG"));
                         Slider.Add(new Slider(6, 904, 290, 0, 255, GlobalValues.IconB, "IconB"));
 
-                        Colors.Add(new Button_prop(6, 921, 130, 25, "Nostalgia", 1, "Old"));
-                        Colors.Add(new Button_prop(151, 921, 130, 25, "Float-up", 1, "Animated"));
+                        Colors.Add(new Button(6, 921, 130, 25, "Nostalgia", 1, "Old"));
+                        Colors.Add(new Button(151, 921, 130, 25, "Float-up", 1, "Animated"));
                         break;
                     case "Sound":
                         
@@ -203,7 +204,7 @@ namespace CrystalOSAlpha.Applications.Settings
             foreach (var vscroll in VerticalScrollbar)
             {
                 vscroll.Height = height - 72;
-                vscroll.x = width - 34;
+                vscroll.X = width - 34;
                 if (vscroll.CheckClick((int)MouseManager.X - x, (int)MouseManager.Y - y))
                 {
                     temp = true;
@@ -240,7 +241,10 @@ namespace CrystalOSAlpha.Applications.Settings
                 {
                     if (button.Clicked == true)
                     {
-                        Button.Button_render(window, button.X, button.Y, button.Width, button.Height, Color.White.ToArgb(), button.Text);
+                        int Col = button.Color;
+                        button.Color = Color.White.ToArgb();
+                        button.Render(window);
+                        button.Color = Col;
                         switch (button.Text)
                         {
                             case "Display":
@@ -268,7 +272,7 @@ namespace CrystalOSAlpha.Applications.Settings
                     }
                     else
                     {
-                        Button.Button_render(window, button.X, button.Y, button.Width, button.Height, button.Color, button.Text);
+                        button.Render(window);
                     }
                     if (MouseManager.MouseState == MouseState.None)
                     {
@@ -295,7 +299,10 @@ namespace CrystalOSAlpha.Applications.Settings
                             button.Width = (int)res.Width - 3;
                             if (button.Clicked == true)
                             {
-                                Button.Button_render(res, button.X, button.Y, button.Width, button.Height, Color.White.ToArgb(), button.Text);
+                                int Col = button.Color;
+                                button.Color = Color.White.ToArgb();
+                                button.Render(res);
+                                button.Color = Col;
                                 switch (button.Text)
                                 {
                                     case "1920x1080x32":
@@ -351,7 +358,7 @@ namespace CrystalOSAlpha.Applications.Settings
                             }
                             else
                             {
-                                Button.Button_render(res, button.X, button.Y, button.Width, button.Height, button.Color, button.Text);
+                                button.Render(res);
                             }
                             if (MouseManager.MouseState == MouseState.None)
                             {
@@ -364,7 +371,8 @@ namespace CrystalOSAlpha.Applications.Settings
 
                         BitFont.DrawBitFontString(window, "ArialCustomCharset16", Color.White, "Use custom resolution:", 128, 317);
 
-                        TextBox.Box(window, 128, 338, 157, 20, ImprovedVBE.colourToNumber(60, 60, 60), customres, "Example: 800x600x32", TextBox.Options.left);
+                        TextBox tb1 = new TextBox(128, 338, 157, 20, ImprovedVBE.colourToNumber(60, 60, 60), customres, "Example: 800x600x32", TextBox.Options.left, "TextBox1");
+                        tb1.Render(window);
 
                         break;
                     case "Appearance":
@@ -422,11 +430,14 @@ namespace CrystalOSAlpha.Applications.Settings
                                 }
                                 if (button.Clicked == true)
                                 {
-                                    Button.Button_render(Container, button.X, button.Y, button.Width, button.Height, Color.White.ToArgb(), button.Text);
+                                    int Col = button.Color;
+                                    button.Color = Color.White.ToArgb();
+                                    button.Render(Container);
+                                    button.Color = Col;
                                 }
                                 else
                                 {
-                                    Button.Button_render(Container, button.X, button.Y, button.Width, button.Height, button.Color, button.Text);
+                                    button.Render(Container);
                                 }
                                 if (MouseManager.MouseState == MouseState.None)
                                 {
@@ -818,10 +829,10 @@ namespace CrystalOSAlpha.Applications.Settings
             }
             foreach (var v in Slider)
             {
-                if(v.CheckForClick(x + 128, y + 62))
+                if(v.CheckClick(x + 128, y + 62))
                 {
                     temp = true;
-                    v.UpdateValue(x + 128);
+                    //v.UpdateValue(x + 128);
                     switch (v.ID)
                     {
                         case "WindowRed":

@@ -7,6 +7,11 @@ namespace CrystalOSAlpha.Applications.Calculator
     {
         public static double Calculate(string input)
         {
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                return 0;
+            }
+
             Queue<string> outputQueue = new Queue<string>();
             Stack<string> operatorStack = new Stack<string>();
 
@@ -123,56 +128,70 @@ namespace CrystalOSAlpha.Applications.Calculator
         {
             Stack<double> stack = new Stack<double>();
 
-            while (outputQueue.Count > 0)
+            try
             {
-                string token = outputQueue.Dequeue();
-
-                if (IsNumber(token))
+                while (outputQueue.Count > 0)
                 {
-                    stack.Push(double.Parse(token));
-                }
-                else if (IsOperator(token))
-                {
-                    if (stack.Count < 2)
-                    {
-                        throw new ArgumentException("Invalid expression.");
-                    }
-                    double operand2 = stack.Pop();
-                    double operand1 = stack.Pop();
+                    string token = outputQueue.Dequeue();
 
-                    if (token == "+")
+                    if (IsNumber(token))
                     {
-                        stack.Push(operand1 + operand2);
+                        stack.Push(double.Parse(token));
                     }
-                    else if (token == "-")
+                    else if (IsOperator(token))
                     {
-                        stack.Push(operand1 - operand2);
-                    }
-                    else if (token == "*")
-                    {
-                        stack.Push(operand1 * operand2);
-                    }
-                    else if (token == "/")
-                    {
-                        if (operand2 == 0)
+                        if (stack.Count < 2)
                         {
-                            throw new DivideByZeroException("Division by zero is not allowed.");
+                            throw new ArgumentException("Invalid expression.");
                         }
-                        stack.Push(operand1 / operand2);
+                        double operand2 = stack.Pop();
+                        double operand1 = stack.Pop();
+
+                        if (token == "+")
+                        {
+                            stack.Push(operand1 + operand2);
+                        }
+                        else if (token == "-")
+                        {
+                            stack.Push(operand1 - operand2);
+                        }
+                        else if (token == "*")
+                        {
+                            stack.Push(operand1 * operand2);
+                        }
+                        else if (token == "/")
+                        {
+                            if (operand2 == 0)
+                            {
+                                // Division by zero, return 0
+                                return 0;
+                            }
+                            stack.Push(operand1 / operand2);
+                        }
+                    }
+                    else
+                    {
+                        throw new ArgumentException("Invalid token: " + token);
                     }
                 }
-                else
+
+                if (stack.Count != 1)
                 {
-                    throw new ArgumentException("Invalid token: " + token);
+                    throw new ArgumentException("Invalid expression.");
                 }
-            }
 
-            if (stack.Count != 1)
+                return stack.Pop();
+            }
+            catch (DivideByZeroException)
             {
-                throw new ArgumentException("Invalid expression.");
+                // Handle division by zero
+                return 0;
             }
-
-            return stack.Pop();
+            catch (Exception)
+            {
+                // Handle any other exception, treat it as invalid input
+                return 0;
+            }
         }
     }
 }

@@ -3,7 +3,9 @@ using Cosmos.System.Graphics;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Programming;
+using CrystalOSAlpha.System32;
 using CrystalOSAlpha.UI_Elements;
+using CrYstalOSAlpha.UI_Elements;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -53,8 +55,8 @@ namespace CrystalOSAlpha.Applications.Terminal
         public Bitmap window { get; set; }
         public Bitmap Container;
 
-        public List<Button_prop> Buttons = new List<Button_prop>();
-        public List<Scrollbar_Values> Scroll = new List<Scrollbar_Values>();
+        public List<Button> Buttons = new List<Button>();
+        public List<Scrollbar> Scroll = new List<Scrollbar>();
         public List<string> cmd_history = new List<string>();
 
         CSharp CSharp = new CSharp();
@@ -65,9 +67,9 @@ namespace CrystalOSAlpha.Applications.Terminal
             {
                 CSharp.Count = 0;
 
-                Buttons.Add(new Button_prop(5, 27, 90, 20, "Clear", 1));
+                Buttons.Add(new Button(5, 27, 90, 20, "Clear", 1));
 
-                Scroll.Add(new Scrollbar_Values(width - 22, 30, 20, height - 60, 0));
+                Scroll.Add(new Scrollbar(width - 22, 30, 20, height - 60, 0));
 
                 initial = false;
             }
@@ -83,7 +85,10 @@ namespace CrystalOSAlpha.Applications.Terminal
                 {
                     if (button.Clicked == true)
                     {
-                        Button.Button_render(canvas, button.X, button.Y, button.Width, button.Height, Color.White.ToArgb(), button.Text);
+                        int Col = button.Color;
+                        button.Color = Color.White.ToArgb();
+                        button.Render(canvas);
+                        button.Color = Col;
 
                         switch (button.Text)
                         {
@@ -97,7 +102,7 @@ namespace CrystalOSAlpha.Applications.Terminal
                     }
                     else
                     {
-                        Button.Button_render(canvas, button.X, button.Y, button.Width, button.Height, button.Color, button.Text);
+                        button.Render(canvas);
                     }
                     if (MouseManager.MouseState == MouseState.None)
                     {
@@ -105,7 +110,8 @@ namespace CrystalOSAlpha.Applications.Terminal
                     }
                 }
 
-                canvas = Scrollbar.Render(canvas, Scroll[0]);
+                Scrollbar sb = Scroll[0];
+                sb.Render(canvas);
 
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
                 once = false;
@@ -141,14 +147,14 @@ namespace CrystalOSAlpha.Applications.Terminal
             {
                 if (MouseManager.MouseState == MouseState.Left)
                 {
-                    if (MouseManager.Y > y + scv.y + 42 + scv.Pos && MouseManager.Y < y + scv.y + scv.Pos + 62)
+                    if (MouseManager.Y > y + scv.Y + 42 + scv.Pos && MouseManager.Y < y + scv.Y + scv.Pos + 62)
                     {
-                        if (MouseManager.X > x + scv.x + 2 && MouseManager.X < x + scv.x + scv.Width)
+                        if (MouseManager.X > x + scv.X + 2 && MouseManager.X < x + scv.X + scv.Width)
                         {
                             if (scv.Clicked == false)
                             {
                                 scv.Clicked = true;
-                                Reg_Y = (int)MouseManager.Y - y - scv.y - 42 - scv.Pos;
+                                Reg_Y = (int)MouseManager.Y - y - scv.Y - 42 - scv.Pos;
                             }
                         }
                         temp = true;
@@ -163,11 +169,11 @@ namespace CrystalOSAlpha.Applications.Terminal
                 {
                     scv.Clicked = false;
                 }
-                if (MouseManager.Y > y + scv.y + 48 && MouseManager.Y < y + height - 42 && scv.Clicked == true)
+                if (MouseManager.Y > y + scv.Y + 48 && MouseManager.Y < y + height - 42 && scv.Clicked == true)
                 {
                     if (scv.Pos >= 0 && scv.Pos <= scv.Height - 44)
                     {
-                        scv.Pos = (int)MouseManager.Y - y - scv.y - 42 - Reg_Y;
+                        scv.Pos = (int)MouseManager.Y - y - scv.Y - 42 - Reg_Y;
                     }
                     else
                     {
@@ -358,7 +364,8 @@ namespace CrystalOSAlpha.Applications.Terminal
             {
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
                 Array.Fill(Container.RawData, ImprovedVBE.colourToNumber(36, 36, 36));
-                window = Scrollbar.Render(window, Scroll[0]);
+                Scrollbar sb = Scroll[0];
+                sb.Render(window);
 
                 if (content.Split('\n').Length > 21)
                 {

@@ -5,7 +5,7 @@ using System.Drawing;
 
 namespace CrystalOSAlpha.UI_Elements
 {
-    class CheckBox
+    class CheckBox : UIElementHandler
     {
         public int X { get; set; }
         public int Y { get; set; }
@@ -14,8 +14,17 @@ namespace CrystalOSAlpha.UI_Elements
         public bool Value { get; set; }
         public bool Clicked { get; set; }
         public string ID { get; set; }
-        public string Content { get; set; }
-        public CheckBox(int x, int y, int width, int height, bool value, string iD, string content)
+        public string Text { get; set; }
+        public int Color { get; set; }
+        public TypeOfElement TypeOfElement { get; set; }
+        public int Pos { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        int UIElementHandler.Value { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public float Sensitivity { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public int LockedPos { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public int MinVal { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public int MaxVal { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+
+        public CheckBox(int x, int y, int width, int height, bool value, string iD, string text)
         {
             X = x;
             Y = y + 22;
@@ -23,7 +32,8 @@ namespace CrystalOSAlpha.UI_Elements
             Height = height;
             Value = value;
             ID = iD;
-            Content = content;
+            Text = text;
+            this.TypeOfElement = TypeOfElement.CheckBox;
         }
 
         public void Render(Bitmap Canvas)
@@ -39,10 +49,10 @@ namespace CrystalOSAlpha.UI_Elements
                 ImprovedVBE.DrawFilledRectangle(Canvas, 1, X, Y, Width, Height, false);
                 ImprovedVBE.DrawFilledRectangle(Canvas, ImprovedVBE.colourToNumber(133, 133, 133), X + 1, Y + 1, Width - 2, Height - 2, false);
             }
-            BitFont.DrawBitFontString(Canvas, "ArialCustomCharset16", Color.White, Content, X + Width + 5, Y + (Height / 2) - 9);
+            BitFont.DrawBitFontString(Canvas, "ArialCustomCharset16", System.Drawing.Color.White, Text, X + Width + 5, Y + (Height / 2) - 9);
         }
 
-        public bool CheckForClick(int x, int y)
+        public bool CheckClick(int x, int y)
         {
             if (MouseManager.MouseState == MouseState.Left)
             {

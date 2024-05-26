@@ -5,7 +5,9 @@ using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics.Widgets;
 using CrystalOSAlpha.Programming;
+using CrystalOSAlpha.System32;
 using CrystalOSAlpha.UI_Elements;
+using CrYstalOSAlpha.UI_Elements;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -52,11 +54,11 @@ namespace CrystalOSAlpha.SystemApps
         #endregion Essential
 
         #region UI_Elements
-        public List<Button_prop> Button = new List<Button_prop>();
+        public List<Button> Button = new List<Button>();
         public List<Slider> Slider = new List<Slider>();
         public List<CheckBox> CheckBox = new List<CheckBox>();
         public List<Dropdown> Dropdown = new List<Dropdown>();
-        public List<Scrollbar_Values> Scroll = new List<Scrollbar_Values>();
+        public List<Scrollbar> Scroll = new List<Scrollbar>();
         public List<TextBox> TextBox = new List<TextBox>();
         public List<label> Label = new List<label>();
         public List<Table> Tables = new List<Table>();
@@ -226,7 +228,7 @@ namespace CrystalOSAlpha.SystemApps
                                 string[] values = parts[1].Replace("new(", "").Split(",");
                                 //Store the values
                                 //Label.Add(new label(int.Parse(values[0]), int.Parse(values[1]), values[2].Remove(values[2].Length - 1).Remove(0, 1), ImprovedVBE.colourToNumber(int.Parse(values[3]), int.Parse(values[4]), int.Parse(values[5])), name));
-                                Button.Add(new Button_prop(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]), parts[1].Substring(parts[1].IndexOf('\"') + 1, parts[1].LastIndexOf('\"') - parts[1].IndexOf('\"') - 1), ImprovedVBE.colourToNumber(int.Parse(values[^3]), int.Parse(values[^2]), int.Parse(values[^1])), name));
+                                Button.Add(new Button(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]), parts[1].Substring(parts[1].IndexOf('\"') + 1, parts[1].LastIndexOf('\"') - parts[1].IndexOf('\"') - 1), ImprovedVBE.colourToNumber(int.Parse(values[^3]), int.Parse(values[^2]), int.Parse(values[^1])), name));
                             }
                             else if (trimmed.StartsWith("Slider"))
                             {
@@ -394,7 +396,7 @@ namespace CrystalOSAlpha.SystemApps
             foreach (var slid in Slider)
             {
                 int val = slid.Value;
-                if (slid.CheckForClick(x, y))
+                if (slid.CheckClick(x, y))
                 {
                     slid.Clicked = true;
                 }
@@ -414,22 +416,22 @@ namespace CrystalOSAlpha.SystemApps
 
             foreach (var Box in TextBox)
             {
-                Box.Box(window, Box.X, Box.Y);
-                if (Box.Clciked(x + Box.X, y + Box.Y) == true && clicked == false)
+                Box.Render(window);
+                if (Box.CheckClick(x + Box.X, y + Box.Y) == true && clicked == false)
                 {
                     foreach (var box2 in TextBox)
                     {
-                        box2.Selected = false;
+                        box2.Clicked = false;
                     }
                     clicked = true;
-                    Box.Selected = true;
+                    Box.Clicked = true;
                 }
             }
 
             foreach (var slid in CheckBox)
             {
                 bool val = slid.Value;
-                if (slid.CheckForClick(x, y))
+                if (slid.CheckClick(x, y))
                 {
                     slid.Clicked = true;
                 }
@@ -593,7 +595,7 @@ namespace CrystalOSAlpha.SystemApps
                 {
                     foreach (var box in TextBox)
                     {
-                        if (box.Selected == true)
+                        if (box.Clicked == true)
                         {
                             box.Text = Keyboard.HandleKeyboard(box.Text, key);
                         }
@@ -620,9 +622,9 @@ namespace CrystalOSAlpha.SystemApps
                             {
                                 foreach (var box in TextBox)
                                 {
-                                    if (box.Selected == true)
+                                    if (box.Clicked == true)
                                     {
-                                        box.Selected = false;
+                                        box.Clicked = false;
                                     }
                                 }
                                 temp = true;
@@ -643,7 +645,10 @@ namespace CrystalOSAlpha.SystemApps
                     {
                         if (button.Clicked == true)
                         {
-                            UI_Elements.Button.Button_render(window, button.X, button.Y, button.Width, button.Height, ComplimentaryColor.Generate(button.Color).ToArgb(), button.Text);
+                            int Col = button.Color;
+                            button.Color = ComplimentaryColor.Generate(button.Color).ToArgb();
+                            button.Render(window);
+                            button.Color = Col;
 
                             //Need to think about this one for a bit...
                             foreach (var p in Parts)
@@ -689,13 +694,13 @@ namespace CrystalOSAlpha.SystemApps
                         }
                         else
                         {
-                            UI_Elements.Button.Button_render(window, button.X, button.Y, button.Width, button.Height, button.Color, button.Text);
+                            button.Render(window);
                         }
                     }
 
                     foreach (label l in Label)
                     {
-                        l.Label(window);
+                        l.Render(window);
                     }
 
                     foreach (Slider s in Slider)
@@ -705,7 +710,7 @@ namespace CrystalOSAlpha.SystemApps
 
                     foreach (var Box in TextBox)
                     {
-                        Box.Box(window, Box.X, Box.Y);
+                        Box.Render(window);
                     }
 
                     foreach (var Checkbox in CheckBox)
@@ -736,7 +741,10 @@ namespace CrystalOSAlpha.SystemApps
                     {
                         if (button.Clicked == true)
                         {
-                            UI_Elements.Button.Button_render(window, button.X, button.Y, button.Width, button.Height, ComplimentaryColor.Generate(button.Color).ToArgb(), button.Text);
+                            int Col = button.Color;
+                            button.Color = ComplimentaryColor.Generate(button.Color).ToArgb();
+                            button.Render(window);
+                            button.Color = Col;
                             if(clicked == false)
                             {
                                 //Need to think about this one for a bit...
@@ -814,13 +822,13 @@ namespace CrystalOSAlpha.SystemApps
                         }
                         else
                         {
-                            UI_Elements.Button.Button_render(window, button.X, button.Y, button.Width, button.Height, button.Color, button.Text);
+                           button.Render(window);
                         }
                     }
 
                     foreach (label l in Label)
                     {
-                        l.Label(window);
+                        l.Render(window);
                     }
 
                     foreach (Slider s in Slider)
@@ -830,7 +838,7 @@ namespace CrystalOSAlpha.SystemApps
 
                     foreach (var Box in TextBox)
                     {
-                        Box.Box(window, Box.X, Box.Y);
+                        Box.Render(window);
                     }
 
                     foreach (var Checkbox in CheckBox)
@@ -975,8 +983,8 @@ namespace CrystalOSAlpha.SystemApps
                                 string[] values = parts[1].Replace("new(", "").Split(",");
                                 //Store the values
                                 //Label.Add(new label(int.Parse(values[0]), int.Parse(values[1]), values[2].Remove(values[2].Length - 1).Remove(0, 1), ImprovedVBE.colourToNumber(int.Parse(values[3]), int.Parse(values[4]), int.Parse(values[5])), name));
-                                Button.Add(new Button_prop(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]), parts[1].Substring(parts[1].IndexOf('\"') + 1, parts[1].LastIndexOf('\"') - parts[1].IndexOf('\"') - 1), ImprovedVBE.colourToNumber(int.Parse(values[^3]), int.Parse(values[^2]), int.Parse(values[^1])), name));
-                                //Button.Add(new Button_prop(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]), values[4].Remove(values[4].Length - 1).Remove(0, 1), ImprovedVBE.colourToNumber(int.Parse(values[5]), int.Parse(values[6]), int.Parse(values[7])), name));
+                                Button.Add(new Button(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]), parts[1].Substring(parts[1].IndexOf('\"') + 1, parts[1].LastIndexOf('\"') - parts[1].IndexOf('\"') - 1), ImprovedVBE.colourToNumber(int.Parse(values[^3]), int.Parse(values[^2]), int.Parse(values[^1])), name));
+                                //Button.Add(new Button(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]), values[4].Remove(values[4].Length - 1).Remove(0, 1), ImprovedVBE.colourToNumber(int.Parse(values[5]), int.Parse(values[6]), int.Parse(values[7])), name));
                             }
                             else if (trimmed.StartsWith("Slider"))
                             {
@@ -1077,13 +1085,16 @@ namespace CrystalOSAlpha.SystemApps
                 {
                     if (button.Clicked == true)
                     {
-                        UI_Elements.Button.Button_render(canvas, button.X, button.Y, button.Width, button.Height, ComplimentaryColor.Generate(button.Color).ToArgb(), button.Text);
+                        int Col = button.Color;
+                        button.Color = ComplimentaryColor.Generate(button.Color).ToArgb();
+                        button.Render(canvas);
+                        button.Color = Col;
 
                         //Need to think about this one for a bit...
                     }
                     else
                     {
-                        UI_Elements.Button.Button_render(canvas, button.X, button.Y, button.Width, button.Height, button.Color, button.Text);
+                        button.Render(canvas);
                     }
                 }
 
@@ -1091,7 +1102,7 @@ namespace CrystalOSAlpha.SystemApps
 
                 foreach (label l in Label)
                 {
-                    l.Label(window);
+                    l.Render(window);
                 }
 
                 foreach (Slider s in Slider)
@@ -1101,7 +1112,7 @@ namespace CrystalOSAlpha.SystemApps
 
                 foreach (var Box in TextBox)
                 {
-                    Box.Box(window, Box.X, Box.Y);
+                    Box.Render(window);
                 }
 
                 foreach (var Checkbox in CheckBox)
@@ -1144,7 +1155,7 @@ namespace CrystalOSAlpha.SystemApps
             foreach (var slid in Slider)
             {
                 int val = slid.Value;
-                if (slid.CheckForClick(x, y))
+                if (slid.CheckClick(x, y))
                 {
                     slid.Clicked = true;
                 }
@@ -1164,14 +1175,14 @@ namespace CrystalOSAlpha.SystemApps
 
             foreach (var Box in TextBox)
             {
-                Box.Box(window, Box.X, Box.Y);
-                if (Box.Clciked(x + Box.X, y + Box.Y) == true)
+                Box.Render(window);
+                if (Box.CheckClick(x + Box.X, y + Box.Y) == true)
                 {
                     foreach (var box2 in TextBox)
                     {
-                        box2.Selected = false;
+                        box2.Clicked = false;
                     }
-                    Box.Selected = true;
+                    Box.Clicked = true;
                 }
             }
 
@@ -1223,7 +1234,7 @@ namespace CrystalOSAlpha.SystemApps
                 {
                     foreach (var box in TextBox)
                     {
-                        if (box.Selected == true)
+                        if (box.Clicked == true)
                         {
                             box.Text = Keyboard.HandleKeyboard(box.Text, key);
                         }

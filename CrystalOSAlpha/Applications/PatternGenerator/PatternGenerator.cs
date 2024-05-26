@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using Cosmos.System;
 using CrystalOSAlpha.Graphics.TaskBar;
+using CrystalOSAlpha.System32;
 
 namespace CrystalOSAlpha.Applications.PatternGenerator
 {
@@ -43,7 +44,7 @@ namespace CrystalOSAlpha.Applications.PatternGenerator
 
         public List<int> Colors = new List<int>();
         public List<TextBox> TextBoxes = new List<TextBox>();
-        public List<Button_prop> Buttons = new List<Button_prop>();
+        public List<Button> Buttons = new List<Button>();
         #endregion Extras
 
         public void App()
@@ -97,8 +98,8 @@ namespace CrystalOSAlpha.Applications.PatternGenerator
                     TextBoxes.Add(new TextBox(291, 93, 80, 25, ImprovedVBE.colourToNumber(60, 60, 60), "50", "Green", TextBox.Options.left, "Green"));
                     TextBoxes.Add(new TextBox(291, 130, 80, 25, ImprovedVBE.colourToNumber(60, 60, 60), "50", "Blue", TextBox.Options.left, "Blue"));
 
-                    Buttons.Add(new Button_prop(216, 2, 155, 25, "Create wallpaper", 1, "Create_Wallpaper"));
-                    Buttons.Add(new Button_prop(117, 2, 95, 25, "Fill", 1, "Fill"));
+                    Buttons.Add(new Button(216, 2, 155, 25, "Create wallpaper", 1, "Create_Wallpaper"));
+                    Buttons.Add(new Button(117, 2, 95, 25, "Fill", 1, "Fill"));
                 }
                 else
                 {
@@ -142,14 +143,14 @@ namespace CrystalOSAlpha.Applications.PatternGenerator
 
             foreach (var Box in TextBoxes)
             {
-                if (Box.Clciked(x + Box.X, y + Box.Y) == true && clicked == false)
+                if (Box.CheckClick(x + Box.X, y + Box.Y) == true && clicked == false)
                 {
                     foreach (var box2 in TextBoxes)
                     {
-                        box2.Selected = false;
+                        box2.Clicked = false;
                     }
                     clicked = true;
-                    Box.Selected = true;
+                    Box.Clicked = true;
                 }
             }
 
@@ -240,7 +241,7 @@ namespace CrystalOSAlpha.Applications.PatternGenerator
                     {
                         foreach (var box in TextBoxes)
                         {
-                            if (box.Selected == true)
+                            if (box.Clicked == true)
                             {
                                 box.Text = Keyboard.HandleKeyboard(box.Text, key);
                                 temp = true;
@@ -278,14 +279,17 @@ namespace CrystalOSAlpha.Applications.PatternGenerator
 
                 foreach (var v in TextBoxes)
                 {
-                    v.Box(window, v.X, v.Y);
+                    v.Render(window);
                 }
 
                 foreach (var button in Buttons)
                 {
                     if (button.Clicked == true)
                     {
-                        Button.Button_render(window, button.X, button.Y, button.Width, button.Height, Color.White.ToArgb(), button.Text);
+                        int Col = button.Color;
+                        button.Color = Color.White.ToArgb();
+                        button.Render(window);
+                        button.Color = Col;
 
                         switch (button.ID)
                         {
@@ -321,7 +325,7 @@ namespace CrystalOSAlpha.Applications.PatternGenerator
                     }
                     else
                     {
-                        Button.Button_render(window, button.X, button.Y, button.Width, button.Height, button.Color, button.Text);
+                        button.Render(window);
                     }
                 }
 

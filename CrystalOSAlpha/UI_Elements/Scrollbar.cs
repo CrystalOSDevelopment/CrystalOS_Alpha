@@ -1,50 +1,52 @@
 ﻿using Cosmos.System.Graphics;
+using CrystalOSAlpha;
+using CrystalOSAlpha.UI_Elements;
 
-namespace CrystalOSAlpha.UI_Elements
+namespace CrYstalOSAlpha.UI_Elements
 {
-    class Scrollbar
+    class Scrollbar : UIElementHandler
     {
-        public static Bitmap Render(Bitmap canvas, Scrollbar_Values scv)
-        {
-            ImprovedVBE.DrawFilledRectangle(canvas, ImprovedVBE.colourToNumber(36, 36, 36), scv.x, scv.y + 22, scv.Width, scv.Height, false);
-            if(scv.Clicked == false)
-            {
-                ImprovedVBE.DrawFilledRectangle(canvas, ImprovedVBE.colourToNumber(50, 50, 50), scv.x + 2, scv.y + 42 + scv.Pos, scv.Width - 4, 20, false);
-            }
-            else
-            {
-                ImprovedVBE.DrawFilledRectangle(canvas, ImprovedVBE.colourToNumber(100, 100, 100), scv.x + 2, scv.y + 42 + scv.Pos, scv.Width - 4, 20, false);
-            }
-
-            return canvas;
-        }
-    }
-
-    class Scrollbar_Values
-    {
-        public int x { get; set; }
-        public int y { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
         public int Pos { get; set; }
         public bool Clicked { get; set; }
+        public string Text { get; set; }
+        public int Color { get; set; }
+        public TypeOfElement TypeOfElement { get; set; }
+        public string ID { get; set; }
+        public int Value { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public float Sensitivity { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public int LockedPos { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public int MinVal { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public int MaxVal { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
 
-        public Scrollbar_Values(int x, int y, int width, int height, int Pos)
+        public Scrollbar(int X, int Y, int width, int height, int Pos)
         {
-            this.x = x;
-            this.y = y;
+            this.X = X;
+            this.Y = Y;
             this.Width = width;
             this.Height = height;
             this.Pos = Pos;
         }
-        public Scrollbar_Values(int x, int y, int width, int height, int Pos, bool Clicked)
+
+        public void Render(Bitmap canvas)
         {
-            this.x = x;
-            this.y = y;
-            this.Width = width;
-            this.Height = height;
-            this.Pos = Pos;
-            this.Clicked = Clicked;
+            ImprovedVBE.DrawFilledRectangle(canvas, ImprovedVBE.colourToNumber(36, 36, 36), X, Y + 22, Width, Height, false);
+            if(Clicked == false)
+            {
+                ImprovedVBE.DrawFilledRectangle(canvas, ImprovedVBE.colourToNumber(50, 50, 50), X + 2, Y + 42 + Pos, Width - 4, 20, false);
+            }
+            else
+            {
+                ImprovedVBE.DrawFilledRectangle(canvas, ImprovedVBE.colourToNumber(100, 100, 100), X + 2, Y + 42 + Pos, Width - 4, 20, false);
+            }
+        }
+
+        public bool CheckClick(int X, int Y)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

@@ -20,6 +20,10 @@ namespace CrystalOSAlpha.UI_Elements
             this.SubmenuList = SubmenuList;
             this.SubmenuNames = SubmenuNames;
         }
+
+        public int X { get; set; }
+        public int Y { get; set; }
+
         public bool Render(Bitmap Canvas, int AppID)
         {
             ImprovedVBE.DrawFilledRectangle(Canvas, ImprovedVBE.colourToNumber(255, 255, 255), 0, 22, (int)Canvas.Width, 30, false);

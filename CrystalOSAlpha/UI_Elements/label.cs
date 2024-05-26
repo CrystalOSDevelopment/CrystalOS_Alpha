@@ -4,21 +4,34 @@ using System.Drawing;
 
 namespace CrystalOSAlpha.UI_Elements
 {
-    class label
+    class label : UIElementHandler
     {
         public int X { get; set; }
         public int Y { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
         public string Text { get; set; }
         public int TextColor { get; set; }
         public string ID { get; set; }
         public string FontType { get; set; }
+        public bool Clicked { get; set; }
+        public int Color { get; set; }
+        public TypeOfElement TypeOfElement { get; set; }
+        public int Pos { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public int Value { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public float Sensitivity { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public int LockedPos { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public int MinVal { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public int MaxVal { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+
         public label(int X, int Y, string Text, int TextColor, string iD)
         {
             this.X = X;
             this.Y = Y;
             this.Text = Text;
             this.TextColor = TextColor;
-            ID = iD;
+            this.ID = iD;
+            this.TypeOfElement = TypeOfElement.Label;
         }
         public label(int X, int Y, string Text, string fontType, int TextColor, string iD)
         {
@@ -27,18 +40,24 @@ namespace CrystalOSAlpha.UI_Elements
             this.Text = Text;
             this.TextColor = TextColor;
             this.FontType = fontType;
-            ID = iD;
+            this.ID = iD;
+            this.TypeOfElement = TypeOfElement.Label;
         }
-        public void Label(Bitmap canvas)
+        public void Render(Bitmap canvas)
         {
             if(FontType != null)
             {
-                BitFont.DrawBitFontString(canvas, FontType, Color.FromArgb(TextColor), Text, X, Y + 22);
+                BitFont.DrawBitFontString(canvas, FontType, System.Drawing.Color.FromArgb(TextColor), Text, X, Y + 22);
             }
             else
             {
-                BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.FromArgb(TextColor), Text, X, Y + 22);
+                BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", System.Drawing.Color.FromArgb(TextColor), Text, X, Y + 22);
             }
+        }
+
+        public bool CheckClick(int X, int Y)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

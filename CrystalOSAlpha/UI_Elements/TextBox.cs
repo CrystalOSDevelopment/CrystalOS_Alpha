@@ -5,7 +5,7 @@ using System;
 
 namespace CrystalOSAlpha.UI_Elements
 {
-    public class TextBox
+    class TextBox : UIElementHandler
     {
         public TextBox(int X, int Y, int Width, int Height, int Color, string Text, string PlaceHolder, Options opt, string ID)
         {
@@ -18,6 +18,7 @@ namespace CrystalOSAlpha.UI_Elements
             this.PlaceHolder = PlaceHolder;
             this.opt = opt;
             this.ID = ID;
+            this.TypeOfElement = TypeOfElement.TextBox;
         }
         public static Bitmap canvas;
         public static Bitmap canvas_Blank;
@@ -38,8 +39,16 @@ namespace CrystalOSAlpha.UI_Elements
         public int Y { get; set; }
         public int X { get; set; }
         public string ID { get; set; }
-        public bool Selected { get; set; }
-        public static Bitmap Box(Bitmap Canvas, int X, int Y, int Width, int Height, int Color, string Text, string PlaceHolder, Options opt)
+        public bool Clicked { get; set; }
+        public TypeOfElement TypeOfElement { get; set; }
+        public int Pos { get; set; }
+        public int Value { get; set; }
+        public float Sensitivity { get; set; }
+        public int LockedPos { get; set; }
+        public int MinVal { get; set; }
+        public int MaxVal { get; set; }
+
+        public void Render(Bitmap Canvas)
         {
             canvas = new Bitmap((uint)Width, (uint)Height, ColorDepth.ColorDepth32);
             canvas_Blank = new Bitmap((uint)Width, (uint)Height, ColorDepth.ColorDepth32);
@@ -86,60 +95,10 @@ namespace CrystalOSAlpha.UI_Elements
                     break;
             }
 
-            return ImprovedVBE.DrawImageAlpha(canvas, X, Y, Canvas);
-        }
-        public void Box(Bitmap Canvas, int X, int Y)
-        {
-            canvas = new Bitmap((uint)Width, (uint)Height, ColorDepth.ColorDepth32);
-            canvas_Blank = new Bitmap((uint)Width, (uint)Height, ColorDepth.ColorDepth32);
-            Array.Fill(canvas.RawData, ImprovedVBE.colourToNumber(36, 36, 36));
-
-            ImprovedVBE.DrawFilledRectangle(canvas, Color, 2, 2, Width - 4, Height - 4, false);
-
-            string temp = Text;
-            switch (opt)
-            {
-                case Options.left:
-                    if (Text == "")
-                    {
-                        BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", System.Drawing.Color.Gray, PlaceHolder, (Width / 2) - (PlaceHolder.Length * 4), Height / 2 - 8);
-                    }
-                    else
-                    {
-                        offset = 0;
-                        for (int i = Text.Length; i > 0; i--)
-                        {
-                            offset += BitFont.DrawBitFontString(canvas_Blank, "ArialCustomCharset16", System.Drawing.Color.Black, Text[i].ToString(), 0, 0);
-                            if (offset > Width - 15)
-                            {
-                                temp = Text.Remove(0, i);
-                                break;
-                            }
-                        }
-                        BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", System.Drawing.Color.White, temp, 5, Height / 2 - 8);
-                    }
-                    break;
-                case Options.right:
-                    if (Text == "")
-                    {
-                        BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", System.Drawing.Color.Gray, PlaceHolder, (Width / 2) - (PlaceHolder.Length * 4), Height / 2 - 8);
-                    }
-                    else
-                    {
-                        if (Text.Length > 30)
-                        {
-                            temp = Text.Remove(0, Text.Length - 30);
-                        }
-                        offset = BitFont.DrawBitFontString(canvas_Blank, "ArialCustomCharset16", System.Drawing.Color.White, Text, Width - (Text.Length * 6) - 3, Height / 2 - 8);
-                        BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", System.Drawing.Color.White, temp, Width - offset - 3, Height / 2 - 8);
-                    }
-                    break;
-            }
-
-            ImprovedVBE.DrawImage(canvas, X, Y, Canvas);
+            ImprovedVBE.DrawImageAlpha(canvas, X, Y, Canvas);
         }
 
-        public bool Clciked(int X, int Y)
+        public bool CheckClick(int X, int Y)
         {
             if(MouseManager.MouseState == MouseState.Left)
             {
@@ -147,7 +106,7 @@ namespace CrystalOSAlpha.UI_Elements
                 {
                     if(MouseManager.Y > Y && MouseManager.Y < Y + Height)
                     {
-                        Selected = true;
+                        Clicked = true;
                         return true;
                     }
                 }

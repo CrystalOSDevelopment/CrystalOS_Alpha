@@ -2,14 +2,14 @@
 using CrystalOSAlpha.Graphics;
 using Kernel = CrystalOS_Alpha.Kernel;
 
-namespace CrystalOSAlpha.UI_Elements
+namespace CrystalOSAlpha.System32
 {
     class Keyboard
     {
         public static string HandleKeyboard(string input, KeyEvent key)
         {
             string temp = input;
-            if(Kernel.Is_KeyboardMouse == false)
+            if (Kernel.Is_KeyboardMouse == false)
             {
                 switch (key.Key)
                 {
@@ -31,20 +31,29 @@ namespace CrystalOSAlpha.UI_Elements
                     case ConsoleKeyEx.LWin:
                         foreach (var v in TaskScheduler.Apps)
                         {
-                            if(v.name.Length > 2)
+                            if (v.name.Length > 2)
                             {
                                 v.minimised = true;
                             }
                         }
                         break;
                     default:
-                        temp += Keyboard_HU(key);
+                        //TODO: Decide what keyboard layout to use
+                        switch (GlobalValues.KeyboardLayout)
+                        {
+                            case KeyboardLayout.EN_US:
+                                temp += key.KeyChar;
+                                break;
+                            case KeyboardLayout.HUngarian:
+                                temp += Keyboard_HU(key);
+                                break;
+                        }
                         break;
                 }
             }
             else
             {
-                switch(key.Key)
+                switch (key.Key)
                 {
                     case ConsoleKeyEx.W:
                         MouseManager.Y -= 4;
@@ -59,7 +68,7 @@ namespace CrystalOSAlpha.UI_Elements
                         MouseManager.X += 4;
                         break;
                     case ConsoleKeyEx.Q:
-                        if(MouseManager.MouseState == MouseState.None)
+                        if (MouseManager.MouseState == MouseState.None)
                         {
                             MouseManager.MouseState = MouseState.Left;
                         }
@@ -74,7 +83,7 @@ namespace CrystalOSAlpha.UI_Elements
 
         public static char Keyboard_HU(KeyEvent key)
         {
-            if(KeyboardManager.ShiftPressed == true)
+            if (KeyboardManager.ShiftPressed == true)
             {
                 switch (key.Key)
                 {
@@ -107,7 +116,7 @@ namespace CrystalOSAlpha.UI_Elements
 
                 }
             }
-            if(KeyboardManager.AltPressed == true)
+            if (KeyboardManager.AltPressed == true)
             {
                 switch (key.Key)
                 {

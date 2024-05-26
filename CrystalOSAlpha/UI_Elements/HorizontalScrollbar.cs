@@ -4,58 +4,60 @@ using System;
 
 namespace CrystalOSAlpha.UI_Elements
 {
-    class HorizontalScrollbar
+    class HorizontalScrollbar : UIElementHandler
     {
-        public int x { get; set; }
-        public int y { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
         public int Pos { get; set; }
         public bool Clicked { get; set; }
+        public string Text { get; set; }
+        public int Color { get; set; }
+        public TypeOfElement TypeOfElement { get; set; }
+        public string ID { get; set; }
+        public int Value { get; set; }
+        public float Sensitivity { get; set; }
+        int UIElementHandler.LockedPos { get; set; }
+        public int MinVal { get; set; }
+        public int MaxVal { get; set; }
+
         public int LockedPos = 0;
 
-        public HorizontalScrollbar(int x, int y, int width, int height, int Pos)
+        public HorizontalScrollbar(int X, int y, int width, int height, int Pos)
         {
-            this.x = x;
-            this.y = y;
+            this.X = X;
+            this.Y = y;
             this.Width = width;
             this.Height = height;
             this.Pos = Pos;
-        }
-        public HorizontalScrollbar(int x, int y, int width, int height, int Pos, bool Clicked)
-        {
-            this.x = x;
-            this.y = y;
-            this.Width = width;
-            this.Height = height;
-            this.Pos = Pos;
-            this.Clicked = Clicked;
+            this.TypeOfElement = TypeOfElement.HorizontalScrollbar;
         }
         public void Render(Bitmap canvas)
         {
             Pos = Math.Clamp(Pos, 20, Width - 40);
-            ImprovedVBE.DrawFilledRectangle(canvas, ImprovedVBE.colourToNumber(36, 36, 36), x, y, Width, Height, false);
+            ImprovedVBE.DrawFilledRectangle(canvas, ImprovedVBE.colourToNumber(36, 36, 36), X, Y, Width, Height, false);
             if (Clicked == false)
             {
-                ImprovedVBE.DrawFilledRectangle(canvas, ImprovedVBE.colourToNumber(50, 50, 50), x + Pos, y + 2, 20, Height - 4, false);
+                ImprovedVBE.DrawFilledRectangle(canvas, ImprovedVBE.colourToNumber(50, 50, 50), X + Pos, Y + 2, 20, Height - 4, false);
             }
             else
             {
-                ImprovedVBE.DrawFilledRectangle(canvas, ImprovedVBE.colourToNumber(100, 100, 100), x + Pos, y + 2, 20, Height - 4, false);
+                ImprovedVBE.DrawFilledRectangle(canvas, ImprovedVBE.colourToNumber(100, 100, 100), X + Pos, Y + 2, 20, Height - 4, false);
             }
         }
         public bool CheckClick(int X, int Y)
         {
             if(MouseManager.MouseState == MouseState.Left)
             {
-                if(X > x + Pos && X < x + Pos + 20 && Clicked == false)
+                if(X > X + Pos && X < X + Pos + 20 && Clicked == false)
                 {
-                    LockedPos = X - (x + Pos);
+                    LockedPos = X - (X + Pos);
                     Clicked = true;
                 }
                 if(Clicked == true)
                 {
-                    Pos = X - x - LockedPos;
+                    Pos = X - X - LockedPos;
                 }
                 Pos = Math.Clamp(Pos, 20, Width - 40);
                 return true;

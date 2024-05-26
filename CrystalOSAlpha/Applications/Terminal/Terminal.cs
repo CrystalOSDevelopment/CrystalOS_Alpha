@@ -2,6 +2,7 @@
 using Cosmos.System.Graphics;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
+using CrystalOSAlpha.System32;
 using CrystalOSAlpha.UI_Elements;
 using System;
 using System.Collections.Generic;
@@ -46,17 +47,17 @@ namespace CrystalOSAlpha.Applications.Terminal
         public Bitmap window { get; set; }
         public Bitmap Container;
 
-        public List<Button_prop> Buttons = new List<Button_prop>();
-        public List<VerticalScrollbar> Scroll = new List<VerticalScrollbar>();
+        public List<UIElementHandler> Buttons = new List<UIElementHandler>();
+        public List<UIElementHandler> Scroll = new List<UIElementHandler>();
         public List<string> cmd_history = new List<string>();
 
         public void App()
         {
             if (initial == true)
             {
-                Buttons.Add(new Button_prop(5, 27, 90, 20, "Clear", 1));
+                Buttons.Add(new Button(5, 27, 90, 20, "Clear", 1));
 
-                Scroll.Add(new VerticalScrollbar(width - 22, 52, 20, height - 60, 20, 0, 1000));
+                Scroll.Add(new VerticalScrollbar(width - 22, 52, 20, height - 60, 20, 0, 1000, ""));
 
                 initial = false;
             }
@@ -72,7 +73,10 @@ namespace CrystalOSAlpha.Applications.Terminal
                 {
                     if (button.Clicked == true)
                     {
-                        Button.Button_render(canvas, button.X, button.Y, button.Width, button.Height, Color.White.ToArgb(), button.Text);
+                        int Col = button.Color;
+                        button.Color = Color.White.ToArgb();
+                        button.Render(canvas);
+                        button.Color = Col;
 
                         switch (button.Text)
                         {
@@ -86,7 +90,7 @@ namespace CrystalOSAlpha.Applications.Terminal
                     }
                     else
                     {
-                        Button.Button_render(canvas, button.X, button.Y, button.Width, button.Height, button.Color, button.Text);
+                        button.Render(canvas);
                     }
                     if (MouseManager.MouseState == MouseState.None)
                     {
@@ -127,7 +131,7 @@ namespace CrystalOSAlpha.Applications.Terminal
             foreach (var vscroll in Scroll)
             {
                 vscroll.Height = height - 60;
-                vscroll.x = width - 22;
+                vscroll.X = width - 22;
                 if (content.Split('\n').Length * 16 > Container.Height)
                 {
                     vscroll.MaxVal = content.Split('\n').Length * 16 - (int)Container.Height;

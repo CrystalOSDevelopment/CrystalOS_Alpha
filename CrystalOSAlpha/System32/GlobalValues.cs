@@ -37,7 +37,15 @@ namespace CrystalOSAlpha.Graphics
         //Modes: Default(Preloaded wallpaper), Monocolor(One single color as wallpaper), Loaded(Load from file. WARNING: Loading from filesystem may result in higher memory usage)
         public static string Background_type = "Default";
         //Colors 
-        public static string Background_color = "CystalBlack";
+        public static string Background_color = "CrystalBlack";
         public static int LevelOfTransparency = 85;
+
+        //Keyboard layout
+        public static KeyboardLayout KeyboardLayout = KeyboardLayout.EN_US;
+    }
+    public enum KeyboardLayout
+    {
+        EN_US,
+        HUngarian
     }
 }

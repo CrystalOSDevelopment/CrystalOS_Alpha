@@ -14,13 +14,12 @@ namespace CrystalOSAlpha.UI_Elements
         public int Y { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
-        public int Color { get; set; }
         public int Selected = 0;
         public string ID { get; set; }
 
         public bool Found = false;
         
-        public Color TextColor = System.Drawing.Color.White;
+        public Color TextColor = Color.White;
         
         public List<string> TextLines = new List<string>();
         public RightClick(int X, int Y, int Width, int Height, List<string> MenuItemNames, string iD)

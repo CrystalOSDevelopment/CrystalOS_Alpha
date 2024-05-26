@@ -6,6 +6,7 @@ using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics.Icons;
 using CrystalOSAlpha.Graphics.TaskBar;
 using CrystalOSAlpha.Programming;
+using CrystalOSAlpha.System32;
 using CrystalOSAlpha.SystemApps;
 using CrystalOSAlpha.UI_Elements;
 using System;
@@ -63,15 +64,13 @@ namespace CrystalOSAlpha.Applications.FileSys
 
         public Structure Selected;
 
-        public List<string> cmd_history = new List<string>();
         public List<string> MItems = new List<string>();
         public List<string> History = new List<string>();
         public List<string> HistoryForward = new List<string>();
-        public List<Button_prop> Buttons = new List<Button_prop>();
-        public List<VerticalScrollbar> Scroll = new List<VerticalScrollbar>();
         public List<Structure> Items = new List<Structure>();
         public List<RightClick> rightClicks = new List<RightClick>();
-        public List<TextBox> TextBoxes = new List<TextBox>();
+
+        public List<UIElementHandler> UIElements = new List<UIElementHandler>();
 
         public string returnvalue = null;
 
@@ -83,17 +82,17 @@ namespace CrystalOSAlpha.Applications.FileSys
                 {
                     throw new Exception("Failed to open FileManager:\nFilesystem not initialized!");
                 }
-                Buttons.Add(new Button_prop(3, 2, 49, 25, "Home", 1, "Home"));
-                Buttons.Add(new Button_prop(59, 2, 105, 25, "Wastebasket", 1, "Wastebasket"));
-                Buttons.Add(new Button_prop(171, 2, 105, 25, "Security Area", 1, "Security Area"));
-                Buttons.Add(new Button_prop(3, 31, 20, 20, "<-", 1, "Back"));
-                Buttons.Add(new Button_prop(32, 31, 20, 20, "->", 1, "Forward"));
-                Buttons.Add(new Button_prop(59, 31, 35, 20, "Up", 1, "Up"));
+                UIElements.Add(new Button(3, 2, 49, 25, "Home", 1, "Home"));
+                UIElements.Add(new Button(59, 2, 105, 25, "Wastebasket", 1, "Wastebasket"));
+                UIElements.Add(new Button(171, 2, 105, 25, "Security Area", 1, "Security Area"));
+                UIElements.Add(new Button(3, 31, 20, 20, "<-", 1, "Back"));
+                UIElements.Add(new Button(32, 31, 20, 20, "->", 1, "Forward"));
+                UIElements.Add(new Button(59, 31, 35, 20, "Up", 1, "Up"));
 
-                Scroll.Add(new VerticalScrollbar(width - 30, 77, 20, height - 85, 20, 0, 800));
+                UIElements.Add(new VerticalScrollbar(width - 30, 77, 20, height - 85, 20, 0, 800, "ScrollRight"));
 
-                TextBoxes.Add(new TextBox(283, 24, width - 320, 25, ImprovedVBE.colourToNumber(60, 60, 60), "", "Type here to search...", TextBox.Options.left, "Search"));
-                TextBoxes.Add(new TextBox(99, 53, width - 109, 20, ImprovedVBE.colourToNumber(60, 60, 60), "0:\\", "0:\\", TextBox.Options.left, "Path"));
+                UIElements.Add(new TextBox(283, 24, width - 320, 25, ImprovedVBE.colourToNumber(60, 60, 60), "", "Type here to search...", TextBox.Options.left, "Search"));
+                UIElements.Add(new TextBox(99, 53, width - 109, 20, ImprovedVBE.colourToNumber(60, 60, 60), "0:\\", "0:\\", TextBox.Options.left, "Path"));
 
                 Logo = ImprovedVBE.ScaleImageStock(new Bitmap(TaskManager.Elephant), 25, 25);
 
@@ -105,65 +104,6 @@ namespace CrystalOSAlpha.Applications.FileSys
                 (canvas, back, window) = WindowGenerator.Generate(x, y, width, height, CurrentColor, name);
                 side = new Bitmap(118, (uint)height - 85, ColorDepth.ColorDepth32);
                 Main = new Bitmap((uint)width - 163, (uint)height - 85, ColorDepth.ColorDepth32);
-
-                foreach (var button in Buttons)
-                {
-                    if (button.Clicked == true)
-                    {
-                        Button.Button_render(canvas, button.X, button.Y, button.Width, button.Height, Color.White.ToArgb(), button.Text);
-
-                        switch (button.ID)
-                        {
-                            case "Home":
-                                TextBoxes[1].Text = "0:\\";
-                                Route = "0:\\";
-                                break;
-                            case "Wastebasket":
-                                TextBoxes[1].Text = "0:\\User\\" + GlobalValues.Username + "\\Wastebasket";
-                                Route = "0:\\User\\" + GlobalValues.Username + "\\Wastebasket";
-                                break;
-                            case "Security Area":
-                                TextBoxes[1].Text = "0:\\User\\" + GlobalValues.Username + "\\SecurityArea";
-                                Route = "0:\\User\\" + GlobalValues.Username + "\\SecurityArea";
-                                break;
-                            case "Back":
-                                if(History.Count > 0)
-                                {
-                                    HistoryForward.Add(History[^1]);
-                                    History.RemoveAt(History.Count - 1);
-                                    if(History.Count > 0)
-                                    {
-                                        TextBoxes[1].Text = History[^1];
-                                        Route = History[^1];
-                                    }
-                                    else
-                                    {
-                                        History.Clear();
-                                        History = new List<string>
-                                        {
-                                            "0:\\"
-                                        };
-                                        TextBoxes[1].Text = History[^1];
-                                        Route = History[^1];
-                                    }
-                                }
-                                break;
-                            case "Forward":
-                                if(HistoryForward.Count > 0)
-                                {
-                                    History.Add(HistoryForward[^1]);
-                                    HistoryForward.RemoveAt(HistoryForward.Count - 1);
-                                    TextBoxes[1].Text = History[^1];
-                                    Route = History[^1];
-                                }
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        Button.Button_render(canvas, button.X, button.Y, button.Width, button.Height, button.Color, button.Text);
-                    }
-                }
 
                 Array.Fill(side.RawData, ImprovedVBE.colourToNumber(36, 36, 36));
                 Array.Fill(Main.RawData, ImprovedVBE.colourToNumber(36, 36, 36));
@@ -197,52 +137,65 @@ namespace CrystalOSAlpha.Applications.FileSys
 
             if(TaskScheduler.Apps.FindAll(d => d.name.Contains("Error")).Count == 0)
             {
-                foreach (var button in Buttons)
+                foreach (var elements in UIElements)
                 {
                     if (MouseManager.MouseState == MouseState.Left)
                     {
-                        if (MouseManager.X > x + button.X && MouseManager.X < x + button.X + button.Width)
+                        if (MouseManager.X > x + elements.X && MouseManager.X < x + elements.X + elements.Width)
                         {
-                            if (MouseManager.Y > y + button.Y && MouseManager.Y < y + button.Y + button.Height)
+                            if (MouseManager.Y > y + elements.Y && MouseManager.Y < y + elements.Y + elements.Height)
                             {
-                                if (clicked == false)
+                                switch (elements.TypeOfElement)
                                 {
-                                    button.Clicked = true;
-                                    once = true;
-                                    clicked = true;
+                                    case TypeOfElement.Button:
+                                        if (clicked == false)
+                                        {
+                                            elements.Clicked = true;
+                                            temp = true;
+                                            clicked = true;
+                                        }
+                                        break;
+                                    case TypeOfElement.TextBox:
+                                        foreach (var v in UIElements)
+                                        {
+                                            v.Clicked = false;
+                                        }
+                                        elements.Clicked = true;
+                                        break;
+                                }
+                            }
+                            else
+                            {
+                                if (elements.Clicked == true)
+                                {
+                                    temp = true;
+                                    elements.Clicked = false;
+                                    clicked = false;
                                 }
                             }
                         }
-                    }
-                    else if(MouseManager.MouseState == MouseState.None)
-                    {
-                        if(button.Clicked == true)
+                        else
                         {
-                            button.Clicked = false;
-                            once = true;
+                            if (elements.Clicked == true)
+                            {
+                                temp = true;
+                                elements.Clicked = false;
+                                clicked = false;
+                            }
                         }
-
                     }
-                }
-
-                foreach (var vscroll in Scroll)
-                {
-                    if (vscroll.CheckClick((int)MouseManager.X - x, (int)MouseManager.Y - y))
+                    if (elements.TypeOfElement != TypeOfElement.TextBox && elements.Clicked == true && MouseManager.MouseState == MouseState.None)
                     {
                         temp = true;
+                        elements.Clicked = false;
+                        clicked = false;
                     }
-                }
-
-                foreach (var Box in TextBoxes)
-                {
-                    if (Box.Clciked(x + Box.X, y + Box.Y) == true && clicked == false)
+                    if(elements.TypeOfElement == TypeOfElement.VerticalScrollbar)
                     {
-                        foreach (var box2 in TextBoxes)
+                        if (elements.CheckClick((int)MouseManager.X - x, (int)MouseManager.Y - y))
                         {
-                            box2.Selected = false;
+                            temp = true;
                         }
-                        clicked = true;
-                        Box.Selected = true;
                     }
                 }
 
@@ -259,15 +212,15 @@ namespace CrystalOSAlpha.Applications.FileSys
                     {
                         if (key.Key == ConsoleKeyEx.Enter)
                         {
-                            Route = TextBoxes[1].Text;
+                            Route = UIElements.Find(d => d.ID == "Path").Text;
                         }
                         else
                         {
-                            foreach (var box in TextBoxes)
+                            foreach (var element in UIElements)
                             {
-                                if (box.Selected == true)
+                                if (element.Clicked == true)
                                 {
-                                    box.Text = Keyboard.HandleKeyboard(box.Text, key);
+                                    element.Text = Keyboard.HandleKeyboard(element.Text, key);
                                     temp = true;
                                 }
                             }
@@ -278,6 +231,7 @@ namespace CrystalOSAlpha.Applications.FileSys
                 }
                 if(temp == true)
                 {
+                    temp = false;
                     Items.Clear();
                     try
                     {
@@ -286,13 +240,13 @@ namespace CrystalOSAlpha.Applications.FileSys
                             if (d.mEntryType == DirectoryEntryTypeEnum.Directory)
                             {
                                 //Selecting if the file/directory matches the criteria of textbox 0
-                                if (TextBoxes[0].Text == "")
+                                if (UIElements.Find(d => d.ID == "Search").Text == "")
                                 {
                                     Items.Add(new Structure(d.mName, d.mFullPath, Opt.Folder));
                                 }
-                                else if(TextBoxes[0].Text != "" && !TextBoxes[0].Text.Contains("."))
+                                else if(UIElements.Find(d => d.ID == "Search").Text != "" && !UIElements.Find(d => d.ID == "Search").Text.Contains("."))
                                 {
-                                    if (d.mName.ToLower().Contains(TextBoxes[0].Text.ToLower()))
+                                    if (d.mName.ToLower().Contains(UIElements.Find(d => d.ID == "Search").Text.ToLower()))
                                     {
                                         Items.Add(new Structure(d.mName, d.mFullPath, Opt.Folder));
                                     }
@@ -304,13 +258,13 @@ namespace CrystalOSAlpha.Applications.FileSys
                             if (d.mEntryType == DirectoryEntryTypeEnum.File)
                             {
                                 //Selecting if the file/directory matches the criteria of textbox 0
-                                if (TextBoxes[0].Text == "" || TextBoxes[0].Text.StartsWith("*") && !TextBoxes[0].Text.Contains("."))
+                                if (UIElements.Find(d => d.ID == "Search").Text == "" || UIElements.Find(d => d.ID == "Search").Text.StartsWith("*") && !UIElements.Find(d => d.ID == "Search").Text.Contains("."))
                                 {
                                     Items.Add(new Structure(d.mName, d.mFullPath, Opt.File));
                                 }
-                                else if (TextBoxes[0].Text.Contains("."))
+                                else if (UIElements.Find(d => d.ID == "Search").Text.Contains("."))
                                 {
-                                    string[] sides = TextBoxes[0].Text.Split(".");
+                                    string[] sides = UIElements.Find(d => d.ID == "Search").Text.Split(".");
                                     if (sides[0] == "*" && d.mName.ToLower().Contains("." + sides[1].ToLower()))
                                     {
                                         Items.Add(new Structure(d.mName, d.mFullPath, Opt.File));
@@ -322,7 +276,7 @@ namespace CrystalOSAlpha.Applications.FileSys
                                 }
                                 else
                                 {
-                                    if (d.mName.ToLower().Contains(TextBoxes[0].Text.ToLower()))
+                                    if (d.mName.ToLower().Contains(UIElements.Find(d => d.ID == "Search").Text.ToLower()))
                                     {
                                         Items.Add(new Structure(d.mName, d.mFullPath, Opt.File));
                                     }
@@ -334,7 +288,7 @@ namespace CrystalOSAlpha.Applications.FileSys
                     {
                         TaskScheduler.Apps.Add(new MsgBox(999, ImprovedVBE.width / 2 - 200, ImprovedVBE.height / 2 - 100, 400, 200, "Error!", ex.Message, icon));
                         Route = "0:\\";
-                        TextBoxes[1].Text = "0:\\";
+                        UIElements.Find(d => d.ID == "Path").Text = "0:\\";
                     }
                     Array.Fill(Main.RawData, ImprovedVBE.colourToNumber(36, 36, 36));
 
@@ -347,7 +301,7 @@ namespace CrystalOSAlpha.Applications.FileSys
                     ImprovedVBE.DrawImageAlpha(ImprovedVBE.ScaleImageStock(Resources.File, 28, 28), 0, 0, File);
 
                     int x_off = 14;
-                    int y_off = 9 - Scroll[0].Value;
+                    int y_off = 9 - UIElements.Find(d => d.ID == "ScrollRight").Value;
                     int indicator = 0;
                     foreach(var entry in Items)
                     {
@@ -393,27 +347,84 @@ namespace CrystalOSAlpha.Applications.FileSys
                     }
                     ImprovedVBE.DrawImage(Main, 126, 77, window);
                     //Render scrollbar
-                    foreach (var vscroll in Scroll)
+                    foreach(var Box in UIElements)
                     {
-                        vscroll.x = width - 30;
-                        vscroll.Height = height - 85;
-                        vscroll.Render(window);
-                    }
-                    foreach(var Box in TextBoxes)
-                    {
-                        switch (Box.ID)
+                        Box.Render(window);
+                        if(Box.TypeOfElement == TypeOfElement.TextBox)
                         {
-                            case "Search":
-                                Box.Width = width - 320;
-                                break;
-                            case "Path":
-                                Box.Width = width - 109;
-                                break;
+                            switch (Box.ID)
+                            {
+                                case "Search":
+                                    Box.Width = width - 320;
+                                    break;
+                                case "Path":
+                                    Box.Width = width - 109;
+                                    break;
+                            }
+                            Box.Render(window);
                         }
-                        Box.Box(window, Box.X, Box.Y);
+                        else if (Box.Clicked == true && Box.TypeOfElement == TypeOfElement.Button)
+                        {
+                            int Col = Box.Color;
+                            Box.Color = Color.White.ToArgb();
+                            Box.Render(window);
+                            Box.Color = Col;
+
+                            switch (Box.ID)
+                            {
+                                case "Home":
+                                    UIElements.Find(d => d.ID == "Path").Text = "0:\\";
+                                    Route = "0:\\";
+                                    break;
+                                case "Wastebasket":
+                                    UIElements.Find(d => d.ID == "Path").Text = "0:\\User\\" + GlobalValues.Username + "\\Wastebasket";
+                                    Route = "0:\\User\\" + GlobalValues.Username + "\\Wastebasket";
+                                    break;
+                                case "Security Area":
+                                    UIElements.Find(d => d.ID == "Path").Text = "0:\\User\\" + GlobalValues.Username + "\\SecurityArea";
+                                    Route = "0:\\User\\" + GlobalValues.Username + "\\SecurityArea";
+                                    break;
+                                case "Back":
+                                    if (History.Count > 0)
+                                    {
+                                        HistoryForward.Add(History[^1]);
+                                        History.RemoveAt(History.Count - 1);
+                                        if (History.Count > 0)
+                                        {
+                                            UIElements.Find(d => d.ID == "Path").Text = History[^1];
+                                            Route = History[^1];
+                                        }
+                                        else
+                                        {
+                                            History.Clear();
+                                            History = new List<string>
+                                        {
+                                            "0:\\"
+                                        };
+                                            UIElements.Find(d => d.ID == "Path").Text = History[^1];
+                                            Route = History[^1];
+                                        }
+                                    }
+                                    break;
+                                case "Forward":
+                                    if (HistoryForward.Count > 0)
+                                    {
+                                        History.Add(HistoryForward[^1]);
+                                        HistoryForward.RemoveAt(HistoryForward.Count - 1);
+                                        UIElements.Find(d => d.ID == "Path").Text = History[^1];
+                                        Route = History[^1];
+                                    }
+                                    break;
+                            }
+                        }
+                        else if(Box.TypeOfElement == TypeOfElement.VerticalScrollbar)
+                        {
+                            Box.X = width - 30;
+                            Box.Height = height - 85;
+                            Box.Render(window);
+                        }
                     }
                     ImprovedVBE.DrawImageAlpha(Logo, width - (int)Logo.Width - 5, 24, window);
-                    temp = false;
                 }
 
                 #region Rename & Create file
@@ -538,7 +549,7 @@ namespace CrystalOSAlpha.Applications.FileSys
                                     }
                                     else if(entry.type == Opt.Folder)
                                     {
-                                        TextBoxes[1].Text = entry.fullPath;
+                                        UIElements.Find(d => d.ID == "Path").Text = entry.fullPath;
                                         Route = entry.fullPath;
                                         HistoryForward.Clear();
                                         History.Add(entry.fullPath);
@@ -559,7 +570,7 @@ namespace CrystalOSAlpha.Applications.FileSys
                         {
                             if (MouseManager.Y > y + 77 + Top && MouseManager.Y < y + 77 + Top + 22)
                             {
-                                TextBoxes[1].Text = i + ":\\";
+                                UIElements.Find(d => d.ID == "Path").Text = i + ":\\";
                                 Route = i + ":\\";
                                 temp = true;
                             }
@@ -577,22 +588,22 @@ namespace CrystalOSAlpha.Applications.FileSys
                                 switch (i)
                                 {
                                     case 0:
-                                        TextBoxes[1].Text = "0:\\User\\" + GlobalValues.Username + "\\Favorites";
+                                        UIElements.Find(d => d.ID == "Path").Text = "0:\\User\\" + GlobalValues.Username + "\\Favorites";
                                         Route = "0:\\User\\" + GlobalValues.Username + "\\Favorites";
                                         temp = true;
                                         break;
                                     case 1:
-                                        TextBoxes[1].Text = "0:\\User\\" + GlobalValues.Username + "\\Documents";
+                                        UIElements.Find(d => d.ID == "Path").Text = "0:\\User\\" + GlobalValues.Username + "\\Documents";
                                         Route = "0:\\User\\" + GlobalValues.Username + "\\Documents";
                                         temp = true;
                                         break;
                                     case 2:
-                                        TextBoxes[1].Text = "0:\\User\\" + GlobalValues.Username + "\\Pictures";
+                                        UIElements.Find(d => d.ID == "Path").Text = "0:\\User\\" + GlobalValues.Username + "\\Pictures";
                                         Route = "0:\\User\\" + GlobalValues.Username + "\\Pictures";
                                         temp = true;
                                         break;
                                     case 3:
-                                        TextBoxes[1].Text = "0:\\User\\" + GlobalValues.Username + "\\Films";
+                                        UIElements.Find(d => d.ID == "Path").Text = "0:\\User\\" + GlobalValues.Username + "\\Films";
                                         Route = "0:\\User\\" + GlobalValues.Username + "\\Films";
                                         temp = true;
                                         break;
@@ -776,10 +787,10 @@ namespace CrystalOSAlpha.Applications.FileSys
                                     break;
                                 case 1:
                                     //Paste a file
-                                    if(TextBoxes[1].Text.Length > 3)
+                                    if(UIElements.Find(d => d.ID == "Path").Text.Length > 3)
                                     {
-                                        File.Create(TextBoxes[1].Text + "\\" + ToCopy.Split("\\")[^1]);
-                                        File.WriteAllText(TextBoxes[1].Text + "\\" + ToCopy.Split("\\")[^1], File.ReadAllText(ToCopy));
+                                        File.Create(UIElements.Find(d => d.ID == "Path").Text + "\\" + ToCopy.Split("\\")[^1]);
+                                        File.WriteAllText(UIElements.Find(d => d.ID == "Path").Text + "\\" + ToCopy.Split("\\")[^1], File.ReadAllText(ToCopy));
                                         if(Cut == true)
                                         {
                                             File.Delete(ToCopy);
@@ -788,8 +799,8 @@ namespace CrystalOSAlpha.Applications.FileSys
                                     }
                                     else
                                     {
-                                        File.Create(TextBoxes[1].Text + ToCopy.Split("\\")[^1]);
-                                        File.WriteAllText(TextBoxes[1].Text + ToCopy.Split("\\")[^1], File.ReadAllText(ToCopy));
+                                        File.Create(UIElements.Find(d => d.ID == "Path").Text + ToCopy.Split("\\")[^1]);
+                                        File.WriteAllText(UIElements.Find(d => d.ID == "Path").Text + ToCopy.Split("\\")[^1], File.ReadAllText(ToCopy));
                                         if (Cut == true)
                                         {
                                             File.Delete(ToCopy);

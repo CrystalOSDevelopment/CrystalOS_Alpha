@@ -2,6 +2,7 @@
 using Cosmos.System.Graphics;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
+using CrystalOSAlpha.System32;
 using CrystalOSAlpha.UI_Elements;
 using System;
 using System.Collections.Generic;
@@ -46,14 +47,12 @@ namespace CrystalOSAlpha.Applications.Clock
         
         public List<int> StopWatchLaps = new List<int>();
         public List<Tuple<int, int>> Positions = new List<Tuple<int, int>>();
-
-        public List<Button_prop> Buttons = new List<Button_prop>();
-        public List<TextBox> TextBoxes = new List<TextBox>();
+        public List<UIElementHandler> UIElements = new List<UIElementHandler>();
         #endregion Extra
 
         public void App()
         {
-            int YPos = height / 2 - 3;
+            int YPos = height / 2 - 8;
             string[] Options = { "Clock", "Stopwatch", "Timer" };
             if(width >= 350)
             {
@@ -62,22 +61,6 @@ namespace CrystalOSAlpha.Applications.Clock
             if (once == true)
             {
                 #region Fix Windowsize
-                //if (width < 300)
-                //{
-                //    width = 300;
-                //}
-                //if(width > 400)
-                //{
-                //    width = 400;
-                //}
-                //if(height < 300)
-                //{
-                //    height = 300;
-                //}
-                //if(height > 400)
-                //{
-                //    height = 400;
-                //}
                 if(width != 300)
                 {
                     width = 300;
@@ -91,12 +74,11 @@ namespace CrystalOSAlpha.Applications.Clock
                 Bitmap back = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
                 (canvas, back, window) = WindowGenerator.Generate(x, y, width, height, CurrentColor, name);
 
-                Buttons.Clear();
-                TextBoxes.Clear();
+                UIElements.Clear();
                 if(Tab == "Clock")
                 {
                     int Radius = Math.Min(width, height) / 2 - 52;
-                    YPos = height / 2 - 8;//height / 2 + 12
+                    YPos = height / 2 - 8;
                     ImprovedVBE.DrawFilledEllipse(canvas, width / 2, YPos, Radius, Radius, ImprovedVBE.colourToNumber(20, 20, 20));
                     for (int hour = 1; hour <= 12; hour++)
                     {
@@ -131,14 +113,14 @@ namespace CrystalOSAlpha.Applications.Clock
                 }
                 else if(Tab == "Stopwatch")
                 {
-                    Buttons.Add(new Button_prop(10, height - 120, width / 2 - 20, 25, "Start/Stop", 1, "StartStop"));
-                    Buttons.Add(new Button_prop(width / 2 + 10, height - 120, width / 2 - 20, 25, "Mark time", 1, "Mark"));
+                    UIElements.Add(new Button(10, height - 120, width / 2 - 20, 25, "Start/Stop", 1, "StartStop"));
+                    UIElements.Add(new Button(width / 2 + 10, height - 120, width / 2 - 20, 25, "Mark time", 1, "Mark"));
                 }
                 else if(Tab == "Timer")
                 {
-                    Buttons.Add(new Button_prop(10, height - 120, width / 2 - 20, 25, "Start/Stop", 1, "StartStopTimer"));
-                    Buttons.Add(new Button_prop(width / 2 + 10, height - 120, width / 2 - 20, 25, "Pause", 1, "Pause"));
-                    TextBoxes.Add(new TextBox(10, 50, 200, 25, ImprovedVBE.colourToNumber(60, 60, 60), "", "00:00:00", TextBox.Options.left, "Time"));
+                    UIElements.Add(new Button(10, height - 120, width / 2 - 20, 25, "Start/Stop", 1, "StartStopTimer"));
+                    UIElements.Add(new Button(width / 2 + 10, height - 120, width / 2 - 20, 25, "Pause", 1, "Pause"));
+                    UIElements.Add(new TextBox(10, 50, 200, 25, ImprovedVBE.colourToNumber(60, 60, 60), "", "00:00:00", TextBox.Options.left, "Time"));
                 }
 
                 int offset = 10;
@@ -161,19 +143,6 @@ namespace CrystalOSAlpha.Applications.Clock
                 temp = true;
             }
 
-            foreach (var Box in TextBoxes)
-            {
-                if (Box.Clciked(x + Box.X, y + Box.Y) == true && Clicked == false)
-                {
-                    foreach (var box2 in TextBoxes)
-                    {
-                        box2.Selected = false;
-                    }
-                    Clicked = true;
-                    Box.Selected = true;
-                }
-            }
-
             if (TaskScheduler.Apps[^1] == this)
             {
                 KeyEvent key;
@@ -181,7 +150,7 @@ namespace CrystalOSAlpha.Applications.Clock
                 {
                     if (key.Key == ConsoleKeyEx.Enter)
                     {
-                        string[] Vals = TextBoxes[0].Text.Split(":");
+                        string[] Vals = UIElements.Find(d => d.ID == "Time").Text.Split(":");
                         if (Vals.Length == 0)
                         {
 
@@ -202,11 +171,11 @@ namespace CrystalOSAlpha.Applications.Clock
                     }
                     else
                     {
-                        foreach (var box in TextBoxes)
+                        foreach (var element in UIElements)
                         {
-                            if (box.Selected == true)
+                            if (element.ID == "Time")
                             {
-                                box.Text = Keyboard.HandleKeyboard(box.Text, key);
+                                element.Text = Keyboard.HandleKeyboard(element.Text, key);
                                 temp = true;
                             }
                         }
@@ -288,7 +257,6 @@ namespace CrystalOSAlpha.Applications.Clock
                         ImprovedVBE.DrawFilledRectangle(window, Color.Blue.ToArgb(), Positions[1].Item1, height - 48, Positions[1].Item2, 3);
                         break;
                     case "Timer":
-                        TextBoxes[0].Box(window, TextBoxes[0].X, TextBoxes[0].Y);
                         int RemainingHour = RemainingTime / 3600;
                         int RemainingMinute = (RemainingTime - RemainingHour * 3600) / 60;
                         int RemainingSecond = RemainingTime - RemainingHour * 3600 - RemainingMinute * 60;
@@ -328,49 +296,60 @@ namespace CrystalOSAlpha.Applications.Clock
                 temp = false;
             }
 
-            foreach (var button in Buttons)
+            foreach (var element in UIElements)
             {
                 if (MouseManager.MouseState == MouseState.Left)
                 {
-                    if (MouseManager.X > x + button.X && MouseManager.X < x + button.X + button.Width)
+                    if (MouseManager.X > x + element.X && MouseManager.X < x + element.X + element.Width)
                     {
-                        if (MouseManager.Y > y + button.Y && MouseManager.Y < y + button.Y + button.Height)
+                        if (MouseManager.Y > y + element.Y && MouseManager.Y < y + element.Y + element.Height)
                         {
                             if (Clicked == false)
                             {
-                                button.Clicked = true;
-                                temp = true;
-                                Clicked = true;
-                                switch (button.ID)
+                                switch (element.TypeOfElement)
                                 {
-                                    case "StartStop":
-                                        StartCount = !StartCount;
-                                        break;
-                                    case "Mark":
-                                        StopWatchLaps.Add(Stopwatch);
-                                        break;
-                                    case "StartStopTimer":
-                                        string[] Vals = TextBoxes[0].Text.Split(":");
-                                        if(Vals.Length == 0)
+                                    case TypeOfElement.Button:
+                                        element.Clicked = true;
+                                        temp = true;
+                                        Clicked = true;
+                                        switch (element.ID)
                                         {
+                                            case "StartStop":
+                                                StartCount = !StartCount;
+                                                break;
+                                            case "Mark":
+                                                StopWatchLaps.Add(Stopwatch);
+                                                break;
+                                            case "StartStopTimer":
+                                                string[] Vals = UIElements.Find(d => d.ID == "Time").Text.Split(":");
+                                                if (Vals.Length == 0)
+                                                {
 
+                                                }
+                                                else if (Vals.Length == 1)
+                                                {
+                                                    RemainingTime = int.Parse(Vals[0]) * 3600;
+                                                }
+                                                else if (Vals.Length == 2)
+                                                {
+                                                    RemainingTime = int.Parse(Vals[0]) * 3600 + int.Parse(Vals[1]) * 60;
+                                                }
+                                                else if (Vals.Length == 3)
+                                                {
+                                                    RemainingTime = int.Parse(Vals[0]) * 3600 + int.Parse(Vals[1]) * 60 + int.Parse(Vals[2]);
+                                                }
+                                                CountBack = true;
+                                                break;
+                                            case "Pause":
+                                                CountBack = !CountBack;
+                                                break;
                                         }
-                                        else if (Vals.Length == 1)
-                                        {
-                                            RemainingTime = int.Parse(Vals[0]) * 3600;
-                                        }
-                                        else if(Vals.Length == 2)
-                                        {
-                                            RemainingTime = int.Parse(Vals[0]) * 3600 + int.Parse(Vals[1]) * 60;
-                                        }
-                                        else if(Vals.Length == 3)
-                                        {
-                                            RemainingTime = int.Parse(Vals[0]) * 3600 + int.Parse(Vals[1]) * 60 + int.Parse(Vals[2]);
-                                        }
-                                        CountBack = true;
                                         break;
-                                    case "Pause":
-                                        CountBack = !CountBack;
+
+                                    case TypeOfElement.TextBox:
+                                        element.Clicked = true;
+                                        temp = true;
+                                        Clicked = true;
                                         break;
                                 }
                             }
@@ -379,25 +358,32 @@ namespace CrystalOSAlpha.Applications.Clock
                 }
                 else if (MouseManager.MouseState == MouseState.None)
                 {
-                    if (button.Clicked == true)
+                    if (element.Clicked == true)
                     {
-                        button.Clicked = false;
+                        element.Clicked = false;
                         once = true;
                     }
 
                 }
-                if (button.Clicked == true)
+                if (element.Clicked == true)
                 {
-                    Button.Button_render(window, button.X, button.Y, button.Width, button.Height, Color.White.ToArgb(), button.Text);
-
-                    switch (button.ID)
+                    switch (element.TypeOfElement)
                     {
+                        case TypeOfElement.Button:
+                            int Col = element.Color;
+                            element.Color = Color.White.ToArgb();
+                            element.Render(window);
+                            element.Color = Col;
+                            break;
 
+                        case TypeOfElement.TextBox:
+                            element.Render(window);
+                            break;
                     }
                 }
                 else
                 {
-                    Button.Button_render(window, button.X, button.Y, button.Width, button.Height, button.Color, button.Text);
+                    element.Render(window);
                 }
             }
 

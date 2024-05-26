@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using CrystalOSAlpha.UI_Elements;
 using System.Drawing;
 using CrystalOSAlpha.Applications;
+using CrystalOSAlpha.System32;
 
 namespace CrystalOSAlpha.Graphics.Widgets
 {
@@ -44,7 +45,7 @@ namespace CrystalOSAlpha.Graphics.Widgets
         
         public Bitmap Back;
 
-        public List<Button_prop> Buttons = new List<Button_prop>();
+        public List<Button> Buttons = new List<Button>();
         public List<Dropdown> dropdowns = new List<Dropdown>();
         public List<values> value = new List<values>();
 
@@ -53,13 +54,7 @@ namespace CrystalOSAlpha.Graphics.Widgets
             string output = "Conversion tool";
             if(initial == true)
             {
-                Buttons.Add(new Button_prop((200 - sizeDec) / 2 - 40, 130, 80, 20, "Convert", 1));
-                Dropdown d = new Dropdown(58, 30, 100, 20, "First");
-                dropdowns.Add(d);
-
-                Dropdown c = new Dropdown(58, 80, 100, 20, "Second");
-                dropdowns.Add(c);
-
+                Buttons.Add(new Button((200 - sizeDec) / 2 - 40, 130, 80, 20, "Convert", 1));
                 value.Add(new values(false, "Mile", "First"));
                 value.Add(new values(true, "Hour", "First"));
                 value.Add(new values(false, "Kilometre", "First"));
@@ -70,6 +65,12 @@ namespace CrystalOSAlpha.Graphics.Widgets
                 value.Add(new values(false, "Mile", "Second"));
                 value.Add(new values(false, "Hour", "Second"));
 
+                Dropdown d = new Dropdown(58, 30, 100, 20, "First", value);
+                dropdowns.Add(d);
+
+                Dropdown c = new Dropdown(58, 80, 100, 20, "Second", value);
+                dropdowns.Add(c);
+
                 initial = false;
             }
             if (Get_Back == true)
@@ -79,7 +80,7 @@ namespace CrystalOSAlpha.Graphics.Widgets
                     sizeDec = 40;
                 }
                 bool extraction = Buttons[0].Clicked;
-                Buttons[0] = new Button_prop((200 - sizeDec) / 2 - 40, 130, 80, 20, "Convert", 1);
+                Buttons[0] = new Button((200 - sizeDec) / 2 - 40, 130, 80, 20, "Convert", 1);
                 Back = Base.Widget_Back(200 - sizeDec, 200 - sizeDec, ImprovedVBE.colourToNumber(GlobalValues.R, GlobalValues.G, GlobalValues.B));
                 Back = ImprovedVBE.EnableTransparency(Back, x, y, Back);
 
@@ -95,7 +96,10 @@ namespace CrystalOSAlpha.Graphics.Widgets
                 {
                     if (button.Clicked == true)
                     {
-                        Button.Button_render(Back, button.X, button.Y, button.Width, button.Height, Color.White.ToArgb(), button.Text);
+                        int Col = button.Color;
+                        button.Color = Color.White.ToArgb();
+                        button.Render(Back);
+                        button.Color = Col;
 
                         switch (button.Text)
                         {
@@ -158,7 +162,7 @@ namespace CrystalOSAlpha.Graphics.Widgets
                     }
                     else
                     {
-                        Button.Button_render(Back, button.X, button.Y, button.Width, button.Height, button.Color, button.Text);
+                        button.Render(Back);
                     }
                     if (MouseManager.MouseState == MouseState.None)
                     {
@@ -167,9 +171,11 @@ namespace CrystalOSAlpha.Graphics.Widgets
                 }
 
                 BitFont.DrawBitFontString(Back, "ArialCustomCharset16", GlobalValues.c, "From: ", 10, 30);
-                TextBox.Box(Back, 10, 55, 180 - sizeDec, 20, ImprovedVBE.colourToNumber(60, 60, 60), input, "Input", TextBox.Options.left);
+                TextBox tb1 = new TextBox(10, 55, 180 - sizeDec, 20, ImprovedVBE.colourToNumber(60, 60, 60), input, "Input", TextBox.Options.left, "TextBox1");
+                tb1.Render(Back);
                 BitFont.DrawBitFontString(Back, "ArialCustomCharset16", GlobalValues.c, "To: ", 10, 80);
-                TextBox.Box(Back, 10, 105, 180 - sizeDec, 20, ImprovedVBE.colourToNumber(60, 60, 60), result, "Output", TextBox.Options.left);
+                TextBox tb2 = new TextBox(10, 105, 180 - sizeDec, 20, ImprovedVBE.colourToNumber(60, 60, 60), result, "Output", TextBox.Options.left, "textBox2");
+                tb2.Render(Back);
                 BitFont.DrawBitFontString(Back, "ArialCustomCharset16", GlobalValues.c, output, ((100 - sizeDec / 2) - output.Length * 4), 3);
                 int ind = 0;
                 foreach (var Dropd in dropdowns)
@@ -203,7 +209,7 @@ namespace CrystalOSAlpha.Graphics.Widgets
                     }
                     if (render == true)
                     {
-                        Dropd.Draw(Back, value);
+                        Dropd.Render(Back);
                     }
                     ind++;
                 }
@@ -331,7 +337,7 @@ namespace CrystalOSAlpha.Graphics.Widgets
                         }
                     }
                 }
-                Dropd.Render(x, y);
+                //Dropd.Render(x, y);
             }
 
             ImprovedVBE.DrawImageAlpha(Back, x, y, ImprovedVBE.cover);

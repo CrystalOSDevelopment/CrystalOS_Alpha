@@ -13,6 +13,9 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using CrystalOSAlpha.System32;
+using CrYstalOSAlpha.UI_Elements;
+using System.ComponentModel;
 
 namespace CrystalOSAlpha.Applications.CarbonIDE
 {
@@ -54,8 +57,8 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public Bitmap back_canvas;
         public Bitmap window { get; set; }
 
-        public List<Button_prop> Buttons = new List<Button_prop>();
-        public List<Scrollbar_Values> Scroll = new List<Scrollbar_Values>();
+        public List<Button> Buttons = new List<Button>();
+        public List<Scrollbar> Scroll = new List<Scrollbar>();
         public List<Dropdown> dropdowns = new List<Dropdown>();
         public List<values> value = new List<values>();
         public List<Structure> CSharpFiles = new List<Structure>();
@@ -67,18 +70,18 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 Buttons.Clear();
                 if(typeOf == "Opening")
                 {
-                    Buttons.Add(new Button_prop(496, 129, 175, 60, "Create a new project", 1));
-                    Buttons.Add(new Button_prop(496, 226, 175, 60, "Import from filesytem", 1));
+                    Buttons.Add(new Button(496, 129, 175, 60, "Create a new project", 1));
+                    Buttons.Add(new Button(496, 226, 175, 60, "Import from filesytem", 1));
                 }
                 else if(typeOf == "New Project")
                 {
-                    Buttons.Add(new Button_prop(537, 381, 70, 25, "Back", 1));
-                    Buttons.Add(new Button_prop(620, 381, 70, 25, "Create", 1));
-
-                    dropdowns.Add(new Dropdown(10, 167, 325, 25, "Options"));
+                    Buttons.Add(new Button(537, 381, 70, 25, "Back", 1));
+                    Buttons.Add(new Button(620, 381, 70, 25, "Create", 1));
 
                     value.Add(new values(true, "Program mode: Terminal", "Options"));
                     value.Add(new values(false, "Program mode: Graphical", "Options"));
+
+                    dropdowns.Add(new Dropdown(10, 167, 325, 25, "Options", value));
                 }
 
                 foreach (DirectoryEntry dir in Kernel.fs.GetDirectoryListing("0:\\User\\Source"))
@@ -222,18 +225,23 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
                     BitFont.DrawBitFontString(window, "ArialCustomCharset16", Color.White, "Project name:", 10, 65);
 
-                    TextBox.Box(window, 10, 85, 200, 20, ImprovedVBE.colourToNumber(60, 60, 60), namedProject, "Example", TextBox.Options.left);
+                    TextBox tb1 = new TextBox(10, 85, 200, 20, ImprovedVBE.colourToNumber(60, 60, 60), namedProject, "Example", TextBox.Options.left, "TextBox1");
+                    tb1.Render(window);
 
                     BitFont.DrawBitFontString(window, "ArialCustomCharset16", Color.White, "Project location:", 10, 110);
 
-                    TextBox.Box(window, 10, 130, 200, 20, ImprovedVBE.colourToNumber(60, 60, 60), SourceofProject, "0:\\sources", TextBox.Options.left);
+                    TextBox tb2 = new TextBox(10, 130, 200, 20, ImprovedVBE.colourToNumber(60, 60, 60), SourceofProject, "0:\\sources", TextBox.Options.left, "TextBox2");
+                    tb2.Render(window);
                 }
 
                 foreach (var button in Buttons)
                 {
                     if (button.Clicked == true)
                     {
-                        Button.Button_render(window, button.X, button.Y, button.Width, button.Height, Color.White.ToArgb(), button.Text);
+                        int Col = button.Color;
+                        button.Color = Color.White.ToArgb();
+                        button.Render(window);
+                        button.Color = Col;
 
                         switch (button.Text)
                         {
@@ -302,7 +310,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     }
                     else
                     {
-                        Button.Button_render(window, button.X, button.Y, button.Width, button.Height, button.Color, button.Text);
+                        button.Render(window);
                     }
                     if (MouseManager.MouseState == MouseState.None)
                     {
@@ -342,7 +350,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     }
                     if (render == true)
                     {
-                        Dropd.Draw(window, value);
+                        Dropd.Render(window);
                     }
                     ind++;
                 }
@@ -470,7 +478,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                             }
                         }
                     }
-                    Dropd.Render(x, y);
+                    //Dropd.Render(x, y);
                 }
             }
             #endregion Mechanical

@@ -4,11 +4,50 @@ using System.Drawing;
 
 namespace CrystalOSAlpha.UI_Elements
 {
-    class Button
+    class Button : UIElementHandler
     {
+        public int X { get; set; }
+        public int Y { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
+        public string Text { get; set; }
+        public int Color { get; set; }
+        public bool Clickable { get; set; }
+        public bool Clicked { get; set; }
+        public string ID { get; set; }
+        public TypeOfElement TypeOfElement { get; set; }
+        public int Pos { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public int Value { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public float Sensitivity { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public int LockedPos { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public int MinVal { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public int MaxVal { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+
+        public Button(int X, int Y, int Width, int Height, string Text, int Color)
+        {
+            this.X = X;
+            this.Y = Y;
+            this.Width = Width;
+            this.Height = Height;
+            this.Text = Text;
+            this.Color = Color;
+            this.TypeOfElement = TypeOfElement.Button;
+        }
+        public Button(int X, int Y, int Width, int Height, string Text, int Color, string ID)
+        {
+            this.X = X;
+            this.Y = Y + 22;
+            this.Width = Width;
+            this.Height = Height;
+            this.Text = Text;
+            this.Color = Color;
+            this.ID = ID;
+            this.TypeOfElement = TypeOfElement.Button;
+        }
+
         public static int offset = 0;
         public static Bitmap canvas_Blank;
-        public static Bitmap Button_render(Bitmap canvas, int X, int Y, int Width, int Height, int Color, string Text)
+        public void Render(Bitmap canvas)
         {
             canvas_Blank = new Bitmap((uint)Width, (uint)Height, ColorDepth.ColorDepth32);
             ImprovedVBE.DrawFilledRectangle(canvas, ImprovedVBE.colourToNumber(36, 36, 36), X, Y, Width, Height, false);
@@ -24,39 +63,11 @@ namespace CrystalOSAlpha.UI_Elements
                 offset = BitFont.DrawBitFontString(canvas_Blank, "ArialCustomCharset16", System.Drawing.Color.White, Text, Width - (Text.Length * 6) - 3, Height / 2 - 8);
                 BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", ComplimentaryColor.Generate(Color), Text, X + (Width / 2) - (offset / 2), Y + Height / 2 - (Text.Split('\n').Length * 9));
             }
-            return canvas;
         }
-    }
-    class Button_prop
-    {
 
-        public int X { get; set; }
-        public int Y { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
-        public string Text { get; set; }
-        public int Color {get; set;}
-        public bool Clickable { get; set;}
-        public bool Clicked = false;
-        public string ID { get; set; }
-        public Button_prop(int X, int Y, int Width, int Height, string Text, int Color)
+        public bool CheckClick(int X, int Y)
         {
-            this.X = X;
-            this.Y = Y;
-            this.Width = Width;
-            this.Height = Height;
-            this.Text = Text;
-            this.Color = Color;
-        }
-        public Button_prop(int X, int Y, int Width, int Height, string Text, int Color, string ID)
-        {
-            this.X = X;
-            this.Y = Y + 22;
-            this.Width = Width;
-            this.Height = Height;
-            this.Text = Text;
-            this.Color = Color;
-            this.ID = ID;
+            throw new System.NotImplementedException();
         }
     }
 

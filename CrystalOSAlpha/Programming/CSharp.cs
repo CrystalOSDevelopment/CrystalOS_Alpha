@@ -17,6 +17,7 @@ using System.Linq;
 using TaskScheduler = CrystalOSAlpha.Graphics.TaskScheduler;
 using CrystalOSAlpha.Applications.Calculator;
 using System.Drawing;
+using CrYstalOSAlpha.UI_Elements;
 
 namespace CrystalOSAlpha.Programming
 {
@@ -58,11 +59,11 @@ namespace CrystalOSAlpha.Programming
 
         //For graphical use:
         #region UI_Elements
-        public List<Button_prop> Button = new List<Button_prop>();
+        public List<Button> Button = new List<Button>();
         public List<Slider> Slider = new List<Slider>();
         public List<CheckBox> CheckBox = new List<CheckBox>();
         public List<Dropdown> Dropdown = new List<Dropdown>();
-        public List<Scrollbar_Values> Scroll = new List<Scrollbar_Values>();
+        public List<Scrollbar> Scroll = new List<Scrollbar>();
         public List<TextBox> TextBox = new List<TextBox>();
         public List<label> Label = new List<label>();
         public List<Table> Tables = new List<Table>();

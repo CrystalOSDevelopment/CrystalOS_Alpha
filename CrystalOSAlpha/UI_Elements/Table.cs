@@ -2,11 +2,10 @@
 using CrystalOSAlpha.Graphics.Engine;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 
 namespace CrystalOSAlpha.UI_Elements
 {
-    class Table
+    class Table : UIElementHandler
     {
         public int Width { get; set; } 
         public int Height { get; set; } 
@@ -19,7 +18,16 @@ namespace CrystalOSAlpha.UI_Elements
         public string ID { get; set; }
         public int XOffset = 0;
         public int YOffset = 0;
-        public bool Clicked = false;
+        public bool Clicked { get; set; }
+        public string Text { get; set; }
+        public int Color { get; set; }
+        public TypeOfElement TypeOfElement { get; set; }
+        public int Pos { get; set; }
+        public int Value { get; set; }
+        public float Sensitivity { get; set; }
+        public int LockedPos { get; set; }
+        public int MinVal { get; set; }
+        public int MaxVal { get; set; }
 
         public Bitmap Canvas;
 
@@ -83,12 +91,12 @@ namespace CrystalOSAlpha.UI_Elements
                 if(c.Selected == true)
                 {
                     ImprovedVBE.DrawFilledRectangle(OnTo, ImprovedVBE.colourToNumber(255, 255, 255), X + c.X * TableWidth / Width + 2 - 5, Y + c.Y * 25 + 2 - 5, TableWidth / Width - 4, 22, false);
-                    BitFont.DrawBitFontString(OnTo, "ArialCustomCharset16", Color.Black, c.Content, X + c.X * TableWidth / Width, Y + c.Y * 25);
+                    BitFont.DrawBitFontString(OnTo, "ArialCustomCharset16", System.Drawing.Color.Black, c.Content, X + c.X * TableWidth / Width, Y + c.Y * 25);
                 }
                 else
                 {
                     ImprovedVBE.DrawFilledRectangle(OnTo, ImprovedVBE.colourToNumber(50, 50, 50), X + c.X * TableWidth / Width + 2 - 5, Y + c.Y * 25 + 2 - 5, TableWidth / Width - 4, 22, false);
-                    BitFont.DrawBitFontString(OnTo, "ArialCustomCharset16", Color.White, c.Content, X + c.X * TableWidth / Width, Y + c.Y * 25);
+                    BitFont.DrawBitFontString(OnTo, "ArialCustomCharset16", System.Drawing.Color.White, c.Content, X + c.X * TableWidth / Width, Y + c.Y * 25);
                 }
             }
         }
@@ -107,12 +115,12 @@ namespace CrystalOSAlpha.UI_Elements
                     if (c.Selected == true)
                     {
                         ImprovedVBE.DrawFilledRectangle(Canvas, ImprovedVBE.colourToNumber(255, 255, 255), X + c.X * TableWidth / Width + 2 - 5 - XOffset, Y + c.Y * TableHeight / Height + 2 - 5 - YOffset, TableWidth / Width - 4, TableHeight / Height - 3, false);
-                        BitFont.DrawBitFontString(Canvas, "ArialCustomCharset16", Color.Black, c.Content, X + c.X * TableWidth / Width - XOffset, Y + c.Y * TableHeight / Height - YOffset);
+                        BitFont.DrawBitFontString(Canvas, "ArialCustomCharset16", System.Drawing.Color.Black, c.Content, X + c.X * TableWidth / Width - XOffset, Y + c.Y * TableHeight / Height - YOffset);
                     }
                     else
                     {
                         ImprovedVBE.DrawFilledRectangle(Canvas, ImprovedVBE.colourToNumber(50, 50, 50), X + c.X * TableWidth / Width + 2 - 5 - XOffset, Y + c.Y * TableHeight / Height + 2 - 5 - YOffset, TableWidth / Width - 4, TableHeight / Height - 3, false);
-                        BitFont.DrawBitFontString(Canvas, "ArialCustomCharset16", Color.White, c.Content, X + c.X * TableWidth / Width - XOffset, Y + c.Y * TableHeight / Height - YOffset);
+                        BitFont.DrawBitFontString(Canvas, "ArialCustomCharset16", System.Drawing.Color.White, c.Content, X + c.X * TableWidth / Width - XOffset, Y + c.Y * TableHeight / Height - YOffset);
                     }
                 }
             }
@@ -153,6 +161,11 @@ namespace CrystalOSAlpha.UI_Elements
                 v.Selected = false;
             }
             Cells.Find(d => d.X == Left && d.Y == Top).Selected = true;
+        }
+
+        public bool CheckClick(int X, int Y)
+        {
+            throw new NotImplementedException();
         }
     }
     class Cell

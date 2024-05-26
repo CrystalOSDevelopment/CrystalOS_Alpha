@@ -3,11 +3,10 @@ using Cosmos.System.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 
 namespace CrystalOSAlpha.UI_Elements
 {
-    class Dropdown
+    class Dropdown : UIElementHandler
     {
         public bool Clicked { get; set; }
         public int X { get; set; }
@@ -15,10 +14,23 @@ namespace CrystalOSAlpha.UI_Elements
         public int Width { get; set; }
         public int Height { get; set; }
         public string ID { get; set; }
+        public string Text { get; set; }
+        public int Color { get; set; }
+        public TypeOfElement TypeOfElement { get; set; }
+        public int Pos { get; set; }
+        public int Value { get; set; }
+        public float Sensitivity { get; set; }
+        public int LockedPos { get; set; }
+        public int MinVal { get; set; }
+        public int MaxVal { get; set; }
+
         public Bitmap canv;
         public Bitmap Drop;
-        public Bitmap Draw(Bitmap canvas, List<values> v)
+        public List<values> v;
+        public bool DisableClick = false;
+        public void Render(Bitmap canvas)
         {
+            TypeOfElement = TypeOfElement.DropDown;
             canv = new Bitmap((uint)Width, (uint)Height, ColorDepth.ColorDepth32);
             Array.Fill(canv.RawData, ImprovedVBE.colourToNumber(36, 36, 36));
             ImprovedVBE.DrawFilledRectangle(canv, ImprovedVBE.colourToNumber(60, 60, 60), 2, 2, Width - 4, Height - 4, false);
@@ -26,7 +38,8 @@ namespace CrystalOSAlpha.UI_Elements
             Array.Fill(Drop.RawData, ImprovedVBE.colourToNumber(36, 36, 36));
             ImprovedVBE.DrawFilledRectangle(Drop, ImprovedVBE.colourToNumber(60, 60, 60), 2, 2, Width - 4, 100 - 4, false);
 
-            Button.Button_render(canv, (int)(canv.Width - 30), 0, 30, (int)canv.Height, ImprovedVBE.colourToNumber(60, 60, 60), "exp");
+            Button btn = new Button((int)(canv.Width - 30), 0, 30, (int)canv.Height, "exp", ImprovedVBE.colourToNumber(60, 60, 60));
+            btn.Render(canv);
 
             string temp = "";
             int t = 0;
@@ -43,6 +56,7 @@ namespace CrystalOSAlpha.UI_Elements
                     goto a;
                 }
             }
+            Text = temp;
             if (temp.Length > 7 && Width - 20 < temp.Length * 8)
             {
                 temp = temp.Remove(7);
@@ -59,7 +73,7 @@ namespace CrystalOSAlpha.UI_Elements
                         {
                             ImprovedVBE.DrawFilledRectangle(Drop, ImprovedVBE.colourToNumber(90, 90, 90), 2, top, Width - 4, 20, false);
                         }
-                        BitFont.DrawBitFontString(Drop, "ArialCustomCharset16", Color.White, d.content, 3, top);
+                        BitFont.DrawBitFontString(Drop, "ArialCustomCharset16", System.Drawing.Color.White, d.content, 3, top);
                         top += 20;
                     }
                 }
@@ -68,54 +82,72 @@ namespace CrystalOSAlpha.UI_Elements
 
             BitFont.DrawBitFontString(canv, "ArialCustomCharset16", System.Drawing.Color.White, temp, 5, Height / 2 - 8);
             ImprovedVBE.DrawImageAlpha(canv, X, Y, canvas);
-            return canvas;
         }
-        public void Render(int x, int y)
+        public bool CheckClick(int x, int y)
         {
             if(Clicked == true)
             {
-                ImprovedVBE.DrawImageAlpha(Drop, x + X, y + Y + Height, ImprovedVBE.cover);
-            }
-        }
-        public bool CheckActivity(int x, int y)
-        {
-            if(MouseManager.MouseState == MouseState.Left)
-            {
-                /*
-                if(MouseManager.X > X && MouseManager.X < X + Width)
+                if(MouseManager.X > x + X && MouseManager.X < x + X + Width)
                 {
-                    if (MouseManager.Y > Y && MouseManager.Y < Y + Height)
+                    if(MouseManager.Y > y + Y + Height && MouseManager.Y < y + Y + Height + Drop.Height)
                     {
-                        return true;
+                        foreach(var vals in v)
+                        {
+                            vals.Highlighted = false;
+                        }
+                        int Index = (int)Math.Floor(((double)MouseManager.Y - (double)y - (double)Y - (double)Height) / 20);
+                        if(Index >= 0 && Index < v.Count)
+                        {
+                            v[Index].Highlighted = true;
+                        }
+                        else
+                        {
+                            v[0].Highlighted = true;
+                        }
+                        if(MouseManager.MouseState == MouseState.Left)
+                        {
+                            Clicked = false;
+                        }
                     }
                 }
-                */
+            }
+            if (MouseManager.MouseState == MouseState.Left)
+            {
                 if (MouseManager.X > x + X + (canv.Width - 30) && MouseManager.X < x + X + canv.Width)
                 {
                     if (MouseManager.Y > y + Y && MouseManager.Y < y + Y + Height)
                     {
-                        if(Clicked == true)
+                        if(DisableClick == false)
                         {
-                            Clicked = false;
-                        }
-                        else
-                        {
-                            Clicked = true;
+                            if (Clicked == true)
+                            {
+                                Clicked = false;
+                            }
+                            else
+                            {
+                                Clicked = true;
+                            }
+                            DisableClick = true;
                         }
                         return true;
                     }
                 }
             }
+            else
+            {
+                DisableClick = false;
+            }
             return false;
         }
 
-        public Dropdown(int x, int y, int width, int height, string iD)
+        public Dropdown(int x, int y, int width, int height, string iD, List<values> V)
         {
             X = x;
             Y = y;
             Width = width;
             Height = height;
             ID = iD;
+            v = V;
         }
     }
 

@@ -32,7 +32,7 @@ namespace CrystalOSAlpha.Graphics
 
         public static List<App> Apps = new List<App>();
         public static List<App> AppsQuick = new List<App>();
-        public static List<Button_prop> Buttons = new List<Button_prop>();
+        public static List<Button> Buttons = new List<Button>();
         public static void Exec()
         {
             Random rnd = new Random();
@@ -69,6 +69,10 @@ namespace CrystalOSAlpha.Graphics
                 if (app.y <= 1)
                 {
                     app.y = 1;
+                }
+                if(app.y < TaskManager.TaskBar.Height && GlobalValues.TaskBarType == "Nostalgia")
+                {
+                    app.y = (int)TaskManager.TaskBar.Height;
                 }
                 if ((TaskManager.MenuOpened == false || TaskManager.calendar == false) && TaskManager.clicked == false)
                 {
@@ -345,14 +349,17 @@ namespace CrystalOSAlpha.Graphics
                                     }
                                 }
                             }
-                            Button.Button_render(ImprovedVBE.cover, XVal, YVal, 70, 25, 1, nameTitle);
+                            Button button = new Button(XVal, YVal, 70, 25, nameTitle, 1);
+                            button.Render(ImprovedVBE.cover);
                             if(MouseManager.MouseState == MouseState.Left)
                             {
                                 if(MouseManager.X > XVal && MouseManager.X < XVal + 70)
                                 {
                                     if (MouseManager.Y > YVal && MouseManager.Y < YVal + 25)
                                     {
-                                        Button.Button_render(ImprovedVBE.cover, XVal, YVal, 70, 25, ImprovedVBE.colourToNumber(255, 255, 255), nameTitle);
+                                        button = new Button(XVal, YVal, 70, 25, nameTitle, ImprovedVBE.colourToNumber(255, 255, 255));
+                                        button.Render(ImprovedVBE.cover);
+
                                         if(btn.minimised == false && Clicked == false)
                                         {
                                             btn.minimised = true;
@@ -372,7 +379,9 @@ namespace CrystalOSAlpha.Graphics
                                 {
                                     if (MouseManager.Y > YVal && MouseManager.Y < YVal + 25)
                                     {
-                                        Button.Button_render(ImprovedVBE.cover, XVal, YVal, 70, 25, ImprovedVBE.colourToNumber(25, 25, 25), nameTitle);
+                                        button = new Button(XVal, YVal, 70, 25, nameTitle, ImprovedVBE.colourToNumber(25, 25, 25));
+                                        button.Render(ImprovedVBE.cover);
+
                                         if (Preview.Width == 13 && Preview.Height == 13)
                                         {
                                             Preview = Widgets.Base.Widget_Back((int)(btn.window.Width / 2.5) + 10, (int)(btn.window.Height / 2.5) + 35, ImprovedVBE.colourToNumber(GlobalValues.TaskBarR, GlobalValues.TaskBarG, GlobalValues.TaskBarB));

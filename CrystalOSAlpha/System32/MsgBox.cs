@@ -30,7 +30,7 @@ namespace CrystalOSAlpha.SystemApps
         public Bitmap icon { get; set; }
         #endregion Essential
 
-        public List<Button_prop> Buttons = new List<Button_prop>();
+        public List<Button> Buttons = new List<Button>();
         public bool initial = true;
         public bool once { get; set; }
         public bool clicked = false;
@@ -60,7 +60,7 @@ namespace CrystalOSAlpha.SystemApps
         {
             if (initial == true)
             {
-                Buttons.Add(new Button_prop(width / 2 - 35, height - 45, 70, 20, "OK", 1));
+                Buttons.Add(new Button(width / 2 - 35, height - 45, 70, 20, "OK", 1));
 
                 initial = false;
             }
@@ -72,7 +72,10 @@ namespace CrystalOSAlpha.SystemApps
                 {
                     if (button.Clicked == true)
                     {
-                        Button.Button_render(canvas, button.X, button.Y, button.Width, button.Height, Color.White.ToArgb(), button.Text);
+                        int Col = button.Color;
+                        button.Color = Color.White.ToArgb();
+                        button.Render(canvas);
+                        button.Color = Col;
 
                         switch (button.Text)
                         {
@@ -83,7 +86,7 @@ namespace CrystalOSAlpha.SystemApps
                     }
                     else
                     {
-                        Button.Button_render(canvas, button.X, button.Y, button.Width, button.Height, button.Color, button.Text);
+                        button.Render(canvas);
                     }
                     if (MouseManager.MouseState == MouseState.None)
                     {

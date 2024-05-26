@@ -64,7 +64,7 @@
       <None Remove="Graphics\Icons\WebBrowser.bmp" />
       <None Remove="Graphics\TaskBar\Icon.bmp" />
       <None Remove="Graphics\Widgets\Elephant.bmp" />
-      <None Remove="System\celebrate.bmp" />
+      <None Remove="System32\celebrate.bmp" />
     </ItemGroup>
 
     <ItemGroup>
