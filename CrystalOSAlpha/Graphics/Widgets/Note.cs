@@ -7,6 +7,8 @@ using CrystalOSAlpha.UI_Elements;
 using System.Drawing;
 using CrystalOSAlpha.Applications;
 using CrystalOSAlpha.System32;
+using CrystalOS_Alpha;
+using Kernel = CrystalOS_Alpha.Kernel;
 
 namespace CrystalOSAlpha.Graphics.Widgets
 {
@@ -217,7 +219,7 @@ namespace CrystalOSAlpha.Graphics.Widgets
             }
 
             #region Mechanical
-            if (TaskScheduler.counter == TaskScheduler.Apps.Count - 1 && TaskManager.MenuOpened == false)
+            if (TaskScheduler.Apps[^1] == this && TaskManager.MenuOpened == false && Kernel.Is_KeyboardMouse == false)
             {
                 KeyEvent k;
                 if (KeyboardManager.TryReadKey(out k))

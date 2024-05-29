@@ -1,6 +1,5 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
-using CrystalOS_Alpha;
 using CrystalOSAlpha.Applications.CarbonIDE;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
@@ -16,6 +15,17 @@ namespace CrystalOSAlpha.Applications.Notepad
 {
     class Notepad : App
     {
+        public Notepad(int X, int Y, int Z, int Width, int Height, string Name, Bitmap Icon)
+        {
+            this.x = X;
+            this.y = Y;
+            this.z = Z;
+            this.width = Width;
+            this.height = Height;
+            this.name = Name;
+            this.icon = Icon;
+        }
+
         #region important
         public int x { get; set; }
         public int y { get; set; }

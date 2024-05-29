@@ -48,5 +48,15 @@ namespace CrYstalOSAlpha.UI_Elements
         {
             throw new System.NotImplementedException();
         }
+
+        public void SetValue(int X, int Y, string Value, bool writeprotected)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        string UIElementHandler.GetValue(int X, int Y)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

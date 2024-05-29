@@ -36,11 +36,13 @@ namespace CrystalOS_Alpha
             MouseManager.Y = (uint)ImprovedVBE.height / 2;
             #endregion Mouse
 
+            #region System initials
             //Questions and setup, if needed
             Boot.Initialise();
 
             //Boot animation. Has no purpose, just there for the show. You can adjust the time in seconds. 0 -> Completely skips it 60 -> Plays the animation for 60 seconds(max value)
             Boot.Animation(5);
+            #endregion System initials
 
             #region Widgets
             FPS_Counter f = new FPS_Counter();

@@ -41,7 +41,6 @@
       <None Remove="Applications\Gameboy\Caesars_Palace.gb" />
       <None Remove="Applications\Gameboy\Tetris.gb" />
       <None Remove="Applications\Gameboy\Zelda.gb" />
-      <None Remove="Applications\Video_Player\compressed_video.dat" />
       <None Remove="Applications\Video_Player\Shrek.wav" />
       <None Remove="Applications\Video_Player\video.bvf" />
       <None Remove="Applications\Video_Player\video0.bvf" />
@@ -77,7 +76,6 @@
       <EmbeddedResource Include="Applications\Gameboy\Caesars_Palace.gb" />
       <EmbeddedResource Include="Applications\Gameboy\Tetris.gb" />
       <EmbeddedResource Include="Applications\Gameboy\Zelda.gb" />
-      <EmbeddedResource Include="Applications\Video_Player\compressed_video.dat" />
       <EmbeddedResource Include="Graphics\Engine\Arial_16.btf" />
       <EmbeddedResource Include="Graphics\Engine\Wallp1.bmp" />
       <EmbeddedResource Include="Graphics\Icons\Clock.bmp" />

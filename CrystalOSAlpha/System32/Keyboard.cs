@@ -1,5 +1,7 @@
 ﻿using Cosmos.System;
+using CrystalOSAlpha.Applications.TaskManagerApp;
 using CrystalOSAlpha.Graphics;
+using CrystalOSAlpha.Graphics.Icons;
 using Kernel = CrystalOS_Alpha.Kernel;
 
 namespace CrystalOSAlpha.System32
@@ -37,6 +39,13 @@ namespace CrystalOSAlpha.System32
                             }
                         }
                         break;
+                    case ConsoleKeyEx.Escape:
+                        if(KeyboardManager.ControlPressed == true)
+                        {
+                            //Hotkey for task manager
+                            TaskScheduler.Apps.Add(new TaskManagerApp(100, 100, 999, 355, 300, "TaskManager", Resources.Celebration));
+                        }
+                        break;
                     default:
                         //TODO: Decide what keyboard layout to use
                         switch (GlobalValues.KeyboardLayout)
@@ -71,6 +80,10 @@ namespace CrystalOSAlpha.System32
                         if (MouseManager.MouseState == MouseState.None)
                         {
                             MouseManager.MouseState = MouseState.Left;
+                        }
+                        else if(MouseManager.MouseState == MouseState.Left)
+                        {
+                            MouseManager.MouseState = MouseState.None;
                         }
                         break;
                     case ConsoleKeyEx.F1:

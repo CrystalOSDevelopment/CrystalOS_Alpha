@@ -20,6 +20,17 @@ namespace CrystalOSAlpha.Applications.FileSys
 {
     class FileSystem : App
     {
+        public FileSystem(int X, int Y, int Z, int Width, int Height, string Name, Bitmap Icon)
+        {
+            this.x = X;
+            this.y = Y;
+            this.z = Z;
+            this.width = Width;
+            this.height = Height;
+            this.name = Name;
+            this.icon = Icon;
+        }
+
         #region important
         public int x { get; set; }
         public int y { get; set; }
@@ -48,6 +59,7 @@ namespace CrystalOSAlpha.Applications.FileSys
         public static string PathRightClick = "";
         public string ToCopy = "";
         public string ToCopyFilename = "";
+        public string returnvalue = null;
 
         public bool initial = true;
         public bool clicked = false;
@@ -71,8 +83,6 @@ namespace CrystalOSAlpha.Applications.FileSys
         public List<RightClick> rightClicks = new List<RightClick>();
 
         public List<UIElementHandler> UIElements = new List<UIElementHandler>();
-
-        public string returnvalue = null;
 
         public void App()
         {
@@ -533,16 +543,9 @@ namespace CrystalOSAlpha.Applications.FileSys
                                         }
                                         else
                                         {
-                                            Applications.Notepad.Notepad n = new Notepad.Notepad();
+                                            Applications.Notepad.Notepad n = new Notepad.Notepad(100, 100, 999, 700, 420, "Note... - " + entry.name, ImprovedVBE.ScaleImageStock(Resources.Notepad, 56, 56));
                                             n.content = File.ReadAllText(entry.fullPath);
-                                            n.x = 100;
-                                            n.y = 100;
-                                            n.width = 700;
-                                            n.height = 420;
-                                            n.z = 999;
                                             n.source = entry.fullPath;
-                                            n.icon = ImprovedVBE.ScaleImageStock(Resources.Notepad, 56, 56);
-                                            n.name = "Note... - " + entry.name;
 
                                             TaskScheduler.Apps.Add(n);
                                         }

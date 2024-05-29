@@ -1,7 +1,6 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
-using System.Drawing;
 
 namespace CrystalOSAlpha.UI_Elements
 {
@@ -65,6 +64,16 @@ namespace CrystalOSAlpha.UI_Elements
                 }
             }
             return false;
+        }
+
+        public void SetValue(int X, int Y, string Value, bool writeprotected)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        string UIElementHandler.GetValue(int X, int Y)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

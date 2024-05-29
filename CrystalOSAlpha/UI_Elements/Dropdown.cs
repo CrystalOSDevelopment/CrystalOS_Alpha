@@ -140,6 +140,16 @@ namespace CrystalOSAlpha.UI_Elements
             return false;
         }
 
+        public void SetValue(int X, int Y, string Value, bool writeprotected)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetValue(int X, int Y)
+        {
+            throw new NotImplementedException();
+        }
+
         public Dropdown(int x, int y, int width, int height, string iD, List<values> V)
         {
             X = x;

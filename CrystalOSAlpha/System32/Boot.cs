@@ -343,6 +343,10 @@ namespace CrystalOSAlpha.System32
 
                         //By calling this, the system won't crash after a certain amount of time
                         Heap.Collect();
+                        if(Setup.Done == true)
+                        {
+                            break;
+                        }
                     }
                     if (GlobalValues.Background_type == "Monocolor")
                     {
@@ -450,6 +454,10 @@ namespace CrystalOSAlpha.System32
                                 TaskManager.Time = 99;
                                 break;
                         }
+                    }
+                    else
+                    {
+                        ImprovedVBE.Temp.RawData.CopyTo(ImprovedVBE.data.RawData, 0);
                     }
                     TaskManager.resize = true;
                     TaskManager.Time = 99;
@@ -477,6 +485,10 @@ namespace CrystalOSAlpha.System32
 
                         //By calling this, the system won't crash after a certain amount of time
                         Heap.Collect();
+                        if (Setup.Done == true)
+                        {
+                            break;
+                        }
                     }
                     if (GlobalValues.Background_type == "Monocolor")
                     {
@@ -584,6 +596,10 @@ namespace CrystalOSAlpha.System32
                                 TaskManager.Time = 99;
                                 break;
                         }
+                    }
+                    else
+                    {
+                        ImprovedVBE.Temp.RawData.CopyTo(ImprovedVBE.data.RawData, 0);
                     }
                 }
             }

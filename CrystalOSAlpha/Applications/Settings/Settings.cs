@@ -17,6 +17,17 @@ namespace CrystalOSAlpha.Applications.Settings
 {
     class Settings : App
     {
+        public Settings(int X, int Y, int Z, int Width, int Height, string Name, Bitmap Icon)
+        {
+            this.x = X;
+            this.y = Y;
+            this.z = Z;
+            this.width = Width;
+            this.height = Height;
+            this.name = Name;
+            this.icon = Icon;
+        }
+
         public int x { get; set; }
         public int y { get; set; }
         public int z { get; set; }
@@ -561,19 +572,18 @@ namespace CrystalOSAlpha.Applications.Settings
                         break;
                     case "Sound":
                         BitFont.DrawBitFontString(window, "VerdanaCustomCharset24", Color.White, ActiveD, width - BitFont.DrawBitFontString(back_canvas, "VerdanaCustomCharset24", Color.White, ActiveD, 0, 0) - 5, 24);
+                        BitFont.DrawBitFontString(window, "ArialCustomCharset16", Color.White, "Not implemented or not in working condition", 128, 75);
                         break;
                     case "Networking":
                         BitFont.DrawBitFontString(window, "VerdanaCustomCharset24", Color.White, ActiveD, width - BitFont.DrawBitFontString(back_canvas, "VerdanaCustomCharset24", Color.White, ActiveD, 0, 0) - 5, 24);
-
                         BitFont.DrawBitFontString(window, "ArialCustomCharset16", Color.White, "Not implemented or not in working condition", 128, 75);
-                        
                         break;
                     case "About OS":
                         BitFont.DrawBitFontString(window, "VerdanaCustomCharset24", Color.White, ActiveD, width - BitFont.DrawBitFontString(back_canvas, "VerdanaCustomCharset24", Color.White, ActiveD, 0, 0) - 5, 24);
 
                         BitFont.DrawBitFontString(window, "VerdanaCustomCharset24", Color.White, "CrystalOS Alpha Edition", 128, 58);
 
-                        BitFont.DrawBitFontString(window, "ArialCustomCharset16", Color.White, "Build release: 2024032714", 128, 95);
+                        BitFont.DrawBitFontString(window, "ArialCustomCharset16", Color.White, "Build number: 2024052820(Pre)", 128, 95);
                         string cpuname = CPU.GetCPUBrandString();
                         if (cpuname.Length > 20)
                         {

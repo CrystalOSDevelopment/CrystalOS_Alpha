@@ -21,7 +21,7 @@ namespace CrystalOSAlpha.Graphics
         public static string TaskBarType = "Nostalgia";
 
         //Username
-        public static string Username = "Username666";
+        public static string Username = "Admin";
 
         //Use these RGB values to adjust prefered color and size of the icon background in start menu
         public static int IconR = 255;

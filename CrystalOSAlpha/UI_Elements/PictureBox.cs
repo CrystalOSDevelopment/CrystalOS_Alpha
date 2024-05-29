@@ -53,5 +53,15 @@ namespace CrystalOSAlpha.UI_Elements
         {
             throw new NotImplementedException();
         }
+
+        public void SetValue(int X, int Y, string Value, bool writeprotected)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetValue(int X, int Y)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

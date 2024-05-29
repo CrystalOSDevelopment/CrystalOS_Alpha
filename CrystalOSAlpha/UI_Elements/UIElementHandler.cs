@@ -21,6 +21,8 @@ namespace CrystalOSAlpha.UI_Elements
         public TypeOfElement TypeOfElement { get; set; }
         public void Render(Bitmap Canvas);
         public bool CheckClick(int X, int Y);
+        public void SetValue(int X, int Y, string Value, bool writeprotected);
+        public string GetValue(int X, int Y);
     }
     public enum TypeOfElement
     {

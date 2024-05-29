@@ -1,4 +1,5 @@
-﻿using Cosmos.System.Graphics;
+﻿using Cosmos.System;
+using Cosmos.System.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
 using System;
 using System.Collections.Generic;
@@ -30,8 +31,10 @@ namespace CrystalOSAlpha.UI_Elements
         public int MaxVal { get; set; }
 
         public Bitmap Canvas;
-
         public List<Cell> Cells = new List<Cell>();
+        public int CellWidth = 0;
+        public int CellHeight = 0;
+        //TODO: Remove this below
         public Table(int Width, int Height, int TWidth, int THeight)
         {
             this.Width = Width;
@@ -39,133 +42,92 @@ namespace CrystalOSAlpha.UI_Elements
             this.TableWidth = TWidth;
             this.TableHeight = THeight;
         }
-        public Table(int X, int Y, int Width, int Height, int TWidth, int THeight, string ID, int VisibleX, int VisibleY)
+        /// <summary>
+        /// Creates a table
+        /// </summary>
+        /// <param name="X">Position of the table on the x-axis</param>
+        /// <param name="Y">Position of the table on the y-axis</param>
+        /// <param name="Width">Width of the table</param>
+        /// <param name="Height">Height of the table</param>
+        /// <param name="TWidth">Amount of columns in the table</param>
+        /// <param name="THeight">Amount of rows in the table</param>
+        /// <param name="ID">ID of the table</param>
+        public Table(int X, int Y, int Width, int Height, int TWidth, int THeight, string ID)
         {
+            this.X = X;
+            this.Y = Y;
             this.Width = Width;
             this.Height = Height;
             this.TableWidth = TWidth;
             this.TableHeight = THeight;
-            this.X = X;
-            this.Y = Y;
             this.ID = ID;
-            this.VisibleWidth = VisibleX;
-            this.VisibleHeight = VisibleY;
-        }
-        public void Initialize()
-        {
-            Canvas = new Bitmap((uint)VisibleWidth, (uint)VisibleHeight, ColorDepth.ColorDepth32);
-            int X = 0;
-            int Y = 0;
-            for(int i = 0; i < Width * Height; i++)
+            this.TypeOfElement = TypeOfElement.Table;
+
+            CellWidth = Width / TableWidth;
+            CellHeight = Height / TableHeight;
+            Canvas = new Bitmap((uint)Width, (uint)Height, ColorDepth.ColorDepth32);
+            int XVal = 0;
+            int YVal = 0;
+            for (int i = 0; i < TableWidth * TableHeight; i++)
             {
-                Cells.Add(new Cell(X, Y, "", false, false));
-                if(X < Width - 1)
+                Cells.Add(new Cell(XVal, YVal, "", false, false));
+                if (XVal < TableWidth - 1)
                 {
-                    X++;
+                    XVal++;
                 }
                 else
                 {
-                    Y++;
-                    X = 0;
+                    YVal++;
+                    XVal = 0;
                 }
             }
         }
-        public void Resize()
+        public void Render(Bitmap Window)
         {
-            Canvas = new Bitmap((uint)VisibleWidth, (uint)VisibleHeight, ColorDepth.ColorDepth32);
+            Array.Fill(Canvas.RawData, ImprovedVBE.colourToNumber(32, 32, 32));
+            Bitmap cell = new Bitmap((uint)CellWidth - 4, (uint)CellHeight - 4, ColorDepth.ColorDepth32);
+            foreach (Cell c in Cells)
+            {
+                if(c.Selected == true)
+                {
+                    Array.Fill(cell.RawData, ImprovedVBE.colourToNumber(200, 200, 200));
+                    BitFont.DrawBitFontString(cell, "ArialCustomCharset16", System.Drawing.Color.Black, c.Content, 3, CellHeight / 2 - 12);
+                    Text = c.X + "," + c.Y;
+                }
+                else
+                {
+                    Array.Fill(cell.RawData, ImprovedVBE.colourToNumber(69, 69, 69));
+                    BitFont.DrawBitFontString(cell, "ArialCustomCharset16", System.Drawing.Color.White, c.Content, 3, CellHeight / 2 - 12);
+                }
+                ImprovedVBE.DrawImage(cell, c.X * CellWidth + 3, c.Y * CellHeight + 5, Canvas);
+            }
+            ImprovedVBE.DrawImageAlpha(Canvas, X, Y, Window);
         }
         public void SetValue(int X, int Y, string Value, bool writeprotected)
         {
-            Cells.Find(d => d.X == Y && d.Y == X).Content = Value;
-            Cells.Find(d => d.X == Y && d.Y == X).WriteProtected = writeprotected;
+            Cells.Find(d => d.X == X && d.Y == Y).Content = Value;
+            Cells.Find(d => d.X == X && d.Y == Y).WriteProtected = writeprotected;
         }
         public string GetValue(int X, int Y)
         {
             return Cells.Find(d => d.X == X && d.Y == Y).Content;
         }
-        public void Render(Bitmap OnTo, int X, int Y)
+        public bool CheckClick(int X, int Y)
         {
-            foreach(Cell c in Cells)
-            {
-                ImprovedVBE.DrawFilledRectangle(OnTo, ImprovedVBE.colourToNumber(69, 69, 69), X + c.X * TableWidth / Width - 5, Y + c.Y * 25 - 5, TableWidth / Width, 25, false);
-                if(c.Selected == true)
-                {
-                    ImprovedVBE.DrawFilledRectangle(OnTo, ImprovedVBE.colourToNumber(255, 255, 255), X + c.X * TableWidth / Width + 2 - 5, Y + c.Y * 25 + 2 - 5, TableWidth / Width - 4, 22, false);
-                    BitFont.DrawBitFontString(OnTo, "ArialCustomCharset16", System.Drawing.Color.Black, c.Content, X + c.X * TableWidth / Width, Y + c.Y * 25);
-                }
-                else
-                {
-                    ImprovedVBE.DrawFilledRectangle(OnTo, ImprovedVBE.colourToNumber(50, 50, 50), X + c.X * TableWidth / Width + 2 - 5, Y + c.Y * 25 + 2 - 5, TableWidth / Width - 4, 22, false);
-                    BitFont.DrawBitFontString(OnTo, "ArialCustomCharset16", System.Drawing.Color.White, c.Content, X + c.X * TableWidth / Width, Y + c.Y * 25);
-                }
-            }
-        }
-        public void Render(Bitmap OnTo)
-        {
-            Y -= 44;
-            for(int i = 0; i < VisibleHeight; i++)
-            {
-                Array.Copy(OnTo.RawData, (Y + i) * OnTo.Width + X, Canvas.RawData, i * Canvas.Width, VisibleWidth);
-            }
-            foreach (Cell c in Cells)
-            {
-                if(X + c.X * TableWidth / Width - 5 - XOffset < Canvas.Width && Y + c.Y * TableHeight / Height - 5 < Canvas.Height - YOffset)
-                {
-                    ImprovedVBE.DrawFilledRectangle(Canvas, ImprovedVBE.colourToNumber(69, 69, 69), X + c.X * TableWidth / Width - 5 - XOffset, Y + c.Y * TableHeight / Height - 5 - YOffset, TableWidth / Width, TableHeight / Height, false);
-                    if (c.Selected == true)
-                    {
-                        ImprovedVBE.DrawFilledRectangle(Canvas, ImprovedVBE.colourToNumber(255, 255, 255), X + c.X * TableWidth / Width + 2 - 5 - XOffset, Y + c.Y * TableHeight / Height + 2 - 5 - YOffset, TableWidth / Width - 4, TableHeight / Height - 3, false);
-                        BitFont.DrawBitFontString(Canvas, "ArialCustomCharset16", System.Drawing.Color.Black, c.Content, X + c.X * TableWidth / Width - XOffset, Y + c.Y * TableHeight / Height - YOffset);
-                    }
-                    else
-                    {
-                        ImprovedVBE.DrawFilledRectangle(Canvas, ImprovedVBE.colourToNumber(50, 50, 50), X + c.X * TableWidth / Width + 2 - 5 - XOffset, Y + c.Y * TableHeight / Height + 2 - 5 - YOffset, TableWidth / Width - 4, TableHeight / Height - 3, false);
-                        BitFont.DrawBitFontString(Canvas, "ArialCustomCharset16", System.Drawing.Color.White, c.Content, X + c.X * TableWidth / Width - XOffset, Y + c.Y * TableHeight / Height - YOffset);
-                    }
-                }
-            }
-            ImprovedVBE.DrawImageAlpha(Canvas, X, Y, OnTo);
-            Y += 44;
-        }
-        public bool Select2(int X, int Y)
-        {
-            int Top = (int)Math.Floor((Y - 22) / (decimal)(TableHeight / Height));
-            int Left = (int)Math.Floor(X / ((decimal)TableWidth / Width));
-            
-            var p = Cells.Find(d => d.X == Left && d.Y == Top);
-            
-            if(p.Selected == false)
-            {
-                foreach(var v in Cells)
-                {
-                    v.Selected = false;
-                }
-                p.Selected = true;
-                return true;
-            }
-            else
-            {
-                foreach (var v in Cells)
-                {
-                    v.Selected = false;
-                }
-                return true;
-            }
-        }
-        public void Select(int X, int Y)
-        {
-            int Top = (int)Math.Floor(Y / 25.0);
-            int Left = (int)Math.Floor(X / ((decimal)TableWidth / Width));
-            foreach (var v in Cells)
+            int Left = (int)MouseManager.X - X - this.X;
+            int Top = (int)MouseManager.Y - Y - this.Y;
+            foreach(var v in Cells)
             {
                 v.Selected = false;
             }
-            Cells.Find(d => d.X == Left && d.Y == Top).Selected = true;
-        }
-
-        public bool CheckClick(int X, int Y)
-        {
-            throw new NotImplementedException();
+            if(Top >= 0 && Top <= Height && Left >= 0 && Left <= Width)
+            {
+                int Row = Top / CellHeight;
+                int Column = Left / CellWidth;
+                Cells.Find(d => d.X == Column && d.Y == Row).Selected = true;
+                return true;
+            }
+            return false;
         }
     }
     class Cell

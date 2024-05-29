@@ -13,6 +13,17 @@ namespace CrystalOSAlpha.Applications.Terminal
 {
     class Terminal : App
     {
+        public Terminal(int X, int Y, int Z, int Width, int Height, string Name, Bitmap Icon)
+        {
+            this.x = X;
+            this.y = Y;
+            this.z = Z;
+            this.width = Width;
+            this.height = Height;
+            this.name = Name;
+            this.icon = Icon;
+        }
+
         #region Core_Values
         public int x { get; set; }
         public int y { get; set; }
@@ -132,16 +143,6 @@ namespace CrystalOSAlpha.Applications.Terminal
             {
                 vscroll.Height = height - 60;
                 vscroll.X = width - 22;
-                if (content.Split('\n').Length * 16 > Container.Height)
-                {
-                    vscroll.MaxVal = content.Split('\n').Length * 16 - (int)Container.Height;
-                    vscroll.Pos = (int)(Scroll[0].MaxVal / Scroll[0].Sensitivity) + 20;
-                    temp = true;
-                }
-                else
-                {
-                    vscroll.MaxVal = 0;
-                }
                 if (vscroll.CheckClick((int)MouseManager.X - x, (int)MouseManager.Y - y))
                 {
                     temp = true;
@@ -230,6 +231,26 @@ namespace CrystalOSAlpha.Applications.Terminal
                         command = Keyboard.HandleKeyboard(command, key);
                         content = content.Remove(content.Length - length);
                         content += command;
+                    }
+
+                    foreach (var vscroll in Scroll)
+                    {
+                        vscroll.Height = height - 60;
+                        vscroll.X = width - 22;
+                        if (content.Split('\n').Length * 16 > Container.Height)
+                        {
+                            vscroll.MaxVal = content.Split('\n').Length * 16 - (int)Container.Height;
+                            vscroll.Pos = (int)(Scroll[0].MaxVal / Scroll[0].Sensitivity) + 20;
+                            temp = true;
+                        }
+                        else
+                        {
+                            vscroll.MaxVal = 0;
+                        }
+                        if (vscroll.CheckClick((int)MouseManager.X - x, (int)MouseManager.Y - y))
+                        {
+                            temp = true;
+                        }
                     }
 
                     Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);

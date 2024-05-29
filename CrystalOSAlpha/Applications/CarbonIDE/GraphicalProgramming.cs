@@ -109,7 +109,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
                 #region Table Magic
                 //Initialize the table
-                t.Initialize();
+                //t.Initialize();
 
                 //Set values to the table
                 t.SetValue(0, 0, "Window.X", true);
@@ -541,7 +541,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
                 if (MouseManager.MouseState == MouseState.Left)
                 {
-                    t.Select((int)(MouseManager.X - 1488), (int)(MouseManager.Y - 82));
+                    //t.Select((int)(MouseManager.X - 1488), (int)(MouseManager.Y - 82));
                 }
 
                 #region Labeling
@@ -644,7 +644,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     {
                         Used.Add(new Applications.CarbonIDE.Elements(v.ID, false, Applications.CarbonIDE.Elements.Types.Table));
                     }
-                    v.Resize();
+                    //v.Resize();
                 }
                 for (int i = 0; i < Used.Count; i++)
                 {
@@ -665,7 +665,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                 if (Used[i].T == Applications.CarbonIDE.Elements.Types.Button)
                                 {
                                     t = new Table(2, 6, 412, 600);
-                                    t.Initialize();
+                                    //t.Initialize();
                                     t.SetValue(0, 0, "Button.X", true);
                                     t.SetValue(0, 1, preview.Button.Find(d => d.ID == Used[i].Name).X.ToString(), false);
                                     t.SetValue(1, 0, "Button.Y", true);
@@ -684,7 +684,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                 else if (Used[i].T == Applications.CarbonIDE.Elements.Types.Label)
                                 {
                                     t = new Table(2, 4, 412, 600);
-                                    t.Initialize();
+                                    //t.Initialize();
                                     t.SetValue(0, 0, "Label.X", true);
                                     t.SetValue(0, 1, preview.Label.Find(d => d.ID == Used[i].Name).X.ToString(), false);
                                     t.SetValue(1, 0, "Label.Y", true);
@@ -699,7 +699,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                 else if (Used[i].T == Applications.CarbonIDE.Elements.Types.Slider)
                                 {
                                     t = new Table(2, 4, 412, 600);
-                                    t.Initialize();
+                                    //t.Initialize();
                                     t.SetValue(0, 0, "Slider.X", true);
                                     t.SetValue(0, 1, preview.Slider.Find(d => d.ID == Used[i].Name).X.ToString(), false);
                                     t.SetValue(1, 0, "Slider.Y", true);
@@ -713,7 +713,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                 else if (Used[i].T == Applications.CarbonIDE.Elements.Types.TextBox)
                                 {
                                     t = new Table(2, 7, 412, 600);
-                                    t.Initialize();
+                                    //t.Initialize();
                                     t.SetValue(0, 0, "TextBox.X", true);
                                     t.SetValue(0, 1, preview.TextBox.Find(d => d.ID == Used[i].Name).X.ToString(), false);
                                     t.SetValue(1, 0, "TextBox.Y", true);
@@ -733,7 +733,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                 else if (Used[i].T == Applications.CarbonIDE.Elements.Types.CheckBox)
                                 {
                                     t = new Table(2, 7, 412, 600);
-                                    t.Initialize();
+                                    //t.Initialize();
                                     t.SetValue(0, 0, "CheckBox.X", true);
                                     t.SetValue(0, 1, preview.CheckBox.Find(d => d.ID == Used[i].Name).X.ToString(), false);
                                     t.SetValue(1, 0, "CheckBox.Y", true);
@@ -753,7 +753,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                 else if (Used[i].T == Applications.CarbonIDE.Elements.Types.Table)
                                 {
                                     t = new Table(2, 9, 412, 600);
-                                    t.Initialize();
+                                    //t.Initialize();
                                     t.SetValue(0, 0, "Table.X", true);
                                     t.SetValue(0, 1, preview.Tables.Find(d => d.ID == Used[i].Name).X.ToString(), false);
                                     t.SetValue(1, 0, "Table.Y", true);
@@ -801,7 +801,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 }
 
                 //Rendering Propeties table
-                t.Render(Propeties, 10, 50);
+                //t.Render(Propeties, 10, 50);
 
 
                 foreach (var button in Button)

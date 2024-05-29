@@ -10,6 +10,17 @@ namespace CrystalOSAlpha.Applications.Gameboy
 {
     class Core : App
     {
+        public Core(int X, int Y, int Z, int Width, int Height, string Name, Bitmap Icon)
+        {
+            this.x = X;
+            this.y = Y;
+            this.z = Z;
+            this.width = Width;
+            this.height = Height;
+            this.name = Name;
+            this.icon = Icon;
+        }
+
         public int x { get; set; }
         public int y { get; set; }
         public int z { get; set; }

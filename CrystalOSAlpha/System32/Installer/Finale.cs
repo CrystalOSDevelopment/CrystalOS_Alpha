@@ -1,14 +1,13 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
 using CrystalOSAlpha.Applications;
-using CrystalOSAlpha.Applications.CarbonIDE;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics;
-using CrystalOSAlpha.SystemApps;
 using CrystalOSAlpha.UI_Elements;
 using System.Drawing;
 using System;
 using System.Collections.Generic;
+using Kernel = CrystalOS_Alpha.Kernel;
 
 namespace CrystalOSAlpha.System32.Installer
 {
@@ -54,7 +53,14 @@ namespace CrystalOSAlpha.System32.Installer
             if (initial == true)
             {
                 Time = DateTime.UtcNow.Second;
-                Elements.Add(new Button(width - 215, height - 98, 192, 58, "Reboot", 1, "Next"));
+                if(Kernel.IsDiskSupport == true)
+                {
+                    Elements.Add(new Button(width - 215, height - 98, 192, 58, "Reboot", 1, "Next"));
+                }
+                else
+                {
+                    Elements.Add(new Button(width - 215, height - 98, 192, 58, "Continue", 1, "Next"));
+                }
                 once = true;
                 initial = false;
             }
@@ -62,9 +68,18 @@ namespace CrystalOSAlpha.System32.Installer
             {
                 (canvas, back_canvas, window) = WindowGenerator.Generate(x, y, width, height, CurrentColor, name);
 
-                BitFont.DrawBitFontString(canvas, "VerdanaCustomCharset32", Color.White, "We're done!", 30, 52);
-                BitFont.DrawBitFontString(canvas, "VerdanaCustomCharset24", Color.White, "Your computer will reboot in 5 seconds automatically!", 40, 142);
-                BitFont.DrawBitFontString(canvas, "VerdanaCustomCharset24", Color.White, "After the reboot, you can enjoy your freshly installed CrystalOS Alpha.", 40, 212);
+                if(Kernel.IsDiskSupport == true)
+                {
+                    BitFont.DrawBitFontString(canvas, "VerdanaCustomCharset32", Color.White, "We're done!", 30, 52);
+                    BitFont.DrawBitFontString(canvas, "VerdanaCustomCharset24", Color.White, "Your computer will reboot in 5 seconds automatically!", 40, 142);
+                    BitFont.DrawBitFontString(canvas, "VerdanaCustomCharset24", Color.White, "After the reboot, you can enjoy your freshly installed CrystalOS Alpha.", 40, 212);
+                }
+                else
+                {
+                    BitFont.DrawBitFontString(canvas, "VerdanaCustomCharset32", Color.White, "We're done!", 30, 52);
+                    BitFont.DrawBitFontString(canvas, "VerdanaCustomCharset24", Color.White, "Your computer will proceed booting after 5 seconds!", 40, 142);
+                    BitFont.DrawBitFontString(canvas, "VerdanaCustomCharset24", Color.White, "After the boot process, you can start enjoying your freshly set up CrystalOS Alpha.", 40, 212);
+                }
 
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
                 once = false;
@@ -90,7 +105,14 @@ namespace CrystalOSAlpha.System32.Installer
                                         Element.Color = Col;
                                         if (Element.ID == "Next")
                                         {
-                                            Cosmos.System.Power.Reboot();
+                                            if (Kernel.IsDiskSupport == true)
+                                            {
+                                                Cosmos.System.Power.Reboot();
+                                            }
+                                            else
+                                            {
+                                                TaskScheduler.Apps.Remove(this);
+                                            }
                                         }
                                         break;
                                 }
@@ -111,7 +133,14 @@ namespace CrystalOSAlpha.System32.Installer
             }
             if(RemainingTime == 0)
             {
-                Cosmos.System.Power.Reboot();
+                if(Kernel.IsDiskSupport == true)
+                {
+                    Cosmos.System.Power.Reboot();
+                }
+                else
+                {
+                    TaskScheduler.Apps.Remove(this);
+                }
             }
         }
 

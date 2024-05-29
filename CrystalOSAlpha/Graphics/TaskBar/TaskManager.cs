@@ -340,7 +340,28 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                             //Clear the TaskBar with the Backup
                             Array.Copy(TaskBar.RawData, Backup.RawData, TaskBar.RawData.Length);
                             //Write out the time/date
-                            BitFont.DrawBitFontString(Backup, "ArialCustomCharset16", GlobalValues.c, DateTime.UtcNow.Hour.ToString() + ":" + DateTime.UtcNow.Minute, ImprovedVBE.width - 80, 5);
+                            if(DateTime.UtcNow.Hour < 10)
+                            {
+                                if(DateTime.UtcNow.Minute < 10)
+                                {
+                                    BitFont.DrawBitFontString(Backup, "ArialCustomCharset16", GlobalValues.c, "0" + DateTime.UtcNow.Hour.ToString() + ":0" + DateTime.UtcNow.Minute, ImprovedVBE.width - 80, 5);
+                                }
+                                else
+                                {
+                                    BitFont.DrawBitFontString(Backup, "ArialCustomCharset16", GlobalValues.c, "0" + DateTime.UtcNow.Hour.ToString() + ":" + DateTime.UtcNow.Minute, ImprovedVBE.width - 80, 5);
+                                }
+                            }
+                            else
+                            {
+                                if (DateTime.UtcNow.Minute < 10)
+                                {
+                                    BitFont.DrawBitFontString(Backup, "ArialCustomCharset16", GlobalValues.c, DateTime.UtcNow.Hour.ToString() + ":0" + DateTime.UtcNow.Minute, ImprovedVBE.width - 80, 5);
+                                }
+                                else
+                                {
+                                    BitFont.DrawBitFontString(Backup, "ArialCustomCharset16", GlobalValues.c, DateTime.UtcNow.Hour.ToString() + ":" + DateTime.UtcNow.Minute, ImprovedVBE.width - 80, 5);
+                                }
+                            }
                             BitFont.DrawBitFontString(Backup, "ArialCustomCharset16", GlobalValues.c, DayOfWeek + "," + DateTime.UtcNow.Day, ImprovedVBE.width - 100, 20);
                             //Disable if condition to only execute once every minute -> Works efficiently
                             Time = DateTime.UtcNow.Minute;
@@ -399,16 +420,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                                     MenuOpened = false;
                                     if (TaskScheduler.Apps.FindAll(d => d.name == "Clock").Count == 0)
                                     {
-                                        Clock clock = new Clock();
-                                        clock.x = ImprovedVBE.width - 305;
-                                        clock.y = (int)Backup.Height + 5;
-                                        clock.z = 999;
-                                        clock.width = 300;
-                                        clock.height = 300;
-                                        clock.name = "Clock";
-                                        clock.minimised = false;
-                                        clock.once = true;
-                                        clock.icon = ImprovedVBE.ScaleImageStock(Resources.Clock, 56, 56);
+                                        Clock clock = new Clock(ImprovedVBE.width - 305, (int)Backup.Height + 5, 999, 300, 300, "Clock", ImprovedVBE.ScaleImageStock(Resources.Clock, 56, 56));
                                         TaskScheduler.Apps.Add(clock);
 
                                         TaskScheduler.Apps[^1].once = true;
@@ -858,26 +870,12 @@ namespace CrystalOSAlpha.Graphics.TaskBar
             switch (Source)
             {
                 case "Calculator":
-                    Calculator c = new Calculator();//These need some update to make it easier to work with
-                    c.x = 100;
-                    c.y = 100;
-                    c.width = 200;
-                    c.height = 380;
-                    c.name = "Calculator";
-                    c.z = 999;
-                    c.icon = Icon;
+                    Calculator c = new Calculator(100, 100, 999, 200, 380, "Calculator", Icon);//These need some update to make it easier to work with
                     TaskScheduler.Apps.Add(c);
                     MenuOpened = false;
                     break;
                 case "File Explorer":
-                    Applications.FileSys.FileSystem d = new Applications.FileSys.FileSystem();//Same here ;)
-                    d.x = 100;
-                    d.y = 100;
-                    d.width = 650;
-                    d.height = 380;
-                    d.name = "File Explorer";
-                    d.z = 999;
-                    d.icon = Icon;
+                    Applications.FileSys.FileSystem d = new Applications.FileSys.FileSystem(100, 100, 999, 650, 380, "File Explorer", Icon);//Same here ;)
                     TaskScheduler.Apps.Add(d);
                     MenuOpened = false;
                     break;
@@ -921,50 +919,22 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                     MenuOpened = false;
                     break;
                 case "Settings":
-                    Settings settings = new Settings();
-                    settings.x = 100;
-                    settings.y = 100;
-                    settings.width = 550;
-                    settings.height = 380;
-                    settings.name = "Settings";
-                    settings.z = 999;
-                    settings.icon = Icon;
+                    Settings settings = new Settings(100, 100, 999, 550, 380, "Settings", Icon);
                     TaskScheduler.Apps.Add(settings);
                     MenuOpened = false;
                     break;
                 case "Gameboy":
-                    Core Gameboy = new Core();
-                    Gameboy.x = 100;
-                    Gameboy.y = 100;
-                    Gameboy.width = 162 * 3 - 4;
-                    Gameboy.height = 165 * 3 - 39 + 25;
-                    Gameboy.name = "Gameboy";
-                    Gameboy.z = 999;
-                    Gameboy.icon = Icon;
+                    Core Gameboy = new Core(100, 100, 999, 162 * 3 - 4, 165 * 3 - 39 + 25, "Gameboy", Icon);
                     TaskScheduler.Apps.Add(Gameboy);
                     MenuOpened = false;
                     break;
                 case "Notepad":
-                    Notepad Notepad = new Notepad();
-                    Notepad.x = 100;
-                    Notepad.y = 100;
-                    Notepad.width = 700;
-                    Notepad.height = 420;
-                    Notepad.name = "Notepad";
-                    Notepad.z = 999;
-                    Notepad.icon = Icon;
+                    Notepad Notepad = new Notepad(100, 100, 999, 700, 420, "Notepad", Icon);
                     TaskScheduler.Apps.Add(Notepad);
                     MenuOpened = false;
                     break;
                 case "Terminal":
-                    Terminal Terminal = new Terminal();
-                    Terminal.x = 100;
-                    Terminal.y = 100;
-                    Terminal.width = 700;
-                    Terminal.height = 420;
-                    Terminal.name = "Terminal";
-                    Terminal.z = 999;
-                    Terminal.icon = Icon;
+                    Terminal Terminal = new Terminal(100, 100, 999, 700, 420, "Terminal", Icon);
                     TaskScheduler.Apps.Add(Terminal);
                     MenuOpened = false;
                     break;
@@ -1002,43 +972,18 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                 case "Clock":
                     if (TaskScheduler.Apps.FindAll(d => d.name == "Clock").Count == 0)
                     {
-                        Clock clock = new Clock();
-                        clock.x = ImprovedVBE.width - 305;
-                        clock.y = (int)Backup.Height + 5;
-                        clock.width = 300;
-                        clock.height = 300;
-                        clock.z = 999;
-                        clock.name = "Clock";
-                        clock.icon = ImprovedVBE.ScaleImageStock(Resources.Clock, 56, 56);
+                        Clock clock = new Clock(ImprovedVBE.width - 305, (int)Backup.Height + 5, 999, 300, 300, "Clock", ImprovedVBE.ScaleImageStock(Resources.Clock, 56, 56));
                         TaskScheduler.Apps.Add(clock);
                         MenuOpened = false;
                     }
                     break;
                 case "PatternGenerator":
-                    PatternGenerator PTG = new PatternGenerator();
-                    PTG.x = 10;
-                    PTG.y = 100;
-                    PTG.width = 375;
-                    PTG.height = 307;
-                    PTG.z = 999;
-                    PTG.name = "Pattern Generator";
-                    PTG.minimised = false;
-                    PTG.once = true;
-                    PTG.icon = ImprovedVBE.ScaleImageStock(Resources.PTG, 56, 56);
+                    PatternGenerator PTG = new PatternGenerator(10, 100, 999, 375, 307, "Pattern Generator", ImprovedVBE.ScaleImageStock(Resources.PTG, 56, 56));
                     TaskScheduler.Apps.Add(PTG);
                     MenuOpened = false;
                     break;
                 case "Entertainment":
-                    MediaCenter mc = new MediaCenter();
-                    mc.x = 10;
-                    mc.y = 100;
-                    mc.width = 862;
-                    mc.height = 490;
-                    mc.z = 999;
-                    mc.name = "Media center";
-                    mc.minimised = false;
-                    mc.once = true;
-                    mc.icon = ImprovedVBE.ScaleImageStock(Resources.PTG, 56, 56);
+                    MediaCenter mc = new MediaCenter(10, 100, 999, 862, 490, "Media center", ImprovedVBE.ScaleImageStock(Resources.CrystalVideo, 56, 56));
                     TaskScheduler.Apps.Add(mc);
                     MenuOpened = false;
                     break;

@@ -281,8 +281,8 @@ namespace CrystalOSAlpha.SystemApps
                                 //Read data from new()
                                 string[] values = parts[1].Replace("new(", "").Split(",");
 
-                                Tables.Add(new Table(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]), int.Parse(values[4]), int.Parse(values[5]), name, int.Parse(values[6]), int.Parse(values[7])));
-                                Tables[^1].Initialize();
+                                //Tables.Add(new Table(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]), int.Parse(values[4]), int.Parse(values[5]), name, int.Parse(values[6]), int.Parse(values[7])));
+                                //Tables[^1].Initialize();
                             }
                             else if (trimmed.StartsWith("PictureBox"))
                             {
@@ -618,18 +618,18 @@ namespace CrystalOSAlpha.SystemApps
                     {
                         if(clicked == false)
                         {
-                            if (v.Select2((int)MouseManager.X - x - v.X, (int)MouseManager.Y - y - v.Y))
-                            {
-                                foreach (var box in TextBox)
-                                {
-                                    if (box.Clicked == true)
-                                    {
-                                        box.Clicked = false;
-                                    }
-                                }
-                                temp = true;
-                                clicked = true;
-                            }
+                            //if (v.Select2((int)MouseManager.X - x - v.X, (int)MouseManager.Y - y - v.Y))
+                            //{
+                            //    foreach (var box in TextBox)
+                            //    {
+                            //        if (box.Clicked == true)
+                            //        {
+                            //            box.Clicked = false;
+                            //        }
+                            //    }
+                            //    temp = true;
+                            //    clicked = true;
+                            //}
                         }
                     }
                 }
@@ -1043,8 +1043,8 @@ namespace CrystalOSAlpha.SystemApps
 
                                 if(values.Length == 8)
                                 {
-                                    Tables.Add(new Table(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]), int.Parse(values[4]), int.Parse(values[5]), name, int.Parse(values[6]), int.Parse(values[7])));
-                                    Tables[^1].Initialize();
+                                    //Tables.Add(new Table(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]), int.Parse(values[4]), int.Parse(values[5]), name, int.Parse(values[6]), int.Parse(values[7])));
+                                    //Tables[^1].Initialize();
                                 }
                             }
                         }
@@ -1254,7 +1254,7 @@ namespace CrystalOSAlpha.SystemApps
                 {
                     foreach(var v in Tables)
                     {
-                        v.Select2((int)MouseManager.X - x - v.X, (int)MouseManager.Y - y - v.Y);
+                        //v.Select2((int)MouseManager.X - x - v.X, (int)MouseManager.Y - y - v.Y);
                     }
                 }
             }

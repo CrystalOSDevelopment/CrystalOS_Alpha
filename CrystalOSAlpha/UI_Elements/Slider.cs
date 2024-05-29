@@ -85,5 +85,15 @@ namespace CrystalOSAlpha.UI_Elements
             Value = (int)((MouseManager.X - x - X) * Sensitivity);
             Value = Math.Clamp(Value, MinValue, MaxValue);
         }
+
+        public void SetValue(int X, int Y, string Value, bool writeprotected)
+        {
+            throw new NotImplementedException();
+        }
+
+        string UIElementHandler.GetValue(int X, int Y)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

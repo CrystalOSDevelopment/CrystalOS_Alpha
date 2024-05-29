@@ -12,6 +12,7 @@ namespace CrystalOSAlpha.System32.Installer
     {
         public bool GenerateBase = true;
         public bool First = true;
+        public bool Done = false;
         public int[] Pattern = new int[16 * 16]
         {
             13055, 7895160, 7895160, 7895160, 7895160, 13055, 13055, 13055, 13055, 13055, 13055, 13055, 13055, 13055, 13055, 13055,
@@ -108,6 +109,14 @@ namespace CrystalOSAlpha.System32.Installer
                 {
                     TaskScheduler.Apps.Add(new Finale(260, 50, 999, ImprovedVBE.width - 520, ImprovedVBE.height - 237, "Finished!", Resources.Celebration));
                     Elements.Find(d => d.ID == "Progress").Value += 20;
+                }
+                else
+                {
+                    //In case no reboot is needed
+                    if(TaskScheduler.Apps.Count == 0)
+                    {
+                        Done = true;
+                    }
                 }
             }
         }

@@ -69,6 +69,16 @@ namespace CrystalOSAlpha.UI_Elements
         {
             throw new System.NotImplementedException();
         }
+
+        public void SetValue(int X, int Y, string Value, bool writeprotected)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public string GetValue(int X, int Y)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 
     class ComplimentaryColor

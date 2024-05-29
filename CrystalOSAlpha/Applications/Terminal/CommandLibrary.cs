@@ -60,7 +60,7 @@ namespace CrystalOSAlpha.Applications.Terminal
                 sb.Append("                     *((/////(((((((*                       \n");
                 sb.Append("                   ,///////////(((((((/.                    \n");
                 sb.Append("                .****////////////(((((((/*                  CrystalOS Alpha Edition \n");
-                sb.Append("             .,..,**///////////////((((((((/.               Release date: 2024. 04. 25. \n");
+                sb.Append("             .,..,**///////////////((((((((/.               Release date: 2024. 05. 27. \n");
                 sb.Append("           ,*////,..*////////////////((#%%#(/,              \n");
                 sb.Append("        .*//////////,.,//////////////(//((*..,,,,.          About System: \n");
                 sb.Append("      ,****/((((((((/*. .*/////////////*..,******,,.            Processor: " + CPU.GetCPUBrandString() + " \n");
