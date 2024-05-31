@@ -27,7 +27,7 @@
         <Timeout>0</Timeout>
         <BinFormat>Elf</BinFormat>
         <ExtractMapFile>False</ExtractMapFile>
-        <UseUEFI>False</UseUEFI>
+        <UseUEFI>True</UseUEFI>
     </PropertyGroup>
 
     <ItemGroup>

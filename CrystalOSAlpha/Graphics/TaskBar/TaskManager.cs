@@ -653,7 +653,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                         {
                             Name = "Entertainment",
                             Source = "Entertainment",
-                            Icon = ImprovedVBE.ScaleImageStock(Resources.PTG, GlobalValues.IconWidth, GlobalValues.IconHeight)
+                            Icon = ImprovedVBE.ScaleImageStock(Resources.CrystalVideo, GlobalValues.IconWidth, GlobalValues.IconHeight)
                         }
                     };
 

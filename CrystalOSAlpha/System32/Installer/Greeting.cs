@@ -61,7 +61,15 @@ namespace CrystalOSAlpha.System32.Installer
                 BitFont.DrawBitFontString(canvas, "VerdanaCustomCharset32", Color.White, "Thank you for choosing CrystalOS Alpha!", 30, 52);
                 BitFont.DrawBitFontString(canvas, "VerdanaCustomCharset24", Color.White, "We're so glad that you want to try out CrystalOS Alpha!", 40, 142);
                 BitFont.DrawBitFontString(canvas, "VerdanaCustomCharset24", Color.White, "To begin with the installation, click on \"Next\"", 40, 212);
-                ImprovedVBE.DrawImageAlpha(ImprovedVBE.ScaleImageStock(new Bitmap(TaskManager.Elephant), 475, 450), width - 576, 151, canvas);
+                switch (ImprovedVBE.width)
+                {
+                    case 1920:
+                        ImprovedVBE.DrawImageAlpha(ImprovedVBE.ScaleImageStock(new Bitmap(TaskManager.Elephant), 475, 450), width - 576, 151, canvas);
+                        break;
+                    case 1024:
+                        ImprovedVBE.DrawImageAlpha(ImprovedVBE.ScaleImageStock(new Bitmap(TaskManager.Elephant), 335, 310), width - 365, 211, canvas);
+                        break;
+                }
                 
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
                 once = false;

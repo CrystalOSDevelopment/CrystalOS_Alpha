@@ -1,10 +1,8 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
 using CrystalOSAlpha.Applications;
-using CrystalOSAlpha.Applications.CarbonIDE;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics;
-using CrystalOSAlpha.SystemApps;
 using CrystalOSAlpha.UI_Elements;
 using System.Drawing;
 using System;
@@ -212,14 +210,17 @@ namespace CrystalOSAlpha.System32.Installer
                                         Element.Clicked = true;
                                         break;
                                     case TypeOfElement.Button:
-                                        int Col = Element.Color;
-                                        Element.Color = ImprovedVBE.colourToNumber(255, 255, 255);
-                                        Element.Render(window);
-                                        Element.Clicked = true;
-                                        Element.Color = Col;
-                                        if (Element.ID == "Next")
+                                        if(GlobalValues.Clicked == false)
                                         {
-                                            TaskScheduler.Apps.Remove(this);
+                                            int Col = Element.Color;
+                                            Element.Color = ImprovedVBE.colourToNumber(255, 255, 255);
+                                            Element.Render(window);
+                                            Element.Clicked = true;
+                                            Element.Color = Col;
+                                            if (Element.ID == "Next")
+                                            {
+                                                TaskScheduler.Apps.Remove(this);
+                                            }
                                         }
                                         break;
                                 }
@@ -229,6 +230,7 @@ namespace CrystalOSAlpha.System32.Installer
                     else if (Element.TypeOfElement != TypeOfElement.TextBox)
                     {
                         Element.Clicked = false;
+                        GlobalValues.Clicked = false;
                     }
                 }
             }

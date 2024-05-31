@@ -98,20 +98,23 @@ namespace CrystalOSAlpha.System32.Installer
                                 switch (Element.TypeOfElement)
                                 {
                                     case TypeOfElement.Button:
-                                        int Col = Element.Color;
-                                        Element.Color = ImprovedVBE.colourToNumber(255, 255, 255);
-                                        Element.Render(window);
-                                        Element.Clicked = true;
-                                        Element.Color = Col;
-                                        if (Element.ID == "Next")
+                                        if(GlobalValues.Clicked == false)
                                         {
-                                            if (Kernel.IsDiskSupport == true)
+                                            int Col = Element.Color;
+                                            Element.Color = ImprovedVBE.colourToNumber(255, 255, 255);
+                                            Element.Render(window);
+                                            Element.Clicked = true;
+                                            Element.Color = Col;
+                                            if (Element.ID == "Next")
                                             {
-                                                Cosmos.System.Power.Reboot();
-                                            }
-                                            else
-                                            {
-                                                TaskScheduler.Apps.Remove(this);
+                                                if (Kernel.IsDiskSupport == true)
+                                                {
+                                                    Cosmos.System.Power.Reboot();
+                                                }
+                                                else
+                                                {
+                                                    TaskScheduler.Apps.Remove(this);
+                                                }
                                             }
                                         }
                                         break;
@@ -122,6 +125,7 @@ namespace CrystalOSAlpha.System32.Installer
                     else if (Element.TypeOfElement != TypeOfElement.TextBox)
                     {
                         Element.Clicked = false;
+                        GlobalValues.Clicked = false;
                     }
                 }
             }

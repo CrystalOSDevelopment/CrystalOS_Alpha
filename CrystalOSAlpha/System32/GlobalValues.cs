@@ -42,6 +42,9 @@ namespace CrystalOSAlpha.Graphics
 
         //Keyboard layout
         public static KeyboardLayout KeyboardLayout = KeyboardLayout.EN_US;
+
+        //Public bool for the setup
+        public static bool Clicked = false;
     }
     public enum KeyboardLayout
     {

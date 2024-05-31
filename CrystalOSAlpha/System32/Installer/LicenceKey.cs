@@ -103,26 +103,29 @@ namespace CrystalOSAlpha.System32.Installer
                                         Element.Clicked = true;
                                         break;
                                     case TypeOfElement.Button:
-                                        int Col = Element.Color;
-                                        Element.Color = ImprovedVBE.colourToNumber(255, 255, 255);
-                                        Element.Render(window);
-                                        Element.Clicked = true;
-                                        Element.Color = Col;
-                                        if(Element.ID == "Next")
+                                        if(GlobalValues.Clicked == false)
                                         {
-                                            if(ValidateLicenseKey(Elements.Find(d => d.ID == "First").Text + "-" + 
-                                            Elements.Find(d => d.ID == "Second").Text + "-" + 
-                                            Elements.Find(d => d.ID == "Third").Text + "-" + 
-                                            Elements.Find(d => d.ID == "Fourth").Text) == true)
+                                            int Col = Element.Color;
+                                            Element.Color = ImprovedVBE.colourToNumber(255, 255, 255);
+                                            Element.Render(window);
+                                            Element.Clicked = true;
+                                            Element.Color = Col;
+                                            if(Element.ID == "Next")
                                             {
-                                                TaskScheduler.Apps.Remove(this);
-                                            }
-                                            else
-                                            {
-                                                TaskScheduler.Apps.Add(new MsgBox(999, ImprovedVBE.width / 2 - 225, ImprovedVBE.height / 2 - 100, 450, 200, "Error!", "The key you provided is not a valid key!\nDebug: " + Elements.Find(d => d.ID == "First").Text + "-" +
-                                                Elements.Find(d => d.ID == "Second").Text + "-" +
-                                                Elements.Find(d => d.ID == "Third").Text + "-" +
-                                                Elements.Find(d => d.ID == "Fourth").Text, icon));
+                                                if(ValidateLicenseKey(Elements.Find(d => d.ID == "First").Text + "-" + 
+                                                Elements.Find(d => d.ID == "Second").Text + "-" + 
+                                                Elements.Find(d => d.ID == "Third").Text + "-" + 
+                                                Elements.Find(d => d.ID == "Fourth").Text) == true)
+                                                {
+                                                    TaskScheduler.Apps.Remove(this);
+                                                }
+                                                else
+                                                {
+                                                    TaskScheduler.Apps.Add(new MsgBox(999, ImprovedVBE.width / 2 - 225, ImprovedVBE.height / 2 - 100, 450, 200, "Error!", "The key you provided is not a valid key!\nDebug: " + Elements.Find(d => d.ID == "First").Text + "-" +
+                                                    Elements.Find(d => d.ID == "Second").Text + "-" +
+                                                    Elements.Find(d => d.ID == "Third").Text + "-" +
+                                                    Elements.Find(d => d.ID == "Fourth").Text, icon));
+                                                }
                                             }
                                         }
                                         break;
@@ -133,6 +136,7 @@ namespace CrystalOSAlpha.System32.Installer
                     else if(Element.TypeOfElement != TypeOfElement.TextBox)
                     {
                         Element.Clicked = false;
+                        GlobalValues.Clicked = false;
                     }
                 }
             }
