@@ -56,6 +56,7 @@ namespace CrystalOSAlpha.System32.Installer
                 Elements.Add(new TextBox(640, 257, 150, 45, ImprovedVBE.colourToNumber(60, 60, 60), "", "XXXX", TextBox.Options.left, "Fourth"));
 
                 Elements.Add(new Button(width - 215, height - 98, 192, 58, "Next", 1, "Next"));
+                Elements[0].Clicked = true;
                 once = true;
                 initial = false;
             }
