@@ -1,25 +1,34 @@
 ﻿using Cosmos.System;
 using Cosmos.System.FileSystem.Listing;
 using Cosmos.System.Graphics;
-using CrystalOSAlpha.Applications.FileSys;
+using CrystalOSAlpha.Applications.Terminal;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
-using CrystalOSAlpha.Programming;
-using CrystalOSAlpha.SystemApps;
+using CrystalOSAlpha.Graphics.Icons;
+using CrystalOSAlpha.Graphics.TaskBar;
 using CrystalOSAlpha.UI_Elements;
-using CrYstalOSAlpha.UI_Elements;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using Kernel = CrystalOS_Alpha.Kernel;
-using TaskScheduler = CrystalOSAlpha.Graphics.TaskScheduler;
 
 namespace CrystalOSAlpha.Applications.CarbonIDE
 {
     class CarbonIDE : App
     {
+        public CarbonIDE() { }
+        public CarbonIDE(int X, int Y, int Z, int Width, int Height, string Name, Bitmap Icon)
+        {
+            this.x = X;
+            this.y = Y;
+            this.z = Z;
+            this.width = Width;
+            this.height = Height;
+            this.name = Name;
+            this.icon = Icon;
+        }
+
         #region important
         public int x { get; set; }
         public int y { get; set; }
@@ -39,256 +48,70 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         #endregion important
 
         public int CurrentColor = ImprovedVBE.colourToNumber(GlobalValues.R, GlobalValues.G, GlobalValues.B);
-        public int Reg_Y = 0;
-        public int memory = 0;
-        public int cursorIndex = 0;
-        public int lineIndex = 0;
 
-        public string Back_content = "";
-        public string content = "";
-        public string source = "";
-        public string lineCount = "";
-        public string Path = "";
-        public string namedProject = "";
-
-        public string TestCode = "string name = Console.ReadLine();\nif(name == \"John\")\n{\n    Console.WriteLine(\"Hi\");\n}\nelse if(name == \"Doe\")\n{\n    Console.WriteLine(\"Hello\");\n}\nelse if(name == \"Carol\")\n{\n    Console.WriteLine(\"Who even are you?\");\n}\nelse\n{\n    Console.WriteLine(\"No message for you!\");\n}\nfor(int i = 5; i < 15; i++)\n{\n    Console.WriteLine(i + \". Cycle\");\n}\nConsole.WriteLine(\"End of Program\");\nfor(int i = 0; i < 10; i++)\n{\n    Console.WriteLine(i + \". Cycle\");\n}\nConsole.WriteLine(\"End of Program\");";
-        public string Game = "Console.WriteLine(\"Guess a number game!\");\nbool match = false;\nint num = Random.Next(0, 11);\nConsole.WriteLine(\"You have 3 guesses!\");\nfor(int i = 0; i < 3; i++)\n{\n    Console.Write(i + \". Guess\");\n    int guessed = Console.ReadLine();\n    if(guessed == num)\n    {\n        Console.WriteLine(\"That's Correct\");\n        bool match = true;\n    }\n    else if(guessed > num)\n    {\n        Console.WriteLine(\"Guessed is bigger\");\n    }\n    else\n    {\n        Console.WriteLine(\"Guessed is smaller\");\n    }\n}\nConsole.WriteLine(\"The correct number was: \" + num);";
-        public string TestWhile = "Console.Write(\"Start while loop? (y, n): \");\nstring input = Console.ReadLine();\nwhile(input == \"y\")\n{\n    for(int i = 0; i < 3; i++)\n    {\n        Console.WriteLine(\"Test\");\n    }\n    Console.Write(\"end of cycle, continue?(y, n): \");\n    string input = Console.ReadLine();\n}";
-        public string Keyboard_Test = "ReadKey key;\nReadKey key2;\nif(key == key2)\n{\n    Console.WriteLine(\"Two keys are matching!\");\n}\nif(key == ConsoleKeyEx.U)\n{\n    Console.WriteLine(\"You pressed the Escape key!\");\n}";
-        public string Window1 =
-            "#Define Window_Main\n" +
-            "{\n" +
-            "    this.RGB = 255, 52, 126;\n" +
-            "    this.Title = \"Demo title\";\n" +
-            "    this.Width = 400;\n" +
-            "    this.Height = 500;\n" +
-            "    this.Titlebar = true;\n" +
-            "    this.X = 500;\n" +
-            "    this.Y = 500;\n" +
-            "    this.AlwaysOnTop = true;\n" +
-            "    Label test = new Label(10, 10, \"Hello World\", 255, 255, 255);\n" +
-            "    Button btn = new Button(10, 30, 110, 25, \"Hello World\", 1, 1, 1);\n" +
-            "    Slider slider = new Slider(10, 80, 255, 20);\n" +
-            "    TextBox tbox = new TextBox(10, 110, 110, 25, 60, 60, 60, \"\", \"Dummy text\");\n" +
-            "    CheckBox.NewCheckBox(15, 60, 20, 20, true, \"Choices\", \"Office Document\");\n" +
-            "    Table table = new Table(10, 10, 100, 25, 1920, 900, 1900, 900);\n" +
-            "}" +
-            "\n" +
-            "#OnClick btn\n" +
-            "{\n" +
-            "    if(10 == 10)\n" +
-            "    {\n" +
-            "        test.Content = \"New message\";\n" +
-            "        test.Color = 1, 1, 1;\n" +
-            "        test.X = 110;\n" +
-            "        test.Y = 60;\n" +
-            "        \n" +
-            "        btn.Width = 90;\n" +
-            "    }\n" +
-            "}" +
-            "#void Looping\n" +
-            "{\n" +
-            "    Graphics.FilledRectangle(10, 180, 150, 40, 0, 0, 255);\n" +
-            "    Graphics.FilledCircle(85, 200, 20, 20, 0, 128, 255);\n" +
-            "}";
-
-        public bool initial = true;
-        public bool clicked = false;
         public bool once { get; set; }
         public bool temp = true;
+        public bool initial = true;
+        public bool clicked = false;
 
-        public List<Button> Buttons = new List<Button>();
-        public List<Scrollbar> Scroll = new List<Scrollbar>();
+        public string content = "";
+        public string Buffered_Content = "";
+        public string Path = "";
 
-        public Bitmap canvas;
+        public int CursorX = 0;
+        public int CursorY = 0;
+
         public Bitmap window { get; set; }
-        public Bitmap Container;
-        public Bitmap Strucrure;
+        public Bitmap canvas;
+        public Bitmap back_canvas;
+        public Bitmap CodeContainer;
+        public Bitmap Filetree;
 
-        public List<Dropdown> dropdowns = new List<Dropdown>();
-        public List<values> value = new List<values>();
-        public List<CSharpFile> FileTree = new List<CSharpFile>();
+        public List<UIElementHandler> UIElements = new List<UIElementHandler>();
 
         public void App()
         {
             if (initial == true)
             {
-                Buttons.Add(new Button(5, 27, 60, 20, "New", 1));
-                Buttons.Add(new Button(195, 27, 60, 20, "Run", 1));
-                Buttons.Add(new Button(270, 27, 60, 20, "Save", 1));
+                #region Top bar
+                UIElements.Add(new Button(5, 6, 60, 20, "New", 1, "New"));
+                UIElements.Add(new Dropdown(72, 28, 115, 20, "CompileType", 
+                    new List<values>
+                    {
+                        new values(true, "GUI", "CompileType"),
+                        new values(false, "Terminal", "CompileType")
+                    }));
+                UIElements.Add(new Button(195, 6, 60, 20, "Run", 1, "Run"));
+                UIElements.Add(new Button(270, 6, 60, 20, "Save", 1, "Save"));
+                #endregion Top bar
 
-                Scroll.Add(new Scrollbar(width - 347, 30, 20, height - 60, 0));
-                Scroll.Add(new Scrollbar(width - 25, 30, 20, height - 267, 0));
-                
-                value.Add(new values(false, "C# console", "Type"));
-                value.Add(new values(true, "C# GUI", "Type"));
+                #region Code container
+                UIElements.Add(new VerticalScrollbar(width - 348, 55, 20, height - 139, 20, 0, 1000, "TextScroll"));
+                #endregion Code container
 
-                Dropdown d = new Dropdown(72, 27, 115, 20, "Type", value);
-                dropdowns.Add(d);
+                #region FileTree
+                UIElements.Add(new VerticalScrollbar(width - 26, 55, 20, 734, 20, 0, 1000, "FileTree"));
+                #endregion FileTree
+                name += " - " + Path;
 
-                //Starting to init line counting
-                for(int i = 0; i < 278; i++)
-                {
-                    if (i.ToString().Length == 1)
-                    {
-                        lineCount += (i + 1) + "  \n";
-                    }
-                    else if(i.ToString().Length == 2)
-                    {
-                        lineCount += (i + 1) + " \n";
-                    }
-                    else
-                    {
-                        lineCount += (i + 1) + "\n";
-                    }
-                }
-
-                FileTree.Add(new CSharpFile("Tests.cs", TestCode));
-                FileTree.Add(new CSharpFile("Game.cs", Game));
-                FileTree.Add(new CSharpFile("WhileLoops.cs", TestWhile));
-                FileTree.Add(new CSharpFile("Keyboard.cs", Keyboard_Test));
-                FileTree.Add(new CSharpFile("Window_Demo.cs", Window1));
-
-                foreach (DirectoryEntry dir in Kernel.fs.GetDirectoryListing(Path))
-                {
-                    if (dir.mEntryType == DirectoryEntryTypeEnum.File)
-                    {
-                        File.Delete(dir.mFullPath);
-                    }
-                }
-                foreach (CSharpFile c in FileTree)
-                {
-                    if (c.Content.Contains("#Define Window_Main"))
-                    {
-                        File.WriteAllText(Path + "\\" + c.Name.Replace(".cs", ".app"), c.Content);
-                    }
-                    else
-                    {
-                        File.WriteAllText(Path + "\\" + c.Name.Replace(".cs", ".cmd"), c.Content);
-                    }
-                }
-                FileTree.Clear();
-
-                foreach (DirectoryEntry dir in Kernel.fs.GetDirectoryListing(Path))
-                {
-                    if (dir.mEntryType == DirectoryEntryTypeEnum.File)
-                    {
-                        FileTree.Add(new CSharpFile(dir.mName, File.ReadAllText(dir.mFullPath)));
-                    }
-                }
                 initial = false;
             }
             if (once == true)
             {
-                canvas = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
-                window = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
-                Container = new Bitmap((uint)(width - 332), (uint)(height - 60), ColorDepth.ColorDepth32);
-                Strucrure = new Bitmap((uint)(314), (uint)height - 267, ColorDepth.ColorDepth32);
+                (canvas, back_canvas, window) = WindowGenerator.Generate(x, y, width, height, CurrentColor, name);
 
-                Array.Fill(Container.RawData, ImprovedVBE.colourToNumber(60, 60, 60));
-                Array.Fill(Strucrure.RawData, ImprovedVBE.colourToNumber(60, 60, 60));
+                CodeContainer = new Bitmap((uint)width - 331, (uint)height - 135, ColorDepth.ColorDepth32);
+                Array.Fill(CodeContainer.RawData, ImprovedVBE.colourToNumber(200, 200, 200));
+                ImprovedVBE.DrawFilledRectangle(CodeContainer, ImprovedVBE.colourToNumber(50, 50, 50), 2, 2, (int)CodeContainer.Width - 4, (int)CodeContainer.Height - 4);
+                ImprovedVBE.DrawImage(CodeContainer, 5, 53, canvas);
 
-                #region corners
-                ImprovedVBE.DrawFilledEllipse(canvas, 10, 10, 10, 10, CurrentColor);
-                ImprovedVBE.DrawFilledEllipse(canvas, width - 11, 10, 10, 10, CurrentColor);
-                ImprovedVBE.DrawFilledEllipse(canvas, 10, height - 10, 10, 10, CurrentColor);
-                ImprovedVBE.DrawFilledEllipse(canvas, width - 11, height - 10, 10, 10, CurrentColor);
-
-                ImprovedVBE.DrawFilledRectangle(canvas, CurrentColor, 0, 10, width, height - 20, false);
-                ImprovedVBE.DrawFilledRectangle(canvas, CurrentColor, 5, 0, width - 10, 15, false);
-                ImprovedVBE.DrawFilledRectangle(canvas, CurrentColor, 5, height - 15, width - 10, 15, false);
-                #endregion corners
-
-                canvas = ImprovedVBE.EnableTransparency(canvas, x, y, canvas);
-
-                ImprovedVBE.DrawGradientLeftToRight(canvas);
-
-                ImprovedVBE.DrawFilledEllipse(canvas, width - 13, 10, 8, 8, ImprovedVBE.colourToNumber(255, 0, 0));
-
-                ImprovedVBE.DrawFilledEllipse(canvas, width - 34, 10, 8, 8, ImprovedVBE.colourToNumber(227, 162, 37));
-
-                BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, name, 2, 2);
-
-                Scroll[0].Render(canvas);
-                Scroll[1].Render(canvas);
+                Filetree = new Bitmap(314, 738, ColorDepth.ColorDepth32);
+                Array.Fill(Filetree.RawData, ImprovedVBE.colourToNumber(200, 200, 200));
+                ImprovedVBE.DrawFilledRectangle(Filetree, ImprovedVBE.colourToNumber(50, 50, 50), 2, 2, (int)Filetree.Width - 4, (int)Filetree.Height - 4);
+                ImprovedVBE.DrawImage(Filetree, width - 318, 53, canvas);
 
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
                 once = false;
-                temp = true;
-            }
-
-            foreach (var button in Buttons)
-            {
-                if (MouseManager.MouseState == MouseState.Left)
-                {
-                    if (MouseManager.X > x + button.X && MouseManager.X < x + button.X + button.Width)
-                    {
-                        if (MouseManager.Y > y + button.Y && MouseManager.Y < y + button.Y + button.Height)
-                        {
-                            if (clicked == false)
-                            {
-                                button.Clicked = true;
-                                temp = true;
-                                clicked = true;
-                            }
-                        }
-                    }
-                }
-            }
-            if (clicked == true && MouseManager.MouseState == MouseState.None)
-            {
-                foreach(var button in Buttons)
-                {
-                    button.Clicked = false;
-                }
-                temp = true;
-                clicked = false;
-            }
-
-            foreach (var scv in Scroll)
-            {
-                if (MouseManager.MouseState == MouseState.Left)
-                {
-                    if (MouseManager.Y > y + scv.Y + 42 + scv.Pos && MouseManager.Y < y + scv.Y + scv.Pos + 62)
-                    {
-                        if (MouseManager.X > x + scv.X + 2 && MouseManager.X < x + scv.X + scv.Width)
-                        {
-                            if (scv.Clicked == false)
-                            {
-                                scv.Clicked = true;
-                                Reg_Y = (int)MouseManager.Y - y - scv.Y - 22 - scv.Pos;
-                            }
-                        }
-                        temp = true;
-                    }
-                }
-                if (MouseManager.MouseState == MouseState.None && scv.Clicked == true)
-                {
-                    temp = true;
-                    scv.Clicked = false;
-                }
-                if (scv.Clicked == true && MouseManager.MouseState == MouseState.None)
-                {
-                    scv.Clicked = false;
-                }
-                if (MouseManager.Y > y + scv.Y + 48 && MouseManager.Y < y + scv.Y + scv.Height - 22 && scv.Clicked == true)
-                {
-                    if (scv.Pos >= 0 && scv.Pos <= scv.Height - 24)
-                    {
-                        scv.Pos = (int)MouseManager.Y - y - scv.Y - 22 - Reg_Y;
-                    }
-                    else
-                    {
-                        if (scv.Pos < 0)
-                        {
-                            scv.Pos = 1;
-                        }
-                        else
-                        {
-                            scv.Pos = scv.Height - 24;
-                        }
-                    }
-                }
             }
 
             if (TaskScheduler.counter == TaskScheduler.Apps.Count - 1)
@@ -296,306 +119,180 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 KeyEvent key;
                 if (KeyboardManager.TryReadKey(out key))
                 {
-                    if (key.Key == ConsoleKeyEx.F5)
-                    {
-                        if (value[0].Highlighted == true)
-                        {
-                            CSharp c = new CSharp();
-                            c.Executor(content);
+                    (content, Buffered_Content, CursorX, CursorY) = CoreEditor.Editor(content, Buffered_Content, CursorX, CursorY, key);
 
-                            Kernel.Clipboard = Path + "\\" + namedProject + ".app";
-                        }
-                        if (value[1].Highlighted == true)
-                        {
-                            TaskScheduler.Apps.Add(new Window(100, 100, 999, 350, 200, 0, "Later", false, icon, content));
-                        }
-                    }
-                    else if(KeyboardManager.ControlPressed == true)
-                    {
-                        if (key.Key == ConsoleKeyEx.S)
-                        {
-                            //save file
-                        }
-                    }
-                    else
-                    {
-                        (content, Back_content, cursorIndex, lineIndex) = CoreEditor.Editor(content, Back_content, cursorIndex, lineIndex, key);
-                    }
+                    //UIElements.Find(d => d.ID == "TextScroll").MaxVal = content.Split('\n').Length * 16 - (int)CodeContainer.Height;
+
                     Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
+                    //Problem that needs to be solved possibly before release: When going down with arrow key, it should go all the way to the bottom first and not just jump there
+                    //Possible fix: IDK honestly...
+                    switch (key.Key)
+                    {
+                        case ConsoleKeyEx.DownArrow:
+                            if (CursorY * 16 >= CodeContainer.Height - 10)
+                            {
+                                UIElements.Find(d => d.ID == "TextScroll").Value = Math.Clamp((CursorY - (int)CodeContainer.Height / 17) * 16, UIElements.Find(d => d.ID == "TextScroll").MinVal, UIElements.Find(d => d.ID == "TextScroll").MaxVal);
+                                UIElements.Find(d => d.ID == "TextScroll").Pos = (int)(UIElements.Find(d => d.ID == "TextScroll").Value / UIElements.Find(d => d.ID == "TextScroll").Sensitivity) + 20;
+                            }
+                            break;
+                        case ConsoleKeyEx.UpArrow:
+                            if (CursorY * 16 < UIElements.Find(d => d.ID == "TextScroll").Value)
+                            {
+                                UIElements.Find(d => d.ID == "TextScroll").Value = Math.Clamp(CursorY * 16, UIElements.Find(d => d.ID == "TextScroll").MinVal, UIElements.Find(d => d.ID == "TextScroll").MaxVal);
+                                UIElements.Find(d => d.ID == "TextScroll").Pos = (int)(UIElements.Find(d => d.ID == "TextScroll").Value / UIElements.Find(d => d.ID == "TextScroll").Sensitivity) + 20;
+                            }
+                            break;
+                        case ConsoleKeyEx.Enter:
+                            if (CursorY * 16 >= CodeContainer.Height - 10)
+                            {
+                                UIElements.Find(d => d.ID == "TextScroll").Value = Math.Clamp(CursorY * 16, UIElements.Find(d => d.ID == "TextScroll").MinVal, UIElements.Find(d => d.ID == "TextScroll").MaxVal);
+                                UIElements.Find(d => d.ID == "TextScroll").Pos = (int)(UIElements.Find(d => d.ID == "TextScroll").Value / UIElements.Find(d => d.ID == "TextScroll").Sensitivity) + 20;
+                            }
+                            break;
+                    }
                     temp = true;
+                }
+                if(MouseManager.MouseState == MouseState.Left && clicked == false)
+                {
+                    if (MouseManager.X > width - 318 && MouseManager.X < width - 318 + Filetree.Width)
+                    {
+                        if (MouseManager.Y > y + 53 && MouseManager.Y < y + 53 + Filetree.Height)
+                        {
+                            temp = true;
+                            clicked = true;
+                        }
+                    }
+                }
+                else
+                {
+                    clicked = false;
                 }
             }
 
             if (temp == true)
             {
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
-                
-                #region Code container
-                Array.Fill(Container.RawData, ImprovedVBE.colourToNumber(36, 36, 36));
-                ImprovedVBE.DrawFilledRectangle(Container, ImprovedVBE.colourToNumber(50, 50, 50), 2, 2, (int)Container.Width - 4, (int)Container.Height - 4, false);
-                ImprovedVBE.DrawFilledRectangle(Container, ImprovedVBE.colourToNumber(69, 69, 69), 2, 2, 35, (int)Container.Height - 4, false);
-                #endregion Code container
+
+                #region CodeContainer
+                Array.Fill(CodeContainer.RawData, ImprovedVBE.colourToNumber(200, 200, 200));
+                ImprovedVBE.DrawFilledRectangle(CodeContainer, ImprovedVBE.colourToNumber(50, 50, 50), 2, 2, (int)CodeContainer.Width - 4, (int)CodeContainer.Height - 4);
+                ImprovedVBE.DrawFilledRectangle(CodeContainer, ImprovedVBE.colourToNumber(90, 90, 90), 2, 2, 25, (int)CodeContainer.Height - 4);
+                int StartY = UIElements.Find(d => d.ID == "TextScroll").Value;
+
+                if (UIElements.Find(d => d.ID == "TextScroll").Value > 0)
+                {
+                    for (int Top = 0; Top < Buffered_Content.Split('\n').Length; Top++)
+                    {
+                        BitFont.DrawBitFontString(CodeContainer, "ArialCustomCharset16", Color.White, (Top + 1).ToString(), 5, 0 - UIElements.Find(d => d.ID == "TextScroll").Value + Top * 16);
+                    }
+
+                    BitFont.DrawBitFontString(CodeContainer, "ArialCustomCharset16", HighLight(Buffered_Content), Buffered_Content, 30, 0 - UIElements.Find(d => d.ID == "TextScroll").Value);
+                }
+                else
+                {
+                    for (int Top = 0; Top < Buffered_Content.Split('\n').Length; Top++)
+                    {
+                        BitFont.DrawBitFontString(CodeContainer, "ArialCustomCharset16", Color.White, (Top + 1).ToString(), 5, 5 - UIElements.Find(d => d.ID == "TextScroll").Value + Top * 16);
+                    }
+
+                    BitFont.DrawBitFontString(CodeContainer, "ArialCustomCharset16", HighLight(Buffered_Content), Buffered_Content, 30, 5 - UIElements.Find(d => d.ID == "TextScroll").Value);
+                }
+
+                ImprovedVBE.DrawImage(CodeContainer, 5, 53, window);
+
+                #endregion CodeContainer
 
                 #region FileTree
-                Array.Fill(Strucrure.RawData, ImprovedVBE.colourToNumber(36, 36, 36));
-                ImprovedVBE.DrawFilledRectangle(Strucrure, ImprovedVBE.colourToNumber(50, 50, 50), 2, 2, (int)Strucrure.Width - 4, (int)Strucrure.Height - 4, false);
+                Filetree = new Bitmap(314, 738, ColorDepth.ColorDepth32);
+                Array.Fill(Filetree.RawData, ImprovedVBE.colourToNumber(200, 200, 200));
+                ImprovedVBE.DrawFilledRectangle(Filetree, ImprovedVBE.colourToNumber(50, 50, 50), 2, 2, (int)Filetree.Width - 4, (int)Filetree.Height - 4);
 
-                int top = 15;
-                int left = 15;
+                Bitmap Title = new Bitmap(Filetree.Width - 24, 35, ColorDepth.ColorDepth32);
+                Array.Fill(Title.RawData, ImprovedVBE.colourToNumber(50, 50, 50));
+                ImprovedVBE.DrawFilledRectangle(Title, ImprovedVBE.colourToNumber(200, 200, 200), 5, (int)Title.Height - 3, (int)Title.Width - 10, 2);
+                BitFont.DrawBitFontString(Title, "VerdanaCustomCharset24", Color.White, Path.Split('\\')[^1], 2, 2);
 
-                BitFont.DrawBitFontString(Strucrure, "ArialCustomCharset16", Color.White, "Solution explorer", 15, top - 4);//The title
-                ImprovedVBE.DrawFilledRectangle(Strucrure, ImprovedVBE.colourToNumber(90, 90, 90), 7, top + 20, (int)Strucrure.Width - 34, 2, false);
-
-                top += 28;
-
-                foreach(var v in FileTree)
+                var Slider = UIElements.Find(d => d.ID == "FileTree");
+                int TopY = 0;
+                foreach (DirectoryEntry d in Kernel.fs.GetDirectoryListing(Path))
                 {
-                    v.List_Y = top;
-                    v.List_X = left;
-                    if (v.selected)
+                    if (!d.mName.EndsWith("sln"))
                     {
-                        ImprovedVBE.DrawFilledRectangle(Strucrure, ImprovedVBE.colourToNumber(20, 20, 20), left - 10, top - 3, (int)(Strucrure.Width - 28), 23, false);
-                        ImprovedVBE.DrawFilledRectangle(Strucrure, ImprovedVBE.colourToNumber(90, 90, 90), left - 8, top - 1, (int)(Strucrure.Width - 32), 19, false);
+                        BitFont.DrawBitFontString(Filetree, "ArialCustomCharset16", Color.White, d.mName, 15, 45 - Slider.Value + TopY * 26);
+                        TopY++;
                     }
-                    BitFont.DrawBitFontString(Strucrure, "ArialCustomCharset16", Color.White, v.Name, left, top - Scroll[1].Pos);//Filename
-                    top += 25;
                 }
+                ImprovedVBE.DrawImage(Title, 2, 2, Filetree);
 
+                ImprovedVBE.DrawImage(Filetree, width - 318, 53, window);
                 #endregion FileTree
-
-                foreach (var button in Buttons)
-                {
-                    if (button.Clicked == true)
-                    {
-                        int Col = button.Color;
-                        button.Color = Color.White.ToArgb();
-                        button.Render(window);
-                        button.Color = Col;
-
-                        switch (button.Text)
-                        {
-                            case "New":
-                                //Create a popup window, that will give the user an option to create a new file
-                                TaskScheduler.Apps.Add(new DialogBox(100, 100, 999, 900, 540, 0, "Create new", false, icon));
-                                break;
-                            case "Run":
-                                //BitFont.DrawBitFontString(window, "ArialCustomCharset16", Color.White, CSharp.Executor(content), 500, 500);
-                                if (value[0].Highlighted == true)
-                                {
-                                    CSharp c = new CSharp();
-                                    c.Executor(content);
-                                }
-                                if (value[1].Highlighted == true)
-                                {
-                                    TaskScheduler.Apps.Add(new Window(100, 100, 999, 350, 200, 0, "Untitled", false, icon, content));
-                                }
-                                break;
-                            case "Save":
-                                foreach (DirectoryEntry d in Kernel.fs.GetDirectoryListing("0:\\User\\Source\\Demo"))
-                                {
-                                    if (d.mEntryType == DirectoryEntryTypeEnum.File)
-                                    {
-                                        File.Delete(d.mFullPath);
-                                    }
-                                }
-                                foreach (CSharpFile c in FileTree)
-                                {
-                                    if (c.Content.Contains("#Define Window_Main"))
-                                    {
-                                        File.WriteAllText(Path + "\\" + c.Name.Replace(".cs", ".app"), c.Content);
-                                    }
-                                    else
-                                    {
-                                        File.WriteAllText(Path + "\\" + c.Name.Replace(".cs", ".cmd"), c.Content);
-                                    }
-                                }
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        button.Render(window);
-                    }
-                    if (MouseManager.MouseState == MouseState.None)
-                    {
-                        button.Clicked = false;
-                    }
-                }
-
-                foreach (var Dropd in dropdowns)
-                {
-                    bool render = true;
-                    if (MouseManager.MouseState == MouseState.Left)
-                    {
-                        if (MouseManager.X > x + Dropd.X + (Dropd.canv.Width - 30) && MouseManager.X < x + Dropd.X + Dropd.canv.Width)
-                        {
-                            if (MouseManager.Y > y + Dropd.Y && MouseManager.Y < y + Dropd.Y + Dropd.Height)
-                            {
-                                Dropdown d = Dropd;
-                                dropdowns.Remove(d);
-                                dropdowns.Add(d);
-                                if (clicked == false)
-                                {
-                                    if (Dropd.Clicked == true)
-                                    {
-                                        Dropd.Clicked = false;
-                                    }
-                                    else
-                                    {
-                                        Dropd.Clicked = true;
-                                        render = false;
-                                    }
-                                    clicked = true;
-                                }
-                            }
-                        }
-                    }
-                    if (render == true)
-                    {
-                        Dropd.Render(window);
-                    }
-                }
-
-                BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.Black, lineCount, 7, 7 - (Scroll[0].Pos * 4));//The line counter
-
-                BitFont.DrawBitFontString(Container, "ArialCustomCharset16", HighLight(Back_content), Back_content, 42, 7 - (Scroll[0].Pos * 4));//The actual code
-
-                ImprovedVBE.DrawImageAlpha(Container, 5, 52, window);
-                ImprovedVBE.DrawImageAlpha(Strucrure, width - 319, 52, window);
-
-
-                Scroll[0].Render(window);
-                Scroll[1].Render(window);
-
                 temp = false;
             }
 
-            if(MouseManager.MouseState == MouseState.Left)
+            foreach (var element in UIElements)
             {
-                foreach(var v in FileTree)
+                if(element.TypeOfElement == TypeOfElement.DropDown)
                 {
-                    if(MouseManager.X > x + width - 319 + v.List_X && MouseManager.X < x + width - 10)
+                    bool StoreClick = element.Clicked;
+                    element.CheckClick(x, y);
+                    if (StoreClick != element.Clicked)
                     {
-                        if (MouseManager.Y > y + 52 + v.List_Y && MouseManager.Y < y + 52 + v.List_Y + 22)
-                        {
-                            foreach(var v2 in FileTree)
-                            {
-                                v2.selected = false;
-                            }
-                            content = v.Content;
-                            Back_content = v.Content;
-                            v.selected = true;
-                            temp = true;
-                        }
+                        temp = true;
                     }
                 }
-            }
-
-            foreach (var v in FileTree)
-            {
-                if(v.selected == true)
-                {
-                    v.Content = content;
-                }
-            }
-
-            //Recieve data from window
-            WindowMessage message = WindowMessenger.Recieve("Create new", "CarbonIDE");
-            if(message != null)
-            {
-                if (!File.Exists(message.Message))
-                {
-                    File.Create(message.Message);
-                }
-                FileTree.Add(new CSharpFile(message.Message.Remove(0, message.Message.LastIndexOf('\\') + 1), File.ReadAllText(message.Message)));
-                WindowMessenger.Message.Remove(message);
-                temp = true;
-            }
-
-            Array.Copy(window.RawData, 0, ImprovedVBE.cover.RawData, 0, window.RawData.Length);
-            foreach (var Dropd in dropdowns)
-            {
+                element.Render(window);
                 if (MouseManager.MouseState == MouseState.Left)
                 {
-                    if (MouseManager.X > x + Dropd.X + (Dropd.canv.Width - 30) && MouseManager.X < x + Dropd.X + Dropd.canv.Width)
+                    if (MouseManager.X > x + element.X && MouseManager.X < x + element.X + element.Width)
                     {
-                        if (MouseManager.Y > y + Dropd.Y && MouseManager.Y < y + Dropd.Y + Dropd.Height)
+                        if (MouseManager.Y > y + element.Y && MouseManager.Y < y + element.Y + element.Height)
                         {
-                            Dropdown d = Dropd;
-                            dropdowns.Remove(Dropd);
-                            dropdowns.Add(d);
-                            if (clicked == false)
+                            switch (element.TypeOfElement)
                             {
-                                if (Dropd.Clicked == true)
-                                {
-                                    Dropd.Clicked = false;
-                                }
-                                else
-                                {
-                                    Dropd.Clicked = true;
-
-                                }
-                                clicked = true;
-                            }
-                            temp = true;
-                        }
-                    }
-                }
-                if (Dropd.Clicked != false)
-                {
-                    if (MouseManager.X > x + Dropd.X && MouseManager.X < x + Dropd.X + Dropd.canv.Width - 30)
-                    {
-                        if (MouseManager.Y > y + Dropd.Y + Dropd.Height && MouseManager.Y < y + Dropd.Y + Dropd.Height + 100)
-                        {
-                            int top = (int)(MouseManager.Y - y - Dropd.Y - Dropd.Height);
-                            int discardable = 0;
-                            int select = 1;
-                            if (top < 20)
-                            {
-                                select = 1;
-                            }
-                            else if (top > 20 && top < 40)
-                            {
-                                select = 2;
-                            }
-                            else if (top > 40 && top < 60)
-                            {
-                                select = 3;
-                            }
-                            else if (top > 60 && top < 80)
-                            {
-                                select = 4;
-                            }
-                            if (select != memory)
-                            {
-                                foreach (var val in value)
-                                {
-                                    if (val.ID == Dropd.ID)
+                                case TypeOfElement.Button:
+                                    int Col = element.Color;
+                                    element.Color = Color.White.ToArgb();
+                                    element.Render(window);
+                                    element.Color = Col;
+                                    if (element.Clicked == false)
                                     {
-                                        val.Highlighted = false;
-                                        discardable++;
-                                    }
-                                    if (discardable == select && val.ID == Dropd.ID)
-                                    {
-                                        if (val.Highlighted == false)
+                                        switch (element.ID)
                                         {
-                                            val.Highlighted = true;
-                                            temp = true;
+                                            case "Run":
+                                                TaskScheduler.Apps.Add(new Terminal.Terminal(100, 100, 999, 500, 350, Path.Split("\\")[^1] + ".cmd", Resources.Terminal));
+                                                break;
                                         }
                                     }
-                                }
-                                memory = select;
+                                    break;
+                                case TypeOfElement.DropDown:
+                                    element.CheckClick(x, y);
+                                    break;
                             }
-
-                            if (MouseManager.MouseState == MouseState.Left)
-                            {
-                                Dropd.Clicked = false;
-                                temp = true;
-                            }
+                            element.Clicked = true;
                         }
                     }
                 }
-                //Dropd.Render(x, y);
+                else if(element.TypeOfElement == TypeOfElement.Button && MouseManager.MouseState == MouseState.None)
+                {
+                    element.Clicked = false;
+                }
+                if (element.TypeOfElement == TypeOfElement.VerticalScrollbar)
+                {
+                    if (element.CheckClick((int)MouseManager.X - x, (int)MouseManager.Y - y))
+                    {
+                        temp = true;
+                    }
+                }
+            }
+
+            //Renders the window to the screen
+            if (GlobalValues.TaskBarType == "Nostalgia")
+            {
+                Array.Copy(window.RawData, 0, ImprovedVBE.cover.RawData, ImprovedVBE.width * TaskManager.TaskBar.Height, window.RawData.Length);
+            }
+            else
+            {
+                Array.Copy(window.RawData, 0, ImprovedVBE.cover.RawData, 0, window.RawData.Length);
             }
         }
 

@@ -184,9 +184,8 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                             ide.height = ImprovedVBE.height - 75;
                                             ide.z = 999;
                                             ide.icon = ImprovedVBE.ScaleImageStock(Resources.IDE, 56, 56);
+                                            ide.Path = v.fullPath;
                                             ide.name = "CarbonIDE";
-                                            ide.Path = v.fullPath + "\\" + v.name;
-                                            ide.namedProject = v.name;
 
                                             TaskScheduler.Apps.Add(ide);
 
@@ -277,7 +276,6 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                         ide.z = 999;
                                         ide.icon = ImprovedVBE.ScaleImageStock(Resources.IDE, 56, 56);
                                         ide.name = "CarbonIDE";
-                                        ide.Path = SourceofProject + "\\" + namedProject;
 
                                         TaskScheduler.Apps.Add(ide);
 

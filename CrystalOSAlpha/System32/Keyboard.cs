@@ -135,6 +135,10 @@ namespace CrystalOSAlpha.System32
                 {
                     case ConsoleKeyEx.V:
                         return '@';
+                    case ConsoleKeyEx.Comma:
+                        return ';';
+                    case ConsoleKeyEx.C:
+                        return '&';
                 }
             }
             switch (key.Key)

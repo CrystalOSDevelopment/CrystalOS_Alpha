@@ -595,12 +595,12 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                             Source = "Calculator",
                             Icon = ImprovedVBE.ScaleImageStock(Resources.Calculator, GlobalValues.IconWidth, GlobalValues.IconHeight)
                         },
-                        //new Menu_Items
-                        //{
-                        //    Name = "CarbonIDE",
-                        //    Source = "CarbonIDE",
-                        //    Icon = ImprovedVBE.ScaleImageStock(Resources.IDE, GlobalValues.IconWidth, GlobalValues.IconHeight)
-                        //},
+                        new Menu_Items
+                        {
+                            Name = "CarbonIDE",
+                            Source = "CarbonIDE",
+                            Icon = ImprovedVBE.ScaleImageStock(Resources.IDE, GlobalValues.IconWidth, GlobalValues.IconHeight)
+                        },
                         new Menu_Items
                         {
                             Name = "File Explorer",
