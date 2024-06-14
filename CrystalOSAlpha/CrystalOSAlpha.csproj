@@ -159,4 +159,8 @@
         <PackageReference Include="IL2CPU.API" Version="0.1.0-localbuild20240414074830" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Programming\CrystalSharp\CodeStructure\Conditional\" />
+    </ItemGroup>
+
 </Project>

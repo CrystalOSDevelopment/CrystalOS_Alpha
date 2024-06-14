@@ -6,10 +6,12 @@ using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics.Icons;
 using CrystalOSAlpha.Graphics.TaskBar;
+using CrystalOSAlpha.Programming.CrystalSharp;
 using CrystalOSAlpha.UI_Elements;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using Kernel = CrystalOS_Alpha.Kernel;
 
@@ -73,6 +75,54 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         {
             if (initial == true)
             {
+                if (!File.Exists(Path + "\\Extension.cs"))
+                {
+                    File.WriteAllText(Path + "\\Extension.cs",
+                        "class Extension\n" +
+                        "{\n" +
+                        "    public static void TestVoid()\n" +
+                        "    {\n" +
+                        "        Console.WriteLine(\"Hello from TestVoid()\");\n" +
+                        "    }\n" +
+                        "    \n" +
+                        "    public static void Testvoid2()\n" +
+                        "    {\n" +
+                        "        Console.WriteLine(\"Hello from Testvoid2()\");\n" +
+                        "    }\n" +
+                        "}");
+                }
+                if (File.Exists(Path + "\\Main.cs"))
+                {
+                    File.WriteAllText(Path + "\\Main.cs", 
+                        "class Demo\n" +
+                        "{\n" +
+                        "    public static void Main()\n" +
+                        "    {\n" +
+                        "        Console.WriteLine(\"Hello from Main()\");\n" +
+                        "        Console.WriteLine(\"This is a test message\");\n" +
+                        "        Console.WriteLine(\"Extra line\");\n" +
+                        "        Console.Write(\"Extension: \");\n" +
+                        "        Console.ReadLine();\n" +
+                        "        Console.Clear();\n" +
+                        "        Console.WriteLine(\"This line is visible after Clear()\");\n" +
+                        "        string Test = \"Hello\";\n" +
+                        "    }\n" +
+                        "    \n" +
+                        "    public static void ExtraVoid()\n" +
+                        "    {\n" +
+                        "        Console.WriteLine(\"Hello from ExtraVoid()\");\n" +
+                        "        Console.WriteLine(\"This shouldn't be executed!\");\n" +
+                        "    }\n" +
+                        "}");
+                    content = File.ReadAllText(Path + "\\Main.cs");
+                    Buffered_Content = content;
+                }
+                else
+                {
+                    content = File.ReadAllText(Path + "\\Main.cs");
+                    Buffered_Content = content;
+                }
+
                 #region Top bar
                 UIElements.Add(new Button(5, 6, 60, 20, "New", 1, "New"));
                 UIElements.Add(new Dropdown(72, 28, 115, 20, "CompileType", 
@@ -259,7 +309,18 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                         switch (element.ID)
                                         {
                                             case "Run":
-                                                TaskScheduler.Apps.Add(new Terminal.Terminal(100, 100, 999, 500, 350, Path.Split("\\")[^1] + ".cmd", Resources.Terminal));
+                                                //Take the file(s) and make it segmented into fast accessable chunks
+                                                List<string> list = new List<string>();
+                                                foreach (DirectoryEntry d in Kernel.fs.GetDirectoryListing(Path))
+                                                {
+                                                    if (d.mName.EndsWith("cs"))
+                                                    {
+                                                        list.Add(d.mFullPath);
+                                                    }
+                                                }
+                                                var Assembled = CodeAssembler.AssembleCode(list);
+
+                                                TaskScheduler.Apps.Add(new Terminal.Terminal(100, 100, 999, 500, 350, Path.Split("\\")[^1] + ".cmd", Resources.Terminal, TypeOfTerminal.Executable, Assembled));
                                                 break;
                                         }
                                     }

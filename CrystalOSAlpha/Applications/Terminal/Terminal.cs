@@ -2,18 +2,20 @@
 using Cosmos.System.Graphics;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
+using CrystalOSAlpha.Programming.CrystalSharp;
 using CrystalOSAlpha.System32;
 using CrystalOSAlpha.UI_Elements;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using Core = CrystalOSAlpha.Programming.CrystalSharp.Core;
 using TaskScheduler = CrystalOSAlpha.Graphics.TaskScheduler;
 
 namespace CrystalOSAlpha.Applications.Terminal
 {
     class Terminal : App
     {
-        public Terminal(int X, int Y, int Z, int Width, int Height, string Name, Bitmap Icon)
+        public Terminal(int X, int Y, int Z, int Width, int Height, string Name, Bitmap Icon, TypeOfTerminal TerminalType = TypeOfTerminal.Normal, List<CodeSegments> CodeSegments = null, string Code = "")
         {
             this.x = X;
             this.y = Y;
@@ -22,6 +24,12 @@ namespace CrystalOSAlpha.Applications.Terminal
             this.height = Height;
             this.name = Name;
             this.icon = Icon;
+            this.T = TerminalType;
+            if(TerminalType != TypeOfTerminal.Normal)
+            {
+                this.content = Code;
+                this.CodeSegments = CodeSegments;
+            }
         }
 
         #region Core_Values
@@ -35,7 +43,6 @@ namespace CrystalOSAlpha.Applications.Terminal
         public string name {get; set; }
         public bool minimised { get; set; }
         public bool movable { get; set; }
-        
         public Bitmap icon { get; set; }
         #endregion Core_Values
 
@@ -44,28 +51,40 @@ namespace CrystalOSAlpha.Applications.Terminal
         public int index = 0;
         public int Reg_Y = 0;
         public int CurrentColor = ImprovedVBE.colourToNumber(GlobalValues.R, GlobalValues.G, GlobalValues.B);
+        //Index line counter for the programming language execution part
+        public int Index = 0;
 
         public string content = "Crystal-PC> ";
-
         public string command = "";
+
         public bool initial = true;
         public bool clicked = false;
         public bool temp = true;
         public bool once { get; set; }
         public bool echo_off = false;
+        public bool NeedFeedback = false;
 
-        public Bitmap canvas;
         public Bitmap window { get; set; }
         public Bitmap Container;
+        public Bitmap canvas;
 
         public List<UIElementHandler> Buttons = new List<UIElementHandler>();
         public List<UIElementHandler> Scroll = new List<UIElementHandler>();
         public List<string> cmd_history = new List<string>();
+        public List<CodeSegments> CodeSegments;
+
+        public Core ProgramExec = new Core();
+        public TypeOfTerminal T = TypeOfTerminal.Normal;
+        public int ResponseLength = 0;
 
         public void App()
         {
             if (initial == true)
             {
+                if(T != TypeOfTerminal.Normal)
+                {
+                    //content = "";
+                }
                 Buttons.Add(new Button(5, 27, 90, 20, "Clear", 1));
 
                 Scroll.Add(new VerticalScrollbar(width - 22, 52, 20, height - 60, 20, 0, 1000, ""));
@@ -89,13 +108,18 @@ namespace CrystalOSAlpha.Applications.Terminal
                         button.Render(canvas);
                         button.Color = Col;
 
-                        switch (button.Text)
+                        switch (T)
                         {
-                            case "Clear":
-                                content = "Crystal-PC> ";
-                                command = "";
-                                offset = 0;
-                                offset2 = 0;
+                            case TypeOfTerminal.Normal:
+                                switch (button.Text)
+                                {
+                                    case "Clear":
+                                        content = "Crystal-PC> ";
+                                        command = "";
+                                        offset = 0;
+                                        offset2 = 0;
+                                        break;
+                                }
                                 break;
                         }
                     }
@@ -149,88 +173,150 @@ namespace CrystalOSAlpha.Applications.Terminal
                 }
             }
 
+            switch (T)
+            {
+                case TypeOfTerminal.Executable:
+                    if (ProgramExec.LineCounter == -1)
+                    {
+                        // ProgramExec.LineCounter = 2;
+                        // content = "";
+                    }
+                    else
+                    {
+                        if (!ProgramExec.IsWaitingForReadLine)
+                        {
+                            string SaveOut = ProgramExec.Execute(CodeSegments, name.Split('.')[0]);
+                            if (SaveOut != null)
+                            {
+                                content += SaveOut;
+                                if (ProgramExec.IsWaitingForReadLine)
+                                {
+                                    ResponseLength = SaveOut.Length;
+                                }
+                            }
+                            else
+                            {
+                                ResponseLength = 0;
+                                content = "";
+                            }
+                        }
+                        else
+                        {
+                            content = content.Remove(content.Length - ResponseLength);
+                            string SaveOut = ProgramExec.Execute(CodeSegments, name.Split('.')[0]);
+                            if (SaveOut != null)
+                            {
+                                content += SaveOut;
+                                ResponseLength = SaveOut.Length;
+                            }
+                            else
+                            {
+                                ResponseLength = 0;
+                                content = "";
+                            }
+                        }
+                        content = content.TrimStart('\n');
+                        temp = true;
+                    }
+                    break;
+            }
+
             if (TaskScheduler.counter == TaskScheduler.Apps.Count - 1)
             {
                 KeyEvent key;
                 if (KeyboardManager.TryReadKey(out key))
                 {
-                    if(key.Key == ConsoleKeyEx.Enter)
+                    switch (T)
                     {
-                        if(command == "clear")
-                        {
-                            if(echo_off == true)
-                            {
+                        case TypeOfTerminal.Normal:
+                                if (key.Key == ConsoleKeyEx.Enter)
+                                {
+                                    if(command == "clear")
+                                    {
+                                        if(echo_off == true)
+                                        {
 
-                            }
-                            else
+                                        }
+                                        else
+                                        {
+                                            content = "Crystal-PC> ";
+                                        }
+                                        offset = 0;
+                                        offset2 = 0;
+                                    }
+                                    else
+                                    {
+                                        cmd_history.Add(command);
+                                        if(echo_off == true)
+                                        {
+                                            content += "\n" + CommandLibrary.Execute(command);
+                                        }
+                                        else
+                                        {
+                                            content += "\n" + CommandLibrary.Execute(command) + "\nCrystal-PC> ";
+                                        }
+                                        index = cmd_history.Count;
+                                        if(cmd_history.Count > 20)
+                                        {
+                                            cmd_history.RemoveAt(0);
+                                        }
+                                    }
+                                    command = "";
+                                    while(content.Split('\n').Length * 16 > Container.Height * 5)
+                                    {
+                                        content = content.Remove(0, content.IndexOf("\n") + 1);
+                                    }
+                                    if (content.Split('\n').Length * 16 >= Container.Height - 10)
+                                    {
+                                        Scroll[0].Value = Math.Clamp(content.Split('\n').Length * 16, Scroll[0].MinVal, Scroll[0].MaxVal);
+                                        Scroll[0].Pos = (int)(Scroll[0].Value / Scroll[0].Sensitivity) + 20;
+                                    }
+                                }
+                                else if(key.Key == ConsoleKeyEx.UpArrow)
+                                {
+                                    int l = command.Length;
+                                    if (command.Length != 0)
+                                    {
+                                        content = content.Remove(content.Length - l);
+                                    }
+                                    if (index > 0)
+                                    {
+                                        index--;
+                                    }
+                                    command = cmd_history[index];
+                                    content += command;
+                                }
+                                else if (key.Key == ConsoleKeyEx.DownArrow)
+                                {
+                                    int l = command.Length;
+                                    if(command.Length != 0)
+                                    {
+                                        content = content.Remove(content.Length - l);
+                                    }
+                                    if(index < cmd_history.Count - 1)
+                                    {
+                                        index++;
+                                    }
+                                    command = cmd_history[index];
+                                    content += command;
+                                }
+                                else
+                                {
+                                    int length = command.Length;
+                                    command = Keyboard.HandleKeyboard(command, key);
+                                    content = content.Remove(content.Length - length);
+                                    content += command;
+                                }
+                            break;
+                        case TypeOfTerminal.Executable:
+                            if (NeedFeedback)
                             {
-                                content = "Crystal-PC> ";
+                                int LengthOfInput = command.Length;
+                                command = Keyboard.HandleKeyboard(command, key);
+                                content = content.Remove(content.Length - LengthOfInput);
+                                content += command;
                             }
-                            offset = 0;
-                            offset2 = 0;
-                        }
-                        else
-                        {
-                            cmd_history.Add(command);
-                            if(echo_off == true)
-                            {
-                                content += "\n" + CommandLibrary.Execute(command);
-                            }
-                            else
-                            {
-                                content += "\n" + CommandLibrary.Execute(command) + "\nCrystal-PC> ";
-                            }
-                            index = cmd_history.Count;
-                            if(cmd_history.Count > 20)
-                            {
-                                cmd_history.RemoveAt(0);
-                            }
-                        }
-                        command = "";
-                        while(content.Split('\n').Length * 16 > Container.Height * 5)
-                        {
-                            content = content.Remove(0, content.IndexOf("\n") + 1);
-                        }
-                        if (content.Split('\n').Length * 16 >= Container.Height - 10)
-                        {
-                            Scroll[0].Value = Math.Clamp(content.Split('\n').Length * 16, Scroll[0].MinVal, Scroll[0].MaxVal);
-                            Scroll[0].Pos = (int)(Scroll[0].Value / Scroll[0].Sensitivity) + 20;
-                        }
-                    }
-                    else if(key.Key == ConsoleKeyEx.UpArrow)
-                    {
-                        int l = command.Length;
-                        if (command.Length != 0)
-                        {
-                            content = content.Remove(content.Length - l);
-                        }
-                        if (index > 0)
-                        {
-                            index--;
-                        }
-                        command = cmd_history[index];
-                        content += command;
-                    }
-                    else if (key.Key == ConsoleKeyEx.DownArrow)
-                    {
-                        int l = command.Length;
-                        if(command.Length != 0)
-                        {
-                            content = content.Remove(content.Length - l);
-                        }
-                        if(index < cmd_history.Count - 1)
-                        {
-                            index++;
-                        }
-                        command = cmd_history[index];
-                        content += command;
-                    }
-                    else
-                    {
-                        int length = command.Length;
-                        command = Keyboard.HandleKeyboard(command, key);
-                        content = content.Remove(content.Length - length);
-                        content += command;
+                            break;
                     }
 
                     foreach (var vscroll in Scroll)
@@ -298,5 +384,10 @@ namespace CrystalOSAlpha.Applications.Terminal
             }
             return index_out;
         }
+    }
+    public enum TypeOfTerminal
+    {
+        Normal,
+        Executable
     }
 }
