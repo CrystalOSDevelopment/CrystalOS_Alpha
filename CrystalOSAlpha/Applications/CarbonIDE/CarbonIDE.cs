@@ -93,7 +93,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 }
                 if (File.Exists(Path + "\\Main.cs"))
                 {
-                    File.WriteAllText(Path + "\\Main.cs", 
+                    File.WriteAllText(Path + "\\Main.cs",
                         "class Demo\n" +
                         "{\n" +
                         "    public static void Main()\n" +
@@ -105,7 +105,27 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                         "        Console.ReadLine();\n" +
                         "        Console.Clear();\n" +
                         "        Console.WriteLine(\"This line is visible after Clear()\");\n" +
-                        "        string Test = \"Hello\";\n" +
+                        "        string A = \"Hello\";\n" +
+                        "        int B = 18;\n" +
+                        "        bool C = true;\n" +
+                        "        bool D = false;\n" +
+                        "        float E = 1.5f;\n" +
+                        "        double F = 1.2221;\n" +
+                        "        char G = 'A';\n" +
+                        "        A = Console.ReadLine();\n" +
+                        "        D = false;\n" +
+                        "        if(B == 18 && C)\n" +
+                        "        {\n" +
+                        "            Console.WriteLine(\"Condition B == 18 && C is true\");\n" +
+                        "        }\n" +
+                        "        if(B != 18 && D == true)\n" +
+                        "        {\n" +
+                        "            Console.WriteLine(\"Condition B != 18 || D is false\");\n" +
+                        "        }\n" +
+                        "        for (int i = 0; i < 10; i++)\n" +
+                        "        {\n" +
+                        "            Console.WriteLine(\"1\");\n" +
+                        "        }\n" +
                         "    }\n" +
                         "    \n" +
                         "    public static void ExtraVoid()\n" +

@@ -15,7 +15,6 @@ using System.Drawing;
 using System.IO;
 using CrystalOSAlpha.System32;
 using CrYstalOSAlpha.UI_Elements;
-using System.ComponentModel;
 
 namespace CrystalOSAlpha.Applications.CarbonIDE
 {
