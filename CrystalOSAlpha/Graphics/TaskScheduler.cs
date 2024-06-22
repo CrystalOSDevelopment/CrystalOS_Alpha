@@ -197,7 +197,7 @@ namespace CrystalOSAlpha.Graphics
                         }
                         else
                         {
-                            Apps.Add(new MsgBox(999, ImprovedVBE.width / 2 - 300, ImprovedVBE.height / 2 - 100, 600, 200, "Error!", "An unknown error occoured!\nIf restarting the app doesn't help, open a github issue at:\nhttps://github.com/CrystalOSDevelopment/CrystalOS_Alpha", Resources.Celebration));
+                            Apps.Add(new MsgBox(999, ImprovedVBE.width / 2 - 300, ImprovedVBE.height / 2 - 100, 600, 200, "Error!", "An unknown error occoured!\nIf restarting the app doesn't help, open a github issue at:\nhttps://github.com/CrystalOSDevelopment/CrystalOS_Alpha\n" + e.Message, Resources.Celebration));
                         }
                         Apps.Remove(app);
                     }

@@ -546,6 +546,7 @@ namespace CrystalOSAlpha.Applications.FileSys
                                             Applications.Notepad.Notepad n = new Notepad.Notepad(100, 100, 999, 700, 420, "Note... - " + entry.name, ImprovedVBE.ScaleImageStock(Resources.Notepad, 56, 56));
                                             n.content = File.ReadAllText(entry.fullPath);
                                             n.source = entry.fullPath;
+                                            n.Buffered_Content = n.content;
 
                                             TaskScheduler.Apps.Add(n);
                                         }

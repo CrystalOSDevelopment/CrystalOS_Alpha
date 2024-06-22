@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Kernel = CrystalOS_Alpha.Kernel;
 
 namespace CrystalOSAlpha.Applications.CarbonIDE
@@ -70,6 +71,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public Bitmap Filetree;
 
         public List<UIElementHandler> UIElements = new List<UIElementHandler>();
+        public List<CSharpFile> Files = new List<CSharpFile>();
 
         public void App()
         {
@@ -91,8 +93,9 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                         "    }\n" +
                         "}");
                 }
-                if (File.Exists(Path + "\\Main.cs"))
+                if (!File.Exists(Path + "\\Main.cs"))
                 {
+                    #region TestCode
                     File.WriteAllText(Path + "\\Main.cs",
                         "class Demo\n" +
                         "{\n" +
@@ -109,23 +112,40 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                         "        int B = 18;\n" +
                         "        bool C = true;\n" +
                         "        bool D = false;\n" +
-                        "        float E = 1.5f;\n" +
+                        "        float E = 1.5;\n" +
                         "        double F = 1.2221;\n" +
                         "        char G = 'A';\n" +
-                        "        A = Console.ReadLine();\n" +
+                        "        A = Math.Abs(-5 + 2);\n" +
                         "        D = false;\n" +
                         "        if(B == 18 && C)\n" +
                         "        {\n" +
                         "            Console.WriteLine(\"Condition B == 18 && C is true\");\n" +
                         "        }\n" +
+                        "        else\n" +
+                        "        {\n" +
+                        "            Console.WriteLine(\"This shouldn't run\");\n" +
+                        "        }\n" +
                         "        if(B != 18 && D == true)\n" +
                         "        {\n" +
                         "            Console.WriteLine(\"Condition B != 18 || D is false\");\n" +
                         "        }\n" +
-                        "        for (int i = 0; i < 10; i++)\n" +
+                        "        else if(B == 18)\n" +
+                        "        {\n" +
+                        "            Console.WriteLine(\"From elseif!\");\n" +
+                        "        }\n" +
+                        "        else\n" +
+                        "        {\n" +
+                        "            Console.WriteLine(\"This should run\");\n" +
+                        "        }\n" +
+                        "        for(int i = 0; i < 10; i++)\n" +
                         "        {\n" +
                         "            Console.WriteLine(\"1\");\n" +
                         "        }\n" +
+                        "        Random.Next(5, 11);\n" +
+                        "        B += Console.ReadLine();\n" +
+                        "        Console.WriteLine(\"Value of B: \" + B);\n" +
+                        "        B *= 10;\n" +
+                        "        Console.WriteLine(\"Value of B after multiply by 10: \" + B);\n" +
                         "    }\n" +
                         "    \n" +
                         "    public static void ExtraVoid()\n" +
@@ -134,6 +154,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                         "        Console.WriteLine(\"This shouldn't be executed!\");\n" +
                         "    }\n" +
                         "}");
+                    #endregion TestCode
                     content = File.ReadAllText(Path + "\\Main.cs");
                     Buffered_Content = content;
                 }
@@ -222,7 +243,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     }
                     temp = true;
                 }
-                if(MouseManager.MouseState == MouseState.Left && clicked == false)
+                if(MouseManager.MouseState == MouseState.Left && clicked == false) 
                 {
                     if (MouseManager.X > width - 318 && MouseManager.X < width - 318 + Filetree.Width)
                     {
@@ -249,6 +270,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 ImprovedVBE.DrawFilledRectangle(CodeContainer, ImprovedVBE.colourToNumber(90, 90, 90), 2, 2, 25, (int)CodeContainer.Height - 4);
                 int StartY = UIElements.Find(d => d.ID == "TextScroll").Value;
 
+                //TODO: Cache the code so it doesn't have to be re-rendered every frame
                 if (UIElements.Find(d => d.ID == "TextScroll").Value > 0)
                 {
                     for (int Top = 0; Top < Buffered_Content.Split('\n').Length; Top++)
@@ -284,11 +306,46 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
                 var Slider = UIElements.Find(d => d.ID == "FileTree");
                 int TopY = 0;
-                foreach (DirectoryEntry d in Kernel.fs.GetDirectoryListing(Path))
+                if(Files.Count == 0)
                 {
-                    if (!d.mName.EndsWith("sln"))
+                    foreach (DirectoryEntry d in Kernel.fs.GetDirectoryListing(Path))
                     {
-                        BitFont.DrawBitFontString(Filetree, "ArialCustomCharset16", Color.White, d.mName, 15, 45 - Slider.Value + TopY * 26);
+                        Files.Add(new CSharpFile(d));
+                        if (d.mName.Contains("Main"))
+                        {
+                            Files[^1].selected = true;
+                        }
+                    }
+                }
+                foreach (CSharpFile d in Files)
+                {
+                    if (!d.Name.mName.EndsWith("sln") && !d.Name.mName.EndsWith("cmd"))
+                    {
+                        if(MouseManager.MouseState == MouseState.Left)
+                        {
+                            if(MouseManager.X > width - 318 && MouseManager.X < width - 318 + Filetree.Width)
+                            {
+                                if (MouseManager.Y > y + 53 + 40 + TopY * 26 && MouseManager.Y < y + 53 + 40 + TopY * 26 + 26)
+                                {
+                                    foreach (CSharpFile f in Files)
+                                    {
+                                        if (f.selected == true)
+                                        {
+                                            File.WriteAllText(f.Name.mFullPath, content);
+                                            f.selected = false;
+                                        }
+                                    }
+                                    d.selected = true;
+                                    content = File.ReadAllText(d.Name.mFullPath);
+                                    Buffered_Content = content;
+                                }
+                            }
+                        }
+                        if(d.selected == true)
+                        {
+                            ImprovedVBE.DrawFilledRectangle(Filetree, ImprovedVBE.colourToNumber(100, 100, 100), 2, 40 - Slider.Value + TopY * 26, (int)Filetree.Width - 4, 31);
+                        }
+                        BitFont.DrawBitFontString(Filetree, "ArialCustomCharset16", Color.White, d.Name.mName, 15, 45 - Slider.Value + TopY * 26);
                         TopY++;
                     }
                 }
@@ -382,302 +439,131 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
         }
 
+        private static readonly Dictionary<string, Color> keywordColors = new Dictionary<string, Color>
+    {
+        {"Console", Color.Green},
+        {"Math", Color.Green},
+        {"Random", Color.Green},
+        {"File", Color.Green},
+        {"ReadKey", Color.LightGreen},
+        {"ConsoleKeyEx", Color.LightGreen},
+        {"int", Color.Blue},
+        {"string", Color.Blue},
+        {"bool", Color.Blue},
+        {"float", Color.Blue},
+        {"double", Color.Blue},
+        {"public", Color.Blue},
+        {"static", Color.Blue},
+        {"void", Color.Blue},
+        {"namespace", Color.Blue},
+        {"class", Color.Blue},
+        {"new", Color.Blue},
+        {"true", Color.Blue},
+        {"false", Color.Blue},
+        {"this", Color.Blue},
+        {"if", Color.DeepPink},
+        {"for", Color.DeepPink},
+        {"while", Color.DeepPink},
+        {"else", Color.DeepPink},
+        {"Label", Color.DarkSalmon},
+        {"Button", Color.DarkSalmon},
+        {"Slider", Color.DarkSalmon},
+        {"TextBox", Color.DarkSalmon}
+    };
+
         public Color[] HighLight(string source)
         {
             Color[] colors = new Color[source.Length];
             Array.Fill(colors, Color.White);
 
-            int index = 0;
-            int sepCounter = 0;
-            int qCount = 0;
-            
-            string Extra = "";
+            StringBuilder extra = new StringBuilder();
             string state = "Ended";
-            
-            bool was_String = false;
             bool comment = false;
+            int index = 0;
 
-            foreach(char c in source)
+            for (int i = 0; i < source.Length; i++)
             {
-                if(state == "Ended")
+                char c = source[i];
+
+                if (state == "Ended")
                 {
-                    if(c == '\n')
+                    if (c == '\n')
                     {
                         comment = false;
                     }
-                    if (c == '.' || c == '\n' || c == ' ' || c == '=' || c == '{' || c == '}' || c == '+' || c == '-' || c == ',' || c == '|')
+                    if (".\n ={}+-|,".Contains(c))
                     {
-                        if(comment == false)
+                        if (!comment)
                         {
-                            Extra = "";
+                            extra.Clear();
                         }
                     }
                     else
                     {
-                        Extra += c;
+                        extra.Append(c);
                         if (c == '\"')
                         {
                             state = "Started";
                         }
                     }
                 }
-                else if(state == "Started")
+                else if (state == "Started")
                 {
-                    Extra += c;
-                    if (c == '\"' && !Extra.EndsWith("\\\"") && Extra.Count(t => t == '\"') % 2 == 0)
+                    extra.Append(c);
+                    if (c == '\"' && !extra.ToString().EndsWith("\\\"") && extra.ToString().Count(t => t == '\"') % 2 == 0)
                     {
                         state = "Ended";
                     }
                 }
-                
-                switch(Extra)
+
+                string extraString = extra.ToString();
+
+                if (keywordColors.ContainsKey(extraString))
                 {
-                    case "Console":
-                        for(int i = index - Extra.Length + 1; i <= index; i++)
-                        {
-                            colors[i] = Color.Green;
-                        }
-                        break;
-                    case "Math":
-                        for (int i = index - Extra.Length + 1; i <= index; i++)
-                        {
-                            colors[i] = Color.Green;
-                        }
-                        Extra = "";
-                        break;
-                    case "Random":
-                        for (int i = index - Extra.Length + 1; i <= index; i++)
-                        {
-                            colors[i] = Color.Green;
-                        }
-                        Extra = "";
-                        break;
-                    case "File":
-                        for (int i = index - Extra.Length + 1; i <= index; i++)
-                        {
-                            colors[i] = Color.Green;
-                        }
-                        Extra = "";
-                        break;
-                    case "ReadKey":
-                        for (int i = index - Extra.Length + 1; i <= index; i++)
-                        {
-                            colors[i] = Color.LightGreen;
-                        }
-                        Extra = "";
-                        break;
-                    case "ConsoleKeyEx":
-                        for (int i = index - Extra.Length + 1; i <= index; i++)
-                        {
-                            colors[i] = Color.LightGreen;
-                        }
-                        Extra = "";
-                        break;
-                    case "int":
-                        for (int i = index - Extra.Length + 1; i <= index; i++)
-                        {
-                            colors[i] = Color.Blue;
-                        }
-                        Extra = "";
-                        break;
-                    case "string":
-                        for (int i = index - Extra.Length + 1; i <= index; i++)
-                        {
-                            colors[i] = Color.Blue;
-                        }
-                        Extra = "";
-                        break;
-                    case "bool":
-                        for (int i = index - Extra.Length + 1; i <= index; i++)
-                        {
-                            colors[i] = Color.Blue;
-                        }
-                        Extra = "";
-                        break;
-                    case "float":
-                        for (int i = index - Extra.Length + 1; i <= index; i++)
-                        {
-                            colors[i] = Color.Blue;
-                        }
-                        Extra = "";
-                        break;
-                    case "double":
-                        for (int i = index - Extra.Length + 1; i <= index; i++)
-                        {
-                            colors[i] = Color.Blue;
-                        }
-                        Extra = "";
-                        break;
-                    case "public":
-                        for (int i = index - Extra.Length + 1; i <= index; i++)
-                        {
-                            colors[i] = Color.Blue;
-                        }
-                        Extra = "";
-                        break;
-                    case "static":
-                        for (int i = index - Extra.Length + 1; i <= index; i++)
-                        {
-                            colors[i] = Color.Blue;
-                        }
-                        Extra = "";
-                        break;
-                    case "void":
-                        for (int i = index - Extra.Length + 1; i <= index; i++)
-                        {
-                            colors[i] = Color.Blue;
-                        }
-                        Extra = "";
-                        break;
-                    case "namespace":
-                        for (int i = index - Extra.Length + 1; i <= index; i++)
-                        {
-                            colors[i] = Color.Blue;
-                        }
-                        Extra = "";
-                        break;
-                    case "class":
-                        for (int i = index - Extra.Length + 1; i <= index; i++)
-                        {
-                            colors[i] = Color.Blue;
-                        }
-                        Extra = "";
-                        break;
-                    case "new":
-                        for (int i = index - Extra.Length + 1; i <= index; i++)
-                        {
-                            colors[i] = Color.Blue;
-                        }
-                        Extra = "";
-                        break;
-                    case "true":
-                        for (int i = index - Extra.Length + 1; i <= index; i++)
-                        {
-                            colors[i] = Color.Blue;
-                        }
-                        Extra = "";
-                        break;
-                    case "false":
-                        for (int i = index - Extra.Length + 1; i <= index; i++)
-                        {
-                            colors[i] = Color.Blue;
-                        }
-                        Extra = "";
-                        break;
-                    case "this":
-                        for (int i = index - Extra.Length + 1; i <= index; i++)
-                        {
-                            colors[i] = Color.Blue;
-                        }
-                        Extra = "";
-                        break;
-                    case "if(":
-                        for (int i = index - Extra.Length + 1; i < index; i++)
-                        {
-                            colors[i] = Color.DeepPink;
-                        }
-                        Extra = "";
-                        break;
-                    case "for(":
-                        for (int i = index - Extra.Length + 1; i < index; i++)
-                        {
-                            colors[i] = Color.DeepPink;
-                        }
-                        Extra = "";
-                        break;
-                    case "while(":
-                        for (int i = index - Extra.Length + 1; i < index; i++)
-                        {
-                            colors[i] = Color.DeepPink;
-                        }
-                        Extra = "";
-                        break;
-                    case "else":
-                        for (int i = index - Extra.Length + 1; i <= index; i++)
-                        {
-                            colors[i] = Color.DeepPink;
-                        }
-                        Extra = "";
-                        break;
-                    //For UI Elements
-                    case "Label":
-                        for (int i = index - Extra.Length + 1; i <= index; i++)
-                        {
-                            colors[i] = Color.DarkSalmon;
-                        }
-                        Extra = "";
-                        break;
-                    case "Button":
-                        for (int i = index - Extra.Length + 1; i <= index; i++)
-                        {
-                            colors[i] = Color.DarkSalmon;
-                        }
-                        Extra = "";
-                        break;
-                    case "Slider":
-                        for (int i = index - Extra.Length + 1; i <= index; i++)
-                        {
-                            colors[i] = Color.DarkSalmon;
-                        }
-                        Extra = "";
-                        break;
-                    case "TextBox":
-                        for (int i = index - Extra.Length + 1; i <= index; i++)
-                        {
-                            colors[i] = Color.DarkSalmon;
-                        }
-                        Extra = "";
-                        break;
-                    default:
-                        for (int i = index - Extra.Length + 1; i <= index; i++)
-                        {
-                            colors[i] = Color.LightBlue;
-                        }
-                        break;
-                }
-                if(Extra.Length > 2)
-                {
-                    if (Extra.EndsWith("(") && state == "Ended")
+                    Color color = keywordColors[extraString];
+                    for (int j = index - extraString.Length + 1; j <= index; j++)
                     {
-                        for (int i = index - Extra.Length + 1; i < index; i++)
-                        {
-                            colors[i] = Color.Yellow;
-                        }
-                        Extra = "";
+                        colors[j] = color;
                     }
-                    if (Extra.StartsWith("//"))
+                    extra.Clear();
+                }
+                else if (extraString.Length > 2)
+                {
+                    if (extraString.EndsWith("(") && state == "Ended")
                     {
-                        for (int i = index - Extra.Length + 1; i <= index; i++)
+                        for (int j = index - extraString.Length + 1; j < index; j++)
                         {
-                            colors[i] = Color.LightGreen;
+                            colors[j] = Color.Yellow;
+                        }
+                        extra.Clear();
+                    }
+                    if (extraString.StartsWith("//"))
+                    {
+                        for (int j = index - extraString.Length + 1; j <= index; j++)
+                        {
+                            colors[j] = Color.LightGreen;
                         }
                         comment = true;
                     }
                 }
-                switch (Extra[^1])
+
+                if (extraString.EndsWith("\""))
                 {
-                    case '\"':
-                        qCount++;
-                        if (qCount % 2 == 0)
+                    int quoteCount = extraString.Count(ch => ch == '\"');
+                    if (quoteCount % 2 == 0)
+                    {
+                        for (int j = index - extraString.Length + 1; j <= index; j++)
                         {
-                            for (int i = index - Extra.Length + 1; i <= index; i++)
-                            {
-                                colors[i] = Color.Orange;
-                            }
-                            Extra = "";
-                            was_String = true;
+                            colors[j] = Color.Orange;
                         }
-                        break;
+                        extra.Clear();
+                    }
                 }
-                if(c == '\n')
-                {
-                    
-                }
-                else
+
+                if (c != '\n')
                 {
                     index++;
                 }
-                sepCounter++;
             }
             return colors;
         }
@@ -685,16 +571,13 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
     class CSharpFile
     {
-        public string Name { get; set; }
-        public string Content { get; set; }
-        public int List_X { get; set; }
-        public int List_Y { get; set; }
+        public DirectoryEntry Name { get; set; }
         public bool selected { get; set; }
 
-        public CSharpFile(string name, string content)
+        public CSharpFile(DirectoryEntry d)
         {
-            Name = name;
-            Content = content;
+            Name = d;
+            selected = false;
         }
     }
 }

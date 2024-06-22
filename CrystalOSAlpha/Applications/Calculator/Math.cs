@@ -73,8 +73,9 @@ namespace CrystalOSAlpha.Applications.Calculator
             List<string> tokens = new List<string>();
             string current = "";
 
-            foreach (char c in input)
+            for (int i = 0; i < input.Length; i++)
             {
+                char c = input[i];
                 if (IsOperator(c.ToString()) || c == '(' || c == ')')
                 {
                     if (!string.IsNullOrEmpty(current))
@@ -82,7 +83,14 @@ namespace CrystalOSAlpha.Applications.Calculator
                         tokens.Add(current);
                         current = "";
                     }
-                    tokens.Add(c.ToString());
+                    if (c == '-' && (i == 0 || input[i - 1] == '(' || IsOperator(input[i - 1].ToString())))
+                    {
+                        current += c;
+                    }
+                    else
+                    {
+                        tokens.Add(c.ToString());
+                    }
                 }
                 else
                 {

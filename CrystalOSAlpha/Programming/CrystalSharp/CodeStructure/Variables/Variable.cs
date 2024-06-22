@@ -2,6 +2,7 @@
 {
     public class Variable
     {
+        public Variable() { }
         public Variable(string ID, string Value, VariableType Type)
         {
             this.ID = ID;
