@@ -343,7 +343,8 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                         }
                         if(d.selected == true)
                         {
-                            ImprovedVBE.DrawFilledRectangle(Filetree, ImprovedVBE.colourToNumber(100, 100, 100), 2, 40 - Slider.Value + TopY * 26, (int)Filetree.Width - 4, 31);
+                            ImprovedVBE.DrawFilledRectangle(Filetree, 1, 2, 40 - Slider.Value + TopY * 26, (int)Filetree.Width - 24, 33);//TODO: Fix the width of the rectangle
+                            ImprovedVBE.DrawFilledRectangle(Filetree, ImprovedVBE.colourToNumber(100, 100, 100), 4, 42 - Slider.Value + TopY * 26, (int)Filetree.Width - 28, 29);
                         }
                         BitFont.DrawBitFontString(Filetree, "ArialCustomCharset16", Color.White, d.Name.mName, 15, 45 - Slider.Value + TopY * 26);
                         TopY++;
@@ -388,16 +389,25 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                             case "Run":
                                                 //Take the file(s) and make it segmented into fast accessable chunks
                                                 List<string> list = new List<string>();
+                                                string OutputExecutable = "";
                                                 foreach (DirectoryEntry d in Kernel.fs.GetDirectoryListing(Path))
                                                 {
                                                     if (d.mName.EndsWith("cs"))
                                                     {
-                                                        list.Add(d.mFullPath);
+                                                        //list.Add(d.mFullPath);
+                                                        OutputExecutable += File.ReadAllText(d.mFullPath) + "\n";
                                                     }
                                                 }
+                                                File.Create(Path + "\\" + Path.Split("\\")[^1] + ".cmd");
+                                                File.WriteAllText(Path + "\\" + Path.Split("\\")[^1] + ".cmd", OutputExecutable);
+                                                list.Add(File.ReadAllText(Path + "\\" + Path.Split("\\")[^1] + ".cmd"));
                                                 var Assembled = CodeAssembler.AssembleCode(list);
 
                                                 TaskScheduler.Apps.Add(new Terminal.Terminal(100, 100, 999, 500, 350, Path.Split("\\")[^1] + ".cmd", Resources.Terminal, TypeOfTerminal.Executable, Assembled));
+
+                                                //Notepad.Notepad n = new Notepad.Notepad(100, 500, 999, 500, 350, name + ".sln", Resources.Notepad);
+                                                //n.content = OutputExecutable;
+                                                //TaskScheduler.Apps.Add(n);
                                                 break;
                                         }
                                     }

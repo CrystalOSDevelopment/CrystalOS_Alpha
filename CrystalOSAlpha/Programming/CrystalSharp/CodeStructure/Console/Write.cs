@@ -11,6 +11,8 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.CodeStructure.Console
             // Remove the "Console.WriteLine(" part and the closing parenthesis and semicolon
             string temp = input.Replace("Console.Write(", "").TrimEnd(';', ')').Trim();
 
+            temp = temp.Replace("\\n", "\n");
+
             // Split the input string by the concatenation operator (+)
             string[] parts = temp.Split(new[] { '+' }, StringSplitOptions.None);
 

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 
 namespace CrystalOSAlpha.Programming.CrystalSharp
 {
@@ -13,7 +12,7 @@ namespace CrystalOSAlpha.Programming.CrystalSharp
             foreach (string SourceFile in SourceFiles)
             {
                 CodeSegments Code = new CodeSegments();
-                Code.Segmenter(File.ReadAllText(SourceFile));
+                Code.Segmenter(SourceFile);
                 Codes.Add(Code);
                 foreach(var s in Code.Segments)
                 {

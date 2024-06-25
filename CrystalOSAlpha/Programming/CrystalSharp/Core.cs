@@ -1,5 +1,6 @@
 ﻿using Cosmos.System;
 using CrystalOSAlpha.Programming.CrystalSharp.CodeStructure.Console;
+using CrystalOSAlpha.Programming.CrystalSharp.CodeStructure.FileOperations;
 using CrystalOSAlpha.Programming.CrystalSharp.CodeStructure.Math;
 using CrystalOSAlpha.Programming.CrystalSharp.CodeStructure.Variables;
 using System;
@@ -564,6 +565,39 @@ namespace CrystalOSAlpha.Programming.CrystalSharp
                                             break;
                                     }
                                 }
+                                break;
+                        }
+                        break;
+                    case "File":
+                        switch (Parts[1].Split("(")[0])
+                        {
+                            case "ReadAllText":
+                                //TODO: Do it like it's in console class
+                                if (isVariable)
+                                {
+                                    switch (VariableName.Type)
+                                    {
+                                        case VariableType.String:
+                                            Variables[VariableIndex].Value = FileOperations.ReadAllText(Line.Trim().Remove(Line.Trim().Length - 2).Remove(0, "File.ReadAllText(".Length + 1));
+                                            break;
+                                        case VariableType.Int:
+                                            throw new Exception("Cannot assign a string to an integer.");
+                                        case VariableType.Bool:
+                                            throw new Exception("Cannot assign a string to a boolean.");
+                                        case VariableType.Float:
+                                            throw new Exception("Cannot assign a string to a float.");
+                                        case VariableType.Double:
+                                            throw new Exception("Cannot assign a string to a double.");
+                                        case VariableType.Char:
+                                            throw new Exception("Cannot assign a string to a char.");
+                                    }
+                                    isVariable = false;
+                                    VariableIndex = -99;
+                                    VariableName = null;
+                                }
+                                break;
+                            case "WriteAllText":
+                                FileOperations.WriteAllText(Line.Trim().Remove(Line.Trim().Length - 2).Remove(0, "File.ReadAllText(".Length + 1), Variables);
                                 break;
                         }
                         break;

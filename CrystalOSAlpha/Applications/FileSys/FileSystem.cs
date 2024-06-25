@@ -1,11 +1,13 @@
 ﻿using Cosmos.System;
 using Cosmos.System.FileSystem.Listing;
 using Cosmos.System.Graphics;
+using CrystalOSAlpha.Applications.Terminal;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics.Icons;
 using CrystalOSAlpha.Graphics.TaskBar;
 using CrystalOSAlpha.Programming;
+using CrystalOSAlpha.Programming.CrystalSharp;
 using CrystalOSAlpha.System32;
 using CrystalOSAlpha.SystemApps;
 using CrystalOSAlpha.UI_Elements;
@@ -13,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Reflection;
 using Kernel = CrystalOS_Alpha.Kernel;
 using TaskScheduler = CrystalOSAlpha.Graphics.TaskScheduler;
 
@@ -525,8 +528,7 @@ namespace CrystalOSAlpha.Applications.FileSys
                                         }
                                         else if (entry.name.ToLower().EndsWith(".cmd"))
                                         {
-                                            CSharp c = new CSharp();
-                                            c.Executor(File.ReadAllText(entry.fullPath));
+                                            TaskScheduler.Apps.Add(new Terminal.Terminal(100, 100, 999, 500, 350, entry.fullPath.Split("\\")[^1], Resources.Terminal, TypeOfTerminal.Executable, CodeAssembler.AssembleCode(new List<string> { File.ReadAllText(entry.fullPath) })));
                                         }
                                         else if (entry.name.ToLower().EndsWith(".app"))
                                         {
