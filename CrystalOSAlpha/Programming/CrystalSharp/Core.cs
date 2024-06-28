@@ -24,6 +24,7 @@ namespace CrystalOSAlpha.Programming.CrystalSharp
         public string Operator = "";
         public Variable VariableName;
         public List<Variable> Variables = new List<Variable>();
+        public List<ForLoops> Loops = new List<ForLoops>();
 
         public string Execute(List<CodeSegments> CodeSegments, string ProjectName)
         {
@@ -75,6 +76,20 @@ namespace CrystalOSAlpha.Programming.CrystalSharp
                         Output = "";
                     }
                 }
+                if(Loops.Count != 0)
+                {
+                    if (Loops[^1].EndLine == LineCounter)
+                    {
+                        if (EvaluateCondition(Loops[^1].SegmentsHeader[1]))
+                        {
+                            LineCounter = Loops[^1].StartLine;
+                        }
+                        else
+                        {
+                            Loops.RemoveAt(Loops.Count - 1);
+                        }
+                    }
+                }
                 return Temp;
             }
             catch (Exception ex)
@@ -89,71 +104,74 @@ namespace CrystalOSAlpha.Programming.CrystalSharp
             try
             {
                 // IMPORTANT!!!! Always remember that semi-colons are present at the end of the line. They are not trimmed down.
-                if (Line.Contains("string") || Line.Contains("int") || Line.Contains("bool") || Line.Contains("float") || Line.Contains("double") || Line.Contains("char"))
+                if (!Line.Trim().StartsWith("for"))
                 {
-                    Line = SettingVariableValues(Line.Trim());
-                }
-                else
-                {
-                    if (!Line.Contains("if") && !Line.Contains("else if") && !Line.Contains("else") && Line.Contains('='))
+                    if (Line.Contains("string") || Line.Contains("int") || Line.Contains("bool") || Line.Contains("float") || Line.Contains("double") || Line.Contains("char"))
                     {
-                        if (Line.Contains("+="))
+                        Line = SettingVariableValues(Line.Trim());
+                    }
+                    else
+                    {
+                        if (!Line.Contains("if") && !Line.Contains("else if") && !Line.Contains("else") && Line.Contains('='))
                         {
-                            var v = Variables.Find(d => d.ID == Line.Trim().Split(" += ")[0]);
-                            if (v != null)
+                            if (Line.Contains("+="))
                             {
-                                VariableName = v;
-                                VariableIndex = Variables.IndexOf(v);
-                                Line = Line.Split(" += ")[1];
-                                Operator = "+=";
-                                isVariable = true;
+                                var v = Variables.Find(d => d.ID == Line.Trim().Split(" += ")[0]);
+                                if (v != null)
+                                {
+                                    VariableName = v;
+                                    VariableIndex = Variables.IndexOf(v);
+                                    Line = Line.Split(" += ")[1];
+                                    Operator = "+=";
+                                    isVariable = true;
+                                }
                             }
-                        }
-                        else if (Line.Contains("-="))
-                        {
-                            var v = Variables.Find(d => d.ID == Line.Trim().Split(" -= ")[0]);
-                            if (v != null)
+                            else if (Line.Contains("-="))
                             {
-                                VariableName = v;
-                                VariableIndex = Variables.IndexOf(v);
-                                Line = Line.Split(" -= ")[1];
-                                Operator = "-=";
-                                isVariable = true;
+                                var v = Variables.Find(d => d.ID == Line.Trim().Split(" -= ")[0]);
+                                if (v != null)
+                                {
+                                    VariableName = v;
+                                    VariableIndex = Variables.IndexOf(v);
+                                    Line = Line.Split(" -= ")[1];
+                                    Operator = "-=";
+                                    isVariable = true;
+                                }
                             }
-                        }
-                        else if (Line.Contains("*="))
-                        {
-                            var v = Variables.Find(d => d.ID == Line.Trim().Split(" *= ")[0]);
-                            if (v != null)
+                            else if (Line.Contains("*="))
                             {
-                                VariableName = v;
-                                VariableIndex = Variables.IndexOf(v);
-                                Line = Line.Split(" *= ")[1];
-                                Operator = "*=";
-                                isVariable = true;
+                                var v = Variables.Find(d => d.ID == Line.Trim().Split(" *= ")[0]);
+                                if (v != null)
+                                {
+                                    VariableName = v;
+                                    VariableIndex = Variables.IndexOf(v);
+                                    Line = Line.Split(" *= ")[1];
+                                    Operator = "*=";
+                                    isVariable = true;
+                                }
                             }
-                        }
-                        else if (Line.Contains("/="))
-                        {
-                            var v = Variables.Find(d => d.ID == Line.Trim().Split(" /= ")[0]);
-                            if (v != null)
+                            else if (Line.Contains("/="))
                             {
-                                VariableName = v;
-                                VariableIndex = Variables.IndexOf(v);
-                                Line = Line.Split(" /= ")[1];
-                                Operator = "/=";
-                                isVariable = true;
+                                var v = Variables.Find(d => d.ID == Line.Trim().Split(" /= ")[0]);
+                                if (v != null)
+                                {
+                                    VariableName = v;
+                                    VariableIndex = Variables.IndexOf(v);
+                                    Line = Line.Split(" /= ")[1];
+                                    Operator = "/=";
+                                    isVariable = true;
+                                }
                             }
-                        }
-                        else
-                        {
-                            var v = Variables.Find(d => d.ID == Line.Trim().Split(" = ")[0]);
-                            if (v != null)
+                            else
                             {
-                                VariableName = v;
-                                VariableIndex = Variables.IndexOf(v);
-                                Line = Line.Split(" = ")[1];
-                                isVariable = true;
+                                var v = Variables.Find(d => d.ID == Line.Trim().Split(" = ")[0]);
+                                if (v != null)
+                                {
+                                    VariableName = v;
+                                    VariableIndex = Variables.IndexOf(v);
+                                    Line = Line.Split(" = ")[1];
+                                    isVariable = true;
+                                }
                             }
                         }
                     }
@@ -801,38 +819,84 @@ namespace CrystalOSAlpha.Programming.CrystalSharp
                             }
                             else
                             {
-                                foreach (var variable in Variables)
+                                switch (!Line.Trim().StartsWith("for"))
                                 {
-                                    if (variable.ID == Parts[0])
+                                    case true:
+                                        foreach (var variable in Variables)
                                     {
-                                        switch (variable.Type)
+                                        if (variable.ID == Parts[0])
                                         {
-                                            case VariableType.String:
-                                                variable.Value = Parts[1].Remove(Parts[1].Length - 2).Remove(0, 1);
-                                                break;
-                                            case VariableType.Int:
-                                                variable.IntValue = int.Parse(Parts[1].Remove(Parts[1].Length - 1));
-                                                break;
-                                            case VariableType.Bool:
-                                                bool.TryParse(Parts[1].Remove(Parts[1].Length - 1), out bool ParsedBool);
-                                                variable.BoolValue = ParsedBool;
-                                                break;
-                                            case VariableType.Float:
-                                                variable.FloatValue = float.Parse(Line.Remove(Line.Length - 1).Remove(0, Line.IndexOf('.') + 1));
-                                                break;
-                                            case VariableType.Double:
-                                                variable.DoubleValue = double.Parse(Line.Remove(Line.Length - 1).Remove(0, Line.IndexOf('.') + 1));
-                                                break;
-                                            case VariableType.Char:
-                                                variable.CharValue = Line.Remove(Line.Length - 1).Remove(0, 1)[2];
-                                                break;
+                                            switch (variable.Type)
+                                            {
+                                                case VariableType.String:
+                                                    variable.Value = Parts[1].Remove(Parts[1].Length - 2).Remove(0, 1);
+                                                    break;
+                                                case VariableType.Int:
+                                                    variable.IntValue = int.Parse(Parts[1].Remove(Parts[1].Length - 1));
+                                                    break;
+                                                case VariableType.Bool:
+                                                    bool.TryParse(Parts[1].Remove(Parts[1].Length - 1), out bool ParsedBool);
+                                                    variable.BoolValue = ParsedBool;
+                                                    break;
+                                                case VariableType.Float:
+                                                    variable.FloatValue = float.Parse(Line.Remove(Line.Length - 1).Remove(0, Line.IndexOf('.') + 1));
+                                                    break;
+                                                case VariableType.Double:
+                                                    variable.DoubleValue = double.Parse(Line.Remove(Line.Length - 1).Remove(0, Line.IndexOf('.') + 1));
+                                                    break;
+                                                case VariableType.Char:
+                                                    variable.CharValue = Line.Remove(Line.Length - 1).Remove(0, 1)[2];
+                                                    break;
+                                            }
+                                            isVariable = false;
+                                            VariableIndex = -99;
+                                            VariableName = null;
+                                            Operator = "";
                                         }
-                                        isVariable = false;
-                                        VariableIndex = -99;
-                                        VariableName = null;
-                                        Operator = "";
-                                    }
+                                    }                                        
+                                        break;
+                                    case false:
+                                        string[] Segments = {Line.Trim().Remove(0, 3).Trim().Remove(0, 1).Split(";")[0], Line.Trim().Remove(0, 3).Trim().Remove(0, 1).Split(";")[1].Trim(), Line.Trim().Remove(0, 3).Trim().Remove(0, 1).Split(";")[2].Replace(")", "").Trim() };
+                                        int Denting = 0;
+                                        int EndOfFor = 0;
+                                        string[] Temp = Cached.Split('\n');
+                                        for (int i = LineCounter + 1; i < Temp.Length; i++)
+                                        {
+                                            if (Temp[i].Trim() == "{")
+                                            {
+                                                Denting++;
+                                            }
+                                            else if (Temp[i].Trim() == "}")
+                                            {
+                                                Denting--;
+                                            }
+                                            if (Denting == 0 && Cached.Split('\n')[i].Trim() != "")
+                                            {
+                                                Denting = -1;
+                                                EndOfFor = i;
+                                                break;
+                                            }
+                                        }
+                                        //Create the variable if it doesn't exist
+                                        string temp = Segments[0].Remove(0, 4).Replace(" ", "").Split("=")[0];
+                                        if (Variables.Find(d => d.ID == temp) == null)
+                                        {
+                                            int.TryParse(Segments[0].Remove(0, 4).Replace(" ", "").Split("=")[1], out int Parsed);
+                                            Variables.Add(new Variable(temp, Parsed, VariableType.Int));
+                                        }
+                                        else
+                                        {
+                                            Variables.Find(d => d.ID == Segments[0].Remove(0, 4).Replace(" ", "").Split("=")[0]).IntValue += Loops[^1].IncrementalValue;
+                                        }
+                                        //Check the condition if the for loop should be executed
+                                        if (!EvaluateCondition(Segments[1]))
+                                        {
+                                            AllowExecution = false; // If if-condition is false, disallow execution until else or next if/else if
+                                        }
+                                        Loops.Add(new ForLoops(Segments, LineCounter, EndOfFor));
+                                        break;
                                 }
+                                
                             }
                         }
                         break;
@@ -1135,6 +1199,37 @@ namespace CrystalOSAlpha.Programming.CrystalSharp
             // Implement your logging mechanism here.
             // For now, we'll just output the message to the console.
             //Output += "\n" + message;
+        }
+    }
+
+    public class ForLoops
+    {
+        public string[] SegmentsHeader { get; set; }
+        public int StartLine { get; set; }
+        public int EndLine { get; set; }
+        public int IncrementalValue { get; set; }
+        public ForLoops(string[] Segments, int Start, int End)
+        {
+            SegmentsHeader = Segments;
+            StartLine = Start;
+            EndLine = End;
+            switch(Segments[2].Contains("++"))
+            {
+                case true:
+                    IncrementalValue = 1;
+                    break;
+                case false:
+                    switch (Segments[2].Contains("--"))
+                    {
+                        case true:
+                            IncrementalValue = -1;
+                            break;
+                        case false:
+                            
+                            break;
+                    }
+                    break;
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Cosmos.System;
+﻿using Cosmos.Core.Memory;
+using Cosmos.System;
 using Cosmos.System.Graphics;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
@@ -179,9 +180,11 @@ namespace CrystalOSAlpha.Applications.Terminal
                     if (ProgramExec.LineCounter == -1)
                     {
                         // ProgramExec.LineCounter = 2;
-                        // content = "";
+                        content += "\n\nCode Executed successfuly!";
+                        ProgramExec.LineCounter = -2;
+                        temp = true;
                     }
-                    else
+                    else if(ProgramExec.LineCounter != -2)
                     {
                         if (!ProgramExec.IsWaitingForReadLine)
                         {
@@ -365,6 +368,7 @@ namespace CrystalOSAlpha.Applications.Terminal
                 temp = false;
             }
             ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
+            Heap.Collect();
         }
         public void RightClick()
         {
