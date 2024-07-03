@@ -177,6 +177,7 @@ namespace CrystalOSAlpha.Applications.Terminal
             switch (T)
             {
                 case TypeOfTerminal.Executable:
+                    //TODO: Change to switch statements
                     if (ProgramExec.LineCounter == -1)
                     {
                         // ProgramExec.LineCounter = 2;

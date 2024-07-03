@@ -1,5 +1,6 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
+using CrystalOSAlpha.Applications.Clock;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.TaskBar;
 using IL2CPU.API.Attribs;
@@ -38,6 +39,7 @@ namespace CrystalOSAlpha
         #region Render to the screen and Clear
         public static int Counter = 0;
         public static bool isMoving = false;
+        public static int Clock = -99;
 
         /// <summary>
         /// To display the rendered frame.
@@ -69,7 +71,23 @@ namespace CrystalOSAlpha
 
                     Res = false;
                 }
-                c.Display();
+                switch (Clock != DateTime.Now.Second)
+                {
+                    case true:
+                        if(Counter >= 3)
+                        {
+                            Clock = DateTime.Now.Second;
+                            Counter = 0;
+                        }
+                        else
+                        {
+                            Counter++;
+                        }
+                        break;
+                    case false:
+                        c.Display();
+                        break;
+                }
             }
             else
             {

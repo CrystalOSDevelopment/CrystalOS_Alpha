@@ -1,4 +1,5 @@
 ﻿using Cosmos.System;
+using Cosmos.System.Graphics;
 using CrystalOSAlpha.Programming.CrystalSharp.CodeStructure.Console;
 using CrystalOSAlpha.Programming.CrystalSharp.CodeStructure.FileOperations;
 using CrystalOSAlpha.Programming.CrystalSharp.CodeStructure.Math;
@@ -15,6 +16,7 @@ namespace CrystalOSAlpha.Programming.CrystalSharp
         public int VariableIndex = -99;
         public int BracketCounter = 0;
         public int EndOfElse = -99;
+        public int KernelCyle = 0;
         public bool IsWaitingForReadLine = false;
         public bool isVariable = false;
         public bool AllowExecution = true;
@@ -87,6 +89,7 @@ namespace CrystalOSAlpha.Programming.CrystalSharp
                         else
                         {
                             Loops.RemoveAt(Loops.Count - 1);
+                            AllowExecution = true;
                         }
                     }
                 }
@@ -106,9 +109,21 @@ namespace CrystalOSAlpha.Programming.CrystalSharp
                 // IMPORTANT!!!! Always remember that semi-colons are present at the end of the line. They are not trimmed down.
                 if (!Line.Trim().StartsWith("for"))
                 {
-                    if (Line.Contains("string") || Line.Contains("int") || Line.Contains("bool") || Line.Contains("float") || Line.Contains("double") || Line.Contains("char"))
+                    if (Line.Contains("string") || Line.Contains("int") || Line.Contains("bool") || Line.Contains("float") || Line.Contains("double") || Line.Contains("char") || Line.Contains("Bitmap") || (Line.Contains("ConsoleKeyEx") && !Line.Contains("if")) || Line.Contains("List"))
                     {
                         Line = SettingVariableValues(Line.Trim());
+                        if(Variables.Count != 0)
+                        {
+                            switch(Variables[^1].Type)
+                            {
+                                case VariableType.ConsoleKeyEx:
+                                    VariableIndex = Variables.FindIndex(d => d.ID == Line.Split(".")[0]);
+                                    VariableName = Variables[VariableIndex];
+                                    Line = Line.Remove(0, Line.IndexOf(".") + 1);
+                                    //Output += "\n" + Line;
+                                    break;
+                            }
+                        }
                     }
                     else
                     {
@@ -164,13 +179,26 @@ namespace CrystalOSAlpha.Programming.CrystalSharp
                             }
                             else
                             {
-                                var v = Variables.Find(d => d.ID == Line.Trim().Split(" = ")[0]);
-                                if (v != null)
+                                if (Line.Contains("["))
                                 {
-                                    VariableName = v;
-                                    VariableIndex = Variables.IndexOf(v);
-                                    Line = Line.Split(" = ")[1];
-                                    isVariable = true;
+                                    var v = Variables.Find(d => d.ID == Line.Trim().Split(" = ")[0].Split("[")[0]);
+                                    if (v != null)
+                                    {
+                                        VariableName = v;
+                                        VariableIndex = Variables.IndexOf(v);
+                                        isVariable = true;
+                                    }
+                                }
+                                else
+                                {
+                                    var v = Variables.Find(d => d.ID == Line.Trim().Split(" = ")[0]);
+                                    if (v != null)
+                                    {
+                                        VariableName = v;
+                                        VariableIndex = Variables.IndexOf(v);
+                                        Line = Line.Split(" = ")[1];
+                                        isVariable = true;
+                                    }
                                 }
                             }
                         }
@@ -333,6 +361,40 @@ namespace CrystalOSAlpha.Programming.CrystalSharp
                                     {
                                         ReadL.ReadLine(key, ref Output);
                                     }
+                                }
+                                break;
+                            case "ReadKey":
+                                IsWaitingForReadLine = true;
+                                if(KernelCyle < 30)//Possible delay to register key press (?)
+                                {
+                                    if (KeyboardManager.TryReadKey(out KeyEvent KeyPress))
+                                    {
+                                        IsWaitingForReadLine = false;
+                                        switch (VariableName.Type)
+                                        {
+                                            case VariableType.String:
+                                                Variables[VariableIndex].Value = KeyPress.KeyChar.ToString();
+                                                break;
+                                            case VariableType.ConsoleKeyEx:
+                                                Variables[VariableIndex].ConsoleKeyEx = KeyPress.Key;
+                                                break;
+                                        }
+                                        Output += "\n" + Keys.KeyToString(Variables[VariableIndex].ConsoleKeyEx);
+                                        isVariable = false;
+                                        VariableIndex = -99;
+                                        VariableName = null;
+                                        IsWaitingForReadLine = false;
+                                        KernelCyle = 0;
+                                    }
+                                    KernelCyle++;
+                                }
+                                else
+                                {
+                                    isVariable = false;
+                                    VariableIndex = -99;
+                                    VariableName = null;
+                                    IsWaitingForReadLine = false;
+                                    KernelCyle = 0;
                                 }
                                 break;
                             case "Clear":
@@ -590,24 +652,46 @@ namespace CrystalOSAlpha.Programming.CrystalSharp
                         switch (Parts[1].Split("(")[0])
                         {
                             case "ReadAllText":
-                                //TODO: Do it like it's in console class
                                 if (isVariable)
                                 {
-                                    switch (VariableName.Type)
+                                    switch (Operator)
                                     {
-                                        case VariableType.String:
-                                            Variables[VariableIndex].Value = FileOperations.ReadAllText(Line.Trim().Remove(Line.Trim().Length - 2).Remove(0, "File.ReadAllText(".Length + 1));
+                                        case "+=":
+                                            switch (VariableName.Type)
+                                            {
+                                                case VariableType.String:
+                                                    Variables[VariableIndex].Value += FileOperations.ReadAllText(Line.Trim().Remove(Line.Trim().Length - 2).Remove(0, "File.ReadAllText(".Length + 1));
+                                                    break;
+                                                case VariableType.Int:
+                                                    throw new Exception("Cannot assign a string to an integer.");
+                                                case VariableType.Bool:
+                                                    throw new Exception("Cannot assign a string to a boolean.");
+                                                case VariableType.Float:
+                                                    throw new Exception("Cannot assign a string to a float.");
+                                                case VariableType.Double:
+                                                    throw new Exception("Cannot assign a string to a double.");
+                                                case VariableType.Char:
+                                                    throw new Exception("Cannot assign a string to a char.");
+                                            }
                                             break;
-                                        case VariableType.Int:
-                                            throw new Exception("Cannot assign a string to an integer.");
-                                        case VariableType.Bool:
-                                            throw new Exception("Cannot assign a string to a boolean.");
-                                        case VariableType.Float:
-                                            throw new Exception("Cannot assign a string to a float.");
-                                        case VariableType.Double:
-                                            throw new Exception("Cannot assign a string to a double.");
-                                        case VariableType.Char:
-                                            throw new Exception("Cannot assign a string to a char.");
+                                            default:
+                                                switch (VariableName.Type)
+                                                {
+                                                    case VariableType.String:
+                                                        Variables[VariableIndex].Value = FileOperations.ReadAllText(Line.Trim().Remove(Line.Trim().Length - 2).Remove(0, "File.ReadAllText(".Length + 1));
+                                                        break;
+                                                    case VariableType.Int:
+                                                        throw new Exception("Cannot assign a string to an integer.");
+                                                    case VariableType.Bool:
+                                                        throw new Exception("Cannot assign a string to a boolean.");
+                                                    case VariableType.Float:
+                                                        throw new Exception("Cannot assign a string to a float.");
+                                                    case VariableType.Double:
+                                                        throw new Exception("Cannot assign a string to a double.");
+                                                    case VariableType.Char:
+                                                        throw new Exception("Cannot assign a string to a char.");
+                                                }
+                                            break;
                                     }
                                     isVariable = false;
                                     VariableIndex = -99;
@@ -759,6 +843,33 @@ namespace CrystalOSAlpha.Programming.CrystalSharp
                                         case VariableType.Char:
                                             Variables[VariableIndex].CharValue = Line.Remove(Line.Length - 1).Remove(0, 1)[0];
                                             break;
+                                        case VariableType.Bitmap:
+                                            if (!Line.Contains("["))
+                                            {
+                                                string Recieved = Line.Split('=')[1].Replace("new Bitmap", "").Trim().Remove(0, 1);
+                                                string[] RecievedParts = Recieved.Remove(Recieved.Length - 1).Replace(" ", "").Split(',');
+                                                uint Width = uint.Parse(RecievedParts[0]);
+                                                uint Height = uint.Parse(RecievedParts[1]);
+                                                Variables[VariableIndex].BitmapValue = new Bitmap(Width, Height, ColorDepth.ColorDepth32);
+                                            }
+                                            else
+                                            {
+                                                string Recieved = Line.Replace(" ", "").Replace(VariableName.ID, "");
+                                                string[] Part = Recieved.Split("=");
+                                                int XCoord = int.Parse(Part[0].Replace("[", "").Replace("]", "").Split(",")[0]);
+                                                int YCoord = int.Parse(Part[0].Replace("[", "").Replace("]", "").Split(",")[0]);
+                                                int ColorValue = 0;
+                                                if (int.TryParse(Part[1], out int Result))
+                                                {
+                                                    ColorValue = Result;
+                                                }
+                                                else
+                                                {
+                                                    ColorValue += (int)MathOperations.Calculate(Part[1], Variables);
+                                                }
+                                                ImprovedVBE.DrawPixel(Variables[VariableIndex].BitmapValue, XCoord, YCoord, ColorValue);
+                                            }
+                                            break;
                                     }
                                     isVariable = false;
                                     VariableIndex = -99;
@@ -896,7 +1007,6 @@ namespace CrystalOSAlpha.Programming.CrystalSharp
                                         Loops.Add(new ForLoops(Segments, LineCounter, EndOfFor));
                                         break;
                                 }
-                                
                             }
                         }
                         break;
@@ -906,7 +1016,7 @@ namespace CrystalOSAlpha.Programming.CrystalSharp
             catch (Exception ex)
             {
                 LogError("Error in MethodReturner: " + ex.Message);
-                return "Error: " + ex.Message;
+                return "\nError: " + ex.Message + "\nLine: " + LineCounter;
             }
         }
 
@@ -1149,9 +1259,18 @@ namespace CrystalOSAlpha.Programming.CrystalSharp
                         return variable.DoubleValue.ToString();
                     case VariableType.Char:
                         return variable.CharValue.ToString();
-                    default:
-                        LogError($"Unknown variable type for: {token}");
-                        return token;
+                    case VariableType.ConsoleKeyEx:
+                        return Keys.KeyToString(variable.ConsoleKeyEx);
+                }
+            }
+            else
+            {
+                switch(token)
+                {
+                    case "MouseManager.X":
+                        return MouseManager.X.ToString();
+                    case "MouseManager.Y":
+                        return MouseManager.Y.ToString();
                 }
             }
             LogError($"Variable not found: {token}");
@@ -1164,26 +1283,65 @@ namespace CrystalOSAlpha.Programming.CrystalSharp
             {
                 string ReturningValue = Input;
                 string[] Parts = ReturningValue.Split('=');
-                switch (Parts[0].Split(' ')[0])
+                if (Variables.FindAll(D => D.ID == Parts[0].Split(' ')[1].Trim()).Count == 0)
                 {
-                    case "string":
-                        Variables.Add(new Variable(Parts[0].Split(' ')[1].Trim(), "", VariableType.String));
-                        return ReturningValue.Replace("string ", "").Replace(" = ", ".");
-                    case "int":
-                        Variables.Add(new Variable(Parts[0].Split(' ')[1].Trim(), 0, VariableType.Int));
-                        return ReturningValue.Replace("int ", "").Replace(" = ", ".");
-                    case "bool":
-                        Variables.Add(new Variable(Parts[0].Split(' ')[1].Trim(), false, VariableType.Bool));
-                        return ReturningValue.Replace("bool ", "").Replace(" = ", ".");
-                    case "float":
-                        Variables.Add(new Variable(Parts[0].Split(' ')[1].Trim(), 0.0f, VariableType.Float));
-                        return ReturningValue.Replace("float ", "").Replace(" = ", ".");
-                    case "double":
-                        Variables.Add(new Variable(Parts[0].Split(' ')[1].Trim(), 0.0, VariableType.Double));
-                        return ReturningValue.Replace("double ", "").Replace(" = ", ".");
-                    case "char":
-                        Variables.Add(new Variable(Parts[0].Split(' ')[1].Trim(), ' ', VariableType.Char));
-                        return ReturningValue.Replace("char ", "").Replace(" = ", ".");
+                    switch (Parts[0].Split(' ')[0])
+                    {
+                        case "string":
+                            Variables.Add(new Variable(Parts[0].Split(' ')[1].Trim(), "", VariableType.String));
+                            return ReturningValue.Replace("string ", "").Replace(" = ", ".");
+                        case "int":
+                            Variables.Add(new Variable(Parts[0].Split(' ')[1].Trim(), 0, VariableType.Int));
+                            return ReturningValue.Replace("int ", "").Replace(" = ", ".");
+                        case "bool":
+                            Variables.Add(new Variable(Parts[0].Split(' ')[1].Trim(), false, VariableType.Bool));
+                            return ReturningValue.Replace("bool ", "").Replace(" = ", ".");
+                        case "float":
+                            Variables.Add(new Variable(Parts[0].Split(' ')[1].Trim(), 0.0f, VariableType.Float));
+                            return ReturningValue.Replace("float ", "").Replace(" = ", ".");
+                        case "double":
+                            Variables.Add(new Variable(Parts[0].Split(' ')[1].Trim(), 0.0, VariableType.Double));
+                            return ReturningValue.Replace("double ", "").Replace(" = ", ".");
+                        case "char":
+                            Variables.Add(new Variable(Parts[0].Split(' ')[1].Trim(), ' ', VariableType.Char));
+                            return ReturningValue.Replace("char ", "").Replace(" = ", ".");
+                        case "Bitmap":
+                            string Recieved = ReturningValue.Split('=')[1].Replace("new Bitmap", "").Trim().Remove(0, 1);
+                            string[] RecievedParts = Recieved.Remove(Recieved.Length - 2).Replace(" ", "").Split(',');
+                            uint Width = uint.Parse(RecievedParts[0]);
+                            uint Height = uint.Parse(RecievedParts[1]);
+                            Variables.Add(new Variable(Parts[0].Split(' ')[1].Trim(), new Bitmap(Width, Height, ColorDepth.ColorDepth32), VariableType.Bitmap));
+                            return Input;
+                        case "ConsoleKeyEx":
+                            Variables.Add(new Variable(Parts[0].Split(' ')[1].Trim(), ConsoleKeyEx.NoName, VariableType.ConsoleKeyEx));
+                            return ReturningValue.Replace("ConsoleKeyEx ", "").Replace(" = ", ".");
+                        case "List":
+                            Output += "\n" + Parts[0].Split(' ')[1].Trim();
+                            //This might be a brutal one to do. But I'll try to do it. It's supposed to be fun, isn't it?
+                            return ReturningValue;
+                    }
+                }
+                else
+                {
+                    switch (Parts[0].Split(' ')[0])
+                    {
+                        case "string":
+                            return ReturningValue.Replace("string ", "").Replace(" = ", ".");
+                        case "int":
+                            return ReturningValue.Replace("int ", "").Replace(" = ", ".");
+                        case "bool":
+                            return ReturningValue.Replace("bool ", "").Replace(" = ", ".");
+                        case "float":
+                            return ReturningValue.Replace("float ", "").Replace(" = ", ".");
+                        case "double":
+                            return ReturningValue.Replace("double ", "").Replace(" = ", ".");
+                        case "char":
+                            return ReturningValue.Replace("char ", "").Replace(" = ", ".");
+                        case "Bitmap":
+                            return Input;
+                        case "ConsoleKeyEx":
+                            return ReturningValue.Replace("ConsoleKeyEx ", "").Replace(" = ", ".");
+                    }
                 }
                 return ReturningValue;
             }

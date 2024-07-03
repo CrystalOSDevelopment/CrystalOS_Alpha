@@ -1,11 +1,12 @@
 ﻿using CrystalOSAlpha.Applications.Calculator;
-using System;
+using CrystalOSAlpha.Programming.CrystalSharp.CodeStructure.Variables;
 using System.Collections.Generic;
 
 namespace CrystalOSAlpha.Programming.CrystalSharp.CodeStructure.Math
 {
     class MathOperations
     {
+        //So as it turns out, GitHub's Copilot thing is a pile of garbage. Needs some rework as seen in Calculate(). Inside foreach loop.
         public static double Abs(string input, List<Variables.Variable> vars)
         {
             // Remove whitespace from the input
@@ -14,18 +15,24 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.CodeStructure.Math
             // Replace variables with their values
             foreach (Variables.Variable var in vars)
             {
-                string varValue = var.Type switch
+                switch (var.Type)
                 {
-                    Variables.VariableType.Int => var.IntValue.ToString(),
-                    Variables.VariableType.Float => var.FloatValue.ToString(),
-                    Variables.VariableType.Double => var.DoubleValue.ToString(),
-                    Variables.VariableType.String => var.Value,
-                    Variables.VariableType.Char => var.CharValue.ToString(),
-                    Variables.VariableType.Bool => var.BoolValue.ToString().ToLower(),
-                    _ => throw new ArgumentException($"Unsupported variable type: {var.Type}")
-                };
-
-                cleanInput = cleanInput.Replace(var.ID, varValue);
+                    case VariableType.Int:
+                        cleanInput = cleanInput.Replace(var.ID, var.IntValue.ToString());
+                        break;
+                    case VariableType.Float:
+                        cleanInput = cleanInput.Replace(var.ID, var.FloatValue.ToString());
+                        break;
+                    case VariableType.Double:
+                        cleanInput = cleanInput.Replace(var.ID, var.DoubleValue.ToString());
+                        break;
+                    case VariableType.Char:
+                        cleanInput = cleanInput.Replace(var.ID, var.CharValue.ToString());
+                        break;
+                    case VariableType.String:
+                        cleanInput = cleanInput.Replace(var.ID, var.Value);
+                        break;
+                }
             }
             // Evaluate the mathematical expression
             double result = CalculatorA.Calculate(cleanInput);
@@ -41,18 +48,24 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.CodeStructure.Math
             // Replace variables with their values
             foreach (Variables.Variable var in vars)
             {
-                string varValue = var.Type switch
+                switch (var.Type)
                 {
-                    Variables.VariableType.Int => var.IntValue.ToString(),
-                    Variables.VariableType.Float => var.FloatValue.ToString(),
-                    Variables.VariableType.Double => var.DoubleValue.ToString(),
-                    Variables.VariableType.String => var.Value,
-                    Variables.VariableType.Char => var.CharValue.ToString(),
-                    Variables.VariableType.Bool => var.BoolValue.ToString().ToLower(),
-                    _ => throw new ArgumentException($"Unsupported variable type: {var.Type}")
-                };
-
-                cleanInput = cleanInput.Replace(var.ID, varValue);
+                    case VariableType.Int:
+                        cleanInput = cleanInput.Replace(var.ID, var.IntValue.ToString());
+                        break;
+                    case VariableType.Float:
+                        cleanInput = cleanInput.Replace(var.ID, var.FloatValue.ToString());
+                        break;
+                    case VariableType.Double:
+                        cleanInput = cleanInput.Replace(var.ID, var.DoubleValue.ToString());
+                        break;
+                    case VariableType.Char:
+                        cleanInput = cleanInput.Replace(var.ID, var.CharValue.ToString());
+                        break;
+                    case VariableType.String:
+                        cleanInput = cleanInput.Replace(var.ID, var.Value);
+                        break;
+                }
             }
             // Evaluate the mathematical expression
             double result = CalculatorA.Calculate(cleanInput);
@@ -68,18 +81,24 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.CodeStructure.Math
             // Replace variables with their values
             foreach (Variables.Variable var in vars)
             {
-                string varValue = var.Type switch
+                switch (var.Type)
                 {
-                    Variables.VariableType.Int => var.IntValue.ToString(),
-                    Variables.VariableType.Float => var.FloatValue.ToString(),
-                    Variables.VariableType.Double => var.DoubleValue.ToString(),
-                    Variables.VariableType.String => var.Value,
-                    Variables.VariableType.Char => var.CharValue.ToString(),
-                    Variables.VariableType.Bool => var.BoolValue.ToString().ToLower(),
-                    _ => throw new ArgumentException($"Unsupported variable type: {var.Type}")
-                };
-
-                cleanInput = cleanInput.Replace(var.ID, varValue);
+                    case VariableType.Int:
+                        cleanInput = cleanInput.Replace(var.ID, var.IntValue.ToString());
+                        break;
+                    case VariableType.Float:
+                        cleanInput = cleanInput.Replace(var.ID, var.FloatValue.ToString());
+                        break;
+                    case VariableType.Double:
+                        cleanInput = cleanInput.Replace(var.ID, var.DoubleValue.ToString());
+                        break;
+                    case VariableType.Char:
+                        cleanInput = cleanInput.Replace(var.ID, var.CharValue.ToString());
+                        break;
+                    case VariableType.String:
+                        cleanInput = cleanInput.Replace(var.ID, var.Value);
+                        break;
+                }
             }
             // Evaluate the mathematical expression
             double Left = CalculatorA.Calculate(cleanInput.Split(',')[0]);
@@ -96,18 +115,24 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.CodeStructure.Math
             // Replace variables with their values
             foreach (Variables.Variable var in vars)
             {
-                string varValue = var.Type switch
+                switch (var.Type)
                 {
-                    Variables.VariableType.Int => var.IntValue.ToString(),
-                    Variables.VariableType.Float => var.FloatValue.ToString(),
-                    Variables.VariableType.Double => var.DoubleValue.ToString(),
-                    Variables.VariableType.String => var.Value,
-                    Variables.VariableType.Char => var.CharValue.ToString(),
-                    Variables.VariableType.Bool => var.BoolValue.ToString().ToLower(),
-                    _ => throw new ArgumentException($"Unsupported variable type: {var.Type}")
-                };
-
-                cleanInput = cleanInput.Replace(var.ID, varValue);
+                    case VariableType.Int:
+                        cleanInput = cleanInput.Replace(var.ID, var.IntValue.ToString());
+                        break;
+                    case VariableType.Float:
+                        cleanInput = cleanInput.Replace(var.ID, var.FloatValue.ToString());
+                        break;
+                    case VariableType.Double:
+                        cleanInput = cleanInput.Replace(var.ID, var.DoubleValue.ToString());
+                        break;
+                    case VariableType.Char:
+                        cleanInput = cleanInput.Replace(var.ID, var.CharValue.ToString());
+                        break;
+                    case VariableType.String:
+                        cleanInput = cleanInput.Replace(var.ID, var.Value);
+                        break;
+                }
             }
             // Evaluate the mathematical expression
             double result = CalculatorA.Calculate(cleanInput);
@@ -123,18 +148,24 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.CodeStructure.Math
             // Replace variables with their values
             foreach (Variables.Variable var in vars)
             {
-                string varValue = var.Type switch
+                switch (var.Type)
                 {
-                    Variables.VariableType.Int => var.IntValue.ToString(),
-                    Variables.VariableType.Float => var.FloatValue.ToString(),
-                    Variables.VariableType.Double => var.DoubleValue.ToString(),
-                    Variables.VariableType.String => var.Value,
-                    Variables.VariableType.Char => var.CharValue.ToString(),
-                    Variables.VariableType.Bool => var.BoolValue.ToString().ToLower(),
-                    _ => throw new ArgumentException($"Unsupported variable type: {var.Type}")
-                };
-
-                cleanInput = cleanInput.Replace(var.ID, varValue);
+                    case VariableType.Int:
+                        cleanInput = cleanInput.Replace(var.ID, var.IntValue.ToString());
+                        break;
+                    case VariableType.Float:
+                        cleanInput = cleanInput.Replace(var.ID, var.FloatValue.ToString());
+                        break;
+                    case VariableType.Double:
+                        cleanInput = cleanInput.Replace(var.ID, var.DoubleValue.ToString());
+                        break;
+                    case VariableType.Char:
+                        cleanInput = cleanInput.Replace(var.ID, var.CharValue.ToString());
+                        break;
+                    case VariableType.String:
+                        cleanInput = cleanInput.Replace(var.ID, var.Value);
+                        break;
+                }
             }
             // Evaluate the mathematical expression
             double result = CalculatorA.Calculate(cleanInput);
@@ -150,18 +181,24 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.CodeStructure.Math
             // Replace variables with their values
             foreach (Variables.Variable var in vars)
             {
-                string varValue = var.Type switch
+                switch (var.Type)
                 {
-                    Variables.VariableType.Int => var.IntValue.ToString(),
-                    Variables.VariableType.Float => var.FloatValue.ToString(),
-                    Variables.VariableType.Double => var.DoubleValue.ToString(),
-                    Variables.VariableType.String => var.Value,
-                    Variables.VariableType.Char => var.CharValue.ToString(),
-                    Variables.VariableType.Bool => var.BoolValue.ToString().ToLower(),
-                    _ => throw new ArgumentException($"Unsupported variable type: {var.Type}")
-                };
-
-                cleanInput = cleanInput.Replace(var.ID, varValue);
+                    case VariableType.Int:
+                        cleanInput = cleanInput.Replace(var.ID, var.IntValue.ToString());
+                        break;
+                    case VariableType.Float:
+                        cleanInput = cleanInput.Replace(var.ID, var.FloatValue.ToString());
+                        break;
+                    case VariableType.Double:
+                        cleanInput = cleanInput.Replace(var.ID, var.DoubleValue.ToString());
+                        break;
+                    case VariableType.Char:
+                        cleanInput = cleanInput.Replace(var.ID, var.CharValue.ToString());
+                        break;
+                    case VariableType.String:
+                        cleanInput = cleanInput.Replace(var.ID, var.Value);
+                        break;
+                }
             }
             // Evaluate the mathematical expression
             double result = CalculatorA.Calculate(cleanInput);
@@ -177,18 +214,24 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.CodeStructure.Math
             // Replace variables with their values
             foreach (Variables.Variable var in vars)
             {
-                string varValue = var.Type switch
+                switch (var.Type)
                 {
-                    Variables.VariableType.Int => var.IntValue.ToString(),
-                    Variables.VariableType.Float => var.FloatValue.ToString(),
-                    Variables.VariableType.Double => var.DoubleValue.ToString(),
-                    Variables.VariableType.String => var.Value,
-                    Variables.VariableType.Char => var.CharValue.ToString(),
-                    Variables.VariableType.Bool => var.BoolValue.ToString().ToLower(),
-                    _ => throw new ArgumentException($"Unsupported variable type: {var.Type}")
-                };
-
-                cleanInput = cleanInput.Replace(var.ID, varValue);
+                    case VariableType.Int:
+                        cleanInput = cleanInput.Replace(var.ID, var.IntValue.ToString());
+                        break;
+                    case VariableType.Float:
+                        cleanInput = cleanInput.Replace(var.ID, var.FloatValue.ToString());
+                        break;
+                    case VariableType.Double:
+                        cleanInput = cleanInput.Replace(var.ID, var.DoubleValue.ToString());
+                        break;
+                    case VariableType.Char:
+                        cleanInput = cleanInput.Replace(var.ID, var.CharValue.ToString());
+                        break;
+                    case VariableType.String:
+                        cleanInput = cleanInput.Replace(var.ID, var.Value);
+                        break;
+                }
             }
             // Evaluate the mathematical expression
             double result = CalculatorA.Calculate(cleanInput);
@@ -204,18 +247,24 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.CodeStructure.Math
             // Replace variables with their values
             foreach (Variables.Variable var in vars)
             {
-                string varValue = var.Type switch
+                switch (var.Type)
                 {
-                    Variables.VariableType.Int => var.IntValue.ToString(),
-                    Variables.VariableType.Float => var.FloatValue.ToString(),
-                    Variables.VariableType.Double => var.DoubleValue.ToString(),
-                    Variables.VariableType.String => var.Value,
-                    Variables.VariableType.Char => var.CharValue.ToString(),
-                    Variables.VariableType.Bool => var.BoolValue.ToString().ToLower(),
-                    _ => throw new ArgumentException($"Unsupported variable type: {var.Type}")
-                };
-
-                cleanInput = cleanInput.Replace(var.ID, varValue);
+                    case VariableType.Int:
+                        cleanInput = cleanInput.Replace(var.ID, var.IntValue.ToString());
+                        break;
+                    case VariableType.Float:
+                        cleanInput = cleanInput.Replace(var.ID, var.FloatValue.ToString());
+                        break;
+                    case VariableType.Double:
+                        cleanInput = cleanInput.Replace(var.ID, var.DoubleValue.ToString());
+                        break;
+                    case VariableType.Char:
+                        cleanInput = cleanInput.Replace(var.ID, var.CharValue.ToString());
+                        break;
+                    case VariableType.String:
+                        cleanInput = cleanInput.Replace(var.ID, var.Value);
+                        break;
+                }
             }
             // Evaluate the mathematical expression
             double result = CalculatorA.Calculate(cleanInput);
@@ -231,20 +280,33 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.CodeStructure.Math
             // Replace variables with their values
             foreach (Variables.Variable var in vars)
             {
-                string varValue = var.Type switch
+                switch (var.Type)
                 {
-                    Variables.VariableType.Int => var.IntValue.ToString(),
-                    Variables.VariableType.Float => var.FloatValue.ToString(),
-                    Variables.VariableType.Double => var.DoubleValue.ToString(),
-                    Variables.VariableType.String => var.Value,
-                    Variables.VariableType.Char => var.CharValue.ToString(),
-                    Variables.VariableType.Bool => var.BoolValue.ToString().ToLower(),
-                    _ => throw new ArgumentException($"Unsupported variable type: {var.Type}")
-                };
-
-                cleanInput = cleanInput.Replace(var.ID, varValue);
+                    case VariableType.Int:
+                        cleanInput = cleanInput.Replace(var.ID, var.IntValue.ToString());
+                        break;
+                    case VariableType.Float:
+                        cleanInput = cleanInput.Replace(var.ID, var.FloatValue.ToString());
+                        break;
+                    case VariableType.Double:
+                        cleanInput = cleanInput.Replace(var.ID, var.DoubleValue.ToString());
+                        break;
+                    case VariableType.Char:
+                        cleanInput = cleanInput.Replace(var.ID, var.CharValue.ToString());
+                        break;
+                    case VariableType.String:
+                        cleanInput = cleanInput.Replace(var.ID, var.Value);
+                        break;
+                }
             }
-            // Evaluate the mathematical expression
+
+            // Check if the cleaned input is a valid number
+            if (double.TryParse(cleanInput, out double result))
+            {
+                return result;
+            }
+
+            // Evaluate the mathematical expression if it's not a single number
             return CalculatorA.Calculate(cleanInput);
         }
     }

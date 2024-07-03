@@ -48,6 +48,9 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.CodeStructure.Console
                         case Variables.VariableType.Bool:
                             result.Append(variable.BoolValue);
                             break;
+                        case Variables.VariableType.ConsoleKeyEx:
+                            result.Append(Keys.KeyToString(variable.ConsoleKeyEx).Split('.')[1]);
+                            break;
                     }
                 }
                 else

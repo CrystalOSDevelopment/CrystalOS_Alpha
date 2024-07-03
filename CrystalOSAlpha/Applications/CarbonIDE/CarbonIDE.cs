@@ -97,7 +97,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 {
                     #region TestCode
                     File.WriteAllText(Path + "\\Main.cs",
-                        "class Demo\n" +
+                        "class " + Path.Split('\\')[^1] + "\n" +
                         "{\n" +
                         "    public static void Main()\n" +
                         "    {\n" +
@@ -343,10 +343,10 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                         }
                         if(d.selected == true)
                         {
-                            ImprovedVBE.DrawFilledRectangle(Filetree, 1, 2, 40 - Slider.Value + TopY * 26, (int)Filetree.Width - 24, 33);//TODO: Fix the width of the rectangle
-                            ImprovedVBE.DrawFilledRectangle(Filetree, ImprovedVBE.colourToNumber(100, 100, 100), 4, 42 - Slider.Value + TopY * 26, (int)Filetree.Width - 28, 29);
+                            ImprovedVBE.DrawFilledRectangle(Filetree, 1, 2, 40 - Slider.Value + TopY * 35, (int)Filetree.Width - 24, 33);//TODO: Fix the width of the rectangle
+                            ImprovedVBE.DrawFilledRectangle(Filetree, ImprovedVBE.colourToNumber(100, 100, 100), 4, 42 - Slider.Value + TopY * 35, (int)Filetree.Width - 28, 29);
                         }
-                        BitFont.DrawBitFontString(Filetree, "ArialCustomCharset16", Color.White, d.Name.mName, 15, 45 - Slider.Value + TopY * 26);
+                        BitFont.DrawBitFontString(Filetree, "ArialCustomCharset16", Color.White, d.Name.mName, 15, 45 - Slider.Value + TopY * 35);
                         TopY++;
                     }
                 }
@@ -455,8 +455,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         {"Math", Color.Green},
         {"Random", Color.Green},
         {"File", Color.Green},
-        {"ReadKey", Color.LightGreen},
-        {"ConsoleKeyEx", Color.LightGreen},
+        {"ConsoleKeyEx", Color.Green},
         {"int", Color.Blue},
         {"string", Color.Blue},
         {"bool", Color.Blue},
@@ -535,7 +534,10 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     {
                         colors[j] = color;
                     }
-                    extra.Clear();
+                    if(i + 1 < source.Length && ".\n ={}+-|,():".Contains(source[i + 1]))
+                    {
+                        extra.Clear();
+                    }
                 }
                 else if (extraString.Length > 2)
                 {
