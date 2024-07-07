@@ -79,19 +79,19 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
             {
                 if (!File.Exists(Path + "\\Extension.cs"))
                 {
-                    File.WriteAllText(Path + "\\Extension.cs",
-                        "class Extension\n" +
-                        "{\n" +
-                        "    public static void TestVoid()\n" +
-                        "    {\n" +
-                        "        Console.WriteLine(\"Hello from TestVoid()\");\n" +
-                        "    }\n" +
-                        "    \n" +
-                        "    public static void Testvoid2()\n" +
-                        "    {\n" +
-                        "        Console.WriteLine(\"Hello from Testvoid2()\");\n" +
-                        "    }\n" +
-                        "}");
+                    //File.WriteAllText(Path + "\\Extension.cs",
+                    //    "class Extension\n" +
+                    //    "{\n" +
+                    //    "    public static void TestVoid()\n" +
+                    //    "    {\n" +
+                    //    "        Console.WriteLine(\"Hello from TestVoid()\");\n" +
+                    //    "    }\n" +
+                    //    "    \n" +
+                    //    "    public static void Testvoid2()\n" +
+                    //    "    {\n" +
+                    //    "        Console.WriteLine(\"Hello from Testvoid2()\");\n" +
+                    //    "    }\n" +
+                    //    "}");
                 }
                 if (!File.Exists(Path + "\\Main.cs"))
                 {
@@ -101,57 +101,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                         "{\n" +
                         "    public static void Main()\n" +
                         "    {\n" +
-                        "        Console.WriteLine(\"Hello from Main()\");\n" +
-                        "        Console.WriteLine(\"This is a test message\");\n" +
-                        "        Console.WriteLine(\"Extra line\");\n" +
-                        "        Console.Write(\"Extension: \");\n" +
-                        "        Console.ReadLine();\n" +
-                        "        Console.Clear();\n" +
-                        "        Console.WriteLine(\"This line is visible after Clear()\");\n" +
-                        "        string A = \"Hello\";\n" +
-                        "        int B = 18;\n" +
-                        "        bool C = true;\n" +
-                        "        bool D = false;\n" +
-                        "        float E = 1.5;\n" +
-                        "        double F = 1.2221;\n" +
-                        "        char G = 'A';\n" +
-                        "        A = Math.Abs(-5 + 2);\n" +
-                        "        D = false;\n" +
-                        "        if(B == 18 && C)\n" +
-                        "        {\n" +
-                        "            Console.WriteLine(\"Condition B == 18 && C is true\");\n" +
-                        "        }\n" +
-                        "        else\n" +
-                        "        {\n" +
-                        "            Console.WriteLine(\"This shouldn't run\");\n" +
-                        "        }\n" +
-                        "        if(B != 18 && D == true)\n" +
-                        "        {\n" +
-                        "            Console.WriteLine(\"Condition B != 18 || D is false\");\n" +
-                        "        }\n" +
-                        "        else if(B == 18)\n" +
-                        "        {\n" +
-                        "            Console.WriteLine(\"From elseif!\");\n" +
-                        "        }\n" +
-                        "        else\n" +
-                        "        {\n" +
-                        "            Console.WriteLine(\"This should run\");\n" +
-                        "        }\n" +
-                        "        for(int i = 0; i < 10; i++)\n" +
-                        "        {\n" +
-                        "            Console.WriteLine(\"1\");\n" +
-                        "        }\n" +
-                        "        Random.Next(5, 11);\n" +
-                        "        B += Console.ReadLine();\n" +
-                        "        Console.WriteLine(\"Value of B: \" + B);\n" +
-                        "        B *= 10;\n" +
-                        "        Console.WriteLine(\"Value of B after multiply by 10: \" + B);\n" +
-                        "    }\n" +
-                        "    \n" +
-                        "    public static void ExtraVoid()\n" +
-                        "    {\n" +
-                        "        Console.WriteLine(\"Hello from ExtraVoid()\");\n" +
-                        "        Console.WriteLine(\"This shouldn't be executed!\");\n" +
+                        "        \n" +
                         "    }\n" +
                         "}");
                     #endregion TestCode

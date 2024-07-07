@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CrystalOSAlpha.Programming.CrystalSharp.CodeStructure.Math;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -55,8 +56,49 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.CodeStructure.Console
                 }
                 else
                 {
-                    // If it's not a variable, treat it as a literal string
-                    result.Append(trimmedPart.Trim('"'));
+                    if (trimmedPart.Contains("\""))
+                    {
+                        result.Append(trimmedPart.Trim('"'));
+                    }
+                    else
+                    {
+                        if (trimmedPart.Contains("["))
+                        {
+                            string[] Data = trimmedPart.Split('[');
+                            Data[1] = Data[1].TrimEnd(']').Trim();
+                            Variables.Variable FindIt = vars.Find(v => v.ID == Data[0]);
+                            switch (FindIt.Type)
+                            {
+                                case Variables.VariableType.Bitmap:
+                                    if (int.TryParse(Data[1].Replace(" ", "").Split(',')[0], out int X) && int.TryParse(Data[1].Replace(" ", "").Split(',')[1], out int Y))
+                                    {
+                                        result.Append(ImprovedVBE.GetPixel(FindIt.BitmapValue, X, Y));
+                                    }
+                                    else
+                                    {
+                                        int XAxis = (int)MathOperations.Calculate(Data[1].Replace(" ", "").Split(',')[0], vars);
+                                        int YAxis = (int)MathOperations.Calculate(Data[1].Replace(" ", "").Split(',')[1], vars);
+                                        result.Append(ImprovedVBE.GetPixel(FindIt.BitmapValue, XAxis, YAxis));
+                                    }
+                                    break;
+                                case Variables.VariableType.List:
+                                    if (int.TryParse(Data[1], out int Index))
+                                    {
+                                        result.Append(FindIt.Vars[Index].Value);
+                                    }
+                                    else
+                                    {
+                                        int IndexValue = (int)MathOperations.Calculate(Data[1], vars);
+                                        result.Append(FindIt.Vars[IndexValue].Value);
+                                    }
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            result.Append(trimmedPart);
+                        }
+                    }
                 }
             }
 

@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyDescriptionAttribute("Use VMware Player or Workstation to deploy and debug.")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dd9308492e74c1b26d8aeca5a97adc0f56a4604d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cb1b78be95dc46b9a74a4b68ae01fc00268291fc")]
 [assembly: System.Reflection.AssemblyProductAttribute("CrystalOSAlpha")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CrystalOSAlpha")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

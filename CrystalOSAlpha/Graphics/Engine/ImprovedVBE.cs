@@ -152,6 +152,15 @@ namespace CrystalOSAlpha
             }
         }
 
+        public static int GetPixel(Bitmap Canvas, int x, int y)
+        {
+            if (x > 0 && x < Canvas.Width && y >= 0 && y < Canvas.Height)
+            {
+                return Canvas.RawData[y * Canvas.Width + x];
+            }
+            throw new Exception("Out of bounds");
+        }
+
         /// <summary>
         /// Draws a line to the screen
         /// </summary>
