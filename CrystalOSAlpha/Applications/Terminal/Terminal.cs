@@ -178,49 +178,55 @@ namespace CrystalOSAlpha.Applications.Terminal
             {
                 case TypeOfTerminal.Executable:
                     //TODO: Change to switch statements
-                    if (ProgramExec.LineCounter == -1)
+                    switch (ProgramExec.LineCounter)
                     {
-                        // ProgramExec.LineCounter = 2;
-                        content += "\n\nCode Executed successfuly!";
-                        ProgramExec.LineCounter = -2;
-                        temp = true;
-                    }
-                    else if(ProgramExec.LineCounter != -2)
-                    {
-                        if (!ProgramExec.IsWaitingForReadLine)
-                        {
-                            string SaveOut = ProgramExec.Execute(CodeSegments, name.Split('.')[0]);
-                            if (SaveOut != null)
+                        case -1:
+                            // ProgramExec.LineCounter = 2;
+                            content += "\n\nCode Executed successfuly!";
+                            ProgramExec.LineCounter = -2;
+                            temp = true;
+                            break;
+                         default:
+                            switch(ProgramExec.LineCounter != -2)
                             {
-                                content += SaveOut;
-                                if (ProgramExec.IsWaitingForReadLine)
-                                {
-                                    ResponseLength = SaveOut.Length;
-                                }
+                                case true:
+                                    if (!ProgramExec.IsWaitingForReadLine)
+                                    {
+                                        string SaveOut = ProgramExec.Execute(CodeSegments, name.Split('.')[0]);
+                                        if (SaveOut != null)
+                                        {
+                                            content += SaveOut;
+                                            if (ProgramExec.IsWaitingForReadLine)
+                                            {
+                                                ResponseLength = SaveOut.Length;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            ResponseLength = 0;
+                                            content = "";
+                                        }
+                                    }
+                                    else
+                                    {
+                                        content = content.Remove(content.Length - ResponseLength);
+                                        string SaveOut = ProgramExec.Execute(CodeSegments, name.Split('.')[0]);
+                                        if (SaveOut != null)
+                                        {
+                                            content += SaveOut;
+                                            ResponseLength = SaveOut.Length;
+                                        }
+                                        else
+                                        {
+                                            ResponseLength = 0;
+                                            content = "";
+                                        }
+                                    }
+                                    content = content.TrimStart('\n');
+                                    temp = true;
+                                    break;
                             }
-                            else
-                            {
-                                ResponseLength = 0;
-                                content = "";
-                            }
-                        }
-                        else
-                        {
-                            content = content.Remove(content.Length - ResponseLength);
-                            string SaveOut = ProgramExec.Execute(CodeSegments, name.Split('.')[0]);
-                            if (SaveOut != null)
-                            {
-                                content += SaveOut;
-                                ResponseLength = SaveOut.Length;
-                            }
-                            else
-                            {
-                                ResponseLength = 0;
-                                content = "";
-                            }
-                        }
-                        content = content.TrimStart('\n');
-                        temp = true;
+                            break;
                     }
                     break;
             }
