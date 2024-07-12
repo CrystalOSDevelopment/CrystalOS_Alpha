@@ -49,45 +49,37 @@ namespace CrystalOSAlpha
         {
             if(isMoving == false)
             {
-                c.DrawImage(cover, 0, 0);
+                if (Counter == 5)
+                {
+                    c.DrawImage(cover, 0, 0);
+                    c.Display();
+                    if (Res == true)
+                    {
+                        try
+                        {
+                            data = ScaleImageStock(Temp, (uint)width, (uint)height);
+                            cover = ScaleImageStock(Temp, (uint)width, (uint)height);
+
+                            MouseManager.ScreenWidth = (uint)width;
+                            MouseManager.ScreenHeight = (uint)height;
+
+                            TaskManager.Top = height;
+                            TaskManager.Left = width / 2 + 60;
+                        }
+                        catch
+                        {
+
+                        }
+
+                        Res = false;
+                    }
+                    Counter = 0;
+                }
+                else
+                {
+                    Counter++;
+                }
                 Clear();
-                if (Res == true)
-                {
-                    try
-                    {
-                        data = ScaleImageStock(Temp, (uint)width, (uint)height);
-                        cover = ScaleImageStock(Temp, (uint)width, (uint)height);
-
-                        MouseManager.ScreenWidth = (uint)width;
-                        MouseManager.ScreenHeight = (uint)height;
-
-                        TaskManager.Top = height;
-                        TaskManager.Left = width / 2 + 60;
-                    }
-                    catch
-                    {
-
-                    }
-
-                    Res = false;
-                }
-                switch (Clock != DateTime.Now.Second)
-                {
-                    case true:
-                        if(Counter >= 3)
-                        {
-                            Clock = DateTime.Now.Second;
-                            Counter = 0;
-                        }
-                        else
-                        {
-                            Counter++;
-                        }
-                        break;
-                    case false:
-                        c.Display();
-                        break;
-                }
             }
             else
             {
@@ -146,9 +138,11 @@ namespace CrystalOSAlpha
         /// <param name="color">Color of the pixel in integer</param>
         public static void DrawPixel(Bitmap Canvas, int x, int y, int color)
         {
-            if (x > 0 && x < Canvas.Width && y >= 0 && y < Canvas.Height)
+            switch(x > 0 && x < Canvas.Width && y >= 0 && y < Canvas.Height)
             {
-                Canvas.RawData[y * Canvas.Width + x] = color;
+                case true:
+                    Canvas.RawData[y * Canvas.Width + x] = color;
+                    break;
             }
         }
 
@@ -375,107 +369,120 @@ namespace CrystalOSAlpha
         {
             int TempX = x;
             int[] line = new int[image.Width];
-            if (x < into.Width)
+            switch(x < into.Width)
             {
-                if (x < 0)
-                {
-                    line = new int[image.Width + x];
-                    x = 0;
-                }
-                else if (x + image.Width > into.Width)
-                {
-                    line = new int[image.Width - (x + image.Width - into.Width)];
-                }
-
-                int counter = 0;
-                int scan_line = 0;
-                for (int _y = y; _y < y + image.Height; _y++, scan_line++)
-                {
-                    try
+                case true:
+                    switch(x < 0)
                     {
-                        if(TempX < 0)
-                        {
-                            Array.Copy(image.RawData, scan_line * image.Width - TempX, line, 0, line.Length);
-                        }
-                        else
-                        {
-                            Array.Copy(image.RawData, scan_line * image.Width, line, 0, line.Length);
-                        }
-                        bool found = false;
-                        for(int i = 0; i < line.Length && found == false; i++)
-                        {
-                            if (line[i] == 0)
+                        case true:
+                            line = new int[image.Width + x];
+                            x = 0;
+                            break;
+                        case false:
+                            switch (x + image.Width > into.Width)
                             {
-                                found = true;
+                                case true:
+                                    line = new int[image.Width - (x + image.Width - into.Width)];
+                                    break;
                             }
-                            else
+                            break;
+                    }
+
+                    int counter = 0;
+                    int scan_line = 0;
+                    for (int _y = y; _y < y + image.Height; _y++, scan_line++)
+                    {
+                        try
+                        {
+                            switch(TempX < 0)
                             {
-                                i = line.Length;
-                                for(int j = line.Length - 1; j >= 0; j--)
+                                case true:
+                                    Array.Copy(image.RawData, scan_line * image.Width - TempX, line, 0, line.Length);
+                                    break;
+                                case false:
+                                    Array.Copy(image.RawData, scan_line * image.Width, line, 0, line.Length);
+                                    break;
+                            }
+                            bool found = false;
+                            for(int i = 0; i < line.Length && found == false; i++)
+                            {
+                                switch (line[i])
                                 {
-                                    if (line[j] == 0)
-                                    {
+                                    case 0:
                                         found = true;
+                                        break;
+                                    default:
+                                        i = line.Length;
+                                        for(int j = line.Length - 1; j >= 0; j--)
+                                        {
+                                            switch (line[j])
+                                            {
+                                                case 0:
+                                                    found = true;
+                                                    break;
+                                                default:
+                                                    j = -1;
+                                                    break;
+                                            }
+                                        }
+                                        break;
+                                }
+                            }
+                            switch (found == false)
+                            {
+                                case true:
+                                    if (_y < into.Height - 1 && _y > 0)
+                                    {
+                                        if(x < 0)
+                                        {
+                                            x = 0;
+                                        }
+                                        line.CopyTo(into.RawData, _y * into.Width + x);
+                                        counter += (int)image.Width;
                                     }
                                     else
                                     {
-                                        j = -1;
+                                        counter += (int)image.Width;
                                     }
-                                }
-                            }
-                        }
-                        if (found == false)
-                        {
-                            if (_y < into.Height - 1 && _y > 0)
-                            {
-                                if(x < 0)
-                                {
-                                    x = 0;
-                                }
-                                line.CopyTo(into.RawData, _y * into.Width + x);
-                                counter += (int)image.Width;
-                            }
-                            else
-                            {
-                                counter += (int)image.Width;
-                            }
-                        }
-                        else
-                        {
-                            x = TempX;
-                            for (int _x = x; _x < x + image.Width; _x++)
-                            {
-                                if (_y < into.Height - 1)
-                                {
-                                    if (_x <= into.Width && _x >= 0)
+                                    break;
+                                case false:
+                                    x = TempX;
+                                    for (int _x = x; _x < x + image.Width; _x++)
                                     {
-                                        if (image.RawData[counter] == 0)
+                                        if (_y < into.Height - 1)
                                         {
-                                            counter++;
+                                            if (_x <= into.Width && _x >= 0)
+                                            {
+                                                if (image.RawData[counter] == 0)
+                                                {
+                                                    counter++;
+                                                }
+                                                else
+                                                {
+                                                    DrawPixel(into, _x, _y, image.RawData[counter]);
+                                                    counter++;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                counter++;
+                                            }
                                         }
                                         else
                                         {
-                                            DrawPixel(into, _x, _y, image.RawData[counter]);
-                                            counter++;
+                                            counter += (int)image.Width;
                                         }
                                     }
-                                    else
-                                    {
-                                        counter++;
-                                    }
-                                }
-                                else
-                                {
-                                    counter += (int)image.Width;
-                                }
+
+                                    break;
                             }
                         }
-                    }
-                    catch
-                    {
+                        catch
+                        {
 
+                        }
                     }
-                }
+                    break;
             }
             return into;
         }

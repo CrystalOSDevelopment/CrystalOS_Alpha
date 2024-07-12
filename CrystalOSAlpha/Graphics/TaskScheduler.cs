@@ -1,6 +1,5 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
-using CrystalOS_Alpha;
 using CrystalOSAlpha.Applications;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics.Icons;
@@ -61,16 +60,27 @@ namespace CrystalOSAlpha.Graphics
 
             foreach (var app in Apps)
             {
-                if (app.AppID < 1000)
+                switch(app.AppID < 1000)
                 {
-                    app.AppID = rnd.Next(1000, 10000);
-                    app.once = true;
+                    case true:
+                        app.AppID = rnd.Next(1000, 10000);
+                        app.once = true;
+                        break;
                 }
-                if (app.y <= 1)
+                switch(app.y <= 1)
                 {
-                    app.y = 1;
+                    case true:
+                        app.y = 1;
+                        break;
                 }
-                if(app.y < TaskManager.TaskBar.Height && GlobalValues.TaskBarType == "Nostalgia")
+                switch(app.x <= 1 && app.name != null)
+                {
+                    case true:
+                        app.x = 1;
+                        break;
+                }
+
+                if (app.y < TaskManager.TaskBar.Height && GlobalValues.TaskBarType == "Nostalgia")
                 {
                     app.y = (int)TaskManager.TaskBar.Height;
                 }

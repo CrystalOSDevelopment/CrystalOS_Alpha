@@ -139,39 +139,50 @@ namespace CrystalOSAlpha.Applications.Terminal
                 temp = true;
             }
 
-            foreach (var button in Buttons)
+            switch(MouseManager.MouseState)
             {
-                if (MouseManager.MouseState == MouseState.Left)
-                {
-                    if (MouseManager.X > x + button.X && MouseManager.X < x + button.X + button.Width)
+                case MouseState.Left:
+                    foreach (var button in Buttons)
                     {
-                        if (MouseManager.Y > y + button.Y && MouseManager.Y < y + button.Y + button.Height)
+                        if (MouseManager.MouseState == MouseState.Left)
                         {
-                            if (clicked == false)
+                            if (MouseManager.X > x + button.X && MouseManager.X < x + button.X + button.Width)
                             {
-                                button.Clicked = true;
-                                once = true;
-                                clicked = true;
+                                if (MouseManager.Y > y + button.Y && MouseManager.Y < y + button.Y + button.Height)
+                                {
+                                    if (clicked == false)
+                                    {
+                                        button.Clicked = true;
+                                        once = true;
+                                        clicked = true;
+                                    }
+                                }
                             }
                         }
                     }
-                }
-                if (clicked == true && MouseManager.MouseState == MouseState.None)
-                {
-                    once = true;
-                    button.Clicked = false;
-                    clicked = false;
-                }
-            }
-
-            foreach (var vscroll in Scroll)
-            {
-                vscroll.Height = height - 60;
-                vscroll.X = width - 22;
-                if (vscroll.CheckClick((int)MouseManager.X - x, (int)MouseManager.Y - y))
-                {
-                    temp = true;
-                }
+                    foreach (var vscroll in Scroll)
+                    {
+                        vscroll.Height = height - 60;
+                        vscroll.X = width - 22;
+                        if (vscroll.CheckClick((int)MouseManager.X - x, (int)MouseManager.Y - y))
+                        {
+                            temp = true;
+                        }
+                    }
+                    break;
+                case MouseState.None:
+                    switch (clicked)
+                    {
+                        case true:
+                            foreach (var button in Buttons)
+                            {
+                                once = true;
+                                button.Clicked = false;
+                                clicked = false;
+                            }
+                            break;
+                    }
+                    break;
             }
 
             switch (T)
@@ -190,6 +201,7 @@ namespace CrystalOSAlpha.Applications.Terminal
                             switch(ProgramExec.LineCounter != -2)
                             {
                                 case true:
+                                    int LengthOfContent = content.Length;
                                     if (!ProgramExec.IsWaitingForReadLine)
                                     {
                                         string SaveOut = ProgramExec.Execute(CodeSegments, name.Split('.')[0]);
@@ -223,135 +235,146 @@ namespace CrystalOSAlpha.Applications.Terminal
                                         }
                                     }
                                     content = content.TrimStart('\n');
-                                    temp = true;
+                                    if(LengthOfContent != content.Length)
+                                    {
+                                        temp = true;
+                                    }
                                     break;
                             }
+                            break;
+                    }
+                    switch(ProgramExec.LineCounter % 3 == 0)
+                    {
+                        case true:
+                            Heap.Collect();
                             break;
                     }
                     break;
             }
 
-            if (TaskScheduler.counter == TaskScheduler.Apps.Count - 1)
+            switch(TaskScheduler.counter == TaskScheduler.Apps.Count - 1 && T == TypeOfTerminal.Normal)
             {
-                KeyEvent key;
-                if (KeyboardManager.TryReadKey(out key))
-                {
-                    switch (T)
+                case true:
+                    KeyEvent key;
+                    if (KeyboardManager.TryReadKey(out key))
                     {
-                        case TypeOfTerminal.Normal:
-                                if (key.Key == ConsoleKeyEx.Enter)
-                                {
-                                    if(command == "clear")
+                        switch (T)
+                        {
+                            case TypeOfTerminal.Normal:
+                                    if (key.Key == ConsoleKeyEx.Enter)
                                     {
-                                        if(echo_off == true)
+                                        if(command == "clear")
                                         {
+                                            if(echo_off == true)
+                                            {
 
+                                            }
+                                            else
+                                            {
+                                                content = "Crystal-PC> ";
+                                            }
+                                            offset = 0;
+                                            offset2 = 0;
                                         }
                                         else
                                         {
-                                            content = "Crystal-PC> ";
+                                            cmd_history.Add(command);
+                                            if(echo_off == true)
+                                            {
+                                                content += "\n" + CommandLibrary.Execute(command);
+                                            }
+                                            else
+                                            {
+                                                content += "\n" + CommandLibrary.Execute(command) + "\nCrystal-PC> ";
+                                            }
+                                            index = cmd_history.Count;
+                                            if(cmd_history.Count > 20)
+                                            {
+                                                cmd_history.RemoveAt(0);
+                                            }
                                         }
-                                        offset = 0;
-                                        offset2 = 0;
+                                        command = "";
+                                        while(content.Split('\n').Length * 16 > Container.Height * 5)
+                                        {
+                                            content = content.Remove(0, content.IndexOf("\n") + 1);
+                                        }
+                                        if (content.Split('\n').Length * 16 >= Container.Height - 10)
+                                        {
+                                            Scroll[0].Value = Math.Clamp(content.Split('\n').Length * 16, Scroll[0].MinVal, Scroll[0].MaxVal);
+                                            Scroll[0].Pos = (int)(Scroll[0].Value / Scroll[0].Sensitivity) + 20;
+                                        }
+                                    }
+                                    else if(key.Key == ConsoleKeyEx.UpArrow)
+                                    {
+                                        int l = command.Length;
+                                        if (command.Length != 0)
+                                        {
+                                            content = content.Remove(content.Length - l);
+                                        }
+                                        if (index > 0)
+                                        {
+                                            index--;
+                                        }
+                                        command = cmd_history[index];
+                                        content += command;
+                                    }
+                                    else if (key.Key == ConsoleKeyEx.DownArrow)
+                                    {
+                                        int l = command.Length;
+                                        if(command.Length != 0)
+                                        {
+                                            content = content.Remove(content.Length - l);
+                                        }
+                                        if(index < cmd_history.Count - 1)
+                                        {
+                                            index++;
+                                        }
+                                        command = cmd_history[index];
+                                        content += command;
                                     }
                                     else
                                     {
-                                        cmd_history.Add(command);
-                                        if(echo_off == true)
-                                        {
-                                            content += "\n" + CommandLibrary.Execute(command);
-                                        }
-                                        else
-                                        {
-                                            content += "\n" + CommandLibrary.Execute(command) + "\nCrystal-PC> ";
-                                        }
-                                        index = cmd_history.Count;
-                                        if(cmd_history.Count > 20)
-                                        {
-                                            cmd_history.RemoveAt(0);
-                                        }
+                                        int length = command.Length;
+                                        command = Keyboard.HandleKeyboard(command, key);
+                                        content = content.Remove(content.Length - length);
+                                        content += command;
                                     }
-                                    command = "";
-                                    while(content.Split('\n').Length * 16 > Container.Height * 5)
-                                    {
-                                        content = content.Remove(0, content.IndexOf("\n") + 1);
-                                    }
-                                    if (content.Split('\n').Length * 16 >= Container.Height - 10)
-                                    {
-                                        Scroll[0].Value = Math.Clamp(content.Split('\n').Length * 16, Scroll[0].MinVal, Scroll[0].MaxVal);
-                                        Scroll[0].Pos = (int)(Scroll[0].Value / Scroll[0].Sensitivity) + 20;
-                                    }
-                                }
-                                else if(key.Key == ConsoleKeyEx.UpArrow)
+                                break;
+                            case TypeOfTerminal.Executable:
+                                if (NeedFeedback)
                                 {
-                                    int l = command.Length;
-                                    if (command.Length != 0)
-                                    {
-                                        content = content.Remove(content.Length - l);
-                                    }
-                                    if (index > 0)
-                                    {
-                                        index--;
-                                    }
-                                    command = cmd_history[index];
-                                    content += command;
-                                }
-                                else if (key.Key == ConsoleKeyEx.DownArrow)
-                                {
-                                    int l = command.Length;
-                                    if(command.Length != 0)
-                                    {
-                                        content = content.Remove(content.Length - l);
-                                    }
-                                    if(index < cmd_history.Count - 1)
-                                    {
-                                        index++;
-                                    }
-                                    command = cmd_history[index];
-                                    content += command;
-                                }
-                                else
-                                {
-                                    int length = command.Length;
+                                    int LengthOfInput = command.Length;
                                     command = Keyboard.HandleKeyboard(command, key);
-                                    content = content.Remove(content.Length - length);
+                                    content = content.Remove(content.Length - LengthOfInput);
                                     content += command;
                                 }
-                            break;
-                        case TypeOfTerminal.Executable:
-                            if (NeedFeedback)
+                                break;
+                        }
+
+                        foreach (var vscroll in Scroll)
+                        {
+                            vscroll.Height = height - 60;
+                            vscroll.X = width - 22;
+                            if (content.Split('\n').Length * 16 > Container.Height)
                             {
-                                int LengthOfInput = command.Length;
-                                command = Keyboard.HandleKeyboard(command, key);
-                                content = content.Remove(content.Length - LengthOfInput);
-                                content += command;
+                                vscroll.MaxVal = content.Split('\n').Length * 16 - (int)Container.Height;
+                                vscroll.Pos = (int)(Scroll[0].MaxVal / Scroll[0].Sensitivity) + 20;
+                                temp = true;
                             }
-                            break;
-                    }
+                            else
+                            {
+                                vscroll.MaxVal = 0;
+                            }
+                            if (vscroll.CheckClick((int)MouseManager.X - x, (int)MouseManager.Y - y))
+                            {
+                                temp = true;
+                            }
+                        }
 
-                    foreach (var vscroll in Scroll)
-                    {
-                        vscroll.Height = height - 60;
-                        vscroll.X = width - 22;
-                        if (content.Split('\n').Length * 16 > Container.Height)
-                        {
-                            vscroll.MaxVal = content.Split('\n').Length * 16 - (int)Container.Height;
-                            vscroll.Pos = (int)(Scroll[0].MaxVal / Scroll[0].Sensitivity) + 20;
-                            temp = true;
-                        }
-                        else
-                        {
-                            vscroll.MaxVal = 0;
-                        }
-                        if (vscroll.CheckClick((int)MouseManager.X - x, (int)MouseManager.Y - y))
-                        {
-                            temp = true;
-                        }
+                        Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
+                        temp = true;
                     }
-
-                    Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
-                    temp = true;
-                }
+                    break;
             }
 
             if (temp == true)
@@ -362,20 +385,20 @@ namespace CrystalOSAlpha.Applications.Terminal
                 {
                     vscroll.Render(window);
                 }
-                if (Scroll[0].Value > 0)
+                switch (Scroll[0].Value > 0)
                 {
-                    BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, content, 5, (-3) - Scroll[0].Value);
+                    case true:
+                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, content, 5, (-3) - Scroll[0].Value);
+                        break;
+                    case false:
+                        BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, content, 5, 5 - Scroll[0].Value);
+                        break;
                 }
-                else
-                {
-                    BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, content, 5, 5 - Scroll[0].Value);
-                }
-                ImprovedVBE.DrawImageAlpha(Container, 5, 52, window);
+                ImprovedVBE.DrawImage(Container, 5, 52, window);
 
                 temp = false;
             }
             ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
-            Heap.Collect();
         }
         public void RightClick()
         {
