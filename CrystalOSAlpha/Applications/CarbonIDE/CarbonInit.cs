@@ -67,7 +67,11 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
             if (initial == true)
             {
                 Buttons.Clear();
-                if(typeOf == "Opening")
+                value.Clear();
+                dropdowns.Clear();
+                CSharpFiles.Clear();
+
+                if (typeOf == "Opening")
                 {
                     Buttons.Add(new Button(496, 129, 175, 60, "Create a new project", 1));
                     Buttons.Add(new Button(496, 226, 175, 60, "Import from filesytem", 1));
@@ -282,10 +286,11 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                     }
                                     else if (value[1].Highlighted == true)
                                     {
+                                        Directory.CreateDirectory(SourceofProject + "\\" + namedProject);
                                         File.WriteAllText(SourceofProject + "\\" + namedProject + "\\" + namedProject + ".sln", "Program_mode = Graphical");
                                         File.Create(SourceofProject + "\\" + namedProject + "\\" + namedProject + ".app");
                                         File.WriteAllText(SourceofProject + "\\" + namedProject + "\\" + namedProject + ".app", CodeGenerator.Generate("", ""));
-                                        
+
                                         GraphicalProgramming ide = new GraphicalProgramming();
                                         ide.x = 0;
                                         ide.y = 0;

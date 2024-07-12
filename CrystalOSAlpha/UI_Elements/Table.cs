@@ -3,6 +3,7 @@ using Cosmos.System.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 
 namespace CrystalOSAlpha.UI_Elements
 {
@@ -19,6 +20,7 @@ namespace CrystalOSAlpha.UI_Elements
         public string ID { get; set; }
         public int XOffset = 0;
         public int YOffset = 0;
+        //Since this is basically useless in this case, it will function as a feedback bool to show if the given selected cell is write protected
         public bool Clicked { get; set; }
         public string Text { get; set; }
         public int Color { get; set; }
@@ -27,7 +29,9 @@ namespace CrystalOSAlpha.UI_Elements
         public int Value { get; set; }
         public float Sensitivity { get; set; }
         public int LockedPos { get; set; }
+        //This can be used for the x coordinate(Column) of the selected cell
         public int MinVal { get; set; }
+        //This can be used for the y coordinate(Row) of the selected cell
         public int MaxVal { get; set; }
 
         public Bitmap Canvas;
@@ -65,7 +69,7 @@ namespace CrystalOSAlpha.UI_Elements
 
             CellWidth = Width / TableWidth;
             CellHeight = Height / TableHeight;
-            Canvas = new Bitmap((uint)Width, (uint)Height, ColorDepth.ColorDepth32);
+            Canvas = new Bitmap((uint)((uint)CellWidth * TWidth + 3), (uint)((uint)CellHeight * THeight + 3), ColorDepth.ColorDepth32);
             int XVal = 0;
             int YVal = 0;
             for (int i = 0; i < TableWidth * TableHeight; i++)
@@ -99,7 +103,7 @@ namespace CrystalOSAlpha.UI_Elements
                     Array.Fill(cell.RawData, ImprovedVBE.colourToNumber(69, 69, 69));
                     BitFont.DrawBitFontString(cell, "ArialCustomCharset16", System.Drawing.Color.White, c.Content, 3, CellHeight / 2 - 12);
                 }
-                ImprovedVBE.DrawImage(cell, c.X * CellWidth + 3, c.Y * CellHeight + 5, Canvas);
+                ImprovedVBE.DrawImage(cell, c.X * CellWidth + 3, c.Y * CellHeight + 3, Canvas);
             }
             ImprovedVBE.DrawImageAlpha(Canvas, X, Y, Window);
         }
@@ -120,13 +124,20 @@ namespace CrystalOSAlpha.UI_Elements
             {
                 v.Selected = false;
             }
+
             if(Top >= 0 && Top <= Height && Left >= 0 && Left <= Width)
             {
                 int Row = Top / CellHeight;
                 int Column = Left / CellWidth;
                 Cells.Find(d => d.X == Column && d.Y == Row).Selected = true;
+                Clicked = Cells.Find(d => d.X == Column && d.Y == Row).WriteProtected;
+                MinVal = Column;
+                MaxVal = Row;
                 return true;
             }
+            Clicked = false;
+            MinVal = -1;
+            MaxVal = -1;
             return false;
         }
     }
