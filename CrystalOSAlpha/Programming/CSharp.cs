@@ -2478,7 +2478,7 @@ namespace CrystalOSAlpha.Programming
                             {
                                 if (cleaned.EndsWith(".app"))
                                 {
-                                    TaskScheduler.Apps.Add(new Window(100, 100, 999, 350, 200, 0, "Later", false, Resources.IDE, File.ReadAllText(cleaned)));
+                                    //TaskScheduler.Apps.Add(new Window(100, 100, 999, 350, 200, 0, "Later", false, Resources.IDE, File.ReadAllText(cleaned)));
                                 }
                                 else if (cleaned.EndsWith(".cmd"))
                                 {

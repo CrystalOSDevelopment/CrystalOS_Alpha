@@ -4,8 +4,8 @@ using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics.TaskBar;
 using CrystalOSAlpha.Programming;
+using CrystalOSAlpha.Programming.CrystalSharp.Graphics;
 using CrystalOSAlpha.System32;
-using CrystalOSAlpha.SystemApps;
 using CrystalOSAlpha.UI_Elements;
 using System;
 using System.Collections.Generic;
@@ -76,6 +76,26 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         {
             if (initial == true)
             {
+                //Read in the data
+                name += " - " + Path;
+
+                //Set up the working directories, if it's not done already
+                #region InitDirs
+                //Directory.Delete("0:\\User\\Source\\Hello", true); <-- this will worth millions!!!
+                switch (!Directory.Exists(Path + "\\Window_Layout"))
+                {
+                    case true:
+                        Directory.CreateDirectory(Path + "\\Window_Layout");
+                        break;
+                }
+                switch (!Directory.Exists(Path + "\\Scripts"))
+                {
+                    case true:
+                        Directory.CreateDirectory(Path + "\\Scripts");
+                        break;
+                }
+                #endregion InitDirs
+
                 //Initialize all tabs
                 #region Propeties
                 //Bringing table to existance
@@ -96,16 +116,12 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 PropetiesTab.Find(x => x.ID == "Propeties").SetValue(1, 4, "false", false);
                 PropetiesTab.Find(x => x.ID == "Propeties").SetValue(1, 5, "Test", false);
                 PropetiesTab.Find(x => x.ID == "Propeties").SetValue(1, 6, "false", false);
+
+                //Button
+                PropetiesTab.Add(new Button(5, 612, 204, 35, "OnClick", 1, "Click"));
+                PropetiesTab.Add(new Button(214, 612, 204, 35, "Hover", 1, "Hovering"));
                 #endregion Propeties
 
-                if (File.Exists(Path + ".app"))
-                {
-                    code = File.ReadAllText(Path + ".app");
-                }
-                else
-                {
-                    code = CodeGenerator.Generate(code, "");
-                }
 
                 code = CodeGenerator.Generate(code, "");
                 preview = new Window(20, 50, 999, 400, 300, 1, "New Window", false, icon, code);
@@ -150,7 +166,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
             if (MouseManager.MouseState == MouseState.Left && TaskScheduler.Apps[^1] == this && clicked == false)
             {
-                if (MouseManager.Y < 32 + WindowCanvas.Height)
+                if (MouseManager.Y < y + 32 + WindowCanvas.Height)
                 {
                     temp = true;
                     clicked = true;
@@ -158,8 +174,9 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     StoredY = (int)MouseManager.Y;
                 }
             }
-            else if(MouseManager.MouseState == MouseState.None)
+            else if(MouseManager.MouseState == MouseState.None && clicked)
             {
+                temp = true;
                 clicked = false;
             }
 
@@ -198,26 +215,34 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 //Render to propeties
                 foreach(var Element in PropetiesTab)
                 {
-                    if(MouseManager.MouseState == MouseState.Left)
+                    switch (Element.TypeOfElement)
                     {
-                        Element.CheckClick(1488, y + 32);
-                    }
-                    switch (Element.MinVal >= 0)
-                    {
-                        case true:
-                            switch (KeyPress)
+                        case TypeOfElement.Table:
+                            if(MouseManager.MouseState == MouseState.Left)
                             {
-                                case null:
-                                    break;
-                                default:
-                                    switch (Element.Clicked)
+                                Element.CheckClick(1488, y + 32);
+                            }
+                            switch (Element.MinVal >= 0)
+                            {
+                                case true:
+                                    switch (KeyPress)
                                     {
-                                        case false:
-                                            Element.SetValue(Element.MinVal, Element.MaxVal, Keyboard.HandleKeyboard(Element.GetValue(Element.MinVal, Element.MaxVal), KeyPress), false);
+                                        case null:
+                                            break;
+                                        default:
+                                            switch (Element.Clicked)
+                                            {
+                                                case false:
+                                                    Element.SetValue(Element.MinVal, Element.MaxVal, Keyboard.HandleKeyboard(Element.GetValue(Element.MinVal, Element.MaxVal), KeyPress), false);
+                                                    break;
+                                            }
                                             break;
                                     }
                                     break;
                             }
+                            break;
+                        case TypeOfElement.Button:
+                            Element.CheckClick(1488, y + 32);
                             break;
                     }
                     Element.Render(Propeties);
@@ -230,7 +255,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 //BitFont.DrawBitFontString(Container, "VerdanaCustomCharset24", Color.White, "Code:", 7, 10);
                 #endregion Labeling
 
-                //preview.App(WindowCanvas);
+                preview.App(WindowCanvas);
 
                 #region Rendering
                 ImprovedVBE.DrawImageAlpha(WindowCanvas, 10, 32, window);

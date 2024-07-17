@@ -15,7 +15,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Reflection;
 using Kernel = CrystalOS_Alpha.Kernel;
 using TaskScheduler = CrystalOSAlpha.Graphics.TaskScheduler;
 
@@ -532,7 +531,8 @@ namespace CrystalOSAlpha.Applications.FileSys
                                         }
                                         else if (entry.name.ToLower().EndsWith(".app"))
                                         {
-                                            TaskScheduler.Apps.Add(new Window(100, 100, 999, 350, 200, 0, "Untitled", false, icon, File.ReadAllText(entry.fullPath)));
+                                            //TaskScheduler.Apps.Add(new Window(100, 100, 999, 350, 200, 0, "Untitled", false, icon, File.ReadAllText(entry.fullPath)));
+                                            //Under reimplementation, if you feel the urge tho run old programs, uncommment the line above
                                         }
                                         else if (entry.name.ToLower().EndsWith(".bin"))
                                         {
@@ -655,6 +655,14 @@ namespace CrystalOSAlpha.Applications.FileSys
                                 };
                                 rightClicks.Add(new UI_Elements.RightClick((int)MouseManager.X, (int)MouseManager.Y, 200, 500, MItems, "FiMain"));
                             }
+                            else if (v.type == Opt.Folder)
+                            {
+                                MItems = new List<string>
+                                {
+                                    "Delete",
+                                };
+                                rightClicks.Add(new UI_Elements.RightClick((int)MouseManager.X, (int)MouseManager.Y, 200, 500, MItems, "FoMain"));
+                            }
                             Selected = v;
                             ToCopyFilename = v.name;
                         }
@@ -764,6 +772,17 @@ namespace CrystalOSAlpha.Applications.FileSys
                                         rightClicks.RemoveRange(Pointer + 1, rightClicks.Count - Pointer - 1);
                                         clicked = true;
                                     }
+                                    break;
+                            }
+                            break;
+
+                        //Folder options
+                        case "FoMain":
+                            switch (v.Selected)
+                            {
+                                case 0:
+                                    //Delete the folder with its content
+                                    Directory.Delete(Selected.fullPath, true);
                                     break;
                             }
                             break;

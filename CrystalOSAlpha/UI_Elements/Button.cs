@@ -1,4 +1,6 @@
-﻿using Cosmos.System.Graphics;
+﻿using Cosmos.System;
+using Cosmos.System.Audio.IO;
+using Cosmos.System.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
 using System.Drawing;
 
@@ -22,6 +24,7 @@ namespace CrystalOSAlpha.UI_Elements
         public int LockedPos { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
         public int MinVal { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
         public int MaxVal { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public int SavedColor = 0;
 
         public Button(int X, int Y, int Width, int Height, string Text, int Color)
         {
@@ -31,6 +34,7 @@ namespace CrystalOSAlpha.UI_Elements
             this.Height = Height;
             this.Text = Text;
             this.Color = Color;
+            this.SavedColor = Color;
             this.TypeOfElement = TypeOfElement.Button;
         }
         public Button(int X, int Y, int Width, int Height, string Text, int Color, string ID)
@@ -53,21 +57,36 @@ namespace CrystalOSAlpha.UI_Elements
             ImprovedVBE.DrawFilledRectangle(canvas, ImprovedVBE.colourToNumber(36, 36, 36), X, Y, Width, Height, false);
 
             ImprovedVBE.DrawFilledRectangle(canvas, Color, X + 2, Y + 2, Width - 4, Height - 4, false);
-            if(Color == System.Drawing.Color.White.ToArgb())
-            {
-                offset = BitFont.DrawBitFontString(canvas_Blank, "ArialCustomCharset16", System.Drawing.Color.Black, Text, Width - (Text.Length * 6) - 3, Height / 2 - 8);
-                BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", ComplimentaryColor.Generate(Color), Text, X + (Width / 2) - (offset / 2), Y + Height / 2 - (Text.Split('\n').Length * 9));
-            }
-            else
-            {
-                offset = BitFont.DrawBitFontString(canvas_Blank, "ArialCustomCharset16", System.Drawing.Color.White, Text, Width - (Text.Length * 6) - 3, Height / 2 - 8);
-                BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", ComplimentaryColor.Generate(Color), Text, X + (Width / 2) - (offset / 2), Y + Height / 2 - (Text.Split('\n').Length * 9));
-            }
+
+            offset = BitFont.DrawBitFontString(canvas_Blank, "ArialCustomCharset16", System.Drawing.Color.White, Text, Width - (Text.Length * 6) - 3, Height / 2 - 8);//Used to center text
+            BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", ComplimentaryColor.Generate(Color), Text, X + (Width / 2) - (offset / 2), Y + Height / 2 - (Text.Split('\n').Length * 9));
         }
 
         public bool CheckClick(int X, int Y)
         {
-            throw new System.NotImplementedException();
+            int Left = (int)MouseManager.X - X - this.X;
+            int Top = (int)MouseManager.Y - Y - this.Y;
+            if (Top >= 0 && Top <= Height && Left >= 0 && Left <= Width)
+            {
+                if(MouseManager.MouseState == MouseState.Left)
+                {
+                    if(Clicked == false)
+                    {
+                        Color = ComplimentaryColor.Generate(Color).ToArgb();
+                    }
+                    Clicked = true;
+                }
+                else
+                {
+                    Color = SavedColor;
+                    Clicked = false;
+                }
+            }
+            else
+            {
+                Clicked = false;
+            }
+            return Clicked;
         }
 
         public void SetValue(int X, int Y, string Value, bool writeprotected)

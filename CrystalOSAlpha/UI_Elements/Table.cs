@@ -38,14 +38,7 @@ namespace CrystalOSAlpha.UI_Elements
         public List<Cell> Cells = new List<Cell>();
         public int CellWidth = 0;
         public int CellHeight = 0;
-        //TODO: Remove this below
-        public Table(int Width, int Height, int TWidth, int THeight)
-        {
-            this.Width = Width;
-            this.Height = Height;
-            this.TableWidth = TWidth;
-            this.TableHeight = THeight;
-        }
+
         /// <summary>
         /// Creates a table
         /// </summary>
