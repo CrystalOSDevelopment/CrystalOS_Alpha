@@ -78,6 +78,7 @@ namespace CrystalOSAlpha.UI_Elements
                     XVal = 0;
                 }
             }
+            this.Clicked = false;
         }
         public void Render(Bitmap Window)
         {

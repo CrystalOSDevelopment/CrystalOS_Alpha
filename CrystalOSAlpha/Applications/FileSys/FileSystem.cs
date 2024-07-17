@@ -8,6 +8,7 @@ using CrystalOSAlpha.Graphics.Icons;
 using CrystalOSAlpha.Graphics.TaskBar;
 using CrystalOSAlpha.Programming;
 using CrystalOSAlpha.Programming.CrystalSharp;
+using CrystalOSAlpha.Programming.CrystalSharp.Graphics;
 using CrystalOSAlpha.System32;
 using CrystalOSAlpha.SystemApps;
 using CrystalOSAlpha.UI_Elements;
@@ -531,7 +532,7 @@ namespace CrystalOSAlpha.Applications.FileSys
                                         }
                                         else if (entry.name.ToLower().EndsWith(".app"))
                                         {
-                                            //TaskScheduler.Apps.Add(new Window(100, 100, 999, 350, 200, 0, "Untitled", false, icon, File.ReadAllText(entry.fullPath)));
+                                            TaskScheduler.Apps.Add(new Window(100, 100, 999, 350, 200, 0, "Untitled", false, icon, File.ReadAllText(entry.fullPath)));
                                             //Under reimplementation, if you feel the urge tho run old programs, uncommment the line above
                                         }
                                         else if (entry.name.ToLower().EndsWith(".bin"))
@@ -882,6 +883,7 @@ namespace CrystalOSAlpha.Applications.FileSys
             this.name = name;
             this.fullPath = fullPath;
             this.type = type;
+            Selected = false;
         }
     }
 
