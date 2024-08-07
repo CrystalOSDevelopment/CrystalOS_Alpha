@@ -22,16 +22,6 @@ namespace CrystalOSAlpha.UI_Elements
         public TypeOfElement TypeOfElement { get; set; }
 
         public float Sensitivity { get; set; }
-        public VerticalScrollbar(int x, int y, int width, int height, int Pos, float Sensitivity)
-        {
-            this.X = x;
-            this.X = y;
-            this.Width = width;
-            this.Height = height;
-            this.Pos = Pos;
-            this.Sensitivity = Sensitivity;
-            this.TypeOfElement = TypeOfElement.VerticalScrollbar;
-        }
         public VerticalScrollbar(int x, int y, int width, int height, int Pos, int MinVal, int MaxVal, string ID)
         {
             this.X = x;

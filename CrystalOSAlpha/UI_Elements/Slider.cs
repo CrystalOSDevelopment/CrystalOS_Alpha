@@ -10,8 +10,6 @@ namespace CrystalOSAlpha.UI_Elements
         public int Y { get; set; }
         public int Width { get; set; }
         public int Value { get; set; }
-        public int MinValue { get; set; }
-        public int MaxValue { get; set; }
         public string ID { get; set; }
         public int Height { get; set; }
         public string Text { get; set; }
@@ -26,28 +24,18 @@ namespace CrystalOSAlpha.UI_Elements
 
         public float Sensitivity = 0;
 
-        public Slider(int x, int y, int width, int value, string ID)
+        public Slider(int x, int y, int width, int MinimumValue, int MaximumValue, int value, string ID)
         {
             X = x;
             Y = y + 22;
             Width = width;
             Height = 12;
             Value = value;
+            MinVal = MinimumValue;
+            MaxVal = MaximumValue;
             this.ID = ID;
-            this.TypeOfElement = TypeOfElement.Slider;
-        }
-        public Slider(int x, int y, int width, int MinValue, int MaxValue, int value, string ID)
-        {
-            X = x;
-            Y = y + 22;
-            Width = width;
-            Height = 12;
-            Value = value;
-            this.MinValue = MinValue;
-            this.MaxValue = MaxValue;
-            this.ID = ID;
-            Sensitivity = (float)((float)MaxValue - (float)MinValue) / (float)width;
-            this.TypeOfElement = TypeOfElement.Slider;
+            Sensitivity = (float)(MaxVal - MinVal) / width;
+            TypeOfElement = TypeOfElement.Slider;
         }
 
         public void Render(Bitmap Canvas)
@@ -83,7 +71,7 @@ namespace CrystalOSAlpha.UI_Elements
         public void UpdateValue(int x)
         {
             Value = (int)((MouseManager.X - x - X) * Sensitivity);
-            Value = Math.Clamp(Value, MinValue, MaxValue);
+            Value = Math.Clamp(Value, MinVal, MaxVal);
         }
 
         public void SetValue(int X, int Y, string Value, bool writeprotected)

@@ -75,7 +75,7 @@ namespace CrystalOSAlpha.UI_Elements
                                 break;
                             }
                         }
-                        BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", System.Drawing.Color.White, Text, 5, Height / 2 - 8);
+                        BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", ComplimentaryColor.Generate(Color), Text, 5, Height / 2 - 8);
                     }
                     break;
                 case Options.right:
@@ -90,7 +90,7 @@ namespace CrystalOSAlpha.UI_Elements
                             Text = Text.Remove(0, Text.Length - 30);
                         }
                         offset = BitFont.DrawBitFontString(canvas_Blank, "ArialCustomCharset16", System.Drawing.Color.White, Text, Width - (Text.Length * 6) - 3, Height / 2 - 8);
-                        BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", System.Drawing.Color.White, Text, Width - offset - 3, Height / 2 - 8);
+                        BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", ComplimentaryColor.Generate(Color), Text, Width - offset - 3, Height / 2 - 8);
                     }
                     break;
             }
@@ -102,9 +102,9 @@ namespace CrystalOSAlpha.UI_Elements
         {
             if(MouseManager.MouseState == MouseState.Left)
             {
-                if(MouseManager.X > X && MouseManager.X < X + Width)
+                if(MouseManager.X > this.X + X && MouseManager.X < this.X + X + Width)
                 {
-                    if(MouseManager.Y > Y && MouseManager.Y < Y + Height)
+                    if(MouseManager.Y > this.Y + Y && MouseManager.Y < this.Y + Y + Height)
                     {
                         Clicked = true;
                         return true;

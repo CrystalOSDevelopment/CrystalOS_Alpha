@@ -430,7 +430,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         {"TextBox", Color.DarkSalmon}
     };
 
-        public Color[] HighLight(string source)
+        public static Color[] HighLight(string source)
         {
             Color[] colors = new Color[source.Length];
             Array.Fill(colors, Color.White);

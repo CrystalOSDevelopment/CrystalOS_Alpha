@@ -1,14 +1,12 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
 using CrystalOSAlpha.Applications;
-using CrystalOSAlpha.Applications.Minecraft;
 using CrystalOSAlpha.Graphics;
-using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Programming.CrystalSharp.CodeStructure.Variables;
+using CrystalOSAlpha.System32;
 using CrystalOSAlpha.UI_Elements;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 
 namespace CrystalOSAlpha.Programming.CrystalSharp.Graphics
@@ -338,6 +336,37 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.Graphics
 
             foreach (UIElementHandler UIElement in UIElements)
             {
+                switch (UIElement.TypeOfElement)
+                {
+                    case TypeOfElement.Button:
+                        if(UIElement.CheckClick(x, y))
+                        {
+                            foreach(UIElementHandler UI in UIElements)
+                            {
+                                UI.Clicked = false;
+                            }
+                            UIElement.Clicked = true;
+                        }
+                        break;
+                    case TypeOfElement.TextBox:
+                        if (UIElement.CheckClick(x, y))
+                        {
+                            foreach (UIElementHandler UI in UIElements)
+                            {
+                                UI.Clicked = false;
+                            }
+                            UIElement.Clicked = true;
+                        }
+                        if(UIElement.Clicked == true)
+                        {
+                            KeyEvent key;
+                            if(KeyboardManager.TryReadKey(out key))
+                            {
+                                UIElement.Text = Keyboard.HandleKeyboard(UIElement.Text, key);
+                            }
+                        }
+                        break;
+                }
                 UIElement.Render(window);
             }
 
@@ -549,7 +578,8 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.Graphics
                                                 case false:
                                                     if (ElementType.Length > 1)
                                                     {
-                                                        UIElements.Find(d => d.ID == "debug").Text = "No such file!";
+                                                        UIElements.Add(new PictureBox(PictureBoxX, PictureBoxY, PictureBoxID, true, new Bitmap(10, 10, ColorDepth.ColorDepth32)));
+                                                        //UIElements.Find(d => d.ID == "debug").Text = "No such file!";
                                                     }
                                                     break;
                                             }

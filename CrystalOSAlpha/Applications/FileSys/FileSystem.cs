@@ -6,7 +6,6 @@ using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics.Icons;
 using CrystalOSAlpha.Graphics.TaskBar;
-using CrystalOSAlpha.Programming;
 using CrystalOSAlpha.Programming.CrystalSharp;
 using CrystalOSAlpha.Programming.CrystalSharp.Graphics;
 using CrystalOSAlpha.System32;
@@ -883,7 +882,7 @@ namespace CrystalOSAlpha.Applications.FileSys
             this.name = name;
             this.fullPath = fullPath;
             this.type = type;
-            Selected = false;
+            this.Selected = false;
         }
     }
 

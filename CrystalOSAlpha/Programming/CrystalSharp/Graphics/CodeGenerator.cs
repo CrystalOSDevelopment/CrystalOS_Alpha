@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using System.Text;
+﻿using CrystalOSAlpha.UI_Elements;
 
 namespace CrystalOSAlpha.Programming.CrystalSharp.Graphics
 {
@@ -45,6 +44,35 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.Graphics
             }
             Output = Output.Trim('\n');
             return Output;
+        }
+
+        public static string AddUIElement(string code, UIElementHandler UI, string Extension = "", bool visible = true)
+        {
+            switch (UI.TypeOfElement)
+            {
+                case TypeOfElement.Label:
+                    int LatsSemiColon = code.LastIndexOf(';');
+                    code = code.Insert(LatsSemiColon + 2,  "AddElement(new Label(" + UI.X + ", " + UI.Y + ", " + UI.Color +  ", \"" + UI.Text + "\", \"" + UI.ID + "\");\n");
+                    return code;
+                case TypeOfElement.Button:
+                    LatsSemiColon = code.LastIndexOf(';');
+                    code = code.Insert(LatsSemiColon + 2, "AddElement(new Button(" + UI.X + ", " + UI.Y + ", " + UI.Width + ", " + UI.Height + ", " + UI.Color + ", \"" + UI.Text + "\", \"" + UI.ID + "\");\n");
+                    return code;
+                case TypeOfElement.TextBox:
+                    LatsSemiColon = code.LastIndexOf(';');
+                    code = code.Insert(LatsSemiColon + 2, "AddElement(new TextBox(" + UI.X + ", " + UI.Y + ", " + UI.Width + ", " + UI.Height + ", " + UI.Color + ", \"" + UI.Text + "\", \"" + Extension + "\", \"" + UI.ID + "\");\n");
+                    return code;
+                case TypeOfElement.Slider:
+                    LatsSemiColon = code.LastIndexOf(';');
+                    code = code.Insert(LatsSemiColon + 2, "AddElement(new Slider(" + UI.X + ", " + UI.Y + ", " + UI.Width + ", " + UI.MinVal + ", " + UI.MaxVal + ", " + UI.Value + ", \"" + UI.ID + "\");\n");
+                    return code;
+                case TypeOfElement.PictureBox:
+                    LatsSemiColon = code.LastIndexOf(';');
+                    code = code.Insert(LatsSemiColon + 2, "AddElement(new PictureBox(" + UI.X + ", " + UI.Y + ", " + visible + ", \"" + Extension + "\", \"" + UI.ID + "\");\n");
+                    return code;
+                default:
+                    return code;
+            }
         }
     }
 }

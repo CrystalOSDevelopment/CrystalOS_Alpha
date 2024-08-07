@@ -24,13 +24,17 @@ namespace CrystalOSAlpha.UI_Elements
 
         public int LockedPos = 0;
 
-        public HorizontalScrollbar(int X, int y, int width, int height, int Pos)
+        public HorizontalScrollbar(int X, int y, int width, int height, int Pos, int MinVal, int MaxVal, string ID)
         {
             this.X = X;
             this.Y = y;
             this.Width = width;
             this.Height = height;
             this.Pos = Pos;
+            this.MinVal = MinVal;
+            this.MaxVal = MaxVal;
+            this.Sensitivity = (float)(((float)MaxVal - (float)MinVal) / ((float)this.Width - 60.0));
+            this.ID = ID;
             this.TypeOfElement = TypeOfElement.HorizontalScrollbar;
         }
         public void Render(Bitmap canvas)
@@ -45,19 +49,21 @@ namespace CrystalOSAlpha.UI_Elements
             {
                 ImprovedVBE.DrawFilledRectangle(canvas, ImprovedVBE.colourToNumber(100, 100, 100), X + Pos, Y + 2, 20, Height - 4, false);
             }
+            Sensitivity = (float)(((float)MaxVal - (float)MinVal) / ((float)this.Width - 60.0));
+            Value = (int)((Pos - 20) * Sensitivity);
         }
         public bool CheckClick(int X, int Y)
         {
             if(MouseManager.MouseState == MouseState.Left)
             {
-                if(X > X + Pos && X < X + Pos + 20 && Clicked == false)
+                if(X > this.X + Pos && X < this.X + Pos + 20 && Clicked == false)
                 {
-                    LockedPos = X - (X + Pos);
+                    LockedPos = X - (this.X + Pos);
                     Clicked = true;
                 }
                 if(Clicked == true)
                 {
-                    Pos = X - X - LockedPos;
+                    Pos = X - this.X - LockedPos;
                 }
                 Pos = Math.Clamp(Pos, 20, Width - 40);
                 return true;
