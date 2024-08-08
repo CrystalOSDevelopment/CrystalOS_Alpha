@@ -14,7 +14,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Xml.Linq;
 using Kernel = CrystalOS_Alpha.Kernel;
 using TaskScheduler = CrystalOSAlpha.Graphics.TaskScheduler;
 
@@ -61,6 +60,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public string ThatID = "";
         public static string Typo = "";
         public string ActiveDirectory = "";
+        public string WorkingFile = "Main.wlf";
 
         public List<string> Elements = new List<string> { "Label", "Button", "TextBox", "Slider", "Scrollbar", "PictureBox", "CheckBox", "Radio button", "Progressbar", "Menutab", "Table", "More >>" };
         public List<Structure> Items = new List<Structure>();
@@ -83,6 +83,8 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         #endregion UI Elements
 
         #region Compiler
+        public bool Building = false;
+        public int BuildingPhase = 0;
         public List<string> Log = new List<string>();
         #endregion Compiler
 
@@ -123,22 +125,38 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                         code = File.ReadAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\Window_Layout\\Main.wlf");
                         if(code.Length == 0)
                         {
-                            code = CodeGenerator.GenerateBase();
+                            code = CodeGenerator.GenerateBase("");
                             File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\Window_Layout\\Main.wlf", code);
                         }
                         break;
                     case false:
-                        code = CodeGenerator.GenerateBase();
+                        code = CodeGenerator.GenerateBase("");
                         File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\Window_Layout\\Main.wlf", code);
                         break;
                 }
-                switch(File.Exists(Path.Remove(Path.LastIndexOf('\\')) + "\\MKFILE.mkf"))
+                switch (File.Exists(Path.Remove(Path.LastIndexOf('\\')) + "\\Window_Layout\\Main2.wlf"))
+                {
+                    case true:
+                        string test = File.ReadAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\Window_Layout\\Main2.wlf");
+                        if (test.Length == 0)
+                        {
+                            test = CodeGenerator.GenerateBase("2");
+                            File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\Window_Layout\\Main2.wlf", test);
+                        }
+                        break;
+                    case false:
+                        string test1 = CodeGenerator.GenerateBase("2");
+                        File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\Window_Layout\\Main2.wlf", test1);
+                        break;
+                }
+                switch (File.Exists(Path.Remove(Path.LastIndexOf('\\')) + "\\MKFILE.mkf"))
                 {
                     case true:
                         //If I get to the assembly part, this will be used to build the code into an app
+                        File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\MKFILE.mkf", "INCLUDE:\nMain.wlf\nMain2.wlf\nSGN: Y\nPBLSHR: " + GlobalValues.Username + "\n\nSTRTWNDW:Main2");
                         break;
                     case false:
-                        File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\MKFILE.mkf", "INCLUDE:\nMain.wlf\n\nSGN: Y\nPBLSHR: " + GlobalValues.Username);
+                        File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\MKFILE.mkf", "INCLUDE:\nMain.wlf\nMain2.wlf\nSGN: Y\nPBLSHR: " + GlobalValues.Username);
                         break;
                 }
                 #endregion InitCode
@@ -241,53 +259,56 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
             if((MouseManager.MouseState == MouseState.Left || clicked == true || MouseManager.ScrollDelta != 0) && TaskScheduler.Apps[^1] == this)
             {
-                //Data gathering from user input(s)
-                foreach (var Element in CodeContainer)
+                if(MouseManager.X <= 933 + Container.Width)//Make it more accurate
                 {
-                    switch(!KeyboardManager.ShiftPressed)
+                    //Data gathering from user input(s)
+                    foreach (var Element in CodeContainer)
                     {
-                        case true:
-                            switch(Element.TypeOfElement)
-                            {
-                                case TypeOfElement.VerticalScrollbar:
-                                    Element.Value = Math.Clamp(Element.Value + MouseManager.ScrollDelta * 15, Element.MinVal, Element.MaxVal);
-                                    Element.Pos = (int)(Element.Value / Element.Sensitivity) + 20;
-                                    break;
-                            }
-                            break;
-                        case false:
-                            switch (Element.TypeOfElement)
-                            {
-                                case TypeOfElement.HorizontalScrollbar:
-                                    Element.Value = Math.Clamp(Element.Value + MouseManager.ScrollDelta * 15, Element.MinVal, Element.MaxVal);
-                                    Element.Pos = (int)(Element.Value / Element.Sensitivity) + 20;
-                                    break;
-                            }
-                            break;
+                        switch(!KeyboardManager.ShiftPressed)
+                        {
+                            case true:
+                                switch(Element.TypeOfElement)
+                                {
+                                    case TypeOfElement.VerticalScrollbar:
+                                        Element.Value = Math.Clamp(Element.Value + MouseManager.ScrollDelta * 35, Element.MinVal, Element.MaxVal);
+                                        Element.Pos = (int)(Element.Value / Element.Sensitivity) + 20;
+                                        break;
+                                }
+                                break;
+                            case false:
+                                switch (Element.TypeOfElement)
+                                {
+                                    case TypeOfElement.HorizontalScrollbar:
+                                        Element.Value = Math.Clamp(Element.Value + MouseManager.ScrollDelta * 35, Element.MinVal, Element.MaxVal);
+                                        Element.Pos = (int)(Element.Value / Element.Sensitivity) + 20;
+                                        break;
+                                }
+                                break;
+                        }
+                        Element.CheckClick((int)MouseManager.X - 933, (int)MouseManager.Y - (y + 32));
                     }
-                    Element.CheckClick((int)MouseManager.X - 933, (int)MouseManager.Y - (y + 32));
+
+                    //Clear the container
+                    Array.Fill(Container.RawData, ImprovedVBE.colourToNumber(36, 36, 36));//Background
+                    ImprovedVBE.DrawFilledRectangle(Container, ImprovedVBE.colourToNumber(50, 50, 50), 2, 2, (int)Container.Width - 4, (int)Container.Height - 4, false);//Border
+
+                    //Write the syntax highlighted code out
+                    BitFont.DrawBitFontString(Container, "ArialCustomCharset16", CarbonIDE.HighLight(Back_content), Back_content, 35 - CodeContainer.Find(d => d.ID == "HorizontalScroll").Value, 10 - CodeContainer.Find(d => d.ID == "VerticalScroll").Value);
+
+                    //Render the linecounter
+                    ImprovedVBE.DrawFilledRectangle(Container, ImprovedVBE.colourToNumber(100, 100, 100), 2, 2, 30, (int)Container.Height - 4, false);
+                    BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.Black, lineCount, 2, 10 - CodeContainer.Find(d => d.ID == "VerticalScroll").Value);
+
+                    //Actual rendering happens here
+                    foreach (var Element in CodeContainer)
+                    {
+                        //Render out the scrollbars
+                        Element.Render(Container);
+                    }
+
+                    //Render out to the main window
+                    ImprovedVBE.DrawImage(Container, 933, 32, window);
                 }
-
-                //Clear the container
-                Array.Fill(Container.RawData, ImprovedVBE.colourToNumber(36, 36, 36));//Background
-                ImprovedVBE.DrawFilledRectangle(Container, ImprovedVBE.colourToNumber(50, 50, 50), 2, 2, (int)Container.Width - 4, (int)Container.Height - 4, false);//Border
-
-                //Write the syntax highlighted code out
-                BitFont.DrawBitFontString(Container, "ArialCustomCharset16", CarbonIDE.HighLight(Back_content), Back_content, 35 - CodeContainer.Find(d => d.ID == "HorizontalScroll").Value, 10 - CodeContainer.Find(d => d.ID == "VerticalScroll").Value);
-
-                //Render the linecounter
-                ImprovedVBE.DrawFilledRectangle(Container, ImprovedVBE.colourToNumber(100, 100, 100), 2, 2, 30, (int)Container.Height - 4, false);
-                BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.Black, lineCount, 2, 10 - CodeContainer.Find(d => d.ID == "VerticalScroll").Value);
-
-                //Actual rendering happens here
-                foreach (var Element in CodeContainer)
-                {
-                    //Render out the scrollbars
-                    Element.Render(Container);
-                }
-
-                //Render out to the main window
-                ImprovedVBE.DrawImage(Container, 933, 32, window);
             }
 
             if (MouseManager.MouseState == MouseState.Left && TaskScheduler.Apps[^1] == this && clicked == false)
@@ -345,21 +366,64 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 switch(KeyPress.Key)
                 {
                     case ConsoleKeyEx.F5:
-                        //Build the file
-                        //For now, it only consists of the window layout
-                        File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\Window_Layout\\Main.wlf", code);
-                        if(!Directory.Exists(Path.Remove(Path.LastIndexOf('\\')) + "\\Bin"))
-                        {
-                            Directory.CreateDirectory(Path.Remove(Path.LastIndexOf('\\')) + "\\Bin");
-                        }
-                        File.Create(Path.Remove(Path.LastIndexOf('\\')) + "\\Bin\\" + Path.Remove(0, Path.LastIndexOf('\\') + 1) + ".app");
-                        File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\Bin\\" + Path.Remove(0, Path.LastIndexOf('\\') + 1) + ".app", code);
-                        TaskScheduler.Apps.Add(new Window(100, 100, 999, 350, 200, 0, "Untitled", false, icon, File.ReadAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\Bin\\" + Path.Remove(0, Path.LastIndexOf('\\') + 1) + ".app")));
+                        //Enable building
+                        Building = true;
+                        //Reseting the BuildPhase
+                        BuildingPhase = 0;
                         break;
                     default:
                         temp = true;
                         break;
                 }
+            }
+
+            switch (Building)
+            {
+                case true:
+                    switch (BuildingPhase)
+                    {
+                        case 0:
+                            Log.Clear();
+                            //Build the file
+                            //For now, it only consists of the window layout
+                            Log.Add("Building started...");
+                            Log.Add("Saving currently opened file");
+                            File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\Window_Layout\\" + WorkingFile, code);
+                            Log.Add("Directory init");
+                            if (!Directory.Exists(Path.Remove(Path.LastIndexOf('\\')) + "\\Bin"))
+                            {
+                                Directory.CreateDirectory(Path.Remove(Path.LastIndexOf('\\')) + "\\Bin");
+                            }
+                            Log.Add("Building output app");
+                            string BuiltFile = new ExecutableCreator().CreateExecutable(Path.Remove(Path.LastIndexOf('\\')), File.ReadAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\MKFILE.mkf"));
+                            File.Create(Path.Remove(Path.LastIndexOf('\\')) + "\\Bin\\" + Path.Remove(0, Path.LastIndexOf('\\') + 1) + ".app");
+                            File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\Bin\\" + Path.Remove(0, Path.LastIndexOf('\\') + 1) + ".app", BuiltFile);
+                            File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\Bin\\" + Path.Remove(0, Path.LastIndexOf('\\') + 1) + ".txt", BuiltFile);
+                            BuildingPhase++;
+                            break;
+                        case 1:
+                            Log.Add("Build successful!");
+                            TaskScheduler.Apps.Add(new Window(100, 100, 999, 350, 200, 0, "Untitled", false, icon, File.ReadAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\Bin\\" + Path.Remove(0, Path.LastIndexOf('\\') + 1) + ".app")));
+                            BuildingPhase++;
+                            Building = false;
+                            break;
+                    }
+
+                    //Reset buildlog window
+                    Array.Fill(BuildLog.RawData, ImprovedVBE.colourToNumber(36, 36, 36));//Background
+                    ImprovedVBE.DrawFilledRectangle(BuildLog, ImprovedVBE.colourToNumber(50, 50, 50), 2, 2, (int)BuildLog.Width - 4, (int)BuildLog.Height - 4, false);//Border
+
+                    //Render out the debug window
+                    string LogOutput = "";
+                    foreach (string s in Log)
+                    {
+                        LogOutput += s + "\n";
+                    }
+                    BitFont.DrawBitFontString(BuildLog, "ArialCustomCharset16", Color.White, LogOutput, 10, 10);
+
+                    //Render buildlog
+                    ImprovedVBE.DrawImage(BuildLog, 1488, 721, window);
+                    break;
             }
 
             if (preview.Code != code)
@@ -387,6 +451,9 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
                 Array.Fill(Container.RawData, ImprovedVBE.colourToNumber(36, 36, 36));//Background
                 ImprovedVBE.DrawFilledRectangle(Container, ImprovedVBE.colourToNumber(50, 50, 50), 2, 2, (int)Container.Width - 4, (int)Container.Height - 4, false);//Border
+
+                Array.Fill(BuildLog.RawData, ImprovedVBE.colourToNumber(36, 36, 36));//Background
+                ImprovedVBE.DrawFilledRectangle(BuildLog, ImprovedVBE.colourToNumber(50, 50, 50), 2, 2, (int)BuildLog.Width - 4, (int)BuildLog.Height - 4, false);//Border
 
                 switch (KeyPress)
                 {
@@ -528,14 +595,19 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                                 switch(entry.name[^4..])
                                                 {
                                                     case ".wlf":
-                                                        preview.Code = System.IO.File.ReadAllText(entry.fullPath);
+                                                        System.IO.File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\Window_Layout\\" + WorkingFile, code);
+                                                        code = System.IO.File.ReadAllText(entry.fullPath);
+                                                        Back_content = code;
+                                                        WorkingFile = entry.name;
                                                         break;
                                                     default:
                                                         switch(entry.name[^3..])
                                                         {
                                                             case ".cs":
+                                                                System.IO.File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\Window_Layout\\" + WorkingFile, code);
                                                                 code = System.IO.File.ReadAllText(entry.fullPath);
                                                                 Back_content = code;
+                                                                WorkingFile = entry.name;
                                                                 break;
                                                         }
                                                         break;
@@ -742,6 +814,34 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                             break;
                         case TypeOfElement.Button:
                             Element.CheckClick(1488, y + 32);
+                            switch (Element.ID)
+                            {
+                                case "Window":
+                                    //Reset table to adjust the window propeties
+                                    PropetiesTab.Find(x => x.ID == "Propeties").SetValue(0, 0, "Window.X", true);
+                                    PropetiesTab.Find(x => x.ID == "Propeties").SetValue(0, 1, "Window.Y", true);
+                                    PropetiesTab.Find(x => x.ID == "Propeties").SetValue(0, 2, "Window.Width", true);
+                                    PropetiesTab.Find(x => x.ID == "Propeties").SetValue(0, 3, "Window.Height", true);
+                                    PropetiesTab.Find(x => x.ID == "Propeties").SetValue(0, 4, "Window.AlwaysOnTop", true);
+                                    PropetiesTab.Find(x => x.ID == "Propeties").SetValue(0, 5, "Window.Title", true);
+                                    PropetiesTab.Find(x => x.ID == "Propeties").SetValue(0, 6, "Window.Titlebar", true);
+
+                                    PropetiesTab.Find(x => x.ID == "Propeties").SetValue(1, 0, preview.x.ToString(), false);
+                                    PropetiesTab.Find(x => x.ID == "Propeties").SetValue(1, 1, preview.y.ToString(), false);
+                                    PropetiesTab.Find(x => x.ID == "Propeties").SetValue(1, 2, preview.width.ToString(), false);
+                                    PropetiesTab.Find(x => x.ID == "Propeties").SetValue(1, 3, preview.height.ToString(), false);
+                                    PropetiesTab.Find(x => x.ID == "Propeties").SetValue(1, 4, preview.AlwaysOnTop.ToString(), false);
+                                    PropetiesTab.Find(x => x.ID == "Propeties").SetValue(1, 5, preview.name, false);
+                                    PropetiesTab.Find(x => x.ID == "Propeties").SetValue(1, 6, preview.HasTitlebar.ToString(), false);
+                                    break;
+                                case "UI":
+                                    //Yes, this is a ToDo list, but it's already predefined how I wish to do it.
+                                    //Create a new window that lists all the UI elements
+                                    //After the user selected one (by double clicking/enter key/ok button), the window will close after sending a message to this app defining which element is selected.
+                                    //Since we can't leave it in here, because it'd hang the os, a boolean will be set to true, so it'll wait for a response.
+                                    //The update the table to modify the correct values
+                                    break;
+                            }
                             break;
                     }
                     Element.Render(Propeties);

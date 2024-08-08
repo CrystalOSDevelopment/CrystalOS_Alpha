@@ -104,7 +104,7 @@ namespace CrystalOSAlpha.SystemApps
 
             foreach (var Box in TextBoxes)
             {
-                if (Box.CheckClick(x + Box.X, y + Box.Y) == true && clicked == false)
+                if (Box.CheckClick(x, y) == true && clicked == false)
                 {
                     foreach (var box2 in TextBoxes)
                     {

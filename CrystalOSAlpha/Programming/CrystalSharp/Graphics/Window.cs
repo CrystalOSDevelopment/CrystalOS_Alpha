@@ -115,6 +115,7 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.Graphics
 
                 //This is the part, where the input code gets segmented
                 #region Stage1
+                //Splitting by the "-----||-----" separator
                 CodeParts = CodeChunk.Chunkification(Code);
                 string assembled = "";
                 for (int i = 0; i < CodeParts.Count; i++)

@@ -4,9 +4,9 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.Graphics
 {
     public class CodeGenerator
     {
-        public static string GenerateBase()
+        public static string GenerateBase(string Number)
         {
-            string code = "Main\n" +
+            string code = "Main" + Number + "\n" +
                             "{\n" +
                                 "this.x = 30;\n" +
                                 "this.y = 40;\n" +
