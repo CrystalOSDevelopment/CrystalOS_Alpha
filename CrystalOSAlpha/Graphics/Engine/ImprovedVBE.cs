@@ -1,6 +1,5 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
-using CrystalOSAlpha.Applications.Clock;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.TaskBar;
 using IL2CPU.API.Attribs;
@@ -49,7 +48,7 @@ namespace CrystalOSAlpha
         {
             if(isMoving == false)
             {
-                if (Counter == 5)
+                if (Counter == 7)
                 {
                     c.DrawImage(cover, 0, 0);
                     c.Display();
@@ -84,7 +83,7 @@ namespace CrystalOSAlpha
             else
             {
                 //This is an artificial delay part which only gets activated when a window is being dragged to avoid tearing
-                if(Counter == 5)
+                if(Counter == 7)
                 {
                     if(Res == true)
                     {

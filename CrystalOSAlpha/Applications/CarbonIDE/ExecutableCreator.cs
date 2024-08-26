@@ -12,6 +12,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
          * Example MakeFile:
          * INCLUDE:
          * Main.wlf
+         * Main2.wlf
          * 
          * SGN:Y
          * 

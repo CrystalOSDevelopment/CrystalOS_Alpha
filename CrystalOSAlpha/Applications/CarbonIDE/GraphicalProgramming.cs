@@ -52,6 +52,8 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public int Sel = 0;
         public int lineIndex = 0;
         public int cursorIndex = 0;
+
+        public bool WaitForResponse = false;
         public bool temp = true;
 
         public string code = "";
@@ -61,6 +63,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public static string Typo = "";
         public string ActiveDirectory = "";
         public string WorkingFile = "Main.wlf";
+        public string TableType = "WIndow";
 
         public List<string> Elements = new List<string> { "Label", "Button", "TextBox", "Slider", "Scrollbar", "PictureBox", "CheckBox", "Radio button", "Progressbar", "Menutab", "Table", "More >>" };
         public List<Structure> Items = new List<Structure>();
@@ -257,6 +260,142 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 temp = true;
             }
 
+            if(WaitForResponse == true)
+            {
+                var Response = WindowMessenger.Recieve("Element Selector", AppID.ToString());
+                if (Response != null)
+                {
+                    TableType = "Element";
+                    var Element = preview.UIElements[int.Parse(Response.Message)];
+                    switch (Element.TypeOfElement)
+                    {
+                        case TypeOfElement.Button:
+                            int ImndexOfTable = PropetiesTab.FindIndex(d => d.ID == "Propeties");
+                            PropetiesTab[ImndexOfTable] = new Table(5, 80, 407, 350, 2, 9, "Propeties");
+                            //Left side
+                            PropetiesTab[ImndexOfTable].SetValue(0, 0, "Button.X", true);
+                            PropetiesTab[ImndexOfTable].SetValue(0, 1, "Button.Y", true);
+                            PropetiesTab[ImndexOfTable].SetValue(0, 2, "Button.Width", true);
+                            PropetiesTab[ImndexOfTable].SetValue(0, 3, "Button.Height", true);
+                            PropetiesTab[ImndexOfTable].SetValue(0, 4, "Button.Color", true);
+                            PropetiesTab[ImndexOfTable].SetValue(0, 5, "Button.Text", true);
+                            PropetiesTab[ImndexOfTable].SetValue(0, 6, "Button.ID", true);
+                            PropetiesTab[ImndexOfTable].SetValue(0, 7, "Button.Visible", true);
+                            PropetiesTab[ImndexOfTable].SetValue(0, 8, "Button.Tooltip", true);
+
+                            //Right side
+                            PropetiesTab[ImndexOfTable].SetValue(1, 0, Element.X.ToString(), false);
+                            PropetiesTab[ImndexOfTable].SetValue(1, 1, Element.Y.ToString(), false);
+                            PropetiesTab[ImndexOfTable].SetValue(1, 2, Element.Width.ToString(), false);
+                            PropetiesTab[ImndexOfTable].SetValue(1, 3, Element.Height.ToString(), false);
+                            PropetiesTab[ImndexOfTable].SetValue(1, 4, Element.Color.ToString(), false);
+                            PropetiesTab[ImndexOfTable].SetValue(1, 5, Element.Text, false);
+                            PropetiesTab[ImndexOfTable].SetValue(1, 6, Element.ID, false);
+                            //PropetiesTab[ImndexOfTable].SetValue(1, 7, Element.Visible.ToString(), false);
+                            //PropetiesTab[ImndexOfTable].SetValue(1, 8, Element.Tooltip, false);
+                            break;
+                        case TypeOfElement.Label:
+                            int ImndexOfTable1 = PropetiesTab.FindIndex(d => d.ID == "Propeties");
+                            PropetiesTab[ImndexOfTable1] = new Table(5, 80, 407, 300, 2, 7, "Propeties");
+                            //Left side
+                            PropetiesTab[ImndexOfTable1].SetValue(0, 0, "Label.X", true);
+                            PropetiesTab[ImndexOfTable1].SetValue(0, 1, "Label.Y", true);
+                            PropetiesTab[ImndexOfTable1].SetValue(0, 2, "Label.Color", true);
+                            PropetiesTab[ImndexOfTable1].SetValue(0, 3, "Label.Text", true);
+                            PropetiesTab[ImndexOfTable1].SetValue(0, 4, "Label.ID", true);
+                            PropetiesTab[ImndexOfTable1].SetValue(0, 5, "Label.Visible", true);
+                            PropetiesTab[ImndexOfTable1].SetValue(0, 6, "Label.Tooltip", true);
+
+                            //Right side
+                            PropetiesTab[ImndexOfTable1].SetValue(1, 0, Element.X.ToString(), false);
+                            PropetiesTab[ImndexOfTable1].SetValue(1, 1, Element.Y.ToString(), false);
+                            PropetiesTab[ImndexOfTable1].SetValue(1, 2, Element.Color.ToString(), false);
+                            PropetiesTab[ImndexOfTable1].SetValue(1, 3, Element.Text, false);
+                            PropetiesTab[ImndexOfTable1].SetValue(1, 4, Element.ID, false);
+                            //PropetiesTab[ImndexOfTable1].SetValue(1, 5, Element.Visible.ToString(), false);
+                            //PropetiesTab[ImndexOfTable1].SetValue(1, 6, Element.Tooltip, false);
+                            break;
+                        case TypeOfElement.TextBox:
+                            int ImndexOfTable2 = PropetiesTab.FindIndex(d => d.ID == "Propeties");
+                            PropetiesTab[ImndexOfTable2] = new Table(5, 80, 407, 300, 2, 9, "Propeties");
+                            //Left side
+                            PropetiesTab[ImndexOfTable2].SetValue(0, 0, "TextBox.X", true);
+                            PropetiesTab[ImndexOfTable2].SetValue(0, 1, "TextBox.Y", true);
+                            PropetiesTab[ImndexOfTable2].SetValue(0, 2, "TextBox.Width", true);
+                            PropetiesTab[ImndexOfTable2].SetValue(0, 3, "TextBox.Height", true);
+                            PropetiesTab[ImndexOfTable2].SetValue(0, 4, "TextBox.Color", true);
+                            PropetiesTab[ImndexOfTable2].SetValue(0, 5, "TextBox.Text", true);
+                            PropetiesTab[ImndexOfTable2].SetValue(0, 6, "TextBox.ID", true);
+                            PropetiesTab[ImndexOfTable2].SetValue(0, 7, "TextBox.Visible", true);
+                            PropetiesTab[ImndexOfTable2].SetValue(0, 8, "TextBox.Tooltip", true);
+
+                            //Right side
+                            PropetiesTab[ImndexOfTable2].SetValue(1, 0, Element.X.ToString(), false);
+                            PropetiesTab[ImndexOfTable2].SetValue(1, 1, Element.Y.ToString(), false);
+                            PropetiesTab[ImndexOfTable2].SetValue(1, 2, Element.Width.ToString(), false);
+                            PropetiesTab[ImndexOfTable2].SetValue(1, 3, Element.Height.ToString(), false);
+                            PropetiesTab[ImndexOfTable2].SetValue(1, 4, Element.Color.ToString(), false);
+                            PropetiesTab[ImndexOfTable2].SetValue(1, 5, Element.Text, false);
+                            PropetiesTab[ImndexOfTable2].SetValue(1, 6, Element.ID, false);
+                            //PropetiesTab[ImndexOfTable2].SetValue(1, 7, Element.Visible.ToString(), false);
+                            //PropetiesTab[ImndexOfTable2].SetValue(1, 8, Element.Tooltip, false);
+                            //Propeties
+                            break;
+                        case TypeOfElement.Slider:
+                            int ImndexOfTable3 = PropetiesTab.FindIndex(d => d.ID == "Propeties");
+                            PropetiesTab[ImndexOfTable3] = new Table(5, 80, 407, 300, 2, 10, "Propeties");
+                            //Left side
+                            PropetiesTab[ImndexOfTable3].SetValue(0, 0, "Slider.X", true);
+                            PropetiesTab[ImndexOfTable3].SetValue(0, 1, "Slider.Y", true);
+                            PropetiesTab[ImndexOfTable3].SetValue(0, 2, "Slider.Width", true);
+                            PropetiesTab[ImndexOfTable3].SetValue(0, 3, "Slider.Height", true);
+                            PropetiesTab[ImndexOfTable3].SetValue(0, 4, "Slider.MinVal", true);
+                            PropetiesTab[ImndexOfTable3].SetValue(0, 5, "Slider.MaxVal", true);
+                            PropetiesTab[ImndexOfTable3].SetValue(0, 6, "Slider.Value", true);
+                            PropetiesTab[ImndexOfTable3].SetValue(0, 7, "Slider.ID", true);
+                            PropetiesTab[ImndexOfTable3].SetValue(0, 8, "Slider.Visible", true);
+                            PropetiesTab[ImndexOfTable3].SetValue(0, 9, "Slider.Tooltip", true);
+
+                            //Right side
+                            PropetiesTab[ImndexOfTable3].SetValue(1, 0, Element.X.ToString(), false);
+                            PropetiesTab[ImndexOfTable3].SetValue(1, 1, Element.Y.ToString(), false);
+                            PropetiesTab[ImndexOfTable3].SetValue(1, 2, Element.Width.ToString(), false);
+                            PropetiesTab[ImndexOfTable3].SetValue(1, 3, Element.Height.ToString(), false);
+                            PropetiesTab[ImndexOfTable3].SetValue(1, 4, Element.MinVal.ToString(), false);
+                            PropetiesTab[ImndexOfTable3].SetValue(1, 5, Element.MaxVal.ToString(), false);
+                            PropetiesTab[ImndexOfTable3].SetValue(1, 6, Element.Value.ToString(), false);
+                            PropetiesTab[ImndexOfTable3].SetValue(1, 7, Element.ID, false);
+                            //PropetiesTab[ImndexOfTable3].SetValue(1, 8, Element.Visible.ToString(), false);
+                            //PropetiesTab[ImndexOfTable3].SetValue(1, 9, Element.Tooltip, false);
+                            break;
+                        case TypeOfElement.PictureBox:
+                            int ImndexOfTable4 = PropetiesTab.FindIndex(d => d.ID == "Propeties");
+                            PropetiesTab[ImndexOfTable4] = new Table(5, 80, 407, 300, 2, 7, "Propeties");
+                            //Left side
+                            PropetiesTab[ImndexOfTable4].SetValue(0, 0, "PictureBox.X", true);
+                            PropetiesTab[ImndexOfTable4].SetValue(0, 1, "PictureBox.Y", true);
+                            PropetiesTab[ImndexOfTable4].SetValue(0, 2, "PictureBox.Width", true);
+                            PropetiesTab[ImndexOfTable4].SetValue(0, 3, "PictureBox.Height", true);
+                            PropetiesTab[ImndexOfTable4].SetValue(0, 4, "PictureBox.ID", true);
+                            PropetiesTab[ImndexOfTable4].SetValue(0, 5, "PictureBox.Visible", true);
+                            PropetiesTab[ImndexOfTable4].SetValue(0, 6, "PictureBox.Tooltip", true);
+
+                            //Right side
+                            PropetiesTab[ImndexOfTable4].SetValue(1, 0, Element.X.ToString(), false);
+                            PropetiesTab[ImndexOfTable4].SetValue(1, 1, Element.Y.ToString(), false);
+                            PropetiesTab[ImndexOfTable4].SetValue(1, 2, Element.Width.ToString(), false);
+                            PropetiesTab[ImndexOfTable4].SetValue(1, 3, Element.Height.ToString(), false);
+                            PropetiesTab[ImndexOfTable4].SetValue(1, 4, Element.ID, false);
+                            //PropetiesTab[ImndexOfTable4].SetValue(1, 3, Element.Visible.ToString(), false);
+                            //PropetiesTab[ImndexOfTable4].SetValue(1, 4, Element.Tooltip, false);
+                            break;
+                    }
+                    WindowMessenger.Message.Remove(Response);
+                    temp = true;
+                    WaitForResponse = false;
+                }
+            }
+
             if((MouseManager.MouseState == MouseState.Left || clicked == true || MouseManager.ScrollDelta != 0) && TaskScheduler.Apps[^1] == this)
             {
                 if(MouseManager.X <= 933 + Container.Width)//Make it more accurate
@@ -350,7 +489,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                     //code = CodeGenerator.AddUIElement(code, new Scrollbar(StoredX, StoredY, WidthOfUI, HeightOfUI, 0, 100, 50, "Scrollbar" + preview.UIElements.FindAll(d => d.TypeOfElement == TypeOfElement.Scrollbar).Count));
                                     break;
                                 case 5:
-                                    code = CodeGenerator.AddUIElement(code, new PictureBox(StoredX, StoredY, "PictureBox" + preview.UIElements.FindAll(d => d.TypeOfElement == TypeOfElement.PictureBox).Count, true, new Bitmap(10, 10, ColorDepth.ColorDepth32)), "", true);
+                                    code = CodeGenerator.AddUIElement(code, new PictureBox(StoredX, StoredY - 22, "PictureBox" + preview.UIElements.FindAll(d => d.TypeOfElement == TypeOfElement.PictureBox).Count, true, new Bitmap((uint)WidthOfUI, (uint)HeightOfUI, ColorDepth.ColorDepth32)), "", true);
                                     break;
                             }
                             StoredX = -1;
@@ -689,116 +828,244 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     switch (Element.TypeOfElement)
                     {
                         case TypeOfElement.Table:
-                            if(MouseManager.MouseState == MouseState.Left)
+                            if (MouseManager.MouseState == MouseState.Left)
                             {
                                 Element.CheckClick(1488, y + 32);
-                                if(Element.MinVal > 0)
-                                {
-                                    code = CodeGenerator.ModifyCode(code, Element.GetValue(Element.MinVal - 1, Element.MaxVal), Element.GetValue(Element.MinVal, Element.MaxVal));
-                                }
                             }
-                            switch (Element.MinVal > 0)
+                            switch (TableType)
                             {
-                                case true:
-                                    switch (KeyPress)
+                                case "Element":
+                                    switch (Element.MinVal > 0)
                                     {
-                                        case null:
-                                            break;
-                                        default:
-                                            switch (KeyPress.Key)
+                                        case true:
+                                            switch (KeyPress)
                                             {
-                                                case ConsoleKeyEx.Enter:
-                                                    if(Element.MaxVal == 5)
-                                                    {
-                                                        code = CodeGenerator.ModifyCode(code, Element.GetValue(Element.MinVal - 1, Element.MaxVal), "\"" + Element.GetValue(Element.MinVal, Element.MaxVal) + "\"");
-                                                    }
-                                                    else
-                                                    {
-                                                        code = CodeGenerator.ModifyCode(code, Element.GetValue(Element.MinVal - 1, Element.MaxVal), Element.GetValue(Element.MinVal, Element.MaxVal));
-                                                    }
+                                                case null:
                                                     break;
                                                 default:
-                                                    switch (Element.Clicked)//Element.Clicked means if it's write-protected or not
+                                                    switch (KeyPress.Key)
                                                     {
-                                                        case false:
-                                                            KeyPressed = true;
-                                                            Element.SetValue(Element.MinVal, Element.MaxVal, Keyboard.HandleKeyboard(Element.GetValue(Element.MinVal, Element.MaxVal), KeyPress), false);
-                                                            switch(Element.GetValue(Element.MinVal - 1, Element.MaxVal))
+                                                        case ConsoleKeyEx.Enter:
+                                                            if (Element.MaxVal == 5)
                                                             {
-                                                                case "Window.X":
-                                                                    if(int.TryParse(Element.GetValue(Element.MinVal, Element.MaxVal), out int XVal))
+                                                                //Implement method to update the code
+                                                            }
+                                                            else
+                                                            {
+                                                                //Implement method to update the code
+                                                            }
+                                                            break;
+                                                        default:
+                                                            switch (Element.Clicked)//Element.Clicked means if it's write-protected or not
+                                                            {
+                                                                case false:
+                                                                    KeyPressed = true;
+                                                                    Element.SetValue(Element.MinVal, Element.MaxVal, Keyboard.HandleKeyboard(Element.GetValue(Element.MinVal, Element.MaxVal), KeyPress), false);
+                                                                    switch (Element.GetValue(Element.MinVal - 1, Element.MaxVal).Split(".")[1])
                                                                     {
-                                                                        if(XVal < 0)
-                                                                        {
-                                                                            Element.SetValue(Element.MinVal, Element.MaxVal, "0", false);
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            Element.SetValue(Element.MinVal, Element.MaxVal, XVal.ToString(), false);
-                                                                        }
-                                                                    }
-                                                                    break;
-                                                                case "Window.Y":
-                                                                    if (int.TryParse(Element.GetValue(Element.MinVal, Element.MaxVal), out int YVal))
-                                                                    {
-                                                                        if (YVal < 0)
-                                                                        {
-                                                                            Element.SetValue(Element.MinVal, Element.MaxVal, "0", false);
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            Element.SetValue(Element.MinVal, Element.MaxVal, YVal.ToString(), false);
-                                                                        }
-                                                                    }
-                                                                    break;
-                                                                case "Window.Width":
-                                                                    if (int.TryParse(Element.GetValue(Element.MinVal, Element.MaxVal), out int WidthVal))
-                                                                    {
-                                                                        if (WidthVal < 0)
-                                                                        {
-                                                                            Element.SetValue(Element.MinVal, Element.MaxVal, "0", false);
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            Element.SetValue(Element.MinVal, Element.MaxVal, WidthVal.ToString(), false);
-                                                                        }
-                                                                    }
-                                                                    break;
-                                                                case "Window.Height":
-                                                                    if (int.TryParse(Element.GetValue(Element.MinVal, Element.MaxVal), out int HeightVal))
-                                                                    {
-                                                                        if (HeightVal < 0)
-                                                                        {
-                                                                            Element.SetValue(Element.MinVal, Element.MaxVal, "0", false);
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            Element.SetValue(Element.MinVal, Element.MaxVal, HeightVal.ToString(), false);
-                                                                        }
-                                                                    }
-                                                                    break;
-                                                                case "Window.AlwaysOnTop":
-                                                                    switch(KeyPress.Key)
-                                                                    {
-                                                                        case ConsoleKeyEx.T:
-                                                                            Element.SetValue(Element.MinVal, Element.MaxVal, "True", false);
+                                                                        #region Values
+                                                                        case "X":
+                                                                            if (int.TryParse(Element.GetValue(Element.MinVal, Element.MaxVal), out int XVal))
+                                                                            {
+                                                                                if (XVal < 0)
+                                                                                {
+                                                                                    Element.SetValue(Element.MinVal, Element.MaxVal, "0", false);
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    Element.SetValue(Element.MinVal, Element.MaxVal, XVal.ToString(), false);
+                                                                                }
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                Element.SetValue(Element.MinVal, Element.MaxVal, "0", false);
+                                                                            }
                                                                             break;
-                                                                        case ConsoleKeyEx.F:
-                                                                            Element.SetValue(Element.MinVal, Element.MaxVal, "False", false);
+                                                                        case "Y":
+                                                                            if (int.TryParse(Element.GetValue(Element.MinVal, Element.MaxVal), out int YVal))
+                                                                            {
+                                                                                if (YVal < 0)
+                                                                                {
+                                                                                    Element.SetValue(Element.MinVal, Element.MaxVal, "0", false);
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    Element.SetValue(Element.MinVal, Element.MaxVal, YVal.ToString(), false);
+                                                                                }
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                Element.SetValue(Element.MinVal, Element.MaxVal, "0", false);
+                                                                            }
                                                                             break;
+                                                                        case "Width":
+                                                                            if (int.TryParse(Element.GetValue(Element.MinVal, Element.MaxVal), out int WidthVal))
+                                                                            {
+                                                                                if (WidthVal < 0)
+                                                                                {
+                                                                                    Element.SetValue(Element.MinVal, Element.MaxVal, "0", false);
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    Element.SetValue(Element.MinVal, Element.MaxVal, WidthVal.ToString(), false);
+                                                                                }
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                Element.SetValue(Element.MinVal, Element.MaxVal, "0", false);
+                                                                            }
+                                                                            break;
+                                                                        case "Height":
+                                                                            if (int.TryParse(Element.GetValue(Element.MinVal, Element.MaxVal), out int HeightVal))
+                                                                            {
+                                                                                if (HeightVal < 0)
+                                                                                {
+                                                                                    Element.SetValue(Element.MinVal, Element.MaxVal, "0", false);
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    Element.SetValue(Element.MinVal, Element.MaxVal, HeightVal.ToString(), false);
+                                                                                }
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                Element.SetValue(Element.MinVal, Element.MaxVal, "0", false);
+                                                                            }
+                                                                            break;
+                                                                        case "Visible":
+                                                                            switch (KeyPress.Key)
+                                                                            {
+                                                                                case ConsoleKeyEx.T:
+                                                                                    Element.SetValue(Element.MinVal, Element.MaxVal, "True", false);
+                                                                                    break;
+                                                                                case ConsoleKeyEx.F:
+                                                                                    Element.SetValue(Element.MinVal, Element.MaxVal, "False", false);
+                                                                                    break;
+                                                                            }
+                                                                            break;
+                                                                            #endregion Values
                                                                     }
                                                                     break;
-                                                                case "Window.Title":
-                                                                    Element.SetValue(Element.MinVal, Element.MaxVal, Element.GetValue(Element.MinVal, Element.MaxVal), false);
-                                                                    break;
-                                                                case "Window.Titlebar":
-                                                                    switch (KeyPress.Key)
+                                                            }
+                                                            break;
+                                                    }
+                                                    break;
+                                            }
+                                            break;
+                                    }
+                                    break;
+                                case "Window":
+                                    if(MouseManager.MouseState == MouseState.Left)
+                                    {
+                                        if(Element.MinVal > 0)
+                                        {
+                                            code = CodeGenerator.ModifyCode(code, Element.GetValue(Element.MinVal - 1, Element.MaxVal), Element.GetValue(Element.MinVal, Element.MaxVal));
+                                        }
+                                    }
+                                    switch (Element.MinVal > 0)
+                                    {
+                                        case true:
+                                            switch (KeyPress)
+                                            {
+                                                case null:
+                                                    break;
+                                                default:
+                                                    switch (KeyPress.Key)
+                                                    {
+                                                        case ConsoleKeyEx.Enter:
+                                                            if(Element.MaxVal == 5)
+                                                            {
+                                                                code = CodeGenerator.ModifyCode(code, Element.GetValue(Element.MinVal - 1, Element.MaxVal), "\"" + Element.GetValue(Element.MinVal, Element.MaxVal) + "\"");
+                                                            }
+                                                            else
+                                                            {
+                                                                code = CodeGenerator.ModifyCode(code, Element.GetValue(Element.MinVal - 1, Element.MaxVal), Element.GetValue(Element.MinVal, Element.MaxVal));
+                                                            }
+                                                            break;
+                                                        default:
+                                                            switch (Element.Clicked)//Element.Clicked means if it's write-protected or not
+                                                            {
+                                                                case false:
+                                                                    KeyPressed = true;
+                                                                    Element.SetValue(Element.MinVal, Element.MaxVal, Keyboard.HandleKeyboard(Element.GetValue(Element.MinVal, Element.MaxVal), KeyPress), false);
+                                                                    switch(Element.GetValue(Element.MinVal - 1, Element.MaxVal))
                                                                     {
-                                                                        case ConsoleKeyEx.T:
-                                                                            Element.SetValue(Element.MinVal, Element.MaxVal, "True", false);
+                                                                        case "Window.X":
+                                                                            if(int.TryParse(Element.GetValue(Element.MinVal, Element.MaxVal), out int XVal))
+                                                                            {
+                                                                                if(XVal < 0)
+                                                                                {
+                                                                                    Element.SetValue(Element.MinVal, Element.MaxVal, "0", false);
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    Element.SetValue(Element.MinVal, Element.MaxVal, XVal.ToString(), false);
+                                                                                }
+                                                                            }
                                                                             break;
-                                                                        case ConsoleKeyEx.F:
-                                                                            Element.SetValue(Element.MinVal, Element.MaxVal, "False", false);
+                                                                        case "Window.Y":
+                                                                            if (int.TryParse(Element.GetValue(Element.MinVal, Element.MaxVal), out int YVal))
+                                                                            {
+                                                                                if (YVal < 0)
+                                                                                {
+                                                                                    Element.SetValue(Element.MinVal, Element.MaxVal, "0", false);
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    Element.SetValue(Element.MinVal, Element.MaxVal, YVal.ToString(), false);
+                                                                                }
+                                                                            }
+                                                                            break;
+                                                                        case "Window.Width":
+                                                                            if (int.TryParse(Element.GetValue(Element.MinVal, Element.MaxVal), out int WidthVal))
+                                                                            {
+                                                                                if (WidthVal < 0)
+                                                                                {
+                                                                                    Element.SetValue(Element.MinVal, Element.MaxVal, "0", false);
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    Element.SetValue(Element.MinVal, Element.MaxVal, WidthVal.ToString(), false);
+                                                                                }
+                                                                            }
+                                                                            break;
+                                                                        case "Window.Height":
+                                                                            if (int.TryParse(Element.GetValue(Element.MinVal, Element.MaxVal), out int HeightVal))
+                                                                            {
+                                                                                if (HeightVal < 0)
+                                                                                {
+                                                                                    Element.SetValue(Element.MinVal, Element.MaxVal, "0", false);
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    Element.SetValue(Element.MinVal, Element.MaxVal, HeightVal.ToString(), false);
+                                                                                }
+                                                                            }
+                                                                            break;
+                                                                        case "Window.AlwaysOnTop":
+                                                                            switch(KeyPress.Key)
+                                                                            {
+                                                                                case ConsoleKeyEx.T:
+                                                                                    Element.SetValue(Element.MinVal, Element.MaxVal, "True", false);
+                                                                                    break;
+                                                                                case ConsoleKeyEx.F:
+                                                                                    Element.SetValue(Element.MinVal, Element.MaxVal, "False", false);
+                                                                                    break;
+                                                                            }
+                                                                            break;
+                                                                        case "Window.Title":
+                                                                            Element.SetValue(Element.MinVal, Element.MaxVal, Element.GetValue(Element.MinVal, Element.MaxVal), false);
+                                                                            break;
+                                                                        case "Window.Titlebar":
+                                                                            switch (KeyPress.Key)
+                                                                            {
+                                                                                case ConsoleKeyEx.T:
+                                                                                    Element.SetValue(Element.MinVal, Element.MaxVal, "True", false);
+                                                                                    break;
+                                                                                case ConsoleKeyEx.F:
+                                                                                    Element.SetValue(Element.MinVal, Element.MaxVal, "False", false);
+                                                                                    break;
+                                                                            }
                                                                             break;
                                                                     }
                                                                     break;
@@ -814,33 +1081,40 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                             break;
                         case TypeOfElement.Button:
                             Element.CheckClick(1488, y + 32);
-                            switch (Element.ID)
+                            if (Element.Clicked)
                             {
-                                case "Window":
-                                    //Reset table to adjust the window propeties
-                                    PropetiesTab.Find(x => x.ID == "Propeties").SetValue(0, 0, "Window.X", true);
-                                    PropetiesTab.Find(x => x.ID == "Propeties").SetValue(0, 1, "Window.Y", true);
-                                    PropetiesTab.Find(x => x.ID == "Propeties").SetValue(0, 2, "Window.Width", true);
-                                    PropetiesTab.Find(x => x.ID == "Propeties").SetValue(0, 3, "Window.Height", true);
-                                    PropetiesTab.Find(x => x.ID == "Propeties").SetValue(0, 4, "Window.AlwaysOnTop", true);
-                                    PropetiesTab.Find(x => x.ID == "Propeties").SetValue(0, 5, "Window.Title", true);
-                                    PropetiesTab.Find(x => x.ID == "Propeties").SetValue(0, 6, "Window.Titlebar", true);
+                                switch (Element.ID)
+                                {
+                                    case "Window":
+                                        //Reset table to adjust the window propeties
+                                        PropetiesTab.Find(x => x.ID == "Propeties").SetValue(0, 0, "Window.X", true);
+                                        PropetiesTab.Find(x => x.ID == "Propeties").SetValue(0, 1, "Window.Y", true);
+                                        PropetiesTab.Find(x => x.ID == "Propeties").SetValue(0, 2, "Window.Width", true);
+                                        PropetiesTab.Find(x => x.ID == "Propeties").SetValue(0, 3, "Window.Height", true);
+                                        PropetiesTab.Find(x => x.ID == "Propeties").SetValue(0, 4, "Window.AlwaysOnTop", true);
+                                        PropetiesTab.Find(x => x.ID == "Propeties").SetValue(0, 5, "Window.Title", true);
+                                        PropetiesTab.Find(x => x.ID == "Propeties").SetValue(0, 6, "Window.Titlebar", true);
 
-                                    PropetiesTab.Find(x => x.ID == "Propeties").SetValue(1, 0, preview.x.ToString(), false);
-                                    PropetiesTab.Find(x => x.ID == "Propeties").SetValue(1, 1, preview.y.ToString(), false);
-                                    PropetiesTab.Find(x => x.ID == "Propeties").SetValue(1, 2, preview.width.ToString(), false);
-                                    PropetiesTab.Find(x => x.ID == "Propeties").SetValue(1, 3, preview.height.ToString(), false);
-                                    PropetiesTab.Find(x => x.ID == "Propeties").SetValue(1, 4, preview.AlwaysOnTop.ToString(), false);
-                                    PropetiesTab.Find(x => x.ID == "Propeties").SetValue(1, 5, preview.name, false);
-                                    PropetiesTab.Find(x => x.ID == "Propeties").SetValue(1, 6, preview.HasTitlebar.ToString(), false);
-                                    break;
-                                case "UI":
-                                    //Yes, this is a ToDo list, but it's already predefined how I wish to do it.
-                                    //Create a new window that lists all the UI elements
-                                    //After the user selected one (by double clicking/enter key/ok button), the window will close after sending a message to this app defining which element is selected.
-                                    //Since we can't leave it in here, because it'd hang the os, a boolean will be set to true, so it'll wait for a response.
-                                    //The update the table to modify the correct values
-                                    break;
+                                        PropetiesTab.Find(x => x.ID == "Propeties").SetValue(1, 0, preview.x.ToString(), false);
+                                        PropetiesTab.Find(x => x.ID == "Propeties").SetValue(1, 1, preview.y.ToString(), false);
+                                        PropetiesTab.Find(x => x.ID == "Propeties").SetValue(1, 2, preview.width.ToString(), false);
+                                        PropetiesTab.Find(x => x.ID == "Propeties").SetValue(1, 3, preview.height.ToString(), false);
+                                        PropetiesTab.Find(x => x.ID == "Propeties").SetValue(1, 4, preview.AlwaysOnTop.ToString(), false);
+                                        PropetiesTab.Find(x => x.ID == "Propeties").SetValue(1, 5, preview.name, false);
+                                        PropetiesTab.Find(x => x.ID == "Propeties").SetValue(1, 6, preview.HasTitlebar.ToString(), false);
+
+                                        TableType = "Window";
+                                        break;
+                                    case "UI":
+                                        //Yes, this is a ToDo list, but it's already predefined how I wish to do it.
+                                        //Create a new window that lists all the UI elements
+                                        TaskScheduler.Apps.Add(new ElementSelector(749, 258, 423, 530, AppID, preview.UIElements, this.icon));
+                                        //After the user selected one (by double clicking/enter key/ok button), the window will close after sending a message to this app defining which element is selected.
+                                        //Since we can't leave it in here, because it'd hang the os, a boolean will be set to true, so it'll wait for a response.
+                                        WaitForResponse = true;
+                                        //The update the table to modify the correct values
+                                        break;
+                                }
                             }
                             break;
                     }

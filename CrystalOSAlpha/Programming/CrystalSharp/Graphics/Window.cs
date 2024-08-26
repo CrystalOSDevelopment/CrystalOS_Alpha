@@ -199,7 +199,7 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.Graphics
                                         int ButtonHeight = int.Parse(ButtonSegments[3]);
                                         int ButtonColor = int.Parse(ButtonSegments[4]);
                                         string ButtonText = ButtonSegments[5].Remove(ButtonSegments[5].Length - 1).Remove(0, 1);
-                                        string ButtonID = ButtonSegments[6].Remove(ButtonSegments[6].Length - 2);
+                                        string ButtonID = ButtonSegments[6].Remove(ButtonSegments[6].Length - 1);//
                                         ButtonID = ButtonID.Remove(0, 1);
                                         UIElements.Add(new Button(ButtonX, ButtonY, ButtonWidth, ButtonHeight, ButtonText, ButtonColor, ButtonID));
                                         break;
@@ -214,7 +214,7 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.Graphics
                                         int LabelY = int.Parse(LabelSegments[1]);
                                         int LabelColor = int.Parse(LabelSegments[2]);
                                         string LabelText = LabelSegments[3].Remove(LabelSegments[3].Length - 1).Remove(0, 1);
-                                        string LabelID = LabelSegments[4].Remove(LabelSegments[4].Length - 2);
+                                        string LabelID = LabelSegments[4].Remove(LabelSegments[4].Length - 1);//
                                         LabelID = LabelID.Remove(0, 1);
                                         UIElements.Add(new label(LabelX, LabelY, LabelText, LabelColor, LabelID));
                                         break;
@@ -472,7 +472,7 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.Graphics
                                         int ButtonHeight = int.Parse(ButtonSegments[3]);
                                         int ButtonColor = int.Parse(ButtonSegments[4]);
                                         string ButtonText = ButtonSegments[5].Remove(ButtonSegments[5].Length - 1).Remove(0, 1);
-                                        string ButtonID = ButtonSegments[6].Remove(ButtonSegments[6].Length - 2);
+                                        string ButtonID = ButtonSegments[6].Remove(ButtonSegments[6].Length - 1);
                                         ButtonID = ButtonID.Remove(0, 1);
                                         UIElements.Add(new Button(ButtonX, ButtonY, ButtonWidth, ButtonHeight, ButtonText, ButtonColor, ButtonID));
                                         break;
@@ -487,7 +487,7 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.Graphics
                                         int LabelY = int.Parse(LabelSegments[1]);
                                         int LabelColor = int.Parse(LabelSegments[2]);
                                         string LabelText = LabelSegments[3].Remove(LabelSegments[3].Length - 1).Remove(0, 1);
-                                        string LabelID = LabelSegments[4].Remove(LabelSegments[4].Length - 2);
+                                        string LabelID = LabelSegments[4].Remove(LabelSegments[4].Length - 1);
                                         LabelID = LabelID.Remove(0, 1);
                                         UIElements.Add(new label(LabelX, LabelY, LabelText, LabelColor, LabelID));
                                         break;
@@ -568,9 +568,11 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.Graphics
                                             }
                                             int PictureBoxX = int.Parse(PictureBoxSegments[0]);
                                             int PictureBoxY = int.Parse(PictureBoxSegments[1]);
-                                            bool PictureBoxVisible = bool.Parse(PictureBoxSegments[2]);
-                                            string PictureBoxPath = PictureBoxSegments[3].Remove(PictureBoxSegments[3].Length - 1).Remove(0, 1);
-                                            string PictureBoxID = PictureBoxSegments[4].Remove(PictureBoxSegments[4].Length - 2);
+                                            int PictureBoxWidth = int.Parse(PictureBoxSegments[2]);
+                                            int PictureBoxHeight = int.Parse(PictureBoxSegments[3]);
+                                            bool PictureBoxVisible = bool.Parse(PictureBoxSegments[4]);
+                                            string PictureBoxPath = PictureBoxSegments[5].Remove(PictureBoxSegments[5].Length - 1).Remove(0, 1);
+                                            string PictureBoxID = PictureBoxSegments[6].Remove(PictureBoxSegments[6].Length - 1).Remove(0, 1);
                                             switch (File.Exists(PictureBoxPath))
                                             {
                                                 case true:
@@ -579,7 +581,7 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.Graphics
                                                 case false:
                                                     if (ElementType.Length > 1)
                                                     {
-                                                        UIElements.Add(new PictureBox(PictureBoxX, PictureBoxY, PictureBoxID, true, new Bitmap(10, 10, ColorDepth.ColorDepth32)));
+                                                        UIElements.Add(new PictureBox(PictureBoxX, PictureBoxY, PictureBoxID, true, new Bitmap((uint)PictureBoxWidth, (uint)PictureBoxHeight, ColorDepth.ColorDepth32)));
                                                         //UIElements.Find(d => d.ID == "debug").Text = "No such file!";
                                                     }
                                                     break;

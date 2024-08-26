@@ -68,7 +68,7 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.Graphics
                     return code;
                 case TypeOfElement.PictureBox:
                     LatsSemiColon = code.LastIndexOf(';');
-                    code = code.Insert(LatsSemiColon + 2, "AddElement(new PictureBox(" + UI.X + ", " + UI.Y + ", " + visible + ", \"" + Extension + "\", \"" + UI.ID + "\");\n");
+                    code = code.Insert(LatsSemiColon + 2, "AddElement(new PictureBox(" + UI.X + ", " + UI.Y + ", " + UI.Width + ", " + UI.Height + ", " + visible + ", \"" + Extension + "\", \"" + UI.ID + "\");\n");
                     return code;
                 default:
                     return code;
