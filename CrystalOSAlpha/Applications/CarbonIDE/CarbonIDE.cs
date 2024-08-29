@@ -426,8 +426,14 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         {"else", Color.DeepPink},
         {"Label", Color.DarkSalmon},
         {"Button", Color.DarkSalmon},
+        {"TextBox", Color.DarkSalmon},
         {"Slider", Color.DarkSalmon},
-        {"TextBox", Color.DarkSalmon}
+        {"Scrollbar", Color.DarkSalmon},
+        {"PictureBox", Color.DarkSalmon},
+        {"CheckBox", Color.DarkSalmon},
+        {"Radiobtn", Color.DarkSalmon},
+        {"progressbar", Color.DarkSalmon},
+        {"Table", Color.DarkSalmon},
     };
 
         public static Color[] HighLight(string source)

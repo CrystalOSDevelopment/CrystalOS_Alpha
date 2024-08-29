@@ -75,7 +75,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 Elements.Add(new Button(width - 35, 15 + (int)ListDisplay.Height / 2, 20, (int)ListDisplay.Height / 2, "\\/", 1, "Down"));
 
                 Elements.Add(new Button(221, 467, 90, 30, "Select", 1, "Approve"));
-                Elements.Add(new Button(316, 467, 90, 30, "Cnacel", 1, "Cancel"));
+                Elements.Add(new Button(316, 467, 90, 30, "Cancel", 1, "Cancel"));
 
                 (canvas, back_canvas, window) = WindowGenerator.Generate(x, y, width, height, CurrentColor, name);
 

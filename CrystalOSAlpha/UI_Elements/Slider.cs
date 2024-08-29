@@ -22,19 +22,19 @@ namespace CrystalOSAlpha.UI_Elements
         public int MinVal { get; set; }
         public int MaxVal { get; set; }
 
-        public float Sensitivity = 0;
+        private float Sensitivity;
 
-        public Slider(int x, int y, int width, int MinimumValue, int MaximumValue, int value, string ID)
+        public Slider(int x, int y, int width, int minimumValue, int maximumValue, int value, string ID)
         {
             X = x;
             Y = y + 22;
             Width = width;
             Height = 12;
             Value = value;
-            MinVal = MinimumValue;
-            MaxVal = MaximumValue;
+            MinVal = minimumValue;
+            MaxVal = maximumValue;
             this.ID = ID;
-            Sensitivity = (float)(MaxVal - MinVal) / width;
+            Sensitivity = (float)Width / (MaxVal - MinVal);
             TypeOfElement = TypeOfElement.Slider;
         }
 
@@ -42,35 +42,38 @@ namespace CrystalOSAlpha.UI_Elements
         {
             ImprovedVBE.DrawFilledRectangle(Canvas, ImprovedVBE.colourToNumber(1, 1, 1), X, Y, Width, 7, false);
 
-            ImprovedVBE.DrawFilledEllipse(Canvas, (int)(X + Value / Sensitivity), Y + 4, 6, 6, ImprovedVBE.colourToNumber(30, 30, 30));
+            // Calculate the position of the slider's circle based on the value
+            int circlePosX = X + (int)((Value - MinVal) * Sensitivity);
+
+            ImprovedVBE.DrawFilledEllipse(Canvas, circlePosX, Y + 4, 6, 6, ImprovedVBE.colourToNumber(30, 30, 30));
         }
 
         public bool CheckClick(int x, int y)
         {
-            if(MouseManager.MouseState == MouseState.Left)
+            if (MouseManager.MouseState == MouseState.Left)
             {
-                if(MouseManager.X > x + X + (Value / Sensitivity) - 6 && MouseManager.X < x + X + (Value / Sensitivity) + 6)
+                int circlePosX = X + (int)((Value - MinVal) * Sensitivity);
+
+                // Check if the mouse is over the slider's circle or if it's already clicked
+                if (Clicked || (MouseManager.X > x + circlePosX - 6 && MouseManager.X < x + circlePosX + 6 && MouseManager.Y > y + Y - 6 && MouseManager.Y < y + Y + 12))
                 {
-                    if (MouseManager.Y > y + Y - 6 && MouseManager.Y < y + Y + 6)
-                    {
-                        Clicked = true;
-                        UpdateValue(x);
-                        return true;
-                    }
+                    Clicked = true;
+                    UpdateValue(x);
+                    return true;
                 }
             }
-            if(Clicked == true && MouseManager.MouseState == MouseState.Left && (int)((MouseManager.X - x - X) * Sensitivity) != Value)
+
+            if (MouseManager.MouseState == MouseState.None)
             {
-                UpdateValue(x);
-                return true;
+                Clicked = false;
             }
-            Clicked = false;
+
             return false;
         }
 
         public void UpdateValue(int x)
         {
-            Value = (int)((MouseManager.X - x - X) * Sensitivity);
+            Value = MinVal + (int)((MouseManager.X - x - X) / Sensitivity);
             Value = Math.Clamp(Value, MinVal, MaxVal);
         }
 

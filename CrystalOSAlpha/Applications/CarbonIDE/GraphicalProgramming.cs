@@ -55,6 +55,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
         public bool WaitForResponse = false;
         public bool temp = true;
+        public bool Rerender = false;
 
         public string code = "";
         public string Back_content = "";
@@ -64,6 +65,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public string ActiveDirectory = "";
         public string WorkingFile = "Main.wlf";
         public string TableType = "WIndow";
+        public string PropetiesType = "Window";
 
         public List<string> Elements = new List<string> { "Label", "Button", "TextBox", "Slider", "Scrollbar", "PictureBox", "CheckBox", "Radio button", "Progressbar", "Menutab", "Table", "More >>" };
         public List<Structure> Items = new List<Structure>();
@@ -198,6 +200,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
                 //Buttons for propety of window/UI elements
                 PropetiesTab.Add(new Button(185, -12, 115, 25, "Window prop...", 1, "Window"));
+                PropetiesTab.Add(new Button(185, 18, 115, 25, "Edit MAKEFILE", 1, "MKFILE"));
                 PropetiesTab.Add(new Button(317, -12, 95, 25, "UI elements", 1, "UI"));
                 #endregion Propeties
 
@@ -370,23 +373,25 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                             break;
                         case TypeOfElement.PictureBox:
                             int ImndexOfTable4 = PropetiesTab.FindIndex(d => d.ID == "Propeties");
-                            PropetiesTab[ImndexOfTable4] = new Table(5, 80, 407, 300, 2, 7, "Propeties");
+                            PropetiesTab[ImndexOfTable4] = new Table(5, 80, 407, 300, 2, 8, "Propeties");
                             //Left side
                             PropetiesTab[ImndexOfTable4].SetValue(0, 0, "PictureBox.X", true);
                             PropetiesTab[ImndexOfTable4].SetValue(0, 1, "PictureBox.Y", true);
                             PropetiesTab[ImndexOfTable4].SetValue(0, 2, "PictureBox.Width", true);
                             PropetiesTab[ImndexOfTable4].SetValue(0, 3, "PictureBox.Height", true);
-                            PropetiesTab[ImndexOfTable4].SetValue(0, 4, "PictureBox.ID", true);
-                            PropetiesTab[ImndexOfTable4].SetValue(0, 5, "PictureBox.Visible", true);
-                            PropetiesTab[ImndexOfTable4].SetValue(0, 6, "PictureBox.Tooltip", true);
+                            PropetiesTab[ImndexOfTable4].SetValue(0, 4, "PictureBox.Source", true);
+                            PropetiesTab[ImndexOfTable4].SetValue(0, 5, "PictureBox.ID", true);
+                            PropetiesTab[ImndexOfTable4].SetValue(0, 6, "PictureBox.Visible", true);
+                            PropetiesTab[ImndexOfTable4].SetValue(0, 7, "PictureBox.Tooltip", true);
 
                             //Right side
                             PropetiesTab[ImndexOfTable4].SetValue(1, 0, Element.X.ToString(), false);
                             PropetiesTab[ImndexOfTable4].SetValue(1, 1, Element.Y.ToString(), false);
                             PropetiesTab[ImndexOfTable4].SetValue(1, 2, Element.Width.ToString(), false);
                             PropetiesTab[ImndexOfTable4].SetValue(1, 3, Element.Height.ToString(), false);
-                            PropetiesTab[ImndexOfTable4].SetValue(1, 4, Element.ID, false);
-                            //PropetiesTab[ImndexOfTable4].SetValue(1, 3, Element.Visible.ToString(), false);
+                            PropetiesTab[ImndexOfTable4].SetValue(1, 4, "", false);
+                            PropetiesTab[ImndexOfTable4].SetValue(1, 5, Element.ID, false);
+                            PropetiesTab[ImndexOfTable4].SetValue(1, 6, "True", false);
                             //PropetiesTab[ImndexOfTable4].SetValue(1, 4, Element.Tooltip, false);
                             break;
                     }
@@ -398,7 +403,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
             if((MouseManager.MouseState == MouseState.Left || clicked == true || MouseManager.ScrollDelta != 0) && TaskScheduler.Apps[^1] == this)
             {
-                if(MouseManager.X <= 933 + Container.Width)//Make it more accurate
+                if(MouseManager.X <= 933 + Container.Width && MouseManager.X > 933)//Make it more accurate
                 {
                     //Data gathering from user input(s)
                     foreach (var Element in CodeContainer)
@@ -491,6 +496,9 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                 case 5:
                                     code = CodeGenerator.AddUIElement(code, new PictureBox(StoredX, StoredY - 22, "PictureBox" + preview.UIElements.FindAll(d => d.TypeOfElement == TypeOfElement.PictureBox).Count, true, new Bitmap((uint)WidthOfUI, (uint)HeightOfUI, ColorDepth.ColorDepth32)), "", true);
                                     break;
+                                case 6:
+                                    code = CodeGenerator.AddUIElement(code, new CheckBox(StoredX, StoredY - 42, WidthOfUI, HeightOfUI, true, "CheckBox" + preview.UIElements.FindAll(d => d.TypeOfElement == TypeOfElement.CheckBox).Count, "CheckBox"));
+                                    break;
                             }
                             StoredX = -1;
                             StoredY = -1;
@@ -572,7 +580,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 temp = true;
             }
 
-            if (temp == true && clicked == false)
+            if (temp == true && clicked == false || Rerender)
             {
                 //In case later on need to enable multiple times in a row
                 temp = false;
@@ -823,6 +831,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
                 bool KeyPressed = false;
                 //Render to propeties
+                List<UIElementHandler> Temp = PropetiesTab;
                 foreach (var Element in PropetiesTab)
                 {
                     switch (Element.TypeOfElement)
@@ -841,19 +850,13 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                             switch (KeyPress)
                                             {
                                                 case null:
+                                                    code = CodeGenerator.ModifyUIElement(code, Element);
                                                     break;
                                                 default:
                                                     switch (KeyPress.Key)
                                                     {
                                                         case ConsoleKeyEx.Enter:
-                                                            if (Element.MaxVal == 5)
-                                                            {
-                                                                //Implement method to update the code
-                                                            }
-                                                            else
-                                                            {
-                                                                //Implement method to update the code
-                                                            }
+                                                            code = CodeGenerator.ModifyUIElement(code, Element);
                                                             break;
                                                         default:
                                                             switch (Element.Clicked)//Element.Clicked means if it's write-protected or not
@@ -1086,26 +1089,48 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                 switch (Element.ID)
                                 {
                                     case "Window":
-                                        //Reset table to adjust the window propeties
-                                        PropetiesTab.Find(x => x.ID == "Propeties").SetValue(0, 0, "Window.X", true);
-                                        PropetiesTab.Find(x => x.ID == "Propeties").SetValue(0, 1, "Window.Y", true);
-                                        PropetiesTab.Find(x => x.ID == "Propeties").SetValue(0, 2, "Window.Width", true);
-                                        PropetiesTab.Find(x => x.ID == "Propeties").SetValue(0, 3, "Window.Height", true);
-                                        PropetiesTab.Find(x => x.ID == "Propeties").SetValue(0, 4, "Window.AlwaysOnTop", true);
-                                        PropetiesTab.Find(x => x.ID == "Propeties").SetValue(0, 5, "Window.Title", true);
-                                        PropetiesTab.Find(x => x.ID == "Propeties").SetValue(0, 6, "Window.Titlebar", true);
+                                        Temp.Clear();
+                                        Temp.Add(new Table(5, 80, 407, 300, 2, 7, "Propeties"));
 
-                                        PropetiesTab.Find(x => x.ID == "Propeties").SetValue(1, 0, preview.x.ToString(), false);
-                                        PropetiesTab.Find(x => x.ID == "Propeties").SetValue(1, 1, preview.y.ToString(), false);
-                                        PropetiesTab.Find(x => x.ID == "Propeties").SetValue(1, 2, preview.width.ToString(), false);
-                                        PropetiesTab.Find(x => x.ID == "Propeties").SetValue(1, 3, preview.height.ToString(), false);
-                                        PropetiesTab.Find(x => x.ID == "Propeties").SetValue(1, 4, preview.AlwaysOnTop.ToString(), false);
-                                        PropetiesTab.Find(x => x.ID == "Propeties").SetValue(1, 5, preview.name, false);
-                                        PropetiesTab.Find(x => x.ID == "Propeties").SetValue(1, 6, preview.HasTitlebar.ToString(), false);
+                                        //Button
+                                        PropetiesTab.Add(new Button(5, 612, 204, 35, "OnClick", 1, "Click"));
+                                        PropetiesTab.Add(new Button(214, 612, 204, 35, "Hover", 1, "Hovering"));
+
+                                        //Buttons for propety of window/UI elements
+                                        PropetiesTab.Add(new Button(185, -12, 115, 25, "Window prop...", 1, "Window"));
+                                        PropetiesTab.Add(new Button(185, 18, 115, 25, "Edit MAKEFILE", 1, "MKFILE"));
+                                        PropetiesTab.Add(new Button(317, -12, 95, 25, "UI elements", 1, "UI"));
+
+                                        //Reset table to adjust the window propeties
+                                        Temp.Find(x => x.ID == "Propeties").SetValue(0, 0, "Window.X", true);
+                                        Temp.Find(x => x.ID == "Propeties").SetValue(0, 1, "Window.Y", true);
+                                        Temp.Find(x => x.ID == "Propeties").SetValue(0, 2, "Window.Width", true);
+                                        Temp.Find(x => x.ID == "Propeties").SetValue(0, 3, "Window.Height", true);
+                                        Temp.Find(x => x.ID == "Propeties").SetValue(0, 4, "Window.AlwaysOnTop", true);
+                                        Temp.Find(x => x.ID == "Propeties").SetValue(0, 5, "Window.Title", true);
+                                        Temp.Find(x => x.ID == "Propeties").SetValue(0, 6, "Window.Titlebar", true);
+
+                                        Temp.Find(x => x.ID == "Propeties").SetValue(1, 0, preview.x.ToString(), false);
+                                        Temp.Find(x => x.ID == "Propeties").SetValue(1, 1, preview.y.ToString(), false);
+                                        Temp.Find(x => x.ID == "Propeties").SetValue(1, 2, preview.width.ToString(), false);
+                                        Temp.Find(x => x.ID == "Propeties").SetValue(1, 3, preview.height.ToString(), false);
+                                        Temp.Find(x => x.ID == "Propeties").SetValue(1, 4, preview.AlwaysOnTop.ToString(), false);
+                                        Temp.Find(x => x.ID == "Propeties").SetValue(1, 5, preview.name, false);
+                                        Temp.Find(x => x.ID == "Propeties").SetValue(1, 6, preview.HasTitlebar.ToString(), false);
 
                                         TableType = "Window";
+                                        PropetiesType = "Window";
                                         break;
                                     case "UI":
+                                        Temp.Clear();
+
+                                        Temp.Add(new Table(5, 80, 407, 300, 2, 7, "Propeties"));
+
+                                        //Buttons for propety of window/UI elements
+                                        PropetiesTab.Add(new Button(185, -12, 115, 25, "Window prop...", 1, "Window"));
+                                        PropetiesTab.Add(new Button(185, 18, 115, 25, "Edit MAKEFILE", 1, "MKFILE"));
+                                        PropetiesTab.Add(new Button(317, -12, 95, 25, "UI elements", 1, "UI"));
+
                                         //Yes, this is a ToDo list, but it's already predefined how I wish to do it.
                                         //Create a new window that lists all the UI elements
                                         TaskScheduler.Apps.Add(new ElementSelector(749, 258, 423, 530, AppID, preview.UIElements, this.icon));
@@ -1113,12 +1138,77 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                         //Since we can't leave it in here, because it'd hang the os, a boolean will be set to true, so it'll wait for a response.
                                         WaitForResponse = true;
                                         //The update the table to modify the correct values
+                                        PropetiesType = "Element";
+                                        break;
+                                    case "MKFILE":
+                                        Temp.Clear();
+                                        //Buttons for propety of window/UI elements
+                                        Temp.Add(new Button(185, -12, 115, 25, "Window prop...", 1, "Window"));
+                                        Temp.Add(new Button(185, 18, 115, 25, "Edit MAKEFILE", 1, "MKFILE"));
+                                        Temp.Add(new Button(317, -12, 95, 25, "UI elements", 1, "UI"));
+
+                                        //Makefile propeties
+                                        Temp.Add(new CheckBox(15, 66, 25, 25, true, "BuildDate", "Add build date"));
+                                        Temp.Add(new TextBox(15, 129, 250, 25, ImprovedVBE.colourToNumber(60, 60, 60), "v1.0", "v1.0", TextBox.Options.left, "Version"));
+                                        Temp.Add(new TextBox(15, 172, 250, 25, ImprovedVBE.colourToNumber(60, 60, 60), "\\Icon\\Icon.bmp", "*.bmp (50x50x32 Max)", TextBox.Options.left, "IconPath"));
+                                        Temp.Add(new Button(15, 236, 250, 25, ".wlf files to include", 1, "MainFile"));
+                                        Temp.Add(new CheckBox(15, 299, 20, 25, true, "Signed", "Signed"));
+                                        Temp.Add(new CheckBox(15, 362, 20, 25, true, "Anonim", "Anonim publisher"));
+                                        Temp.Add(new Dropdown(15, 215, 250, 25, "StartWindow", new List<values>
+                                        {
+                                            new values(false, "Main.wlf", "StartWindow"),
+                                            new values(true, "Main2.wlf", "StartWindow")
+                                        }));
+                                        PropetiesType = "MKFILE";
                                         break;
                                 }
                             }
                             break;
+                        case TypeOfElement.CheckBox:
+                            if (clicked == false)
+                            {
+                                if (Element.CheckClick(1488, y + 32))
+                                {
+                                    foreach (UIElementHandler UI in PropetiesTab)
+                                    {
+                                        if (UI.TypeOfElement != TypeOfElement.CheckBox)
+                                        {
+                                            UI.Clicked = false;
+                                        }
+                                    }
+                                    clicked = true;
+                                }
+                            }
+                            break;
+                        case TypeOfElement.DropDown:
+                            Element.CheckClick(1488, y + 32);
+                            break;
                     }
                     Element.Render(Propeties);
+                }
+                if(Temp != PropetiesTab)
+                {
+                    PropetiesTab = Temp;
+                    Rerender = true;
+                }
+                else
+                {
+                    Rerender = false;
+                }
+                if(PropetiesType == "MKFILE")
+                {
+                    string DataToWrite =
+                        (PropetiesTab.Find(d => d.ID == "BuildDate").Clicked ? "DATE: " + DateTime.Now.Year + "." + DateTime.Now.Month + "." + DateTime.Now.Day + "\n" : "") +
+                        "VER: " + PropetiesTab.Find(d => d.ID == "Version").Text + "\n" +
+                        "ICON: " + PropetiesTab.Find(d => d.ID == "IconPath").Text + "\n" +
+                        "INCLUDE: \n" + 
+                        "Main.wlf\n" + 
+                        "Main2.wlf\n" + 
+                        "SGN: " + (PropetiesTab.Find(d => d.ID == "Signed").Clicked ? "Y":"N") + "\n" + 
+                        "PBLSHR: " + (PropetiesTab.Find(d => d.ID == "Anonim").Clicked ? GlobalValues.Username : "Anonim") + "\n" +
+                        "STRTWNDW: " + PropetiesTab.Find(d => d.ID == "StartWindow").Text;
+
+                    File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\MKFILE.mkf", DataToWrite);
                 }
 
                 //Render to FilesTab

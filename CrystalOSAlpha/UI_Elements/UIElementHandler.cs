@@ -36,6 +36,7 @@ namespace CrystalOSAlpha.UI_Elements
         TextBox,
         VerticalScrollbar,
         Label,
-        ProgressBar
+        ProgressBar,
+        None
     }
 }

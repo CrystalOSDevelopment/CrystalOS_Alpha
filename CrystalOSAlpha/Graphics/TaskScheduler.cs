@@ -73,10 +73,10 @@ namespace CrystalOSAlpha.Graphics
                         app.y = 1;
                         break;
                 }
-                switch(app.x <= 1 && app.name != null)
+                switch(app.x <= 0 && app.name != null)
                 {
                     case true:
-                        app.x = 1;
+                        app.x = 0;
                         break;
                 }
 

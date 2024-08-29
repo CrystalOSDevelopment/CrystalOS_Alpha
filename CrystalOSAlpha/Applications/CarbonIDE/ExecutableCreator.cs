@@ -22,7 +22,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
          */
         public string CreateExecutable(string WorkingDirector, string MakeFileContent)
         {
-            string[] delimiters = new string[] { "INCLUDE:", "SGN:", "PBLSHR:" , "STRTWNDW:" };
+            string[] delimiters = new string[] { "DATE:", "VER:", "ICON:", "INCLUDE:", "SGN:", "PBLSHR:" , "STRTWNDW:" };
             List<string> Segments = CodeGenerator.ToList(MakeFileContent.Split(delimiters, StringSplitOptions.RemoveEmptyEntries));
             foreach(string FilesToInclude in Segments[0].Split('\n'))
             {

@@ -328,6 +328,12 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.Graphics
             }
             if (once == true)
             {
+                //Two resaons: Renders faster this way + one pixel width doesn't matter in here
+                if(width == ImprovedVBE.width - 1)
+                {
+                    width = ImprovedVBE.width;
+                }
+
                 Bitmap back = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
                 (canvas, back, window) = WindowGenerator.Generate(x, y, width, height, CurrentColor, name);
 
@@ -335,43 +341,78 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.Graphics
                 once = false;
             }
 
-            foreach (UIElementHandler UIElement in UIElements)
+            KeyEvent key = null;
+            if (MouseManager.MouseState == MouseState.Left && clicked == false || KeyboardManager.TryReadKey(out key) || UIElements.FindAll(d => d.TypeOfElement == TypeOfElement.Button && d.Clicked).Count != 0)
             {
-                switch (UIElement.TypeOfElement)
+                Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
+                foreach (UIElementHandler UIElement in UIElements)
                 {
-                    case TypeOfElement.Button:
-                        if(UIElement.CheckClick(x, y))
-                        {
-                            foreach(UIElementHandler UI in UIElements)
+                    switch (UIElement.TypeOfElement)
+                    {
+                        case TypeOfElement.Button:
+                            UIElement.CheckClick(x, y);
+                            if(UIElement.Clicked)
                             {
-                                UI.Clicked = false;
+                                //Implement onlick event here
                             }
-                            UIElement.Clicked = true;
-                        }
-                        break;
-                    case TypeOfElement.TextBox:
-                        if (UIElement.CheckClick(x, y))
-                        {
-                            foreach (UIElementHandler UI in UIElements)
+                            break;
+                        case TypeOfElement.TextBox:
+                            if (UIElement.CheckClick(x, y))
                             {
-                                UI.Clicked = false;
+                                foreach (UIElementHandler UI in UIElements)
+                                {
+                                    if(UI.TypeOfElement == TypeOfElement.TextBox)
+                                    {
+                                       UI.Clicked = false;
+                                    }
+                                }
+                                UIElement.Clicked = true;
                             }
-                            UIElement.Clicked = true;
-                        }
-                        if(UIElement.Clicked == true)
-                        {
-                            KeyEvent key;
-                            if(KeyboardManager.TryReadKey(out key))
+                            if(UIElement.Clicked == true)
                             {
-                                UIElement.Text = Keyboard.HandleKeyboard(UIElement.Text, key);
+                                if(key != null)
+                                {
+                                    UIElement.Text = Keyboard.HandleKeyboard(UIElement.Text, key);
+                                }
                             }
-                        }
-                        break;
+                            break;
+                        case TypeOfElement.CheckBox:
+                            if(clicked == false)
+                            {
+                                if (UIElement.CheckClick(x, y))
+                                {
+                                    foreach(UIElementHandler UI in UIElements)
+                                    {
+                                        if(UI.TypeOfElement != TypeOfElement.CheckBox)
+                                        {
+                                            UI.Clicked = false;
+                                        }
+                                    }
+                                    clicked = true;
+                                }
+                            }
+                            break;
+                            case TypeOfElement.Slider:
+                            UIElement.CheckClick(x, y);
+                            break;
+                    }
+                    UIElement.Render(window);
                 }
-                UIElement.Render(window);
+            }
+            if(MouseManager.MouseState == MouseState.None && clicked == true)
+            {
+                clicked = false;
             }
 
-            ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
+            switch (x == 0 && width == ImprovedVBE.width)
+            {
+                case true:
+                    Array.Copy(window.RawData, 0, ImprovedVBE.cover.RawData, ImprovedVBE.width * y, window.RawData.Length);
+                    break;
+                default:
+                    ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
+                    break;
+            }
         }
 
         public void App(Bitmap RenderTo)
@@ -505,7 +546,7 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.Graphics
                                         int TextBoxColor = int.Parse(TextBoxSegments[4]);
                                         string TextBoxText = TextBoxSegments[5].Remove(TextBoxSegments[5].Length - 1).Remove(0, 1);
                                         string TextBoxPlaceHolder = TextBoxSegments[6].Remove(TextBoxSegments[6].Length - 1).Remove(0, 1);
-                                        string TextBoxID = TextBoxSegments[7].Remove(TextBoxSegments[7].Length - 2);
+                                        string TextBoxID = TextBoxSegments[7].Remove(TextBoxSegments[7].Length - 1);
                                         TextBoxID = TextBoxID.Remove(0, 1);
                                         UIElements.Add(new TextBox(TextBoxX, TextBoxY, TextBoxWidth, TextBoxHeight, TextBoxColor, TextBoxText, TextBoxPlaceHolder, TextBox.Options.left, TextBoxID));
                                         break;
@@ -521,7 +562,7 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.Graphics
                                         int CheckBoxHeight = int.Parse(CheckBoxSegments[3]);
                                         bool CheckBoxChecked = bool.Parse(CheckBoxSegments[4]);
                                         string CheckBoxText = CheckBoxSegments[5].Remove(CheckBoxSegments[5].Length - 1).Remove(0, 1);
-                                        string CheckBoxID = CheckBoxSegments[6].Remove(CheckBoxSegments[6].Length - 2);
+                                        string CheckBoxID = CheckBoxSegments[6].Remove(CheckBoxSegments[6].Length - 1);
                                         CheckBoxID = CheckBoxID.Remove(0, 1);
                                         UIElements.Add(new CheckBox(CheckBoxX, CheckBoxY, CheckBoxWidth, CheckBoxHeight, CheckBoxChecked, CheckBoxID, CheckBoxText));
                                         break;
@@ -537,7 +578,7 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.Graphics
                                         int SliderMinVal = int.Parse(SliderSegments[3]);
                                         int SliderMaxVal = int.Parse(SliderSegments[4]);
                                         int SliderValue = int.Parse(SliderSegments[5]);
-                                        string SliderID = SliderSegments[6].Remove(SliderSegments[6].Length - 2);
+                                        string SliderID = SliderSegments[6].Remove(SliderSegments[6].Length - 1);
                                         SliderID = SliderID.Remove(0, 1);
                                         UIElements.Add(new Slider(SliderX, SliderY, SliderWidth, SliderMinVal, SliderMaxVal, SliderValue, SliderID));
                                         break;
@@ -553,7 +594,7 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.Graphics
                                         int TableHeight = int.Parse(TableSegments[3]);
                                         int CellWidth = int.Parse(TableSegments[4]);
                                         int CellHeight = int.Parse(TableSegments[5]);
-                                        string TableID = TableSegments[6].Remove(TableSegments[6].Length - 2);
+                                        string TableID = TableSegments[6].Remove(TableSegments[6].Length - 1);
                                         TableID = TableID.Remove(0, 1);
                                         UIElements.Add(new Table(TableX, TableY + 22, TableWidth, TableHeight, CellWidth, CellHeight, TableID));
                                         break;
@@ -616,7 +657,15 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.Graphics
                 UIElement.Render(window);
             }
 
-            ImprovedVBE.DrawImageAlpha(window, x, y, RenderTo);
+            switch (x == 0 && width == ImprovedVBE.width)
+            {
+                case true:
+                    Array.Copy(window.RawData, 0, ImprovedVBE.cover.RawData, ImprovedVBE.width * y, window.RawData.Length);
+                    break;
+                default:
+                    ImprovedVBE.DrawImageAlpha(window, x, y, RenderTo);
+                    break;
+            }
         }
 
         public void RightClick()

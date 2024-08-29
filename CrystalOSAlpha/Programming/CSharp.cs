@@ -1070,7 +1070,7 @@ namespace CrystalOSAlpha.Programming
                                             {
                                                 if(v.ID == sides[0])
                                                 {
-                                                    sides[0] = v.Value.ToString();
+                                                    sides[0] = v.Clicked.ToString();
                                                     Found = true;
                                                 }
                                             }
@@ -1144,7 +1144,7 @@ namespace CrystalOSAlpha.Programming
                                             {
                                                 if (v.ID == sides[1])
                                                 {
-                                                    sides[1] = v.Value.ToString();
+                                                    sides[1] = v.Clicked.ToString();
                                                 }
                                             }
                                         }
@@ -1303,7 +1303,7 @@ namespace CrystalOSAlpha.Programming
                                             {
                                                 if (v.ID == sides[0])
                                                 {
-                                                    sides[0] = v.Value.ToString();
+                                                    sides[0] = v.Clicked.ToString();
                                                     Found = true;
                                                 }
                                             }
@@ -1373,7 +1373,7 @@ namespace CrystalOSAlpha.Programming
                                             {
                                                 if (v.ID == sides[1])
                                                 {
-                                                    sides[1] = v.Value.ToString();
+                                                    sides[1] = v.Clicked.ToString();
                                                 }
                                             }
                                         }
@@ -1474,7 +1474,7 @@ namespace CrystalOSAlpha.Programming
                                             {
                                                 if (v.ID == sides[0])
                                                 {
-                                                    sides[0] = v.Value.ToString();
+                                                    sides[0] = v.Clicked.ToString();
                                                     Found = true;
                                                 }
                                             }
@@ -1544,7 +1544,7 @@ namespace CrystalOSAlpha.Programming
                                             {
                                                 if (v.ID == sides[1])
                                                 {
-                                                    sides[1] = v.Value.ToString();
+                                                    sides[1] = v.Clicked.ToString();
                                                 }
                                             }
                                         }

@@ -10,7 +10,6 @@ namespace CrystalOSAlpha.UI_Elements
         public int Y { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
-        public bool Value { get; set; }
         public bool Clicked { get; set; }
         public string ID { get; set; }
         public string Text { get; set; }
@@ -29,7 +28,7 @@ namespace CrystalOSAlpha.UI_Elements
             Y = y + 22;
             Width = width;
             Height = height;
-            Value = value;
+            Clicked = value;
             ID = iD;
             Text = text;
             this.TypeOfElement = TypeOfElement.CheckBox;
@@ -37,7 +36,7 @@ namespace CrystalOSAlpha.UI_Elements
 
         public void Render(Bitmap Canvas)
         {
-            if(Value == true)
+            if(Clicked == true)
             {
                 ImprovedVBE.DrawFilledRectangle(Canvas, 1, X, Y, Width, Height, false);
                 ImprovedVBE.DrawFilledRectangle(Canvas, ImprovedVBE.colourToNumber(133, 133, 133), X + 1, Y + 1, Width - 2, Height - 2, false);
@@ -59,6 +58,7 @@ namespace CrystalOSAlpha.UI_Elements
                 {
                     if (MouseManager.Y > y + Y && MouseManager.Y < y + Y + Height)
                     {
+                        Clicked = !Clicked;
                         return true;
                     }
                 }
