@@ -52,6 +52,8 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public int Sel = 0;
         public int lineIndex = 0;
         public int cursorIndex = 0;
+        public int CursorX = 0;
+        public int CursorY = 0;
 
         public bool WaitForResponse = false;
         public bool temp = true;
@@ -66,6 +68,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public string WorkingFile = "Main.wlf";
         public string TableType = "WIndow";
         public string PropetiesType = "Window";
+        public string ActiveSection = "Window";
 
         public List<string> Elements = new List<string> { "Label", "Button", "TextBox", "Slider", "Scrollbar", "PictureBox", "CheckBox", "Radio button", "Progressbar", "Menutab", "Table", "More >>" };
         public List<Structure> Items = new List<Structure>();
@@ -154,14 +157,49 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                         File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\Window_Layout\\Main2.wlf", test1);
                         break;
                 }
+                switch (File.Exists(Path.Remove(Path.LastIndexOf('\\')) + "\\Scripts"))
+                {
+                    case true:
+                        //If I get to the assembly part, this will be used to build the code into an app
+                        File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\Scripts\\Base.cs", 
+                            "namespace Base\n" +
+                            "{\n" +
+                            "    public void BeforeRun()\n" +
+                            "    {\n" +
+                            "        //This is just a demo text\n" +
+                            "    }\n" +
+                            "\n" +
+                            "    public void Run()\n" +
+                            "    {\n" +
+                            "        //This is like an infinite loop. Just like in COSMOS\n" +
+                            "    }\n" +
+                            "}");
+                        break;
+                    case false:
+                        //If I get to the assembly part, this will be used to build the code into an app
+                        File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\Scripts\\Base.cs",
+                            "namespace Base\n" +
+                            "{\n" +
+                            "    public void BeforeRun()\n" +
+                            "    {\n" +
+                            "        //This executes only once at the start\n" +
+                            "    }\n" +
+                            "\n" +
+                            "    public void Run()\n" +
+                            "    {\n" +
+                            "        //This is like an infinite loop. Just like in COSMOS\n" +
+                            "    }\n" +
+                            "}");
+                        break;
+                }
                 switch (File.Exists(Path.Remove(Path.LastIndexOf('\\')) + "\\MKFILE.mkf"))
                 {
                     case true:
                         //If I get to the assembly part, this will be used to build the code into an app
-                        File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\MKFILE.mkf", "INCLUDE:\nMain.wlf\nMain2.wlf\nSGN: Y\nPBLSHR: " + GlobalValues.Username + "\n\nSTRTWNDW:Main2");
+                        File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\MKFILE.mkf", "INCLUDE:\nMain.wlf\nMain2.wlf\nBase.cs\nSGN: Y\nPBLSHR: " + GlobalValues.Username + "\n\nSTRTWNDW:Main2");
                         break;
                     case false:
-                        File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\MKFILE.mkf", "INCLUDE:\nMain.wlf\nMain2.wlf\nSGN: Y\nPBLSHR: " + GlobalValues.Username);
+                        File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\MKFILE.mkf", "INCLUDE:\nMain.wlf\nMain2.wlf\nBase.cs\nSGN: Y\nPBLSHR: " + GlobalValues.Username);
                         break;
                 }
                 #endregion InitCode
@@ -403,7 +441,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
             if((MouseManager.MouseState == MouseState.Left || clicked == true || MouseManager.ScrollDelta != 0) && TaskScheduler.Apps[^1] == this)
             {
-                if(MouseManager.X <= 933 + Container.Width && MouseManager.X > 933)//Make it more accurate
+                if(MouseManager.X <= 933 + Container.Width && MouseManager.X > 933 && MouseManager.Y > y + 32 && MouseManager.Y < y + 32 + Container.Height)
                 {
                     //Data gathering from user input(s)
                     foreach (var Element in CodeContainer)
@@ -452,6 +490,43 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
                     //Render out to the main window
                     ImprovedVBE.DrawImage(Container, 933, 32, window);
+                }
+                switch (clicked)
+                {
+                    case false:
+                        if(MouseManager.Y < y + 32 + WindowCanvas.Height && MouseManager.Y > y + 32)
+                        {
+                            if (MouseManager.X < 10 + WindowCanvas.Width)
+                            {
+                                ActiveSection = "Window";
+                            }
+                            else if (MouseManager.X < 933 + Container.Width)
+                            {
+                                ActiveSection = "CodeContainer";
+                            }
+                            else if (MouseManager.X < 1488 + Propeties.Width)
+                            {
+                                ActiveSection = "Propeties";
+                            }
+                            temp = true;
+                        }
+                        else
+                        {
+                            if(MouseManager.X > 10 && MouseManager.X < 10 + UIContainer.Width)
+                            {
+                                ActiveSection = "UIContainer";
+                            }
+                            else if(MouseManager.X > 420 && MouseManager.X < 420 + Files.Width)
+                            {
+                                ActiveSection = "Files";
+                            }
+                            else if (MouseManager.X > 1488 && MouseManager.X < 1488 + BuildLog.Width)
+                            {
+                                ActiveSection = "BuildLog";
+                            }
+                            temp = true;
+                         }
+                        break;
                 }
             }
 
@@ -519,6 +594,13 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                         BuildingPhase = 0;
                         break;
                     default:
+                        if(ActiveSection == "CodeContainer")
+                        {
+                            if (ActiveSection == "CodeContainer")
+                            {
+                                (code, Back_content, CursorX, CursorY) = CrystalOSAlpha.Applications.CarbonIDE.CoreEditor.Editor(code, Back_content, CursorX, CursorY, KeyPress);
+                            }
+                        }
                         temp = true;
                         break;
                 }
@@ -535,7 +617,14 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                             //For now, it only consists of the window layout
                             Log.Add("Building started...");
                             Log.Add("Saving currently opened file");
-                            File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\Window_Layout\\" + WorkingFile, code);
+                            if (WorkingFile.EndsWith(".cs"))
+                            {
+                                File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\Scripts\\" + WorkingFile, code);
+                            }
+                            else
+                            {
+                                File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\Window_Layout\\" + WorkingFile, code);
+                            }
                             Log.Add("Directory init");
                             if (!Directory.Exists(Path.Remove(Path.LastIndexOf('\\')) + "\\Bin"))
                             {
@@ -573,7 +662,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     break;
             }
 
-            if (preview.Code != code)
+            if (preview.Code != code && !WorkingFile.EndsWith(".cs"))
             {
                 Back_content = code;
                 preview = new Window(20, 50, 999, 400, 300, 1, "New Window", false, icon, code);
@@ -1154,11 +1243,19 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                         Temp.Add(new Button(15, 236, 250, 25, ".wlf files to include", 1, "MainFile"));
                                         Temp.Add(new CheckBox(15, 299, 20, 25, true, "Signed", "Signed"));
                                         Temp.Add(new CheckBox(15, 362, 20, 25, true, "Anonim", "Anonim publisher"));
-                                        Temp.Add(new Dropdown(15, 215, 250, 25, "StartWindow", new List<values>
+                                        List<values> Vals = new List<values>();
+                                        foreach(DirectoryEntry d in Kernel.fs.GetDirectoryListing(Path.Remove(Path.LastIndexOf('\\')) + "\\Window_Layout"))
                                         {
-                                            new values(false, "Main.wlf", "StartWindow"),
-                                            new values(true, "Main2.wlf", "StartWindow")
-                                        }));
+                                            if(d.mEntryType == DirectoryEntryTypeEnum.File)
+                                            {
+                                                Vals.Add(new values(false, d.mName, "StartWindow"));
+                                            }
+                                        }
+                                        if(Vals.Count != 0)
+                                        {
+                                            Vals[^1].Highlighted = true;
+                                        }
+                                        Temp.Add(new Dropdown(15, 215, 250, 25, "StartWindow", Vals));
                                         PropetiesType = "MKFILE";
                                         break;
                                 }

@@ -54,30 +54,36 @@ namespace CrystalOSAlpha.UI_Elements
         }
         public bool CheckClick(int X, int Y)
         {
-            if(MouseManager.MouseState == MouseState.Left)
+            if (MouseManager.MouseState == MouseState.Left)
             {
-                if(X > this.X + Pos && X < this.X + Pos + 20 && Clicked == false)
+                // Check if the mouse is over the scrollbar handle
+                if (X > this.X + Pos && X < this.X + Pos + 20 && Y > this.Y && Y < this.Y + Height)
                 {
-                    LockedPos = X - (this.X + Pos);
-                    Clicked = true;
-                }
-                if(Clicked == true)
-                {
+                    if (Clicked == false)
+                    {
+                        LockedPos = X - (this.X + Pos);
+                        Clicked = true;
+                    }
                     Pos = X - this.X - LockedPos;
                 }
+
+                // Adjust the position and clamp it within bounds
                 Pos = Math.Clamp(Pos, 20, Width - 40);
-                return true;
+
+                return Clicked;
             }
             else
             {
-                if(Clicked == true)
+                // Release the click when the mouse is not pressed
+                if (Clicked == true)
                 {
                     Clicked = false;
                     return true;
                 }
-                return false;
+                return Clicked;
             }
         }
+
 
         public void SetValue(int X, int Y, string Value, bool writeprotected)
         {

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using TaskScheduler = CrystalOSAlpha.Graphics.TaskScheduler;
+using Kernel = CrystalOS_Alpha.Kernel;
 
 namespace CrystalOSAlpha.Applications.WebscapeNavigator
 {
@@ -58,7 +59,7 @@ namespace CrystalOSAlpha.Applications.WebscapeNavigator
 
                 Scroll.Add(new VerticalScrollbar(width - 22, 52, 20, height - 60, 20, 0, 500, ""));
 
-                TextBoxes.Add(new TextBox(60, 27, width - 84, 20, ImprovedVBE.colourToNumber(60, 60, 60), "", "Url:", TextBox.Options.left, "URL"));
+                TextBoxes.Add(new TextBox(60, 27, width - 84, 20, ImprovedVBE.colourToNumber(60, 60, 60), "httpforever.com", "Url:", TextBox.Options.left, "URL"));
 
                 initial = false;
             }
@@ -82,8 +83,8 @@ namespace CrystalOSAlpha.Applications.WebscapeNavigator
                         switch (button.Text)
                         {
                             case "Go":
-                                content = "<html>\n  <head></head>\n  <body>\n\n    <h1>Connection error.</h1>\n    <p>the page that you were searching was not found.<br>plese try to reload the page</p>\n    \n  </body>\n</html>";
-                                File.WriteAllText("0:\\index.html", content);
+                                content = Kernel.getContent(TextBoxes[0].Text);//"<html>\n  <head></head>\n  <body>\n\n    <h1>Connection error.</h1>\n    <p>the page that you were searching was not found.<br>plese try to reload the page</p>\n    \n  </body>\n</html>";
+                                File.WriteAllText("0:\\index.txt", content);
                                 temp = true;
                                 break;
                         }
@@ -100,7 +101,7 @@ namespace CrystalOSAlpha.Applications.WebscapeNavigator
 
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
                 
-                Array.Copy(Container.RawData, 0, Webrendering.Render(Container, content).RawData, 0, Container.RawData.Length);
+                //Array.Copy(Container.RawData, 0, Webrendering.Render(Container, content).RawData, 0, Container.RawData.Length);
                 once = false;
                 temp = true;
             }

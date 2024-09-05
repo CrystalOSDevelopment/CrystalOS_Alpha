@@ -13,6 +13,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
          * INCLUDE:
          * Main.wlf
          * Main2.wlf
+         * Base.cs
          * 
          * SGN:Y
          * 
@@ -39,6 +40,9 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                             {
                                 Output += "-----||-----\n" + FilesToInclude + "\n" + File.ReadAllText(WorkingDirector + "\\Window_Layout\\" + FilesToInclude) + "\n";
                             }
+                            break;
+                        case "cs":
+                            Output += "-----||-----\n" + FilesToInclude + "\n" + File.ReadAllText(WorkingDirector + "\\Scripts\\" + FilesToInclude) + "\n";
                             break;
                     }
                 }

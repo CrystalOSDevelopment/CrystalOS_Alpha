@@ -2,6 +2,7 @@
 using Cosmos.System;
 using Cosmos.System.FileSystem;
 using Cosmos.System.Graphics;
+using Cosmos.System.Network.IPv4;
 using CrystalOS_Alpha.Graphics.Widgets;
 using CrystalOSAlpha;
 using CrystalOSAlpha.Graphics;
@@ -10,7 +11,13 @@ using CrystalOSAlpha.Graphics.TaskBar;
 using CrystalOSAlpha.Graphics.Widgets;
 using CrystalOSAlpha.System32;
 using IL2CPU.API.Attribs;
+using System.Net.Sockets;
+using System.Text;
+using System;
 using Sys = Cosmos.System;
+using Cosmos.HAL;
+using Cosmos.System.Network.Config;
+using Cosmos.System.Network.IPv4.UDP.DNS;
 
 namespace CrystalOS_Alpha
 {
@@ -24,6 +31,24 @@ namespace CrystalOS_Alpha
         public static bool IsDiskSupport = false;
         protected override void BeforeRun()
         {
+            try
+            {
+                NetworkDevice nic = NetworkDevice.GetDeviceByName("eth0"); //get network device by name
+                IPConfig.Enable(nic, new Address(192, 168, 1, 69), new Address(255, 255, 255, 0), new Address(192, 168, 1, 254)); //enable IPv4 configuration
+
+                using (var xClient = new Cosmos.System.Network.IPv4.UDP.DHCP.DHCPClient())
+                {
+                    /** Send a DHCP Discover packet **/
+                    //This will automatically set the IP config after DHCP response
+                    xClient.SendDiscoverPacket();
+
+                }
+            }
+            catch (Exception ex)
+            {
+               
+            }
+
             #region Font Registering
             Fonts.RegisterFonts();
             #endregion Font Registering
@@ -166,6 +191,50 @@ namespace CrystalOS_Alpha
             if (collect % 2 == 0)
             {
                 MouseManager.ResetScrollDelta();
+            }
+        }
+
+        public static string getContent(string url)
+        {
+            string IP = "";
+            using (TcpClient client = new TcpClient())
+            {
+                using (var xClient = new DnsClient())
+                {
+                    xClient.Connect(DNSConfig.DNSNameservers[0]); //DNS Server address. We recommend a Google or Cloudflare DNS, but you can use any you like!
+
+                    /** Send DNS ask for a single domain name **/
+                    xClient.SendAsk(url);
+
+                    /** Receive DNS Response **/
+                    Address destination = xClient.Receive(); //can set a timeout value
+                    IP = destination.ToString();
+                    xClient.Close();
+                }
+
+                Address address = Address.Parse(IP);
+                string serverIp = address.ToString();
+                int serverPort = 80;
+                client.Connect(serverIp, serverPort);
+                NetworkStream stream = client.GetStream();
+
+                string httpget = "GET " + "/index.html" + " HTTP/1.1\r\n" +
+                                         "User-Agent: CrystalOS\r\n" +
+                                         "Accept: */*\r\n" +
+                                         "Accept-Encoding: identity\r\n" +
+                                         "Host: " + IP + "\r\n" +
+                                         "Connection: Keep-Alive\r\n\r\n";
+                string messageToSend = httpget;
+                byte[] dataToSend = Encoding.ASCII.GetBytes(messageToSend);
+                stream.Write(dataToSend, 0, dataToSend.Length);
+                /** Receive data **/
+                byte[] receivedData = new byte[client.ReceiveBufferSize];
+                int bytesRead = stream.Read(receivedData, 0, receivedData.Length);
+                string receivedMessage = Encoding.ASCII.GetString(receivedData, 0, bytesRead);
+
+
+                string[] responseParts = receivedMessage.Split(new[] { "\r\n\r\n" }, 2, StringSplitOptions.None);
+                return receivedMessage;
             }
         }
     }
