@@ -3,7 +3,7 @@ using Cosmos.System.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
+using System.Drawing;
 
 namespace CrystalOSAlpha.UI_Elements
 {
@@ -33,6 +33,7 @@ namespace CrystalOSAlpha.UI_Elements
         public int MinVal { get; set; }
         //This can be used for the y coordinate(Row) of the selected cell
         public int MaxVal { get; set; }
+        public List<Point> Points { get; set; }
 
         public Bitmap Canvas;
         public List<Cell> Cells = new List<Cell>();

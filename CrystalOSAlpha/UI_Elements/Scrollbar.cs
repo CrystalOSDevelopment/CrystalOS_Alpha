@@ -1,6 +1,8 @@
 ﻿using Cosmos.System.Graphics;
 using CrystalOSAlpha;
 using CrystalOSAlpha.UI_Elements;
+using System.Collections.Generic;
+using System.Drawing;
 
 namespace CrYstalOSAlpha.UI_Elements
 {
@@ -21,6 +23,7 @@ namespace CrYstalOSAlpha.UI_Elements
         public int LockedPos { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
         public int MinVal { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
         public int MaxVal { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public List<Point> Points { get; set; }
 
         public Scrollbar(int X, int Y, int width, int height, int Pos)
         {

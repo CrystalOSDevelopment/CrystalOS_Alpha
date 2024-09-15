@@ -73,17 +73,17 @@ namespace CrystalOSAlpha.Programming
         public string Executor(string input)
         {
             string output = "";
-            Programming_Term c = new Programming_Term();
-            c.x = 100;
-            c.y = 100;
-            c.width = 700;
-            c.height = 420;
-            c.name = "Term...";
-            c.z = 999;
-            c.echo_off = true;
-            c.code = input;
-            c.icon = ImprovedVBE.ScaleImageStock(Resources.Terminal, 56, 56);
-            TaskScheduler.Apps.Add(c);
+            //Programming_Term c = new Programming_Term();
+            //c.x = 100;
+            //c.y = 100;
+            //c.width = 700;
+            //c.height = 420;
+            //c.name = "Term...";
+            //c.z = 999;
+            //c.echo_off = true;
+            //c.code = input;
+            //c.icon = ImprovedVBE.ScaleImageStock(Resources.Terminal, 56, 56);
+            //TaskScheduler.Apps.Add(c);
             return output;
         }
 
@@ -2536,7 +2536,7 @@ namespace CrystalOSAlpha.Programming
                             else if (split[0].Split('.')[1] == "Color")
                             {
                                 string[] rgbValue = split[1].Split(',');
-                                item.TextColor = ImprovedVBE.colourToNumber(int.Parse(rgbValue[0]), int.Parse(rgbValue[1]), int.Parse(rgbValue[2]));
+                                item.Color = ImprovedVBE.colourToNumber(int.Parse(rgbValue[0]), int.Parse(rgbValue[1]), int.Parse(rgbValue[2]));
                                 NeedUpdate = true;
                             }
                             else if (split[0].Split('.')[1] == "X")

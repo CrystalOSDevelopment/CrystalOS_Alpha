@@ -598,24 +598,33 @@ namespace CrystalOSAlpha.Applications.Settings
                 if(VMTools.IsVMWare == true && Kernel.IsDiskSupport == true)
                 {
                     string Layout =
-                    "WindowR=" + GlobalValues.R +
-                    "\nWindowG=" + GlobalValues.G +
-                    "\nWindowB=" + GlobalValues.B +
-                    "\nTaskbarR=" + GlobalValues.TaskBarR +
-                    "\nTaskbarG=" + GlobalValues.TaskBarG +
-                    "\nTaskbarB=" + GlobalValues.TaskBarB +
-                    "\nTaskbarType=" + GlobalValues.TaskBarType +
-                    "\nUsername=" + GlobalValues.Username +
-                    "\nIconR=" + GlobalValues.IconR +
-                    "\nIconG=" + GlobalValues.IconG +
-                    "\nIconB=" + GlobalValues.IconB +
-                    "\nIconwidth=" + GlobalValues.IconWidth +
-                    "\nIconheight=" + GlobalValues.IconHeight +
-                    "\nStartcolor=" + GlobalValues.StartColor.ToArgb() +
-                    "\nEndcolor=" + GlobalValues.EndColor.ToArgb() +
-                    "\nBakground=" + GlobalValues.Background_type +
-                    "\nBackgroundcolor=" + GlobalValues.Background_color +
-                    "\nTransparency=" + GlobalValues.LevelOfTransparency;
+                            "WindowR=" + GlobalValues.R +
+                            "\nWindowG=" + GlobalValues.G +
+                            "\nWindowB=" + GlobalValues.B +
+                            "\nTaskbarR=" + GlobalValues.TaskBarR +
+                            "\nTaskbarG=" + GlobalValues.TaskBarG +
+                            "\nTaskbarB=" + GlobalValues.TaskBarB +
+                            "\nTaskbarType=" + GlobalValues.TaskBarType +
+                            "\nUsername=" + GlobalValues.Username +
+                            "\nIconR=" + GlobalValues.IconR +
+                            "\nIconG=" + GlobalValues.IconG +
+                            "\nIconB=" + GlobalValues.IconB +
+                            "\nIconwidth=" + GlobalValues.IconWidth +
+                            "\nIconheight=" + GlobalValues.IconHeight +
+                            "\nStartcolor=" + GlobalValues.StartColor.ToArgb() +
+                            "\nEndcolor=" + GlobalValues.EndColor.ToArgb() +
+                            "\nBakground=" + GlobalValues.Background_type +
+                            "\nBackgroundcolor=" + GlobalValues.Background_color +
+                            "\nTransparency=" + GlobalValues.LevelOfTransparency;
+                    switch (GlobalValues.KeyboardLayout)
+                    {
+                        case KeyboardLayout.EN_US:
+                            Layout += "\nKeyboard=EN_US";
+                            break;
+                        case KeyboardLayout.HUngarian:
+                            Layout += "\nKeyboard=Hungarian";
+                            break;
+                    }
 
                     string s = File.ReadAllText("0:\\System\\Layout.sys");
                     if(s != Layout)

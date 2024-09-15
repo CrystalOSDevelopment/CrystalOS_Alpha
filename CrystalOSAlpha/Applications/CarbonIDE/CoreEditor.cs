@@ -27,17 +27,39 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     }
                     break;
                 case ConsoleKeyEx.UpArrow:
-                    if (lineIndex > 0)
+                    if (KeyboardManager.AltPressed)
                     {
-                        lineIndex--;
-                        cursorIndex = Math.Min(cursorIndex, lines[lineIndex].Length);
+                        // Move the line up
+                        string temp = lines[lineIndex - 1];
+                        lines[lineIndex - 1] = lines[lineIndex];
+                        lines[lineIndex] = temp;
+                        lineIndex--; // Update line index to reflect the moved line's new position
+                    }
+                    else
+                    {
+                        if (lineIndex > 0)
+                        {
+                            lineIndex--;
+                            cursorIndex = Math.Min(cursorIndex, lines[lineIndex].Length);
+                        }
                     }
                     break;
                 case ConsoleKeyEx.DownArrow:
-                    if (lineIndex < lines.Length - 1)
+                    if(KeyboardManager.AltPressed)
                     {
-                        lineIndex++;
-                        cursorIndex = Math.Min(cursorIndex, lines[lineIndex].Length);
+                        // Move the line down
+                        string temp = lines[lineIndex + 1];
+                        lines[lineIndex + 1] = lines[lineIndex];
+                        lines[lineIndex] = temp;
+                        lineIndex++; // Update line index to reflect the moved line's new position
+                    }
+                    else
+                    {
+                        if (lineIndex < lines.Length - 1)
+                        {
+                            lineIndex++;
+                            cursorIndex = Math.Min(cursorIndex, lines[lineIndex].Length);
+                        }
                     }
                     break;
                 case ConsoleKeyEx.Backspace:
@@ -65,10 +87,22 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     cursorIndex = 0;
                     break;
                 default:
-                    string temp = Keyboard.HandleKeyboard("", keyInfo);
-                    lines[lineIndex] = lines[lineIndex].Insert(cursorIndex, temp);
-                    //cursorIndex++;
-                    cursorIndex += temp.Length;
+                    if (KeyboardManager.ControlPressed)
+                    {
+                        if(keyInfo.Key == ConsoleKeyEx.D)
+                        {
+                            string duplicatedLine = lines[lineIndex];
+                            lines = lines.Take(lineIndex + 1).Concat(new[] { duplicatedLine }).Concat(lines.Skip(lineIndex + 1)).ToArray();
+                            lineIndex++; // Move to the duplicated line
+                        }
+                    }
+                    else
+                    {
+                        string temp = Keyboard.HandleKeyboard("", keyInfo);
+                        lines[lineIndex] = lines[lineIndex].Insert(cursorIndex, temp);
+                        //cursorIndex++;
+                        cursorIndex += temp.Length;
+                    }
                     break;
             }
 

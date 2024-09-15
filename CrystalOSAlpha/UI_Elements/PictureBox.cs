@@ -1,5 +1,7 @@
 ﻿using Cosmos.System.Graphics;
 using System;
+using System.Collections.Generic;
+using System.Drawing;
 
 namespace CrystalOSAlpha.UI_Elements
 {
@@ -22,6 +24,7 @@ namespace CrystalOSAlpha.UI_Elements
         public int LockedPos { get; set; }
         public int MinVal { get; set; }
         public int MaxVal { get; set; }
+        public List<Point> Points { get; set; }
 
         public PictureBox(int X, int Y, string ID, bool Visible, Bitmap image)
         {

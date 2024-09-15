@@ -1,6 +1,8 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
+using System.Collections.Generic;
+using System.Drawing;
 
 namespace CrystalOSAlpha.UI_Elements
 {
@@ -21,6 +23,7 @@ namespace CrystalOSAlpha.UI_Elements
         public int LockedPos { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
         public int MinVal { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
         public int MaxVal { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public List<Point> Points { get; set; }
 
         public CheckBox(int x, int y, int width, int height, bool value, string iD, string text)
         {

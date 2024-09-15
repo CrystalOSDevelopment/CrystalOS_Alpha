@@ -1,10 +1,12 @@
-﻿using Cosmos.System;
+﻿using Cosmos.Core.Memory;
+using Cosmos.System;
 using Cosmos.System.Graphics;
 using CrystalOSAlpha.Applications;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Programming.CrystalSharp.CodeStructure.Variables;
 using CrystalOSAlpha.System32;
 using CrystalOSAlpha.UI_Elements;
+using CrystalOSAlpha.UI_Elements.Shapes;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -100,6 +102,13 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.Graphics
         public List<string> CodeParts = new List<string>();
         public List<Separated> Separated = new List<Separated>();
         public string debug = "";
+
+        public Core core = new Core();
+        public List<CodeSegments> CodeSegments;
+        public string Stage = "BeforeRun";
+        public int DelayLine = 0;
+        public bool Rerender = true;
+
         public void App()
         {
             if (AlwaysOnTop == true)
@@ -108,6 +117,7 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.Graphics
             }
             if (initial == true)
             {
+                //Need to retype this, because it's not like that anymore
                 //Separate the code into 3 segments:
                 //1. Initial window UI element layout **Done! All implemented**
                 //2. Loop of the window
@@ -232,7 +242,7 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.Graphics
                                         int TextBoxColor = int.Parse(TextBoxSegments[4]);
                                         string TextBoxText = TextBoxSegments[5].Remove(TextBoxSegments[5].Length - 1).Remove(0, 1);
                                         string TextBoxPlaceHolder = TextBoxSegments[6].Remove(TextBoxSegments[6].Length - 1).Remove(0, 1);
-                                        string TextBoxID = TextBoxSegments[7].Remove(TextBoxSegments[7].Length - 2);
+                                        string TextBoxID = TextBoxSegments[7].Remove(TextBoxSegments[7].Length - 1);
                                         TextBoxID = TextBoxID.Remove(0, 1);
                                         UIElements.Add(new TextBox(TextBoxX, TextBoxY, TextBoxWidth, TextBoxHeight, TextBoxColor, TextBoxText, TextBoxPlaceHolder, TextBox.Options.left, TextBoxID));
                                         break;
@@ -248,7 +258,7 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.Graphics
                                         int CheckBoxHeight = int.Parse(CheckBoxSegments[3]);
                                         bool CheckBoxChecked = bool.Parse(CheckBoxSegments[4]);
                                         string CheckBoxText = CheckBoxSegments[5].Remove(CheckBoxSegments[5].Length - 1).Remove(0, 1);
-                                        string CheckBoxID = CheckBoxSegments[6].Remove(CheckBoxSegments[6].Length - 2);
+                                        string CheckBoxID = CheckBoxSegments[6].Remove(CheckBoxSegments[6].Length - 1);
                                         CheckBoxID = CheckBoxID.Remove(0, 1);
                                         UIElements.Add(new CheckBox(CheckBoxX, CheckBoxY, CheckBoxWidth, CheckBoxHeight, CheckBoxChecked, CheckBoxID, CheckBoxText));
                                         break;
@@ -264,7 +274,7 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.Graphics
                                         int SliderMinVal = int.Parse(SliderSegments[3]);
                                         int SliderMaxVal = int.Parse(SliderSegments[4]);
                                         int SliderValue = int.Parse(SliderSegments[5]);
-                                        string SliderID = SliderSegments[6].Remove(SliderSegments[6].Length - 2);
+                                        string SliderID = SliderSegments[6].Remove(SliderSegments[6].Length - 1);
                                         SliderID = SliderID.Remove(0, 1);
                                         UIElements.Add(new Slider(SliderX, SliderY, SliderWidth, SliderMinVal, SliderMaxVal, SliderValue, SliderID));
                                         break;
@@ -280,7 +290,7 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.Graphics
                                         int TableHeight = int.Parse(TableSegments[3]);
                                         int CellWidth = int.Parse(TableSegments[4]);
                                         int CellHeight = int.Parse(TableSegments[5]);
-                                        string TableID = TableSegments[6].Remove(TableSegments[6].Length - 2);
+                                        string TableID = TableSegments[6].Remove(TableSegments[6].Length - 1);
                                         TableID = TableID.Remove(0, 1);
                                         UIElements.Add(new Table(TableX, TableY + 22, TableWidth, TableHeight, CellWidth, CellHeight, TableID));
                                         break;
@@ -297,7 +307,7 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.Graphics
                                             int PictureBoxY = int.Parse(PictureBoxSegments[1]);
                                             bool PictureBoxVisible = bool.Parse(PictureBoxSegments[2]);
                                             string PictureBoxPath = PictureBoxSegments[3].Remove(PictureBoxSegments[3].Length - 1).Remove(0, 1);
-                                            string PictureBoxID = PictureBoxSegments[4].Remove(PictureBoxSegments[4].Length - 2);
+                                            string PictureBoxID = PictureBoxSegments[4].Remove(PictureBoxSegments[4].Length - 1);
                                             switch (File.Exists(PictureBoxPath))
                                             {
                                                 case true:
@@ -316,12 +326,120 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.Graphics
                                             throw new Exception(ex.Message + "\n" + s);
                                         }
                                         break;
+                                    case "Triangle":
+                                        try
+                                        {
+                                            string[] TriangleSegments = CleanUp.Split('(')[1].Split(',');
+                                            for (int i = 0; i < TriangleSegments.Length; i++)
+                                            {
+                                                TriangleSegments[i] = TriangleSegments[i].Trim();
+                                            }
+                                            int TriangleColor = int.Parse(TriangleSegments[0]);
+                                            bool TriangleVisible = bool.Parse(TriangleSegments[1]);
+                                            bool TriangleFilled = bool.Parse(TriangleSegments[2]);
+                                            string TriangleID = TriangleSegments[3].Remove(TriangleSegments[3].Length - 1);
+                                            TriangleID = TriangleID.Remove(0, 1);
+                                            UIElements.Add(new Triangle(TriangleColor, new List<System.Drawing.Point> { new System.Drawing.Point(0, 0), new System.Drawing.Point(0, 0), new System.Drawing.Point(0, 0) }, TriangleVisible, TriangleFilled, TriangleID));//new System.Drawing.Point(50, 50), new System.Drawing.Point(20, 100), new System.Drawing.Point(80, 100)
+                                            break;
+                                        }
+                                        catch
+                                        {
+                                            break;
+                                        }
+                                    case "Rectangle":
+                                        try
+                                        {
+                                            string[] RectangleSegments = CleanUp.Split('(')[1].Split(',');
+                                            for (int i = 0; i < RectangleSegments.Length; i++)
+                                            {
+                                                RectangleSegments[i] = RectangleSegments[i].Trim();
+                                            }
+                                            int RectangleColor = int.Parse(RectangleSegments[0]);
+                                            bool RectangleVisible = bool.Parse(RectangleSegments[1]);
+                                            bool RectangleFilled = bool.Parse(RectangleSegments[2]);
+                                            string RectangleID = RectangleSegments[3].Remove(RectangleSegments[3].Length - 1);
+                                            RectangleID = RectangleID.Remove(0, 1);
+                                            UIElements.Add(new Rectangle(RectangleColor, new List<System.Drawing.Point> { new System.Drawing.Point(0, 0), new System.Drawing.Point(0, 0) }, RectangleVisible, RectangleFilled, RectangleID));//new System.Drawing.Point(50, 50), new System.Drawing.Point(20, 100), new System.Drawing.Point(80, 100)
+                                            break;
+                                        }
+                                        catch
+                                        {
+                                            break;
+                                        }
+                                    case "Circle":
+                                        try
+                                        {
+                                            string[] CircleSegments = CleanUp.Split('(')[1].Split(',');
+                                            for (int i = 0; i < CircleSegments.Length; i++)
+                                            {
+                                                CircleSegments[i] = CircleSegments[i].Trim();
+                                            }
+                                            int CircleColor = int.Parse(CircleSegments[0]);
+                                            bool CircleVisible = bool.Parse(CircleSegments[1]);
+                                            bool CircleFilled = bool.Parse(CircleSegments[2]);
+                                            string CircleID = CircleSegments[3].Remove(CircleSegments[3].Length - 1);
+                                            CircleID = CircleID.Remove(0, 1);
+                                            UIElements.Add(new Circle(CircleColor, new List<System.Drawing.Point> { new System.Drawing.Point(0, 0), new System.Drawing.Point(0, 0) }, CircleVisible, CircleFilled, CircleID));//new System.Drawing.Point(50, 50), new System.Drawing.Point(20, 100), new System.Drawing.Point(80, 100)
+                                            break;
+                                        }
+                                        catch
+                                        {
+                                            break;
+                                        }
+                                    case "Line":
+                                        try
+                                        {
+                                            string[] LineSegments = CleanUp.Split('(')[1].Split(',');
+                                            for (int i = 0; i < LineSegments.Length; i++)
+                                            {
+                                                LineSegments[i] = LineSegments[i].Trim();
+                                            }
+                                            int LineColor = int.Parse(LineSegments[0]);
+                                            bool LineVisible = bool.Parse(LineSegments[1]);
+                                            bool LineFilled = bool.Parse(LineSegments[2]);
+                                            string LineID = LineSegments[3].Remove(LineSegments[3].Length - 1);
+                                            LineID = LineID.Remove(0, 1);
+                                            UIElements.Add(new Line(LineColor, new List<System.Drawing.Point> { new System.Drawing.Point(0, 0), new System.Drawing.Point(0, 0) }, LineVisible, LineFilled, LineID));//new System.Drawing.Point(50, 50), new System.Drawing.Point(20, 100), new System.Drawing.Point(80, 100)
+                                            break;
+                                        }
+                                        catch
+                                        {
+                                            break;
+                                        }
+                                    case "Polygon":
+                                        try
+                                        {
+                                            string[] PolygonSegments = CleanUp.Split('(')[1].Split(',');
+                                            for (int i = 0; i < PolygonSegments.Length; i++)
+                                            {
+                                                PolygonSegments[i] = PolygonSegments[i].Trim();
+                                            }
+                                            int PolygonColor = int.Parse(PolygonSegments[0]);
+                                            bool PolygonVisible = bool.Parse(PolygonSegments[1]);
+                                            bool PolygonFilled = bool.Parse(PolygonSegments[2]);
+                                            string PolygonID = PolygonSegments[3].Remove(PolygonSegments[3].Length - 1);
+                                            PolygonID = PolygonID.Remove(0, 1);
+                                            UIElements.Add(new Polygon(PolygonColor, new List<System.Drawing.Point> { new System.Drawing.Point(0, 0), new System.Drawing.Point(0, 0), new System.Drawing.Point(0, 0) }, PolygonVisible, PolygonFilled, PolygonID));//new System.Drawing.Point(50, 50), new System.Drawing.Point(20, 100), new System.Drawing.Point(80, 100)
+                                            break;
+                                        }
+                                        catch
+                                        {
+                                            break;
+                                        }
                                 }
                                 break;
                         }
                     }
                 }
                 #endregion Stage2
+
+                //This is where the first code cycle executes (BeforeRun)
+                //No matter what, Base.cs is the starting point of the code. An epicenter if you will
+                #region Stage3
+                string BaseFile = Separated.Find(Item => Item.Header == "Base.cs").Content;
+                //CodeAssembler.AssembleCode(new List<string> { File.ReadAllText(entry.fullPath) })
+                CodeSegments = CodeAssembler.AssembleCode(new List<string> { BaseFile });
+                #endregion Stage3
 
                 initial = false;
                 once = true;
@@ -341,8 +459,55 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.Graphics
                 once = false;
             }
 
+            switch (core.LineCounter)
+            {
+                case -1:
+                    if(Stage != "Run")
+                    {
+                        core.Cached = "";
+                    }
+                    Stage = "Run";
+                    core.LineCounter = 1;
+                    UIElements.Find(d => d.ID == "debug").Text = "";
+                    break;
+            }
+
+            switch (DelayLine)
+            {
+                case 2:
+                    switch(Stage)
+                    {
+                        case "BeforeRun":
+                            core.Elements = UIElements;
+                            core.Execute(CodeSegments, "Base", "BeforeRun()");
+                            UIElements = core.Elements;
+                            break;
+                        default:
+                            core.Elements = UIElements;
+                            core.Execute(CodeSegments, "Base", "Run()");
+                            UIElements = core.Elements;
+                            try
+                            {
+                                //UIElements.Find(d => d.ID == "debug").Text += core.Cached.Split('\n')[core.LineCounter];
+                            }
+                            catch { }
+                            Rerender = true;
+                            switch (core.LineCounter % 3 == 0)
+                            {
+                                case true:
+                                    Heap.Collect();
+                                    break;
+                            }
+                            break;
+                    }
+                    break;
+                default:
+                    DelayLine++;
+                    break;
+            }
+
             KeyEvent key = null;
-            if (MouseManager.MouseState == MouseState.Left && clicked == false || KeyboardManager.TryReadKey(out key) || UIElements.FindAll(d => d.TypeOfElement == TypeOfElement.Button && d.Clicked).Count != 0)
+            if (MouseManager.MouseState == MouseState.Left && clicked == false || KeyboardManager.TryReadKey(out key) || UIElements.FindAll(d => d.TypeOfElement == TypeOfElement.Button && d.Clicked).Count != 0 || Rerender)
             {
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
                 foreach (UIElementHandler UIElement in UIElements)
@@ -392,12 +557,17 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.Graphics
                                 }
                             }
                             break;
-                            case TypeOfElement.Slider:
+                        case TypeOfElement.Slider:
                             UIElement.CheckClick(x, y);
+                            break;
+                        case TypeOfElement.Polygon:
+                            UIElement.MinVal = width;
+                            UIElement.MaxVal = height;
                             break;
                     }
                     UIElement.Render(window);
                 }
+                Rerender = false;
             }
             if(MouseManager.MouseState == MouseState.None && clicked == true)
             {
@@ -633,6 +803,106 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.Graphics
                                             throw new Exception(ex.Message + "\n" + s);
                                         }
                                         break;
+                                    case "Triangle":
+                                        try
+                                        {
+                                            string[] TriangleSegments = CleanUp.Split('(')[1].Split(',');
+                                            for (int i = 0; i < TriangleSegments.Length; i++)
+                                            {
+                                                TriangleSegments[i] = TriangleSegments[i].Trim();
+                                            }
+                                            int TriangleColor = int.Parse(TriangleSegments[0]);
+                                            bool TriangleVisible = bool.Parse(TriangleSegments[1]);
+                                            bool TriangleFilled = bool.Parse(TriangleSegments[2]);
+                                            string TriangleID = TriangleSegments[3].Remove(TriangleSegments[3].Length - 1);
+                                            TriangleID = TriangleID.Remove(0, 1);
+                                            UIElements.Add(new Triangle(TriangleColor, new List<System.Drawing.Point> { new System.Drawing.Point(0, 0), new System.Drawing.Point(0, 0), new System.Drawing.Point(0, 0) }, TriangleVisible, TriangleFilled, TriangleID));//new System.Drawing.Point(50, 50), new System.Drawing.Point(20, 100), new System.Drawing.Point(80, 100)
+                                            break;
+                                        }
+                                        catch
+                                        {
+                                            break;
+                                        }
+                                    case "Rectangle":
+                                        try
+                                        {
+                                            string[] RectangleSegments = CleanUp.Split('(')[1].Split(',');
+                                            for (int i = 0; i < RectangleSegments.Length; i++)
+                                            {
+                                                RectangleSegments[i] = RectangleSegments[i].Trim();
+                                            }
+                                            int RectangleColor = int.Parse(RectangleSegments[0]);
+                                            bool RectangleVisible = bool.Parse(RectangleSegments[1]);
+                                            bool RectangleFilled = bool.Parse(RectangleSegments[2]);
+                                            string RectangleID = RectangleSegments[3].Remove(RectangleSegments[3].Length - 1);
+                                            RectangleID = RectangleID.Remove(0, 1);
+                                            UIElements.Add(new Rectangle(RectangleColor, new List<System.Drawing.Point> { new System.Drawing.Point(0, 0), new System.Drawing.Point(0, 0) }, RectangleVisible, RectangleFilled, RectangleID));//new System.Drawing.Point(50, 50), new System.Drawing.Point(20, 100), new System.Drawing.Point(80, 100)
+                                            break;
+                                        }
+                                        catch
+                                        {
+                                            break;
+                                        }
+                                    case "Circle":
+                                        try
+                                        {
+                                            string[] CircleSegments = CleanUp.Split('(')[1].Split(',');
+                                            for (int i = 0; i < CircleSegments.Length; i++)
+                                            {
+                                                CircleSegments[i] = CircleSegments[i].Trim();
+                                            }
+                                            int CircleColor = int.Parse(CircleSegments[0]);
+                                            bool CircleVisible = bool.Parse(CircleSegments[1]);
+                                            bool CircleFilled = bool.Parse(CircleSegments[2]);
+                                            string CircleID = CircleSegments[3].Remove(CircleSegments[3].Length - 1);
+                                            CircleID = CircleID.Remove(0, 1);
+                                            UIElements.Add(new Circle(CircleColor, new List<System.Drawing.Point> { new System.Drawing.Point(0, 0), new System.Drawing.Point(0, 0) }, CircleVisible, CircleFilled, CircleID));//new System.Drawing.Point(50, 50), new System.Drawing.Point(20, 100), new System.Drawing.Point(80, 100)
+                                            break;
+                                        }
+                                        catch
+                                        {
+                                            break;
+                                        }
+                                    case "Line":
+                                        try
+                                        {
+                                            string[] LineSegments = CleanUp.Split('(')[1].Split(',');
+                                            for (int i = 0; i < LineSegments.Length; i++)
+                                            {
+                                                LineSegments[i] = LineSegments[i].Trim();
+                                            }
+                                            int LineColor = int.Parse(LineSegments[0]);
+                                            bool LineVisible = bool.Parse(LineSegments[1]);
+                                            bool LineFilled = bool.Parse(LineSegments[2]);
+                                            string LineID = LineSegments[3].Remove(LineSegments[3].Length - 1);
+                                            LineID = LineID.Remove(0, 1);
+                                            UIElements.Add(new Line(LineColor, new List<System.Drawing.Point> { new System.Drawing.Point(0, 0), new System.Drawing.Point(0, 0) }, LineVisible, LineFilled, LineID));//new System.Drawing.Point(50, 50), new System.Drawing.Point(20, 100), new System.Drawing.Point(80, 100)
+                                            break;
+                                        }
+                                        catch
+                                        {
+                                            break;
+                                        }
+                                    case "Polygon":
+                                        try
+                                        {
+                                            string[] PolygonSegments = CleanUp.Split('(')[1].Split(',');
+                                            for (int i = 0; i < PolygonSegments.Length; i++)
+                                            {
+                                                PolygonSegments[i] = PolygonSegments[i].Trim();
+                                            }
+                                            int PolygonColor = int.Parse(PolygonSegments[0]);
+                                            bool PolygonVisible = bool.Parse(PolygonSegments[1]);
+                                            bool PolygonFilled = bool.Parse(PolygonSegments[2]);
+                                            string PolygonID = PolygonSegments[3].Remove(PolygonSegments[3].Length - 1);
+                                            PolygonID = PolygonID.Remove(0, 1);
+                                            UIElements.Add(new Polygon(PolygonColor, new List<System.Drawing.Point> { new System.Drawing.Point(0, 0), new System.Drawing.Point(0, 0), new System.Drawing.Point(0, 0) }, PolygonVisible, PolygonFilled, PolygonID));//new System.Drawing.Point(50, 50), new System.Drawing.Point(20, 100), new System.Drawing.Point(80, 100)
+                                            break;
+                                        }
+                                        catch
+                                        {
+                                            break;
+                                        }
                                 }
                                 break;
                         }

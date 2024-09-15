@@ -1,6 +1,8 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
 using System;
+using System.Collections.Generic;
+using System.Drawing;
 
 namespace CrystalOSAlpha.UI_Elements
 {
@@ -21,6 +23,7 @@ namespace CrystalOSAlpha.UI_Elements
         int UIElementHandler.LockedPos { get; set; }
         public int MinVal { get; set; }
         public int MaxVal { get; set; }
+        public List<Point> Points { get; set; }
 
         public int LockedPos = 0;
 

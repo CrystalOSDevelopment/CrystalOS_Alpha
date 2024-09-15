@@ -82,10 +82,6 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                     {
                         clicked = false;
                     }
-                    if (initial == true)
-                    {
-                        initial = false;
-                    }
                     if (resize == true)
                     {
                         icon = ImprovedVBE.ScaleImageStock(new Bitmap(Elephant), 36, 36);

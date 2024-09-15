@@ -1,6 +1,8 @@
 ﻿using Cosmos.System.Graphics;
 using Cosmos.System;
 using System;
+using System.Collections.Generic;
+using System.Drawing;
 
 namespace CrystalOSAlpha.UI_Elements
 {
@@ -20,7 +22,7 @@ namespace CrystalOSAlpha.UI_Elements
         public int Color { get; set; }
         public string Text { get; set; }
         public TypeOfElement TypeOfElement { get; set; }
-
+        public List<Point> Points { get; set; }
         public float Sensitivity { get; set; }
         public VerticalScrollbar(int x, int y, int width, int height, int Pos, int MinVal, int MaxVal, string ID)
         {

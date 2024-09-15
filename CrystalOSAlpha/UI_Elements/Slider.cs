@@ -1,6 +1,8 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
 using System;
+using System.Collections.Generic;
+using System.Drawing;
 
 namespace CrystalOSAlpha.UI_Elements
 {
@@ -21,6 +23,7 @@ namespace CrystalOSAlpha.UI_Elements
         public int LockedPos { get; set; }
         public int MinVal { get; set; }
         public int MaxVal { get; set; }
+        public List<Point> Points { get; set; }
 
         private float Sensitivity;
 
@@ -58,8 +61,12 @@ namespace CrystalOSAlpha.UI_Elements
                 if (Clicked || (MouseManager.X > x + circlePosX - 6 && MouseManager.X < x + circlePosX + 6 && MouseManager.Y > y + Y - 6 && MouseManager.Y < y + Y + 12))
                 {
                     Clicked = true;
+                    int Temp = Value;
                     UpdateValue(x);
-                    return true;
+                    if(Temp != Value)
+                    {
+                        return true;
+                    }
                 }
             }
 

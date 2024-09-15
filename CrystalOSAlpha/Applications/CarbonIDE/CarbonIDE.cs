@@ -12,9 +12,11 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using CSystem.Text.RegularExpressions;
+using Kernel = CrystalOS_Alpha.Kernel;
+using CrystalOSAlpha.SystemApps;
 using System.Linq;
 using System.Text;
-using Kernel = CrystalOS_Alpha.Kernel;
 
 namespace CrystalOSAlpha.Applications.CarbonIDE
 {
@@ -438,6 +440,105 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
 
         public static Color[] HighLight(string source)
         {
+            #region attempt1
+            /*
+            try
+            {
+                var keywords = new List<Tuple<Color, string[]>>()
+                {
+                    new Tuple<Color, string[]>(Color.FromArgb(216,160,223), new string[]
+                    {
+                        "if","else","switch","case","do","for","foreach","in","while","break","continue",
+                        "default","goto","return","yield","throw","try","catch","finally","checked",
+                        "unchecked","fixed","lock","from","where","select","group","into","orderby","join"
+                        ,"let","in","on","equals","by","ascending","descending"
+                    }),
+                    new Tuple<Color, string[]>(Color.FromArgb(86,156,214), new string[]
+                    {
+                        "abstract","async","const","event","extern","new","override","partial"
+                        ,"readonly","sealed","static","unsafe","virtual","volatile",
+                        "public","private","internal","protected","params","ref","out","using"
+                        ,"as","await","is","new","sizeof","typeof","stackalloc","checked","unchecked",
+                        "null","false","true","value","void","bool","byte","char","class","decimal"
+                        ,"double","enum","float","int","long","sbyte","short","string","struct","uint",
+                        "ulong","ushort","add","var","dynamic","global","set","value",
+                    }),
+                    new Tuple<Color, string[]>(Color.FromArgb(220,220,170), new string[]
+                    {
+                        "List","Console","Dictionary"
+                    }),
+                    new Tuple<Color, string[]>(Color.FromArgb(78,201,176), new string[]
+                    {
+                        "WriteLine","AddElement","Triangle"
+                    }),
+
+                };
+
+                var vars = Regex.Matches(code, @"\b\w*(?:bool |byte |sbyte |char |decimal |float |int |uint |nint |nuint |long |ulong |short |ushort |var )(\w*)\b");
+                var varkeys = new List<string>();
+                foreach (Match item in vars)
+                {
+                    varkeys.Add(item.Groups[1].Value);
+                }
+                string[] Temp = new string[varkeys.Count];
+                for(int i = 0; i < Temp.Length; i++)
+                {
+                    Temp[i] = varkeys[i];
+                }
+                keywords.Add(new(Color.FromArgb(156, 220, 254), Temp));
+
+                try
+                {
+                    List<(int start, int end, Color col)> parseds = new();
+                    foreach (var item in keywords)
+                    {
+                        string pattern = "(";
+                        foreach (var item1 in item.Item2)
+                        {
+                            pattern += item1 + "|";
+                        }
+                        //pattern = pattern.Remove(pattern.Length - 1) + ")";
+                        //var m = Regex.Matches(code, pattern);
+                        //foreach (Match match in m)
+                        //{
+                        //    parseds.Add(new(match.Index, match.Index + match.Length - 1, item.Item1));
+                        //}
+
+                    }
+                }
+                catch(Exception e)
+                {
+                    
+                }
+
+                Color[] colors = new Color[code.Length];
+                for (int i = 0; i < colors.Length; i++)
+                {
+                    colors[i] = Color.White;
+                }
+
+                //foreach (var item in parseds)
+                //{
+                //    for (int i = item.start; i < item.end; i++)
+                //    {
+                //        colors[i] = item.col;
+                //    }
+                //}
+                return colors;
+
+            }
+            catch (Exception e)
+            {
+                TaskScheduler.Apps.Add(new MsgBox(999, 100, 100, 350, 200, "Message", e.Message, ImprovedVBE.ScaleImageStock(Resources.Web, 56, 56)));
+                Color[] colors = new Color[code.Length];
+                for (int i = 0; i < colors.Length; i++)
+                {
+                    colors[i] = Color.White;
+                }
+                return colors;
+            }
+            */
+            #endregion attempt1
             Color[] colors = new Color[source.Length];
             Array.Fill(colors, Color.White);
 
@@ -490,7 +591,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     {
                         colors[j] = color;
                     }
-                    if(i + 1 < source.Length && ".\n ={}+-|,():".Contains(source[i + 1]))
+                    if (i + 1 < source.Length && ".\n ={}+-|,():".Contains(source[i + 1]))
                     {
                         extra.Clear();
                     }

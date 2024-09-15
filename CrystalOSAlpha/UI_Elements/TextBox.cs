@@ -2,6 +2,8 @@
 using Cosmos.System.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
 using System;
+using System.Collections.Generic;
+using System.Drawing;
 
 namespace CrystalOSAlpha.UI_Elements
 {
@@ -47,6 +49,7 @@ namespace CrystalOSAlpha.UI_Elements
         public int LockedPos { get; set; }
         public int MinVal { get; set; }
         public int MaxVal { get; set; }
+        public List<Point> Points { get; set; }
 
         public void Render(Bitmap Canvas)
         {
@@ -95,7 +98,7 @@ namespace CrystalOSAlpha.UI_Elements
                     break;
             }
 
-            ImprovedVBE.DrawImageAlpha(canvas, X, Y, Canvas);
+            ImprovedVBE.DrawImage(canvas, X, Y, Canvas);
         }
 
         public bool CheckClick(int X, int Y)
@@ -109,7 +112,9 @@ namespace CrystalOSAlpha.UI_Elements
                         Clicked = true;
                         return true;
                     }
+                    Clicked = false;
                 }
+                Clicked = false;
             }
             return false;
         }
@@ -119,7 +124,7 @@ namespace CrystalOSAlpha.UI_Elements
             throw new NotImplementedException();
         }
 
-        string UIElementHandler.GetValue(int X, int Y)
+        public string GetValue(int X, int Y)
         {
             throw new NotImplementedException();
         }

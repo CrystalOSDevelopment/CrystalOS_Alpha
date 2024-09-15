@@ -2,6 +2,7 @@
 using Cosmos.System.Audio.IO;
 using Cosmos.System.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace CrystalOSAlpha.UI_Elements
@@ -24,6 +25,7 @@ namespace CrystalOSAlpha.UI_Elements
         public int LockedPos { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
         public int MinVal { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
         public int MaxVal { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public List<Point> Points { get; set; }
         public int SavedColor = 0;
 
         public Button(int X, int Y, int Width, int Height, string Text, int Color)

@@ -78,6 +78,26 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.Graphics
                     LatsSemiColon = code.LastIndexOf(';');
                     code = code.Insert(LatsSemiColon + 2, "AddElement(new CheckBox(" + UI.X + ", " + UI.Y + ", " + UI.Width + ", " + UI.Height + ", " + UI.Clicked + ", \"" + UI.Text + "\", \"" + UI.ID + "\");\n");//In this case Clicked is used as the value of the checkbox
                     return code;
+                case TypeOfElement.Triangle:
+                    LatsSemiColon = code.LastIndexOf(';');
+                    code = code.Insert(LatsSemiColon + 2, "AddElement(new Triangle(" + UI.Color + ", " + visible + ", " + Extension + ", \"" + UI.ID + "\");\n");//Extension = Filled
+                    return code;
+                case TypeOfElement.Rectangle:
+                    LatsSemiColon = code.LastIndexOf(';');
+                    code = code.Insert(LatsSemiColon + 2, "AddElement(new Rectangle(" + UI.Color + ", " + visible + ", " + Extension + ", \"" + UI.ID + "\");\n");//Extension = Filled
+                    return code;
+                case TypeOfElement.Circle:
+                    LatsSemiColon = code.LastIndexOf(';');
+                    code = code.Insert(LatsSemiColon + 2, "AddElement(new Circle(" + UI.Color + ", " + visible + ", " + Extension + ", \"" + UI.ID + "\");\n");//Extension = Filled
+                    return code;
+                case TypeOfElement.Line:
+                    LatsSemiColon = code.LastIndexOf(';');
+                    code = code.Insert(LatsSemiColon + 2, "AddElement(new Line(" + UI.Color + ", " + visible + ", " + Extension + ", \"" + UI.ID + "\");\n");//Extension = Filled
+                    return code;
+                case TypeOfElement.Polygon:
+                    LatsSemiColon = code.LastIndexOf(';');
+                    code = code.Insert(LatsSemiColon + 2, "AddElement(new Polygon(" + UI.Color + ", " + visible + ", " + Extension + ", \"" + UI.ID + "\");\n");//Extension = Filled
+                    return code;
                 default:
                     return code;
             }

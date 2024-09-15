@@ -6,14 +6,17 @@ using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics.Icons;
 using CrystalOSAlpha.Graphics.TaskBar;
+using CrystalOSAlpha.Programming.CrystalSharp;
 using CrystalOSAlpha.Programming.CrystalSharp.Graphics;
 using CrystalOSAlpha.System32;
 using CrystalOSAlpha.SystemApps;
 using CrystalOSAlpha.UI_Elements;
+using CrystalOSAlpha.UI_Elements.Shapes;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Reflection.Emit;
 using Kernel = CrystalOS_Alpha.Kernel;
 using TaskScheduler = CrystalOSAlpha.Graphics.TaskScheduler;
 
@@ -31,7 +34,6 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public int AppID { get; set; }
         public string name { get; set; }
         public string Path { get; set; }
-        public string namedProject { get; set; }
         public bool minimised { get; set; }
         public bool movable { get; set; }
         public Bitmap icon { get; set; }
@@ -70,7 +72,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
         public string PropetiesType = "Window";
         public string ActiveSection = "Window";
 
-        public List<string> Elements = new List<string> { "Label", "Button", "TextBox", "Slider", "Scrollbar", "PictureBox", "CheckBox", "Radio button", "Progressbar", "Menutab", "Table", "More >>" };
+        public List<string> Elements = new List<string> { "Label", "Button", "TextBox", "Slider", "PictureBox", "CheckBox", "Triangle", "Rectangle", "Circle", "Line", "Polygon" };
         public List<Structure> Items = new List<Structure>();
 
         public Window preview;
@@ -105,80 +107,79 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 //Read in the data
                 name += " - " + Path.Remove(0, Path.LastIndexOf('\\') + 1);
 
-                //Active directory set to the path of the working directory
-                ActiveDirectory = Path.Remove(Path.LastIndexOf('\\'));
+                ActiveDirectory = Path;
 
                 //Set up the working directories, if it's not done already
                 #region InitDirs
                 //Directory.Delete("0:\\User\\Source\\Hello", true); <-- this will worth millions!!!
-                switch (!Directory.Exists(Path.Remove(Path.LastIndexOf('\\')) + "\\Window_Layout"))
+                switch (!Directory.Exists(Path + "\\Window_Layout"))
                 {
                     case true:
-                        Directory.CreateDirectory(Path.Remove(Path.LastIndexOf('\\')) + "\\Window_Layout");
+                        Directory.CreateDirectory(Path + "\\Window_Layout");
                         break;
                 }
-                switch (!Directory.Exists(Path.Remove(Path.LastIndexOf('\\')) + "\\Scripts"))
+                switch (!Directory.Exists(Path + "\\Scripts"))
                 {
                     case true:
-                        Directory.CreateDirectory(Path.Remove(Path.LastIndexOf('\\')) + "\\Scripts");
+                        Directory.CreateDirectory(Path + "\\Scripts");
                         break;
                 }
                 #endregion InitDirs
 
                 //Generate a starting code, if the file doesn't exist/empty
                 #region InitCode
-                switch (File.Exists(Path.Remove(Path.LastIndexOf('\\')) + "\\Window_Layout\\Main.wlf"))
+                switch (File.Exists(Path + "\\Window_Layout\\Main.wlf"))
                 {
                     case true:
-                        code = File.ReadAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\Window_Layout\\Main.wlf");
+                        code = File.ReadAllText(Path + "\\Window_Layout\\Main.wlf");
                         if(code.Length == 0)
                         {
                             code = CodeGenerator.GenerateBase("");
-                            File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\Window_Layout\\Main.wlf", code);
+                            File.WriteAllText(Path + "\\Window_Layout\\Main.wlf", code);
                         }
                         break;
                     case false:
                         code = CodeGenerator.GenerateBase("");
-                        File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\Window_Layout\\Main.wlf", code);
+                        File.WriteAllText(Path + "\\Window_Layout\\Main.wlf", code);
                         break;
                 }
-                switch (File.Exists(Path.Remove(Path.LastIndexOf('\\')) + "\\Window_Layout\\Main2.wlf"))
+                switch (File.Exists(Path + "\\Window_Layout\\Main2.wlf"))
                 {
                     case true:
-                        string test = File.ReadAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\Window_Layout\\Main2.wlf");
+                        string test = File.ReadAllText(Path + "\\Window_Layout\\Main2.wlf");
                         if (test.Length == 0)
                         {
                             test = CodeGenerator.GenerateBase("2");
-                            File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\Window_Layout\\Main2.wlf", test);
+                            File.WriteAllText(Path + "\\Window_Layout\\Main2.wlf", test);
                         }
                         break;
                     case false:
                         string test1 = CodeGenerator.GenerateBase("2");
-                        File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\Window_Layout\\Main2.wlf", test1);
+                        File.WriteAllText(Path + "\\Window_Layout\\Main2.wlf", test1);
                         break;
                 }
-                switch (File.Exists(Path.Remove(Path.LastIndexOf('\\')) + "\\Scripts"))
+                switch (File.Exists(Path + "\\Scripts\\Base.cs"))
                 {
                     case true:
                         //If I get to the assembly part, this will be used to build the code into an app
-                        File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\Scripts\\Base.cs", 
-                            "namespace Base\n" +
-                            "{\n" +
-                            "    public void BeforeRun()\n" +
-                            "    {\n" +
-                            "        //This is just a demo text\n" +
-                            "    }\n" +
-                            "\n" +
-                            "    public void Run()\n" +
-                            "    {\n" +
-                            "        //This is like an infinite loop. Just like in COSMOS\n" +
-                            "    }\n" +
-                            "}");
+                        //File.WriteAllText(Path + "\\Scripts\\Base.cs", 
+                        //    "class Base\n" +
+                        //    "{\n" +
+                        //    "    public void BeforeRun()\n" +
+                        //    "    {\n" +
+                        //    "        //This is just a demo text\n" +
+                        //    "    }\n" +
+                        //    "\n" +
+                        //    "    public void Run()\n" +
+                        //    "    {\n" +
+                        //    "        //This is like an infinite loop. Just like in COSMOS\n" +
+                        //    "    }\n" +
+                        //    "}");
                         break;
                     case false:
                         //If I get to the assembly part, this will be used to build the code into an app
-                        File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\Scripts\\Base.cs",
-                            "namespace Base\n" +
+                        File.WriteAllText(Path + "\\Scripts\\Base.cs",
+                            "class Base\n" +
                             "{\n" +
                             "    public void BeforeRun()\n" +
                             "    {\n" +
@@ -192,14 +193,10 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                             "}");
                         break;
                 }
-                switch (File.Exists(Path.Remove(Path.LastIndexOf('\\')) + "\\MKFILE.mkf"))
+                switch (File.Exists(Path + "\\MKFILE.mkf"))
                 {
-                    case true:
-                        //If I get to the assembly part, this will be used to build the code into an app
-                        File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\MKFILE.mkf", "INCLUDE:\nMain.wlf\nMain2.wlf\nBase.cs\nSGN: Y\nPBLSHR: " + GlobalValues.Username + "\n\nSTRTWNDW:Main2");
-                        break;
                     case false:
-                        File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\MKFILE.mkf", "INCLUDE:\nMain.wlf\nMain2.wlf\nBase.cs\nSGN: Y\nPBLSHR: " + GlobalValues.Username);
+                        File.WriteAllText(Path + "\\MKFILE.mkf", "INCLUDE:\nMain.wlf\nMain2.wlf\nBase.cs\nSGN: Y\nPBLSHR: " + GlobalValues.Username + "\n\nSTRTWNDW:Main2");
                         break;
                 }
                 #endregion InitCode
@@ -245,7 +242,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                 //Initialize the filemanager
                 #region Filemanager
                 //Filepath textbox
-                FilesTab.Add(new TextBox(6, 228, 725, 35, ImprovedVBE.colourToNumber(60, 60, 60), ActiveDirectory, "0:\\", TextBox.Options.left, "SourcePath"));
+                FilesTab.Add(new TextBox(6, 228, 725, 35, ImprovedVBE.colourToNumber(60, 60, 60), Path, "0:\\", TextBox.Options.left, "SourcePath"));
                 //Go button
                 FilesTab.Add(new Button(756, 206, 75, 35, "Go", 1, "Go"));
                 //Add new file button
@@ -566,13 +563,25 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                     code = CodeGenerator.AddUIElement(code, new Slider(StoredX, StoredY - 42, WidthOfUI, 10, 100, 50, "Slider" + preview.UIElements.FindAll(d => d.TypeOfElement == TypeOfElement.Slider).Count));
                                     break;
                                 case 4:
-                                    //code = CodeGenerator.AddUIElement(code, new Scrollbar(StoredX, StoredY, WidthOfUI, HeightOfUI, 0, 100, 50, "Scrollbar" + preview.UIElements.FindAll(d => d.TypeOfElement == TypeOfElement.Scrollbar).Count));
-                                    break;
-                                case 5:
                                     code = CodeGenerator.AddUIElement(code, new PictureBox(StoredX, StoredY - 22, "PictureBox" + preview.UIElements.FindAll(d => d.TypeOfElement == TypeOfElement.PictureBox).Count, true, new Bitmap((uint)WidthOfUI, (uint)HeightOfUI, ColorDepth.ColorDepth32)), "", true);
                                     break;
-                                case 6:
+                                case 5:
                                     code = CodeGenerator.AddUIElement(code, new CheckBox(StoredX, StoredY - 42, WidthOfUI, HeightOfUI, true, "CheckBox" + preview.UIElements.FindAll(d => d.TypeOfElement == TypeOfElement.CheckBox).Count, "CheckBox"));
+                                    break;
+                                case 6:
+                                    code = CodeGenerator.AddUIElement(code, new Triangle(ImprovedVBE.colourToNumber(255, 0, 0), new List<Point> { }, true, true, "Triangle" + preview.UIElements.FindAll(d => d.TypeOfElement == TypeOfElement.Triangle).Count), true.ToString());
+                                    break;
+                                case 7:
+                                    code = CodeGenerator.AddUIElement(code, new UI_Elements.Shapes.Rectangle(ImprovedVBE.colourToNumber(245, 245, 220), new List<Point> { }, true, true, "Rectangle" + preview.UIElements.FindAll(d => d.TypeOfElement == TypeOfElement.Rectangle).Count), true.ToString());
+                                    break;
+                                case 8:
+                                    code = CodeGenerator.AddUIElement(code, new UI_Elements.Shapes.Circle(ImprovedVBE.colourToNumber(210, 105, 30), new List<Point> { }, true, true, "Circle" + preview.UIElements.FindAll(d => d.TypeOfElement == TypeOfElement.Circle).Count), true.ToString());
+                                    break;
+                                case 9:
+                                    code = CodeGenerator.AddUIElement(code, new UI_Elements.Shapes.Line(ImprovedVBE.colourToNumber(0, 255, 0), new List<Point> { }, true, true, "Line" + preview.UIElements.FindAll(d => d.TypeOfElement == TypeOfElement.Line).Count), true.ToString());
+                                    break;
+                                case 10:
+                                    code = CodeGenerator.AddUIElement(code, new UI_Elements.Shapes.Polygon(ImprovedVBE.colourToNumber(0, 255, 0), new List<Point> { }, true, true, "Polygon" + preview.UIElements.FindAll(d => d.TypeOfElement == TypeOfElement.Polygon).Count), true.ToString());
                                     break;
                             }
                             StoredX = -1;
@@ -619,27 +628,28 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                             Log.Add("Saving currently opened file");
                             if (WorkingFile.EndsWith(".cs"))
                             {
-                                File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\Scripts\\" + WorkingFile, code);
+                                File.WriteAllText(Path + "\\Scripts\\" + WorkingFile, code);
                             }
                             else
                             {
-                                File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\Window_Layout\\" + WorkingFile, code);
+                                File.WriteAllText(Path + "\\Window_Layout\\" + WorkingFile, code);
                             }
                             Log.Add("Directory init");
-                            if (!Directory.Exists(Path.Remove(Path.LastIndexOf('\\')) + "\\Bin"))
+                            if (!Directory.Exists(Path + "\\Bin"))
                             {
-                                Directory.CreateDirectory(Path.Remove(Path.LastIndexOf('\\')) + "\\Bin");
+                                Directory.CreateDirectory(Path + "\\Bin");
                             }
                             Log.Add("Building output app");
-                            string BuiltFile = new ExecutableCreator().CreateExecutable(Path.Remove(Path.LastIndexOf('\\')), File.ReadAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\MKFILE.mkf"));
-                            File.Create(Path.Remove(Path.LastIndexOf('\\')) + "\\Bin\\" + Path.Remove(0, Path.LastIndexOf('\\') + 1) + ".app");
-                            File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\Bin\\" + Path.Remove(0, Path.LastIndexOf('\\') + 1) + ".app", BuiltFile);
-                            File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\Bin\\" + Path.Remove(0, Path.LastIndexOf('\\') + 1) + ".txt", BuiltFile);
+                            string BuiltFile = new ExecutableCreator().CreateExecutable(Path, File.ReadAllText(Path + "\\MKFILE.mkf"));
+                            BuiltFile = Core.RemoveCommentsAndBlankLines(BuiltFile);
+                            File.Create(Path + "\\Bin\\" + Path.Remove(0, Path.LastIndexOf('\\') + 1) + ".app");
+                            File.WriteAllText(Path + "\\Bin\\" + Path.Remove(0, Path.LastIndexOf('\\') + 1) + ".app", BuiltFile);
+                            File.WriteAllText(Path + "\\Bin\\" + Path.Remove(0, Path.LastIndexOf('\\') + 1) + ".txt", BuiltFile);
                             BuildingPhase++;
                             break;
                         case 1:
                             Log.Add("Build successful!");
-                            TaskScheduler.Apps.Add(new Window(100, 100, 999, 350, 200, 0, "Untitled", false, icon, File.ReadAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\Bin\\" + Path.Remove(0, Path.LastIndexOf('\\') + 1) + ".app")));
+                            TaskScheduler.Apps.Add(new Window(100, 100, 999, 350, 200, 0, "Untitled", false, icon, File.ReadAllText(Path + "\\Bin\\" + Path.Remove(0, Path.LastIndexOf('\\') + 1) + ".app")));
                             BuildingPhase++;
                             Building = false;
                             break;
@@ -705,7 +715,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                         {
                             if (MouseManager.MouseState == MouseState.Left && clicked == false)
                             {
-                                if (MouseManager.X > 10 + XOffset && MouseManager.X < 190 + XOffset && MouseManager.Y > 721 + 30 + TaskManager.TaskBar.Height + YOffset && MouseManager.Y < 721 + TaskManager.TaskBar.Height + 30 + YOffset + 35)
+                                if (MouseManager.X > 10 + XOffset && MouseManager.X < 190 + XOffset && MouseManager.Y > 721 + 30 + y + YOffset && MouseManager.Y < 721 + y + 30 + YOffset + 35)
                                 {
                                     Sel = i;
                                     temp = true;
@@ -797,7 +807,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                             catch (Exception ex)
                             {
                                 TaskScheduler.Apps.Add(new MsgBox(999, ImprovedVBE.width / 2 - 200, ImprovedVBE.height / 2 - 100, 400, 200, "Error!", ex.Message, icon));
-                                //UIElements.Find(d => d.ID == "Path.Remove(Path.LastIndexOf('\\'))").Text = "0:\\";
+                                //UIElements.Find(d => d.ID == "Path").Text = "0:\\";
                             }
                         }
 
@@ -831,7 +841,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                                 switch(entry.name[^4..])
                                                 {
                                                     case ".wlf":
-                                                        System.IO.File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\Window_Layout\\" + WorkingFile, code);
+                                                        System.IO.File.WriteAllText(Path + "\\Window_Layout\\" + WorkingFile, code);
                                                         code = System.IO.File.ReadAllText(entry.fullPath);
                                                         Back_content = code;
                                                         WorkingFile = entry.name;
@@ -840,7 +850,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                                         switch(entry.name[^3..])
                                                         {
                                                             case ".cs":
-                                                                System.IO.File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\Window_Layout\\" + WorkingFile, code);
+                                                                System.IO.File.WriteAllText(Path + "\\Window_Layout\\" + WorkingFile, code);
                                                                 code = System.IO.File.ReadAllText(entry.fullPath);
                                                                 Back_content = code;
                                                                 WorkingFile = entry.name;
@@ -1244,7 +1254,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                         Temp.Add(new CheckBox(15, 299, 20, 25, true, "Signed", "Signed"));
                                         Temp.Add(new CheckBox(15, 362, 20, 25, true, "Anonim", "Anonim publisher"));
                                         List<values> Vals = new List<values>();
-                                        foreach(DirectoryEntry d in Kernel.fs.GetDirectoryListing(Path.Remove(Path.LastIndexOf('\\')) + "\\Window_Layout"))
+                                        foreach(DirectoryEntry d in Kernel.fs.GetDirectoryListing(Path + "\\Window_Layout"))
                                         {
                                             if(d.mEntryType == DirectoryEntryTypeEnum.File)
                                             {
@@ -1301,11 +1311,12 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                         "INCLUDE: \n" + 
                         "Main.wlf\n" + 
                         "Main2.wlf\n" + 
+                        "Base.cs\n" + 
                         "SGN: " + (PropetiesTab.Find(d => d.ID == "Signed").Clicked ? "Y":"N") + "\n" + 
                         "PBLSHR: " + (PropetiesTab.Find(d => d.ID == "Anonim").Clicked ? GlobalValues.Username : "Anonim") + "\n" +
-                        "STRTWNDW: " + PropetiesTab.Find(d => d.ID == "StartWindow").Text;
+                        "STRTWNDW: " + PropetiesTab.Find(d => d.ID == "StartWindow").Text.Split(".")[0];
 
-                    File.WriteAllText(Path.Remove(Path.LastIndexOf('\\')) + "\\MKFILE.mkf", DataToWrite);
+                    File.WriteAllText(Path + "\\MKFILE.mkf", DataToWrite);
                 }
 
                 //Render to FilesTab

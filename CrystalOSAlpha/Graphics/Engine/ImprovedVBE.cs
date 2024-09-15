@@ -147,11 +147,14 @@ namespace CrystalOSAlpha
 
         public static int GetPixel(Bitmap Canvas, int x, int y)
         {
-            if (x > 0 && x < Canvas.Width && y >= 0 && y < Canvas.Height)
+            if (x >= 0 && x < Canvas.Width && y >= 0 && y < Canvas.Height)
             {
                 return Canvas.RawData[y * Canvas.Width + x];
             }
-            throw new Exception("Out of bounds");
+            else
+            {
+                throw new Exception("Out of bounds");
+            }
         }
 
         /// <summary>
@@ -165,18 +168,129 @@ namespace CrystalOSAlpha
         /// <param name="color">Color of the line in integer</param>
         public static void DrawLine(Bitmap Canvas, float x1, float y1, float x2, float y2, int color)
         {
-            float dx = x2 - x1;
-            float dy = y2 - y1;
-
-            float length = (float)Math.Sqrt(dx * dx + dy * dy);
-
-            float angle = (float)Math.Atan2(dy, dx);
-
-            for (float i = 0; i < length; i++)
+            switch(y1 == y2)
             {
-                DrawPixel(Canvas, (int)(x1 + Math.Cos(angle) * i), (int)(y1 + Math.Sin(angle) * i), color);
+                case false:
+                    float dx = x2 - x1;
+                    float dy = y2 - y1;
+
+                    float length = (float)Math.Sqrt(dx * dx + dy * dy);
+
+                    float angle = (float)Math.Atan2(dy, dx);
+
+                    for (float i = 0; i < length; i++)
+                    {
+                        DrawPixel(Canvas, (int)(x1 + Math.Cos(angle) * i), (int)(y1 + Math.Sin(angle) * i), color);
+                    }
+                    break;
+                case true:
+                    DrawFilledRectangle(Canvas, color, (int)x1, (int)y1, (int)(x2 - x1), 1);
+                    break;
             }
         }
+
+        /// <summary>
+        /// Draws an unfilled triangle on the screen using a list of points
+        /// </summary>
+        /// <param name="Canvas">The image you want to draw the triangle onto</param>
+        /// <param name="Points">List containing the three vertices of the triangle</param>
+        /// <param name="color">Color of the triangle's lines in integer</param>
+        public static void DrawTriangle(Bitmap Canvas, List<Point> Points, int color)
+        {
+            // Ensure the list contains exactly 3 points to form a triangle
+            if (Points.Count == 3)
+            {
+                // Draw the three sides of the triangle
+                DrawLine(Canvas, Points[0].X, Points[0].Y, Points[1].X, Points[1].Y, color); // Side 1: Points[0] to Points[1]
+                DrawLine(Canvas, Points[1].X, Points[1].Y, Points[2].X, Points[2].Y, color); // Side 2: Points[1] to Points[2]
+                DrawLine(Canvas, Points[2].X, Points[2].Y, Points[0].X, Points[0].Y, color); // Side 3: Points[2] to Points[0]
+            }
+
+        }
+
+        public static void DrawFilledTriangle(Bitmap Canvas, List<Point> Points, int color)
+        {
+            if (Points.Count != 3) return; // Ensure it's a triangle
+
+            // Manually sort the points by their Y-coordinate
+            Point p1 = Points[0];
+            Point p2 = Points[1];
+            Point p3 = Points[2];
+
+            // Sort points in place by Y-coordinate (ascending order)
+            if (p1.Y > p2.Y) { Swap(ref p1, ref p2); }
+            if (p1.Y > p3.Y) { Swap(ref p1, ref p3); }
+            if (p2.Y > p3.Y) { Swap(ref p2, ref p3); }
+
+            // Helper function to swap two points
+            void Swap(ref Point a, ref Point b)
+            {
+                Point temp = a;
+                a = b;
+                b = temp;
+            }
+
+            // Function to interpolate between two points
+            void FillLine(Point a, Point b)
+            {
+                int startX = Math.Min(a.X, b.X);
+                int endX = Math.Max(a.X, b.X);
+
+                for (int x = startX; x <= endX; x++)
+                {
+                    DrawPixel(Canvas, x, a.Y, color); // Draw a horizontal line
+                }
+            }
+
+            // Helper function to draw horizontal lines between points vertically
+            void FillFlatBottom(Point top, Point left, Point right)
+            {
+                float slopeLeft = (float)(left.X - top.X) / (left.Y - top.Y);
+                float slopeRight = (float)(right.X - top.X) / (right.Y - top.Y);
+
+                for (int y = top.Y; y <= left.Y; y++)
+                {
+                    int startX = (int)(top.X + (y - top.Y) * slopeLeft);
+                    int endX = (int)(top.X + (y - top.Y) * slopeRight);
+                    FillLine(new Point(startX, y), new Point(endX, y));
+                }
+            }
+
+            void FillFlatTop(Point left, Point right, Point bottom)
+            {
+                float slopeLeft = (float)(bottom.X - left.X) / (bottom.Y - left.Y);
+                float slopeRight = (float)(bottom.X - right.X) / (bottom.Y - right.Y);
+
+                for (int y = left.Y; y <= bottom.Y; y++)
+                {
+                    int startX = (int)(left.X + (y - left.Y) * slopeLeft);
+                    int endX = (int)(right.X + (y - right.Y) * slopeRight);
+                    FillLine(new Point(startX, y), new Point(endX, y));
+                }
+            }
+
+            // Split triangle into two flat triangles (flat-bottom and flat-top)
+            if (p2.Y == p3.Y) // Flat-bottom triangle
+            {
+                FillFlatBottom(p1, p2, p3);
+            }
+            else if (p1.Y == p2.Y) // Flat-top triangle
+            {
+                FillFlatTop(p1, p2, p3);
+            }
+            else
+            {
+                // General case - split into two triangles
+                Point splitPoint = new Point(
+                    p1.X + (int)((float)(p2.Y - p1.Y) / (p3.Y - p1.Y) * (p3.X - p1.X)),
+                    p2.Y
+                );
+
+                FillFlatBottom(p1, p2, splitPoint);
+                FillFlatTop(p2, splitPoint, p3);
+            }
+        }
+
 
         /// <summary>
         /// Draw a non-filled rectangle
@@ -208,53 +322,97 @@ namespace CrystalOSAlpha
         /// <param name="transparent"></param>
         public static void DrawFilledRectangle(Bitmap Canvas, int color, int X, int Y, int Width, int Height, bool transparent = false)
         {
-            if (transparent == true)
+            if(X == 0 && Width == Canvas.Width)
             {
-                int r = (color & 0xff0000) >> 16;
-                int g = (color & 0x00ff00) >> 8;
-                int b = (color & 0x0000ff);
-
-                float blendFactor = 0.5f;
-                float inverseBlendFactor = 1 - blendFactor;
-
-                for (int j = Y; j < Y + Height; j++)
-                {
-                    for (int i = X; i < X + Width; i++)
-                    {
-                        int r3 = (cover.RawData[j * width + i] & 0xff0000) >> 16;
-                        int g3 = (cover.RawData[j * width + i] & 0x00ff00) >> 8;
-                        int b3 = (cover.RawData[j * width + i] & 0x0000ff);
-
-                        int r2 = (int)(inverseBlendFactor * r3 + blendFactor * r);
-                        int g2 = (int)(inverseBlendFactor * g3 + blendFactor * g);
-                        int b2 = (int)(inverseBlendFactor * b3 + blendFactor * b);
-
-                        DrawPixel(Canvas, i, j, colourToNumber(r2, g2, b2));
-                    }
-                }
+                Bitmap Temp = new Bitmap((uint)Width, (uint)Height, ColorDepth.ColorDepth32);
+                Array.Fill(Temp.RawData, color);
+                Array.Copy(Temp.RawData, 0, Canvas.RawData, Y * Canvas.Width, Temp.RawData.Length);
             }
             else
             {
-                if (X <= width)
+                if (transparent == true)
                 {
-                    int[] line = new int[Width];
-                    if (X < 0)
-                    {
-                        line = new int[Width + X];
-                    }
-                    else if (X + Width > Canvas.Width)
-                    {
-                        line = new int[Width - (X + Width - Canvas.Width)];
-                    }
-                    Array.Fill(line, color);
+                    int r = (color & 0xff0000) >> 16;
+                    int g = (color & 0x00ff00) >> 8;
+                    int b = (color & 0x0000ff);
 
-                    for (int i = Y; i < Y + Height; i++)
+                    float blendFactor = 0.5f;
+                    float inverseBlendFactor = 1 - blendFactor;
+
+                    for (int j = Y; j < Y + Height; j++)
                     {
-                        if(i < Canvas.Height && i >= 0)
+                        for (int i = X; i < X + Width; i++)
                         {
-                            Array.Copy(line, 0, Canvas.RawData, (i * Canvas.Width) + X, line.Length);
+                            int r3 = (cover.RawData[j * width + i] & 0xff0000) >> 16;
+                            int g3 = (cover.RawData[j * width + i] & 0x00ff00) >> 8;
+                            int b3 = (cover.RawData[j * width + i] & 0x0000ff);
+
+                            int r2 = (int)(inverseBlendFactor * r3 + blendFactor * r);
+                            int g2 = (int)(inverseBlendFactor * g3 + blendFactor * g);
+                            int b2 = (int)(inverseBlendFactor * b3 + blendFactor * b);
+
+                            DrawPixel(Canvas, i, j, colourToNumber(r2, g2, b2));
                         }
                     }
+                }
+                else
+                {
+                    if (X <= width)
+                    {
+                        int[] line = new int[Width];
+                        if (X < 0)
+                        {
+                            line = new int[Width + X];
+                        }
+                        else if (X + Width > Canvas.Width)
+                        {
+                            line = new int[Width - (X + Width - Canvas.Width)];
+                        }
+                        Array.Fill(line, color);
+
+                        for (int i = Y; i < Y + Height; i++)
+                        {
+                            if(i < Canvas.Height && i >= 0)
+                            {
+                                Array.Copy(line, 0, Canvas.RawData, (i * Canvas.Width) + X, line.Length);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        public static void DrawCircle(Bitmap canvas, int centerX, int centerY, int radius, int color)
+        {
+            int x = radius;
+            int y = 0;
+            int p = 1 - radius;
+
+            // Use symmetry to draw points in all eight octants
+            void DrawCirclePoints(int x, int y)
+            {
+                DrawPixel(canvas, centerX + x, centerY + y, color);
+                DrawPixel(canvas, centerX - x, centerY + y, color);
+                DrawPixel(canvas, centerX + x, centerY - y, color);
+                DrawPixel(canvas, centerX - x, centerY - y, color);
+                DrawPixel(canvas, centerX + y, centerY + x, color);
+                DrawPixel(canvas, centerX - y, centerY + x, color);
+                DrawPixel(canvas, centerX + y, centerY - x, color);
+                DrawPixel(canvas, centerX - y, centerY - x, color);
+            }
+
+            while (x >= y)
+            {
+                DrawCirclePoints(x, y);
+                y++;
+
+                if (p <= 0)
+                {
+                    p += 2 * y + 1;
+                }
+                else
+                {
+                    x--;
+                    p += 2 * y - 2 * x + 1;
                 }
             }
         }
@@ -856,65 +1014,104 @@ namespace CrystalOSAlpha
         /// <param name="Canvas">The canvas you want to render it on</param>
         /// <param name="Points">A list of points</param>
         /// <param name="Color">Color of the filled pollygon</param>
-        public static void DrawFilledPollygon(Bitmap Canvas, List<Point> Points, int Color)
+
+        public static void DrawFilledPollygon(Bitmap canvas, List<Point> points, int color)
         {
-            int XMax = 0;
-            int YMax = 0;
-            for(int i = 0; i < Points.Count; i++)
-            {
-                if (Points[i].X > XMax)
-                {
-                    XMax = Points[i].X;
-                }
-                if (Points[i].Y > YMax)
-                {
-                    YMax = Points[i].Y;
-                }
-            }
-            Bitmap Temp = new Bitmap((uint)XMax, (uint)YMax, ColorDepth.ColorDepth32);
-            Array.Fill(Temp.RawData, 0);
+            int width = (int)canvas.Width;
+            int height = (int)canvas.Height;
 
-            for(int i = 0; i < Points.Count; i++)
+            // Step 1: Find the bounding box of the polygon
+            int yMin = points[0].Y;
+            int yMax = points[0].Y;
+            for (int i = 1; i < points.Count; i++)
             {
-                if(i < Points.Count - 1)
-                {
-                    DrawLine(Temp, Points[i].X, Points[i].Y, Points[i + 1].X, Points[i + 1].Y, Color);
-                }
-                else
-                {
-                    DrawLine(Temp, Points[i].X, Points[i].Y, Points[0].X, Points[0].Y, Color);
-                }
+                if (points[i].Y < yMin) yMin = points[i].Y;
+                if (points[i].Y > yMax) yMax = points[i].Y;
             }
 
-            for(int i = 0; i < Temp.Height - 1; i++)
+            // Step 2: Create the edge table
+            List<Edge>[] edgeTable = new List<Edge>[yMax - yMin + 1];
+            for (int i = 0; i < edgeTable.Length; i++)
             {
-                int StartX = 0;
-                int EndX = 0;
-                bool Found = false;
+                edgeTable[i] = new List<Edge>();
+            }
 
-                for(int j = 0; j < Temp.Width && Found == false; j++)
+            // Step 3: Add edges to the edge table
+            for (int i = 0; i < points.Count; i++)
+            {
+                Point start = points[i];
+                Point end = points[(i + 1) % points.Count];
+
+                if (start.Y != end.Y) // Ignore horizontal edges
                 {
-                    if (Temp.RawData[i * Temp.Width + j] != 0)
+                    if (start.Y > end.Y)
                     {
-                        StartX = j;
-                        Found = true;
+                        Point temp = start;
+                        start = end;
+                        end = temp;
+                    }
+
+                    int deltaY = end.Y - start.Y;
+                    float slope = (float)(end.X - start.X) / deltaY;
+
+                    edgeTable[start.Y - yMin].Add(new Edge(start.X, end.Y, slope));
+                }
+            }
+
+            // Step 4: Fill the polygon using the edge table
+            List<Edge> activeEdges = new List<Edge>();
+
+            for (int y = yMin; y <= yMax; y++)
+            {
+                // Add edges from the edge table to the active edge list
+                activeEdges.AddRange(edgeTable[y - yMin]);
+
+                // Remove edges where y has exceeded the max Y of the edge
+                for (int i = activeEdges.Count - 1; i >= 0; i--)
+                {
+                    if (activeEdges[i].YMax <= y)
+                    {
+                        activeEdges.RemoveAt(i);
                     }
                 }
 
-                Found = false;
-                for (int j = (int)Temp.Width - 1; j >= 0 && Found == false; j--)
+                // Active edges are already sorted, just insert new ones in the right place
+                for (int i = 0; i < activeEdges.Count - 1; i++)
                 {
-                    if (Temp.RawData[i * Temp.Width + j] != 0)
+                    if (activeEdges[i].X > activeEdges[i + 1].X)
                     {
-                        EndX = j;
-                        Found = true;
+                        // Swap the edges
+                        var temp = activeEdges[i];
+                        activeEdges[i] = activeEdges[i + 1];
+                        activeEdges[i + 1] = temp;
                     }
                 }
-                int Distance = EndX - StartX;
-                Array.Fill(Temp.RawData, Color, (int)(i * Temp.Width + StartX), Distance);
+
+                // Step 5: Fill between pairs of active edges with horizontal lines
+                int Height = (int)(y * canvas.Width);
+                for (int i = 0; i < activeEdges.Count; i += 2)
+                {
+                    int xStart = (int)activeEdges[i].X;
+                    int xEnd = (int)activeEdges[i + 1].X;
+
+
+                    if (xStart <= xEnd)
+                    {
+                        for (int x = xStart; x <= xEnd; x++)
+                        {
+                            canvas.RawData[Height + x] = color;
+                        }
+                    }
+                }
+
+                // Update the X values of active edges for the next scanline
+                for (int i = 0; i < activeEdges.Count; i++)
+                {
+                    activeEdges[i].X += activeEdges[i].Slope;
+                }
             }
-            DrawImageAlpha(Temp, 0, 0, Canvas);
         }
+
         #endregion Graphics
 
         #region For Window look
@@ -974,5 +1171,20 @@ namespace CrystalOSAlpha
             x_1 = 0;
         }
         #endregion
+    }
+
+    // Helper class to store edge data
+    public class Edge
+    {
+        public float X;      // Current X position of the edge
+        public int YMax;     // Maximum Y value of the edge
+        public float Slope;  // 1 / slope of the edge
+
+        public Edge(float x, int yMax, float slope)
+        {
+            X = x;
+            YMax = yMax;
+            Slope = slope;
+        }
     }
 }

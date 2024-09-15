@@ -3,6 +3,7 @@ using Cosmos.System.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 
 namespace CrystalOSAlpha.UI_Elements
 {
@@ -23,6 +24,7 @@ namespace CrystalOSAlpha.UI_Elements
         public int LockedPos { get; set; }
         public int MinVal { get; set; }
         public int MaxVal { get; set; }
+        public List<Point> Points { get; set; }
 
         public Bitmap canv;
         public Bitmap Drop;

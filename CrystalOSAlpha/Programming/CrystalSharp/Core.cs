@@ -1,13 +1,19 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
+using CrystalOSAlpha.Graphics;
+using CrystalOSAlpha.Graphics.Icons;
 using CrystalOSAlpha.Programming.CrystalSharp.CodeStructure;
 using CrystalOSAlpha.Programming.CrystalSharp.CodeStructure.Console;
 using CrystalOSAlpha.Programming.CrystalSharp.CodeStructure.FileOperations;
 using CrystalOSAlpha.Programming.CrystalSharp.CodeStructure.List;
 using CrystalOSAlpha.Programming.CrystalSharp.CodeStructure.Math;
 using CrystalOSAlpha.Programming.CrystalSharp.CodeStructure.Variables;
+using CrystalOSAlpha.SystemApps;
+using CrystalOSAlpha.UI_Elements;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Text;
 
 namespace CrystalOSAlpha.Programming.CrystalSharp
 {
@@ -29,8 +35,13 @@ namespace CrystalOSAlpha.Programming.CrystalSharp
         public Variable VariableName;
         public List<Variable> Variables = new List<Variable>();
         public List<ForLoops> Loops = new List<ForLoops>();
+        
+        public Bitmap Window;
+        public List<UIElementHandler> Elements = new List<UIElementHandler>();
+        public string TypeofVariable = "Non-graphical";
+        public int CycleWithoutBrackets = 0;
 
-        public string Execute(List<CodeSegments> CodeSegments, string ProjectName)
+        public string Execute(List<CodeSegments> CodeSegments, string ProjectName, string MainVoid = "Main()")
         {
             try
             {
@@ -40,66 +51,90 @@ namespace CrystalOSAlpha.Programming.CrystalSharp
                 {
                     foreach (var Segment in Main.Segments)
                     {
-                        if (Segment.Split("\n")[0].Contains("Main()"))
+                        if (Segment.Split("\n")[0].Contains(" " + MainVoid))
                         {
                             Cached = Segment;
                             break;
                         }
                     }
                 }
+
+                // Reset LineCounter if it goes beyond the cached length
                 if (LineCounter >= Cached.Split('\n').Length)
                 {
                     LineCounter = -1;
                 }
                 else
                 {
+                    // When AllowExecution is true, process the current line
                     if (AllowExecution)
                     {
                         Temp = MethodReturner(Cached.Split('\n')[LineCounter]);
                     }
                     else
                     {
+                        // Step through the brackets and check for conditions
                         BracketStepper(Cached.Split('\n')[LineCounter]);
                         if (BracketCounter == 0)
                         {
-                            //AllowExecution = true;
-                            if (Cached.Split('\n')[LineCounter].Contains("if") || Cached.Split('\n')[LineCounter].Contains("else if") || Cached.Split('\n')[LineCounter].Contains("else"))
+                            // Check if the current line contains a condition
+                            if (Cached.Split('\n')[LineCounter].Contains("if") ||
+                                Cached.Split('\n')[LineCounter].Contains("else if") ||
+                                Cached.Split('\n')[LineCounter].Contains("else"))
                             {
                                 Temp = MethodReturner(Cached.Split('\n')[LineCounter]);
                             }
-                            if(EndOfElse > 0 && LineCounter == EndOfElse)
+
+                            // Handle EndOfElse logic
+                            if (EndOfElse > 0 && LineCounter == EndOfElse)
                             {
                                 AllowExecution = true;
                                 EndOfElse = -99;
                             }
+                            CycleWithoutBrackets++;
+                        }
+                        else
+                        {
+                            CycleWithoutBrackets = 0;
+                        }
+                        if(CycleWithoutBrackets == 1)
+                        {
+                            AllowExecution = true;
+                            CycleWithoutBrackets = 0;
                         }
                     }
+
+                    // Move to the next line if not waiting for ReadLine
                     if (!IsWaitingForReadLine)
                     {
                         LineCounter++;
                         Output = "";
                     }
                 }
-                if(Loops.Count != 0)
+
+                // Handle loops
+                if (Loops.Count != 0)
                 {
                     if (Loops[^1].EndLine == LineCounter)
                     {
+                        // If loop condition is still true, jump back to start of the loop
                         if (EvaluateCondition(Loops[^1].SegmentsHeader[1]))
                         {
                             LineCounter = Loops[^1].StartLine;
                         }
                         else
                         {
+                            // Exit loop if the condition is false
                             Loops.RemoveAt(Loops.Count - 1);
                             AllowExecution = true;
                         }
                     }
                 }
+
                 return Temp;
             }
             catch (Exception ex)
             {
-                //LogError("Error in Execute method: " + ex.Message);
                 return "Error: " + ex.Message;
             }
         }
@@ -111,32 +146,40 @@ namespace CrystalOSAlpha.Programming.CrystalSharp
                 // IMPORTANT!!!! Always remember that semi-colons are present at the end of the line. They are not trimmed down.
                 if (!Line.Trim().StartsWith("for"))
                 {
-                    if (Line.Contains("string") || Line.Contains("int") || Line.Contains("bool") || Line.Contains("float") || Line.Contains("double") || Line.Contains("char") || Line.Contains("Bitmap") || (Line.Contains("ConsoleKeyEx") && !Line.Contains("if")) || Line.Contains("List"))
+                    if ((Line.Contains("string") || Line.Contains("int") || Line.Contains("bool") || Line.Contains("float") || Line.Contains("double") || Line.Contains("char") || Line.Contains("Bitmap") || (Line.Contains("ConsoleKeyEx") && !Line.Contains("if")) || Line.Contains("List")) && !Line.Contains("Points = "))
                     {
-                        Line = SettingVariableValues(Line.Trim());
-                        if(Variables.Count >= 1)
+                        try
                         {
-                            switch(Variables[^1].Type)
+                            Line = SettingVariableValues(Line.Trim());
+                            if(Variables.Count >= 1)
                             {
-                                case VariableType.ConsoleKeyEx:
-                                    VariableIndex = Variables.FindIndex(d => d.ID == Line.Split(".")[0]);
-                                    VariableName = Variables[VariableIndex];
-                                    Line = Line.Remove(0, Line.IndexOf(".") + 1);
-                                    //Output += "\n" + Line;
-                                    break;
-                                case VariableType.List:
-                                    IsList = true;
-                                    VariableIndex = Variables.FindIndex(d => d.ID == Line.Split(".")[0]);
-                                    VariableName = Variables[VariableIndex];
-                                    Output += "\n" + Line + "\n" + VariableIndex + " " + VariableName.ID;
-                                    break;
+                                switch(Variables[^1].Type)
+                                {
+                                    case VariableType.ConsoleKeyEx:
+                                        VariableIndex = Variables.FindIndex(d => d.ID == Line.Split(".")[0]);
+                                        VariableName = Variables[VariableIndex];
+                                        Line = Line.Remove(0, Line.IndexOf(".") + 1);
+                                        //Output += "\n" + Line;
+                                        break;
+                                    case VariableType.List:
+                                        IsList = true;
+                                        VariableIndex = Variables.FindIndex(d => d.ID == Line.Split(".")[0]);
+                                        VariableName = Variables[VariableIndex];
+                                        Output += "\n" + Line + "\n" + VariableIndex + " " + VariableName.ID;
+                                        break;
+                                }
                             }
+                        }
+                        catch (Exception e)
+                        {
+                            TaskScheduler.Apps.Add(new MsgBox(999, 100, 100, 300, 200, "Error", e.Message, ImprovedVBE.ScaleImageStock(Resources.Web, 56, 56)));
                         }
                     }
                     else
                     {
                         if (!Line.Contains("if") && !Line.Contains("else if") && !Line.Contains("else") && Line.Contains('='))
                         {
+                            TypeofVariable = "Non-graphical";
                             if (Line.Contains("+="))
                             {
                                 var v = Variables.Find(d => d.ID == Line.Trim().Split(" += ")[0]);
@@ -196,6 +239,16 @@ namespace CrystalOSAlpha.Programming.CrystalSharp
                                         VariableIndex = Variables.IndexOf(v);
                                         isVariable = true;
                                     }
+                                    else
+                                    {
+                                        var ElementInQuestion = Elements.Find(d => d.ID == Line.Trim().Split(" = ")[0].Split("[")[0]);
+                                        if (ElementInQuestion != null)
+                                        {
+                                            TypeofVariable = "Graphical";
+                                            VariableIndex = Elements.IndexOf(ElementInQuestion);
+                                            isVariable = true;
+                                        }
+                                    }
                                 }
                                 else
                                 {
@@ -206,6 +259,19 @@ namespace CrystalOSAlpha.Programming.CrystalSharp
                                         VariableIndex = Variables.IndexOf(v);
                                         Line = Line.Split(" = ")[1];
                                         isVariable = true;
+                                    }
+                                    else
+                                    {
+                                        if(Line.Trim().Split(" = ")[0].Contains("."))
+                                        {
+                                            var ElementInQuestion = Elements.Find(d => d.ID == Line.Trim().Split(" = ")[0].Split(".")[0]);
+                                            if (ElementInQuestion != null)
+                                            {
+                                                TypeofVariable = "Graphical";
+                                                VariableIndex = Elements.IndexOf(ElementInQuestion);
+                                                isVariable = true;
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -713,188 +779,308 @@ namespace CrystalOSAlpha.Programming.CrystalSharp
                                         break;
                                 }
                                 break;
+                            case "Graphics":
+                                switch (Parts[1].Split("(")[0])
+                                {
+                                    case "DrawLine":
+                                        //Graphics.DrawLine(Line.Trim().Remove(Line.Trim().Length - 2).Remove(0, "Graphics.DrawLine(".Length + 1), Variables);
+                                        break;
+                                    case "DrawRectangle":
+                                        //Graphics.DrawRectangle(Line.Trim().Remove(Line.Trim().Length - 2).Remove(0, "Graphics.DrawRectangle(".Length + 1), Variables);
+                                        break;
+                                    case "DrawEllipse":
+                                        //Graphics.DrawEllipse(Line.Trim().Remove(Line.Trim().Length - 2).Remove(0, "Graphics.DrawEllipse(".Length + 1), Variables);
+                                        break;
+                                }
+                                break;
                             default:
                                 if (isVariable)
                                 {
-                                    switch (Operator)
+                                    switch (TypeofVariable)
                                     {
-                                        case "+=":
-                                            Line = Line.Remove(Line.Length - 1);
-                                            switch (VariableName.Type)
+                                        case "Non-graphical":
+                                            switch (Operator)
                                             {
-                                                case VariableType.String:
-                                                    Variables[VariableIndex].Value += Line.Remove(Line.Length - 1).Remove(0, 1);
-                                                    break;
-                                                case VariableType.Int:
-                                                    Variables[VariableIndex].IntValue += int.Parse(Line);
-                                                    break;
-                                                case VariableType.Bool:
-                                                    throw new Exception("Cannot add to a boolean.");
-                                                case VariableType.Float:
-                                                    Variables[VariableIndex].FloatValue += float.Parse(Line.Remove(Line.Length - 1).Remove(0, Line.IndexOf('.') + 1));
-                                                    break;
-                                                case VariableType.Double:
-                                                    Variables[VariableIndex].DoubleValue += double.Parse(Line.Remove(Line.Length - 1).Remove(0, Line.IndexOf('.') + 1));
-                                                    break;
-                                                case VariableType.Char:
-                                                    Variables[VariableIndex].CharValue += Line.Remove(Line.Length - 1).Remove(0, 1)[0];
-                                                    break;
-                                            }
-                                            isVariable = false;
-                                            VariableIndex = -99;
-                                            VariableName = null;
-                                            break;
-                                        case "-=":
-                                            Line = Line.Remove(Line.Length - 1);
-                                            switch (VariableName.Type)
-                                            {
-                                                case VariableType.String:
-                                                    throw new Exception("Cannot subtract a string.");
-                                                case VariableType.Int:
-                                                    Variables[VariableIndex].IntValue -= int.Parse(Line);
-                                                    break;
-                                                case VariableType.Bool:
-                                                    throw new Exception("Cannot subtract a boolean.");
-                                                case VariableType.Float:
-                                                    Variables[VariableIndex].FloatValue -= float.Parse(Line.Remove(Line.Length - 1).Remove(0, Line.IndexOf('.') + 1));
-                                                    break;
-                                                case VariableType.Double:
-                                                    Variables[VariableIndex].DoubleValue -= double.Parse(Line.Remove(Line.Length - 1).Remove(0, Line.IndexOf('.') + 1));
-                                                    break;
-                                                case VariableType.Char:
-                                                    Variables[VariableIndex].CharValue -= Line.Remove(Line.Length - 1).Remove(0, 1)[0];
-                                                    break;
-                                            }
-                                            isVariable = false;
-                                            VariableIndex = -99;
-                                            VariableName = null;
-                                            break;
-                                        case "*=":
-                                            Line = Line.Remove(Line.Length - 1);
-                                            switch (VariableName.Type)
-                                            {
-                                                case VariableType.String:
-                                                    string temp = "";
-                                                    if (int.TryParse(Line, out int Parsed))
+                                                case "+=":
+                                                    Line = Line.Remove(Line.Length - 1);
+                                                    switch (VariableName.Type)
                                                     {
-                                                        for (int i = 0; i < Parsed; i++)
-                                                        {
-                                                            temp += Variables[VariableIndex].Value;
-                                                        }
-                                                    }
-                                                    Variables[VariableIndex].Value = temp;
-                                                    break;
-                                                case VariableType.Int:
-                                                    Variables[VariableIndex].IntValue *= int.Parse(Line);
-                                                    break;
-                                                case VariableType.Float:
-                                                    Variables[VariableIndex].FloatValue *= float.Parse(Line);
-                                                    break;
-                                                case VariableType.Double:
-                                                    Variables[VariableIndex].DoubleValue *= double.Parse(Line);
-                                                    break;
-                                                case VariableType.Char:
-                                                    Variables[VariableIndex].CharValue *= Line[0];
-                                                    break;
-                                            }
-                                            isVariable = false;
-                                            VariableIndex = -99;
-                                            VariableName = null;
-                                            break;
-                                        case "/=":
-                                            Line = Line.Remove(Line.Length - 1);
-                                            switch (VariableName.Type)
-                                            {
-                                                case VariableType.String:
-                                                    throw new Exception("Cannot divide a string.");
-                                                case VariableType.Int:
-                                                    Variables[VariableIndex].IntValue /= int.Parse(Line);
-                                                    break;
-                                                case VariableType.Float:
-                                                    Variables[VariableIndex].FloatValue /= float.Parse(Line);
-                                                    break;
-                                                case VariableType.Double:
-                                                    Variables[VariableIndex].DoubleValue /= double.Parse(Line);
-                                                    break;
-                                                case VariableType.Char:
-                                                    Variables[VariableIndex].CharValue /= Line[0];
-                                                    break;
-                                            }
-                                            isVariable = false;
-                                            VariableIndex = -99;
-                                            VariableName = null;
-                                            break;
-                                        default:
-                                            Line = Line.Remove(Line.Length - 1);
-                                            switch (VariableName.Type)
-                                            {
-                                                case VariableType.String:
-                                                    Variables[VariableIndex].Value = Output;
-                                                    break;
-                                                case VariableType.Int:
-                                                    switch(Parts.Length)
-                                                    {
-                                                        case 1:
-                                                            if(int.TryParse(Output, out int Result))
-                                                            {
-                                                                Variables[VariableIndex].IntValue = Result;
-                                                            }
-                                                            else
-                                                            {
-                                                                Variables[VariableIndex].IntValue = (int)MathOperations.Calculate(Parts[0], Variables);
-                                                            }
+                                                        case VariableType.String:
+                                                            Variables[VariableIndex].Value += Line.Remove(Line.Length - 1).Remove(0, 1);
                                                             break;
-                                                        case 2:
-                                                            string[] Part = Line.Split(".");
-                                                            switch (Part.Length)
+                                                        case VariableType.Int:
+                                                            Variables[VariableIndex].IntValue += int.Parse(Line);
+                                                            break;
+                                                        case VariableType.Bool:
+                                                            throw new Exception("Cannot add to a boolean.");
+                                                        case VariableType.Float:
+                                                            Variables[VariableIndex].FloatValue += float.Parse(Line.Remove(Line.Length - 1).Remove(0, Line.IndexOf('.') + 1));
+                                                            break;
+                                                        case VariableType.Double:
+                                                            Variables[VariableIndex].DoubleValue += double.Parse(Line.Remove(Line.Length - 1).Remove(0, Line.IndexOf('.') + 1));
+                                                            break;
+                                                        case VariableType.Char:
+                                                            Variables[VariableIndex].CharValue += Line.Remove(Line.Length - 1).Remove(0, 1)[0];
+                                                            break;
+                                                    }
+                                                    isVariable = false;
+                                                    VariableIndex = -99;
+                                                    VariableName = null;
+                                                    break;
+                                                case "-=":
+                                                    Line = Line.Remove(Line.Length - 1);
+                                                    switch (VariableName.Type)
+                                                    {
+                                                        case VariableType.String:
+                                                            throw new Exception("Cannot subtract a string.");
+                                                        case VariableType.Int:
+                                                            Variables[VariableIndex].IntValue -= int.Parse(Line);
+                                                            break;
+                                                        case VariableType.Bool:
+                                                            throw new Exception("Cannot subtract a boolean.");
+                                                        case VariableType.Float:
+                                                            Variables[VariableIndex].FloatValue -= float.Parse(Line.Remove(Line.Length - 1).Remove(0, Line.IndexOf('.') + 1));
+                                                            break;
+                                                        case VariableType.Double:
+                                                            Variables[VariableIndex].DoubleValue -= double.Parse(Line.Remove(Line.Length - 1).Remove(0, Line.IndexOf('.') + 1));
+                                                            break;
+                                                        case VariableType.Char:
+                                                            Variables[VariableIndex].CharValue -= Line.Remove(Line.Length - 1).Remove(0, 1)[0];
+                                                            break;
+                                                    }
+                                                    isVariable = false;
+                                                    VariableIndex = -99;
+                                                    VariableName = null;
+                                                    break;
+                                                case "*=":
+                                                    Line = Line.Remove(Line.Length - 1);
+                                                    switch (VariableName.Type)
+                                                    {
+                                                        case VariableType.String:
+                                                            string temp = "";
+                                                            if (int.TryParse(Line, out int Parsed))
                                                             {
+                                                                for (int i = 0; i < Parsed; i++)
+                                                                {
+                                                                    temp += Variables[VariableIndex].Value;
+                                                                }
+                                                            }
+                                                            Variables[VariableIndex].Value = temp;
+                                                            break;
+                                                        case VariableType.Int:
+                                                            Variables[VariableIndex].IntValue *= int.Parse(Line);
+                                                            break;
+                                                        case VariableType.Float:
+                                                            Variables[VariableIndex].FloatValue *= float.Parse(Line);
+                                                            break;
+                                                        case VariableType.Double:
+                                                            Variables[VariableIndex].DoubleValue *= double.Parse(Line);
+                                                            break;
+                                                        case VariableType.Char:
+                                                            Variables[VariableIndex].CharValue *= Line[0];
+                                                            break;
+                                                    }
+                                                    isVariable = false;
+                                                    VariableIndex = -99;
+                                                    VariableName = null;
+                                                    break;
+                                                case "/=":
+                                                    Line = Line.Remove(Line.Length - 1);
+                                                    switch (VariableName.Type)
+                                                    {
+                                                        case VariableType.String:
+                                                            throw new Exception("Cannot divide a string.");
+                                                        case VariableType.Int:
+                                                            Variables[VariableIndex].IntValue /= int.Parse(Line);
+                                                            break;
+                                                        case VariableType.Float:
+                                                            Variables[VariableIndex].FloatValue /= float.Parse(Line);
+                                                            break;
+                                                        case VariableType.Double:
+                                                            Variables[VariableIndex].DoubleValue /= double.Parse(Line);
+                                                            break;
+                                                        case VariableType.Char:
+                                                            Variables[VariableIndex].CharValue /= Line[0];
+                                                            break;
+                                                    }
+                                                    isVariable = false;
+                                                    VariableIndex = -99;
+                                                    VariableName = null;
+                                                    break;
+                                                default:
+                                                    Line = Line.Remove(Line.Length - 1);
+                                                    switch (VariableName.Type)
+                                                    {
+                                                        case VariableType.String:
+                                                            Variables[VariableIndex].Value = Output;
+                                                            break;
+                                                        case VariableType.Int:
+                                                            switch(Parts.Length)
+                                                            {
+                                                                case 1:
+                                                                    if(int.TryParse(Output, out int Result))
+                                                                    {
+                                                                        Variables[VariableIndex].IntValue = Result;
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        Variables[VariableIndex].IntValue = (int)MathOperations.Calculate(Parts[0], Variables);
+                                                                    }
+                                                                    break;
                                                                 case 2:
-                                                                    Variables[VariableIndex].IntValue = Variables.Find(d => d.ID == Part[0]).Value.Length;
+                                                                    string[] Part = Line.Split(".");
+                                                                    switch (Part.Length)
+                                                                    {
+                                                                        case 2:
+                                                                            Variables[VariableIndex].IntValue = Variables.Find(d => d.ID == Part[0]).Value.Length;
+                                                                            break;
+                                                                    }
                                                                     break;
                                                             }
                                                             break;
+                                                        case VariableType.Bool:
+                                                            bool.TryParse(Output, out bool ParsedBool);
+                                                            Variables[VariableIndex].BoolValue = ParsedBool;
+                                                            break;
+                                                        case VariableType.Float:
+                                                            Variables[VariableIndex].FloatValue = float.Parse(Output);
+                                                            break;
+                                                        case VariableType.Double:
+                                                            Variables[VariableIndex].DoubleValue = double.Parse(Output);
+                                                            break;
+                                                        case VariableType.Char:
+                                                            Variables[VariableIndex].CharValue = Output[0];
+                                                            break;
+                                                        case VariableType.Bitmap:
+                                                            if (!Line.Contains("["))
+                                                            {
+                                                                string Recieved = Line.Split('=')[1].Replace("new Bitmap", "").Trim().Remove(0, 1);
+                                                                string[] RecievedParts = Recieved.Remove(Recieved.Length - 1).Replace(" ", "").Split(',');
+                                                                uint Width = uint.Parse(RecievedParts[0]);
+                                                                uint Height = uint.Parse(RecievedParts[1]);
+                                                                Variables[VariableIndex].BitmapValue = new Bitmap(Width, Height, ColorDepth.ColorDepth32);
+                                                            }
+                                                            else
+                                                            {
+                                                                string Recieved = Line.Replace(" ", "").Replace(VariableName.ID, "");
+                                                                string[] Part = Recieved.Split("=");
+                                                                int XCoord = int.Parse(Part[0].Replace("[", "").Replace("]", "").Split(",")[0]);
+                                                                int YCoord = int.Parse(Part[0].Replace("[", "").Replace("]", "").Split(",")[0]);
+                                                                int ColorValue = 0;
+                                                                if (int.TryParse(Part[1], out int Result))
+                                                                {
+                                                                    ColorValue = Result;
+                                                                }
+                                                                else
+                                                                {
+                                                                    ColorValue += (int)MathOperations.Calculate(Part[1], Variables);
+                                                                }
+                                                                ImprovedVBE.DrawPixel(Variables[VariableIndex].BitmapValue, XCoord, YCoord, ColorValue);
+                                                            }
+                                                            break;
                                                     }
+                                                    isVariable = false;
+                                                    VariableIndex = -99;
+                                                    VariableName = null;
+                                                    Operator = "";
                                                     break;
-                                                case VariableType.Bool:
-                                                    bool.TryParse(Output, out bool ParsedBool);
-                                                    Variables[VariableIndex].BoolValue = ParsedBool;
+                                            }
+                                            break;
+                                        case "Graphical":
+                                            #region Extract Parts
+                                            // Step 1: Define possible operators
+                                            string[] operators = { "+=", "-=", "*=", "/=", "=" };
+
+                                            // Step 2: Find the operator and split the line
+                                            string foundOperator = null;
+                                            string lhs = "";
+                                            string rhs = "";
+                                            int operatorIndex = -1;
+
+                                            foreach (var op in operators)
+                                            {
+                                                operatorIndex = Line.IndexOf(op);
+                                                if (operatorIndex != -1)
+                                                {
+                                                    foundOperator = op;
                                                     break;
-                                                case VariableType.Float:
-                                                    Variables[VariableIndex].FloatValue = float.Parse(Output);
-                                                    break;
-                                                case VariableType.Double:
-                                                    Variables[VariableIndex].DoubleValue = double.Parse(Output);
-                                                    break;
-                                                case VariableType.Char:
-                                                    Variables[VariableIndex].CharValue = Output[0];
-                                                    break;
-                                                case VariableType.Bitmap:
-                                                    if (!Line.Contains("["))
-                                                    {
-                                                        string Recieved = Line.Split('=')[1].Replace("new Bitmap", "").Trim().Remove(0, 1);
-                                                        string[] RecievedParts = Recieved.Remove(Recieved.Length - 1).Replace(" ", "").Split(',');
-                                                        uint Width = uint.Parse(RecievedParts[0]);
-                                                        uint Height = uint.Parse(RecievedParts[1]);
-                                                        Variables[VariableIndex].BitmapValue = new Bitmap(Width, Height, ColorDepth.ColorDepth32);
-                                                    }
-                                                    else
-                                                    {
-                                                        string Recieved = Line.Replace(" ", "").Replace(VariableName.ID, "");
-                                                        string[] Part = Recieved.Split("=");
-                                                        int XCoord = int.Parse(Part[0].Replace("[", "").Replace("]", "").Split(",")[0]);
-                                                        int YCoord = int.Parse(Part[0].Replace("[", "").Replace("]", "").Split(",")[0]);
-                                                        int ColorValue = 0;
-                                                        if (int.TryParse(Part[1], out int Result))
+                                                }
+                                            }
+
+                                            if (foundOperator != null && operatorIndex != -1)
+                                            {
+                                                // Step 3: Get LHS (before the operator) and RHS (after the operator)
+                                                lhs = Line.Substring(0, operatorIndex).Trim();
+                                                rhs = Line.Substring(operatorIndex + foundOperator.Length).Trim();
+
+                                                // Step 4: Remove semicolon from the RHS if present
+                                                if (rhs.EndsWith(";"))
+                                                {
+                                                    rhs = rhs.Substring(0, rhs.Length - 1).Trim();
+                                                }
+                                            }
+                                            #endregion Extract Parts
+
+                                            //This string is used to extract which property of the element needs to be modified
+                                            //There's also no semicolon at the end of the line
+                                            if (lhs.Contains("."))
+                                            {
+                                                string PropetyType = lhs.Split(".")[1];
+
+                                                
+
+                                                switch (PropetyType)
+                                                {
+                                                    case "X":
+                                                        Elements[VariableIndex].X = (int)MathOperations.Calculate(rhs, Variables);
+                                                        break;
+                                                    case "Y":
+                                                        Elements[VariableIndex].Y = (int)MathOperations.Calculate(rhs, Variables);
+                                                        break;
+                                                    case "Width":
+                                                        Elements[VariableIndex].Width = (int)MathOperations.Calculate(rhs, Variables);
+                                                        break;
+                                                    case "Height":
+                                                        Elements[VariableIndex].Height = (int)MathOperations.Calculate(rhs, Variables);
+                                                        break;
+                                                    case "visible":
+                                                        if(bool.TryParse(rhs, out bool ParsedBool))
                                                         {
-                                                            ColorValue = Result;
+                                                            //TODO: Implement visibility to elements
+                                                            //Elements[VariableIndex].Visible = ParsedBool;
                                                         }
-                                                        else
+                                                        break;
+                                                    case "Text":
+                                                        Elements[VariableIndex].Text = StringUnifier.StringAssembler(rhs, Variables);
+                                                        //Elements.Find(d => d.ID == "debug").Text += Line;
+                                                        break;
+                                                    case "Color":
+                                                        rhs = rhs.Replace(" ", "");
+                                                        Elements[VariableIndex].Color = ImprovedVBE.colourToNumber(int.Parse(rhs.Split(",")[0]), int.Parse(rhs.Split(",")[1]), int.Parse(rhs.Split(",")[2]));
+                                                        break;
+                                                    case "Points":
+                                                        try
                                                         {
-                                                            ColorValue += (int)MathOperations.Calculate(Part[1], Variables);
+                                                            Elements[VariableIndex].Points.Clear();
+                                                            for (int i = 0; i < int.Parse(rhs); i++)
+                                                            {
+                                                                Elements[VariableIndex].Points.Add(new Point(0, 0));
+                                                            }
                                                         }
-                                                        ImprovedVBE.DrawPixel(Variables[VariableIndex].BitmapValue, XCoord, YCoord, ColorValue);
-                                                    }
-                                                    break;
+                                                        catch(Exception e)
+                                                        {
+                                                            TaskScheduler.Apps.Add(new MsgBox(999, 100, 100, 300, 200, "Error", e.Message, ImprovedVBE.ScaleImageStock(Resources.Web, 56, 56)));
+                                                        }
+                                                        break;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                //This is for the point coordinates for graphics rendering(rectangles, lines, ellipses, etc.)
+                                                int IndexOfPoint = int.Parse(lhs.Remove(lhs.Length - 1).Split("[")[1]);
+                                                int XCoord = (int)MathOperations.Calculate(rhs.Replace(" ", "").Split(",")[0], Variables);
+                                                int YCoord = (int)MathOperations.Calculate(rhs.Replace(" ", "").Split(",")[1], Variables);
+                                                Elements[VariableIndex].Points[IndexOfPoint] = new Point(XCoord, YCoord);
                                             }
                                             isVariable = false;
                                             VariableIndex = -99;
@@ -939,6 +1125,8 @@ namespace CrystalOSAlpha.Programming.CrystalSharp
                                                             {
                                                                 AllowExecution = false; // If preceding conditions were true, disallow execution of else block
                                                             }
+
+                                                            // Handle the rest of the else block (EndOfElse logic)
                                                             int Opening = 0;
                                                             string[] lines = Cached.Split('\n');
                                                             for (int i = LineCounter + 1; i < lines.Length; i++)
@@ -951,7 +1139,7 @@ namespace CrystalOSAlpha.Programming.CrystalSharp
                                                                 {
                                                                     Opening--;
                                                                 }
-                                                                if(Opening == 0)
+                                                                if (Opening == 0)
                                                                 {
                                                                     EndOfElse = i;
                                                                     break;
@@ -1473,6 +1661,22 @@ namespace CrystalOSAlpha.Programming.CrystalSharp
             // For now, we'll just output the message to the console.
             //Output += "\n" + message;
         }
+
+        public static string RemoveCommentsAndBlankLines(string code)
+        {
+            string result = "";
+            string[] lines = code.Split('\n');
+            foreach (var line in lines)
+            {
+                string trimmedLine = line.Trim();
+                if (trimmedLine.Length > 0 && !trimmedLine.StartsWith("//"))
+                {
+                    result += trimmedLine + "\n";
+                }
+            }
+            return result;
+        }
+
     }
 
     public class ForLoops

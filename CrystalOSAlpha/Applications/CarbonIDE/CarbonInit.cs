@@ -87,6 +87,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     dropdowns.Add(new Dropdown(10, 167, 325, 25, "Options", value));
                 }
 
+                Directory.CreateDirectory("0:\\User\\Source");
                 foreach (DirectoryEntry dir in Kernel.fs.GetDirectoryListing("0:\\User\\Source"))
                 {
                     if (dir.mEntryType == DirectoryEntryTypeEnum.Directory)
@@ -204,8 +205,7 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                             ide.z = 999;
                                             ide.icon = ImprovedVBE.ScaleImageStock(Resources.IDE, 56, 56);
                                             ide.name = "CarbonIDE";
-                                            ide.Path = v.fullPath + "\\" + v.name;
-                                            ide.namedProject = v.name;
+                                            ide.Path = v.fullPath;
 
                                             TaskScheduler.Apps.Add(ide);
 
@@ -300,7 +300,6 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                                         ide.icon = ImprovedVBE.ScaleImageStock(Resources.IDE, 56, 56);
                                         ide.name = "CarbonIDE";
                                         ide.Path = SourceofProject + "\\" + namedProject;
-                                        ide.namedProject = namedProject;
 
                                         TaskScheduler.Apps.Add(ide);
 

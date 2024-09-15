@@ -1,5 +1,7 @@
 ﻿using Cosmos.System.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
+using System.Collections.Generic;
+using System.Drawing;
 
 namespace CrystalOSAlpha.UI_Elements
 {
@@ -10,7 +12,6 @@ namespace CrystalOSAlpha.UI_Elements
         public int Width { get; set; }
         public int Height { get; set; }
         public string Text { get; set; }
-        public int TextColor { get; set; }
         public string ID { get; set; }
         public string FontType { get; set; }
         public bool Clicked { get; set; }
@@ -22,13 +23,14 @@ namespace CrystalOSAlpha.UI_Elements
         public int LockedPos { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
         public int MinVal { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
         public int MaxVal { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public List<Point> Points { get; set; }
 
         public label(int X, int Y, string Text, int TextColor, string iD)
         {
             this.X = X;
             this.Y = Y;
             this.Text = Text;
-            this.TextColor = TextColor;
+            this.Color = TextColor;
             this.ID = iD;
             this.TypeOfElement = TypeOfElement.Label;
         }
@@ -37,7 +39,7 @@ namespace CrystalOSAlpha.UI_Elements
             this.X = X;
             this.Y = Y;
             this.Text = Text;
-            this.TextColor = TextColor;
+            this.Color = TextColor;
             this.FontType = fontType;
             this.ID = iD;
             this.TypeOfElement = TypeOfElement.Label;
@@ -46,11 +48,11 @@ namespace CrystalOSAlpha.UI_Elements
         {
             if(FontType != null)
             {
-                BitFont.DrawBitFontString(canvas, FontType, System.Drawing.Color.FromArgb(TextColor), Text, X, Y + 22);
+                BitFont.DrawBitFontString(canvas, FontType, System.Drawing.Color.FromArgb(Color), Text, X, Y + 22);
             }
             else
             {
-                BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", System.Drawing.Color.FromArgb(TextColor), Text, X, Y + 22);
+                BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", System.Drawing.Color.FromArgb(Color), Text, X, Y + 22);
             }
         }
 

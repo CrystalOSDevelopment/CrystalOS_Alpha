@@ -1,4 +1,6 @@
 ﻿using Cosmos.System.Graphics;
+using System.Collections.Generic;
+using System.Drawing;
 
 namespace CrystalOSAlpha.UI_Elements
 {
@@ -18,6 +20,7 @@ namespace CrystalOSAlpha.UI_Elements
         public bool Clicked { get; set; }
         public string Text { get; set; }
         public string ID { get; set; }
+        public List<Point> Points { get; set; }
         public TypeOfElement TypeOfElement { get; set; }
         public void Render(Bitmap Canvas);
         public bool CheckClick(int X, int Y);
@@ -37,6 +40,14 @@ namespace CrystalOSAlpha.UI_Elements
         VerticalScrollbar,
         Label,
         ProgressBar,
-        None
+        None,
+
+        //Graphical Elements(polygons, if you will)
+
+        Triangle,
+        Rectangle,
+        Circle,
+        Line,
+        Polygon
     }
 }

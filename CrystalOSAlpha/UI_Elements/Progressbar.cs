@@ -1,5 +1,7 @@
 ﻿using Cosmos.System.Graphics;
 using System;
+using System.Collections.Generic;
+using System.Drawing;
 
 namespace CrystalOSAlpha.UI_Elements
 {
@@ -20,6 +22,7 @@ namespace CrystalOSAlpha.UI_Elements
         public string Text { get; set; }
         public string ID { get; set; }
         public TypeOfElement TypeOfElement { get; set; }
+        public List<Point> Points { get; set; }
         public Progressbar(int x, int y, int width, int height, int color, int value, string iD)
         {
             X = x;
