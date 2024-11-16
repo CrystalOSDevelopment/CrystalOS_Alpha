@@ -210,5 +210,14 @@ namespace CrystalOSAlpha.Programming
             }
             return parts;
         }
+        public static List<byte> ToList(byte[] content)
+        {
+            List<byte> parts = new List<byte>();
+            foreach (byte s in content)
+            {
+                parts.Add(s);
+            }
+            return parts;
+        }
     }
 }

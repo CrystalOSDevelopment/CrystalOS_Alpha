@@ -516,14 +516,42 @@ namespace CrystalOSAlpha.Applications.FileSys
                                             wn.content = File.ReadAllText(entry.fullPath);
                                             wn.x = 100;
                                             wn.y = 100;
-                                            wn.width = 700;
-                                            wn.height = 420;
+                                            wn.width = 738;
+                                            wn.height = 488;
                                             wn.z = 999;
                                             wn.source = entry.fullPath;
                                             wn.icon = ImprovedVBE.ScaleImageStock(Resources.Notepad, 56, 56);
                                             wn.name = "Webs... - " + entry.name;
 
                                             TaskScheduler.Apps.Add(wn);
+                                        }
+                                        else if (entry.name.ToLower().EndsWith(".bmp"))
+                                        {
+                                            try
+                                            {
+                                                //ImprovedVBE.DrawImage(new Bitmap(entry.fullPath), 500, 500, ImprovedVBE.data);
+                                                //try
+                                                //{
+                                                //    byte[] data = File.ReadAllBytes(entry.fullPath);
+                                                //    int xVal = 500;
+                                                //    int yVal = 500;
+                                                //    for (int i = 0; i < data.Length; i += 3)
+                                                //    {
+                                                //        if(xVal == 600)
+                                                //        {
+                                                //            yVal += 1;
+                                                //            xVal = 500;
+                                                //        }
+                                                //        ImprovedVBE.DrawPixel(ImprovedVBE.data, xVal, yVal, (data[i] << 16) + (data[i + 1] << 8) + data[i + 2]);
+                                                //        xVal += 1;
+                                                //    }
+                                                //}
+                                                //catch { }
+                                                TaskScheduler.Apps.Add(new MsgBox(999, ImprovedVBE.width / 2 - 200, ImprovedVBE.height / 2 - 100, 400, 200, "Error", "" + File.ReadAllBytes(entry.fullPath).Length, icon));
+                                            }
+                                            catch(Exception ex)
+                                            {
+                                            }
                                         }
                                         else if (entry.name.ToLower().EndsWith(".cmd"))
                                         {
@@ -620,7 +648,21 @@ namespace CrystalOSAlpha.Applications.FileSys
                     }
                 }
             }
-            ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
+
+            if (ImprovedVBE.RequestRedraw == true)
+            {
+                switch (GlobalValues.TaskBarType)
+                {
+                    case "Classic":
+                        ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
+                        break;
+                    case "Nostalgia":
+                        ImprovedVBE.DrawImage(window, x, y, ImprovedVBE.cover);
+                        break;
+                }
+            }
+
+            //ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
         }
 
         public void RightClick()

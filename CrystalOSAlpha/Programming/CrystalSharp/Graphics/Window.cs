@@ -498,6 +498,7 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.Graphics
                                     Heap.Collect();
                                     break;
                             }
+                            DelayLine = 0;
                             break;
                     }
                     break;

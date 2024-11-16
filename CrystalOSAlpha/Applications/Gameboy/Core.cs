@@ -109,7 +109,19 @@ namespace CrystalOSAlpha.Applications.Gameboy
 
             PPU.x = x + 1;
             PPU.y = y + 22 + 26;
-            ImprovedVBE.DrawImageAlpha(canvas, x, y, ImprovedVBE.cover);
+            if (ImprovedVBE.RequestRedraw == true)
+            {
+                switch (GlobalValues.TaskBarType)
+                {
+                    case "Classic":
+                        ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
+                        break;
+                    case "Nostalgia":
+                        ImprovedVBE.DrawImage(window, x, y, ImprovedVBE.cover);
+                        break;
+                }
+            }
+            //ImprovedVBE.DrawImageAlpha(canvas, x, y, ImprovedVBE.cover);
 
             foreach (var button in Buttons)
             {

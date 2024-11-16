@@ -1,7 +1,9 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Audio.IO;
 using Cosmos.System.Graphics;
+using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 
@@ -55,13 +57,30 @@ namespace CrystalOSAlpha.UI_Elements
         public static Bitmap canvas_Blank;
         public void Render(Bitmap canvas)
         {
-            canvas_Blank = new Bitmap((uint)Width, (uint)Height, ColorDepth.ColorDepth32);
-            ImprovedVBE.DrawFilledRectangle(canvas, ImprovedVBE.colourToNumber(36, 36, 36), X, Y, Width, Height, false);
+            switch (GlobalValues.TaskBarType)
+            {
+                case "Classic":
+                    canvas_Blank = new Bitmap((uint)Width, (uint)Height, ColorDepth.ColorDepth32);
+                    ImprovedVBE.DrawFilledRectangle(canvas, ImprovedVBE.colourToNumber(36, 36, 36), X, Y, Width, Height, false);
 
-            ImprovedVBE.DrawFilledRectangle(canvas, Color, X + 2, Y + 2, Width - 4, Height - 4, false);
+                    ImprovedVBE.DrawFilledRectangle(canvas, Color, X + 2, Y + 2, Width - 4, Height - 4, false);
 
-            offset = BitFont.DrawBitFontString(canvas_Blank, "ArialCustomCharset16", System.Drawing.Color.White, Text, Width - (Text.Length * 6) - 3, Height / 2 - 8);//Used to center text
-            BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", ComplimentaryColor.Generate(Color), Text, X + (Width / 2) - (offset / 2), Y + Height / 2 - (Text.Split('\n').Length * 9));
+                    offset = BitFont.DrawBitFontString(canvas_Blank, "ArialCustomCharset16", System.Drawing.Color.White, Text, Width - (Text.Length * 6) - 3, Height / 2 - 8);//Used to center text
+                    BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", ComplimentaryColor.Generate(Color), Text, X + (Width / 2) - (offset / 2), Y + Height / 2 - (Text.Split('\n').Length * 9));
+                    break;
+                case "Nostalgia":
+                    try
+                    {
+                        canvas_Blank = new Bitmap((uint)Width, (uint)Height, ColorDepth.ColorDepth32);
+                        offset = BitFont.DrawBitFontString(canvas_Blank, "ArialCustomCharset16", System.Drawing.Color.White, Text, Width - (Text.Length * 6) - 3, Height / 2 - 8);//Used to center text
+                        
+                        System.Drawing.Color color = System.Drawing.Color.FromArgb(Color);
+                        RenderGlassyButton(canvas, X, Y, Width, Height, color.R, color.G, color.B); // Example with a blue base color
+                        BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", ComplimentaryColor.Generate(Color), Text, X + (Width / 2) - (offset / 2), Y + Height / 2 - (Text.Split('\n').Length * 9));
+                    }
+                    catch { }
+                    break;
+            }
         }
 
         public bool CheckClick(int X, int Y)
@@ -74,6 +93,7 @@ namespace CrystalOSAlpha.UI_Elements
                 {
                     if(Clicked == false)
                     {
+                        SavedColor = Color;
                         Color = ComplimentaryColor.Generate(Color).ToArgb();
                     }
                     Clicked = true;
@@ -99,6 +119,40 @@ namespace CrystalOSAlpha.UI_Elements
         public string GetValue(int X, int Y)
         {
             throw new System.NotImplementedException();
+        }
+
+        public void RenderGlassyButton(Bitmap canvas, int x, int y, int width, int height, int baseR, int baseG, int baseB)
+        {
+            // Number of gradient steps and pixel decrease for each layer
+            int gradientSteps = 5;
+            int stepSize = 2;
+
+            // Draw outer layers to simulate gradient
+            for (int i = 0; i < gradientSteps; i++)
+            {
+                int currentWidth = width - (i * stepSize * 2);
+                int currentHeight = height - (i * stepSize * 2);
+                int offsetX = x + (i * stepSize);
+                int offsetY = y + (i * stepSize);
+
+                // Adjust the color by gradually increasing brightness
+                int adjustedR = Math.Min(255, baseR + i * 10);
+                int adjustedG = Math.Min(255, baseG + i * 10);
+                int adjustedB = Math.Min(255, baseB + i * 10);
+
+                int layerColor = ImprovedVBE.colourToNumber(adjustedR, adjustedG, adjustedB);
+                ImprovedVBE.DrawFilledRectangle(canvas, layerColor, offsetX, offsetY, currentWidth, currentHeight);
+            }
+
+            if(width >= 30)
+            {
+                // Add a lighter highlight at the top to create a gloss effect
+                int highlightR = Math.Min(255, baseR + 80); // Increase brightness for the highlight
+                int highlightG = Math.Min(255, baseG + 80);
+                int highlightB = Math.Min(255, baseB + 80);
+
+                ImprovedVBE.DrawFilledRectangle(canvas, ImprovedVBE.colourToNumber(highlightR, highlightG, highlightB), x + 4, y + 4, width - 8, height / 3);
+            }
         }
     }
 

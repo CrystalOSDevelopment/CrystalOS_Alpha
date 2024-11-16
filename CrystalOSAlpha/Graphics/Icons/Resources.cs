@@ -40,5 +40,9 @@ namespace CrystalOSAlpha.Graphics.Icons
         //Uncomment this to add video
         //[ManifestResourceStream(ResourceName = "CrystalOSAlpha.Applications.Video_Player.compressed_video.dat")]
         public static byte[] TotalBytes;
+
+        [ManifestResourceStream(ResourceName = "CrystalOSAlpha.Graphics.Engine.arial.ttf")] public static byte[] ANormal;
+
+        [ManifestResourceStream(ResourceName = "CrystalOSAlpha.Graphics.Engine.ARIBL0.ttf")] public static byte[] ABold;
     }
 }

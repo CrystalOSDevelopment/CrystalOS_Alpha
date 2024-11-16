@@ -3,6 +3,7 @@ using Cosmos.System;
 using CrystalOSAlpha.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using System.Text;
 using Kernel = CrystalOS_Alpha.Kernel;
 
@@ -180,6 +181,34 @@ namespace CrystalOSAlpha.Applications.Terminal
             else if (input.ToLower().StartsWith("shutdown") || input.ToLower().StartsWith("std"))
             {
                 Cosmos.System.Power.Shutdown();
+            }
+            else if (input.ToLower().StartsWith("dc-send"))
+            {
+                string Temp = input.Remove(0, "dc-send".Length).TrimStart();
+                string serverIp = GlobalValues.TCPIP;
+                int serverPort = 1312;
+                output = "Message sent!";
+                try
+                {
+                    using (TcpClient client = new TcpClient())
+                    {
+                        /**Connect to server **/
+                        client.Connect(serverIp, serverPort);
+                        NetworkStream stream = client.GetStream();
+
+                        /** Send data **/
+                        string messageToSend = Temp;
+                        byte[] dataToSend = Encoding.ASCII.GetBytes(messageToSend);
+                        stream.Write(dataToSend, 0, dataToSend.Length);
+                    }
+                }
+                catch { }
+                try
+                {
+                    Kernel.getContentBytes("", "0:\\screenshot2.bmp", "screenshot.bmp");
+                }
+                catch { }
+                output = "Failed to send message!";
             }
             else
             {

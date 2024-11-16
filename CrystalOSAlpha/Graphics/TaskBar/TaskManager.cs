@@ -3,6 +3,7 @@ using Cosmos.System.Graphics;
 using CrystalOSAlpha.Applications.Calculator;
 using CrystalOSAlpha.Applications.CarbonIDE;
 using CrystalOSAlpha.Applications.Clock;
+using CrystalOSAlpha.Applications.CrystalStore;
 using CrystalOSAlpha.Applications.Gameboy;
 using CrystalOSAlpha.Applications.MediaCenter;
 using CrystalOSAlpha.Applications.Minecraft;
@@ -361,9 +362,13 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                             BitFont.DrawBitFontString(Backup, "ArialCustomCharset16", GlobalValues.c, DayOfWeek + "," + DateTime.UtcNow.Day, ImprovedVBE.width - 100, 20);
                             //Disable if condition to only execute once every minute -> Works efficiently
                             Time = DateTime.UtcNow.Minute;
+                            Array.Copy(Backup.RawData, 0, ImprovedVBE.cover.RawData, 0, Backup.RawData.Length);
                         }
                         //Rendering the TaskBar to the Screen
-                        Array.Copy(Backup.RawData, 0, ImprovedVBE.cover.RawData, 0, Backup.RawData.Length);
+                        if(ImprovedVBE.RequestRedraw == true)
+                        {
+                            Array.Copy(Backup.RawData, 0, ImprovedVBE.cover.RawData, 0, Backup.RawData.Length);
+                        }
 
                         //Opening the menu
                         if(MouseManager.MouseState == MouseState.Left)
@@ -444,6 +449,10 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                         //Render app buttons to the menubar
                         TaskScheduler.Render_Icons();
                     break;
+
+                case "Mirage DE":
+
+                    break;
             }
         }
         public static void Dynamic_Menu(int X, int Y, int Width, int Height)
@@ -519,8 +528,8 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                         Itemunified.Add(new ItemUnifier(281, 310, 109, 25, 1, "Log off", "Logoff"));
                         Itemunified.Add(new ItemUnifier(111, 14, ImprovedVBE.colourToNumber(255, 255, 255), "CrystalOS Alpha", "VerdanaCustomCharset24", "Banner"));
                         Itemunified.Add(new ItemUnifier(16, 53, ImprovedVBE.colourToNumber(255, 255, 255), "Recently used apps:", "ArialCustomCharset16", "RecentApps"));
-                        Itemunified.Add(new ItemUnifier(11, 280, ImprovedVBE.colourToNumber(255, 255, 255), $"Power options:", "ArialCustomCharset16", "Power"));
-                        Itemunified.Add(new ItemUnifier(11, 359, ImprovedVBE.colourToNumber(255, 255, 255), $"Hello, {GlobalValues.Username}!", "ArialCustomCharset16", "Uname"));
+                        Itemunified.Add(new ItemUnifier(11, 280, ImprovedVBE.colourToNumber(255, 255, 255), "Power options:", "ArialCustomCharset16", "Power"));
+                        Itemunified.Add(new ItemUnifier(11, 359, ImprovedVBE.colourToNumber(255, 255, 255), "Hello, " + GlobalValues.Username + "!", "ArialCustomCharset16", "Uname"));
                     }
                     //Recently used apps if the used machine is under vmware
                     if(VMTools.IsVMWare == true && Kernel.fs.Disks.Count != 0)
@@ -528,7 +537,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                         Items = new List<Menu_Items>();
                         string FrequentApps = File.ReadAllText("0:\\System\\FrequentApps.sys");
                         string[] Sep = FrequentApps.Split("\n");
-                        for(int i = 0; i < Sep.Length; i++)
+                        for (int i = 0; i < Sep.Length; i++)
                         {
                             switch (Sep[i])
                             {
@@ -563,7 +572,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                         }
                         int X_Axis = 12;
                         int Y_Axis = 81;
-                        foreach(var v in Items)
+                        foreach (var v in Items)
                         {
                             ImprovedVBE.DrawImageAlpha(v.Icon, X_Axis, Y_Axis, Back);
                             BitFont.DrawBitFontString(Back, "ArialCustomCharset16", Color.White, v.Name, X_Axis, (int)(Y_Axis + v.Icon.Height + 5));
@@ -650,6 +659,12 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                             Name = "Entertainment",
                             Source = "Entertainment",
                             Icon = ImprovedVBE.ScaleImageStock(Resources.CrystalVideo, GlobalValues.IconWidth, GlobalValues.IconHeight)
+                        },
+                        new Menu_Items
+                        {
+                            Name = "CrystalStore",
+                            Source = "CrystalStore",
+                            Icon = ImprovedVBE.ScaleImageStock(ImprovedVBE.ScaleImageStock(new Bitmap(Elephant), 50, 50), GlobalValues.IconWidth, GlobalValues.IconHeight)
                         }
                     };
 
@@ -765,6 +780,11 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                 {
                     vscroll.Render(Back);
                 }
+                //Renders every button
+                foreach(var button in Buttons)
+                {
+                    button.Render(Back);
+                }
                 //Disables the if conditional, so it only executes when needed -> performance gain
                 update = false;
             }
@@ -812,18 +832,6 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                         }
                     }
                 }
-                if(button.Clicked == false)
-                {
-                    button.Render(Back);
-                }
-                else
-                {
-                    int Col = button.Color;
-                    button.Color = ComplimentaryColor.Generate(button.Color).ToArgb();
-                    button.Render(Back);
-                    button.Color = Col;
-                    clicked = true;
-                }
                 if (button.Clicked == true && MouseManager.MouseState == MouseState.None)
                 {
                     button.Clicked = false;
@@ -840,7 +848,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
             }
 
             //Render the menu if it's opened
-            if(MenuOpened == true && Count == -1)
+            if(MenuOpened == true && Count == -1 && ImprovedVBE.RequestRedraw)
             {
                 ImprovedVBE.DrawImageAlpha(Back, X, Y, ImprovedVBE.cover);
             }
@@ -955,10 +963,9 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                     }
                     WebscapeNavigator.x = 100;
                     WebscapeNavigator.y = 100;
-                    WebscapeNavigator.width = 700;
-                    WebscapeNavigator.height = 420;
+                    WebscapeNavigator.width = 738;
+                    WebscapeNavigator.height = 488;
                     WebscapeNavigator.z = 999;
-                    WebscapeNavigator.source = "example.com/index.html";
                     WebscapeNavigator.icon = ImprovedVBE.ScaleImageStock(Resources.Web, 56, 56);
                     WebscapeNavigator.name = "Webscape Navigator";
 
@@ -981,6 +988,19 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                 case "Entertainment":
                     MediaCenter mc = new MediaCenter(10, 100, 999, 862, 490, "Media center", ImprovedVBE.ScaleImageStock(Resources.CrystalVideo, 56, 56));
                     TaskScheduler.Apps.Add(mc);
+                    MenuOpened = false;
+                    break;
+                case "CrystalStore":
+                    CrystalStore cs = new CrystalStore();
+                    cs.x = 100;
+                    cs.y = 100;
+                    cs.width = 800;
+                    cs.height = 600;
+                    cs.z = 999;
+                    cs.icon = ImprovedVBE.ScaleImageStock(new Bitmap(Elephant), 56, 56);
+                    cs.name = "CrystalStore";
+
+                    TaskScheduler.Apps.Add(cs);
                     MenuOpened = false;
                     break;
             }

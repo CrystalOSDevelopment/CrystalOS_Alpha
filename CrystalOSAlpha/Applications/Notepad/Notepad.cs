@@ -1,5 +1,6 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
+using CrystalOS_Alpha.Graphics.Widgets;
 using CrystalOSAlpha.Applications.CarbonIDE;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
@@ -72,6 +73,9 @@ namespace CrystalOSAlpha.Applications.Notepad
                 UIElements.Add(new Button(280, 27, 90, 20, "Save", 1));
 
                 UIElements.Add(new VerticalScrollbar(width - 22, 52, 20, height - 60, 20, 0, content.Split('\n').Length * 16, "ScrollRight"));
+
+                content = ChuckNorrisFacts.LineBreak(content, 40);
+                Buffered_Content = content;
 
                 initial = false;
             }
@@ -245,7 +249,21 @@ namespace CrystalOSAlpha.Applications.Notepad
                     }
                 }
             }
-            ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
+
+            if (ImprovedVBE.RequestRedraw == true)
+            {
+                switch (GlobalValues.TaskBarType)
+                {
+                    case "Classic":
+                        ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
+                        break;
+                    case "Nostalgia":
+                        ImprovedVBE.DrawImage(window, x, y, ImprovedVBE.cover);
+                        break;
+                }
+            }
+
+            //ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
         }
 
         public void RightClick()

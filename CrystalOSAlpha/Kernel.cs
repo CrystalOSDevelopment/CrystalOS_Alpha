@@ -1,8 +1,6 @@
-﻿using Cosmos.Core.Memory;
-using Cosmos.System;
+﻿using Cosmos.System;
 using Cosmos.System.FileSystem;
 using Cosmos.System.Graphics;
-using Cosmos.System.Network.IPv4;
 using CrystalOS_Alpha.Graphics.Widgets;
 using CrystalOSAlpha;
 using CrystalOSAlpha.Graphics;
@@ -15,9 +13,8 @@ using System.Net.Sockets;
 using System.Text;
 using System;
 using Sys = Cosmos.System;
-using Cosmos.HAL;
-using Cosmos.System.Network.Config;
-using Cosmos.System.Network.IPv4.UDP.DNS;
+using System.IO;
+using System.Collections.Generic;
 
 namespace CrystalOS_Alpha
 {
@@ -29,26 +26,9 @@ namespace CrystalOS_Alpha
         public static CosmosVFS fs = new CosmosVFS();
         public static bool Is_KeyboardMouse = false;
         public static bool IsDiskSupport = false;
+        public static bool IsNetSupport = false;
         protected override void BeforeRun()
         {
-            try
-            {
-                NetworkDevice nic = NetworkDevice.GetDeviceByName("eth0"); //get network device by name
-                IPConfig.Enable(nic, new Address(192, 168, 1, 69), new Address(255, 255, 255, 0), new Address(192, 168, 1, 254)); //enable IPv4 configuration
-
-                using (var xClient = new Cosmos.System.Network.IPv4.UDP.DHCP.DHCPClient())
-                {
-                    /** Send a DHCP Discover packet **/
-                    //This will automatically set the IP config after DHCP response
-                    xClient.SendDiscoverPacket();
-
-                }
-            }
-            catch (Exception ex)
-            {
-               
-            }
-
             #region Font Registering
             Fonts.RegisterFonts();
             #endregion Font Registering
@@ -92,9 +72,69 @@ namespace CrystalOS_Alpha
             n.y = 200;
             n.z = 999;
             n.name = null;
-            i.minimised = false;
+            n.minimised = false;
             n.icon = ImprovedVBE.ScaleImageStock(Resources.Web, 56, 56);
             TaskScheduler.Apps.Add(n);
+
+            if (IsNetSupport)
+            {
+                //Init weather data from server
+                string serverIp = GlobalValues.TCPIP;
+                int serverPort = 1312;
+                try
+                {
+                    using (TcpClient client = new TcpClient())
+                    {
+                        /**Connect to server **/
+                        client.Connect(serverIp, serverPort);
+                        NetworkStream stream = client.GetStream();
+
+                        /** Send data **/
+                        string messageToSend = "Weather:London:UK";
+                        byte[] dataToSend = Encoding.ASCII.GetBytes(messageToSend);
+                        stream.Write(dataToSend, 0, dataToSend.Length);
+                        stream.Close();
+                        client.Close();
+                    }
+                }
+                catch { }
+
+                WeatherForecast Weather = new WeatherForecast();
+                Weather.x = ImprovedVBE.width;
+                Weather.y = 200;
+                Weather.z = 999;
+                Weather.name = null;
+                Weather.minimised = false;
+                Weather.icon = ImprovedVBE.ScaleImageStock(Resources.Web, 56, 56);
+                TaskScheduler.Apps.Add(Weather);
+
+                //Init fact data from server
+                try
+                {
+                    using (TcpClient client = new TcpClient())
+                    {
+                        /**Connect to server **/
+                        client.Connect(serverIp, serverPort);
+                        NetworkStream stream = client.GetStream();
+
+                        /** Send data **/
+                        string messageToSend = "Chuck";
+                        byte[] dataToSend = Encoding.ASCII.GetBytes(messageToSend);
+                        stream.Write(dataToSend, 0, dataToSend.Length);
+                        stream.Close();
+                        client.Close();
+                    }
+                }
+                catch { }
+                ChuckNorrisFacts chuckNorrisFacts = new ChuckNorrisFacts();
+                chuckNorrisFacts.x = 600;
+                chuckNorrisFacts.y = 200;
+                chuckNorrisFacts.z = 999;
+                chuckNorrisFacts.name = null;
+                chuckNorrisFacts.minimised = false;
+                chuckNorrisFacts.icon = ImprovedVBE.ScaleImageStock(Resources.Web, 56, 56);
+                TaskScheduler.Apps.Add(chuckNorrisFacts);
+            }
             #endregion Widgets
 
             #region Mouse
@@ -104,6 +144,8 @@ namespace CrystalOS_Alpha
             MouseManager.X = (uint)ImprovedVBE.width / 2;
             MouseManager.Y = (uint)ImprovedVBE.height / 2;
             #endregion Mouse
+
+            ImprovedVBE.Clear(true);
         }
 
         /// <summary>
@@ -115,10 +157,11 @@ namespace CrystalOS_Alpha
         /// Used for debugging purpose only
         /// </summary>
         public static string Clipboard = "";
+
         protected override void Run()
         {
             //If keyboard mouse is used (W,A,S,D keys to move the cursor) a readkey is placed in the beginning of every kernel cycle
-            if(Is_KeyboardMouse == true)
+            if (Is_KeyboardMouse == true)
             {
                 KeyEvent k;
                 if(KeyboardManager.TryReadKey(out k))
@@ -128,36 +171,38 @@ namespace CrystalOS_Alpha
             }
 
             //Layer organising between the menu, taskbar, calendar and apps
-            if(TaskManager.MenuOpened == false && TaskManager.calendar == false)
-            {
-                if(GlobalValues.TaskBarType == "Classic")
-                {
-                    SideNav.Core();
-                    TaskScheduler.Exec();
-                    TaskManager.Main();
-                }
-                else if(GlobalValues.TaskBarType == "Nostalgia")
-                {
-                    SideNav.Core();
-                    TaskScheduler.Exec();
-                    TaskManager.Main();
-                }
-            }
-            else
-            {
-                SideNav.Core();
-                TaskScheduler.Exec();
-                TaskManager.Main();
-            }
+            //if(TaskManager.MenuOpened == false && TaskManager.calendar == false)
+            //{
+            //    if(GlobalValues.TaskBarType == "Classic")
+            //    {
+            //        SideNav.Core();
+            //        TaskScheduler.Exec();
+            //        TaskManager.Main();
+            //    }
+            //    else if(GlobalValues.TaskBarType == "Nostalgia")
+            //    {
+            //        SideNav.Core();
+            //        TaskScheduler.Exec();
+            //        TaskManager.Main();
+            //    }
+            //}
+            //else
+            //{
+            //    SideNav.Core();
+            //    TaskScheduler.Exec();
+            //    TaskManager.Main();
+            //}
+            SideNav.Core();
+            TaskScheduler.Exec();
+            TaskManager.Main();
 
             //Layer organising between the menu, taskbar, calendar and apps
-            if(TaskManager.MenuOpened == true && GlobalValues.TaskBarType == "Nostalgia")
+            if (TaskManager.MenuOpened == true && GlobalValues.TaskBarType == "Nostalgia")
             {
                 TaskManager.Dynamic_Menu(ImprovedVBE.width / 2 - 200, 50, 400, 400);
             }
 
-            //Renders the cursor
-            ImprovedVBE.DrawImageAlpha(C, (int)MouseManager.X, (int)MouseManager.Y, ImprovedVBE.cover);
+            ImprovedVBE.RequestRedraw = false;
 
             //Display to the screen
             ImprovedVBE.Display(vbe);
@@ -169,49 +214,244 @@ namespace CrystalOS_Alpha
             }
         }
 
-        public static string getContent(string url)
+        public static string getContent(string url, string FileName = "")
         {
             string IP = "";
             using (TcpClient client = new TcpClient())
             {
-                using (var xClient = new DnsClient())
-                {
-                    xClient.Connect(new Address(81, 183, 223, 225)); //DNS Server address. We recommend a Google or Cloudflare DNS, but you can use any you like!
-
-                    /** Send DNS ask for a single domain name **/
-                    xClient.SendAsk(url);
-
-                    /** Receive DNS Response **/
-                    Address destination = xClient.Receive(); //can set a timeout value
-                    IP = destination.ToString();
-                    xClient.Close();
-                }
-
-                Address address = Address.Parse(IP);
-                string serverIp = address.ToString();
+                string serverIp = GlobalValues.ServerIP;//address.ToString();
                 int serverPort = 80;
                 client.Connect(serverIp, serverPort);
                 NetworkStream stream = client.GetStream();
 
-                string httpget = "GET / HTTP/1.1\r\n" +
-                 "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0\r\n" +
-                 "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\r\n" +
-                 "Accept-Encoding: identity\r\n" +
-                 "Accept-Language: en-US,en;q=0.5\r\n" +
-                 "Host: " + url + "\r\n" +
-                 "Connection: Keep-Alive\r\n\r\n";
+                //StringBuilder httpget = new StringBuilder();
+                //httpget.Append("GET /");
+                //httpget.Append(FileName);
+                //httpget.Append(" HTTP/1.1\r\n");
+                //httpget.Append("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0\r\n");
+                //httpget.Append("Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\r\n");
+                //httpget.Append("Accept-Encoding: identity\r\n");
+                //httpget.Append("Accept-Language: en-US,en;q=0.5\r\n");
+                //httpget.Append("Host: ");
+                //httpget.Append(url);
+                //httpget.Append("\r\n");
+                //httpget.Append("Connection: Keep-Alive\r\n\r\n");
+                StringBuilder httpget = new StringBuilder();
+                httpget.Append($"GET /{FileName} HTTP/1.1\r\n");
+                httpget.Append("User-Agent: CustomClient/1.0\r\n");
+                httpget.Append("Accept: */*\r\n");
+                httpget.Append($"Host: {serverIp}\r\n");
+                httpget.Append("Connection: Close\r\n\r\n");
 
-                string messageToSend = httpget;
-                byte[] dataToSend = Encoding.ASCII.GetBytes(messageToSend);
+                //string httpget = "GET /index" + Part + ".html HTTP/1.1\r\n" +
+                // "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0\r\n" +
+                // "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\r\n" +
+                // "Accept-Encoding: identity\r\n" +
+                // "Accept-Language: en-US,en;q=0.5\r\n" +
+                // "Host: " + url + "\r\n" +
+                // "Connection: Keep-Alive\r\n\r\n";
+
+                //string messageToSend = httpget;
+                byte[] dataToSend = Encoding.ASCII.GetBytes(httpget.ToString());
                 stream.Write(dataToSend, 0, dataToSend.Length);
                 /** Receive data **/
                 byte[] receivedData = new byte[client.ReceiveBufferSize];
                 int bytesRead = stream.Read(receivedData, 0, receivedData.Length);
-                string receivedMessage = Encoding.ASCII.GetString(receivedData, 0, bytesRead);
+                StringBuilder sb = new StringBuilder();
+                sb.Append(Encoding.ASCII.GetString(receivedData, 0, bytesRead));
 
+                string[] responseParts = sb.ToString().Split(new[] { "\r\n\r\n" }, 2, StringSplitOptions.None);
+                if(responseParts.Length > 1)
+                {
+                    return responseParts[1];
+                }
+                else
+                {
+                    return sb.ToString();
+                }
+            }
+        }//Also used as download files as UTF-8 string. CAUTION: Beyond certain string legth, it causes the system to crash. Use getContentBytes for downloading files instead.
 
-                string[] responseParts = receivedMessage.Split(new[] { "\r\n\r\n" }, 2, StringSplitOptions.None);
-                return receivedMessage;
+        public static byte[] getContentBytes(string url, string saveTo, string fileName = "")
+        {
+            using (TcpClient client = new TcpClient())
+            {
+                try
+                {
+                    string serverIp = GlobalValues.ServerIP;
+                    int serverPort = 80;
+                    client.Connect(serverIp, serverPort);
+
+                    using (NetworkStream stream = client.GetStream())
+                    {
+                        // Construct HTTP GET request
+                        StringBuilder requestBuilder = new StringBuilder();
+                        requestBuilder.Append($"GET /{fileName} HTTP/1.1\r\n");
+                        requestBuilder.Append("User-Agent: CustomClient/1.0\r\n");
+                        requestBuilder.Append("Accept: */*\r\n");
+                        requestBuilder.Append($"Host: {serverIp}\r\n");
+                        requestBuilder.Append("Connection: Close\r\n\r\n");
+
+                        byte[] requestBytes = Encoding.ASCII.GetBytes(requestBuilder.ToString());
+                        stream.Write(requestBytes, 0, requestBytes.Length);
+
+                        int contentLength = -1;
+                        bool headersParsed = false;
+                        byte[] buffer = new byte[8192]; // 8 KB buffer
+
+                        using (FileStream fileStream = !string.IsNullOrEmpty(saveTo) ? new FileStream(saveTo, FileMode.Create) : null)
+                        {
+                            int bytesRead;
+                            List<byte> resultBytes = new List<byte>(); // Store response if no file path given
+
+                            while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
+                            {
+                                if (!headersParsed)
+                                {
+                                    string responsePart = Encoding.ASCII.GetString(buffer, 0, bytesRead);
+                                    int headerEndIdx = responsePart.IndexOf("\r\n\r\n");
+
+                                    if (headerEndIdx != -1)
+                                    {
+                                        headersParsed = true;
+                                        headerEndIdx += 4; // Position after headers
+                                        string headers = responsePart.Substring(0, headerEndIdx);
+
+                                        // Check for Content-Length directly
+                                        int contentIndex = headers.IndexOf("Content-Length:", StringComparison.OrdinalIgnoreCase);
+                                        if (contentIndex != -1)
+                                        {
+                                            int start = contentIndex + "Content-Length:".Length;
+                                            int end = headers.IndexOf("\r\n", start);
+                                            contentLength = int.Parse(headers.Substring(start, end - start).Trim());
+                                        }
+
+                                        int dataStart = headerEndIdx;
+                                        int dataLength = bytesRead - dataStart;
+
+                                        if (fileStream != null)
+                                            fileStream.Write(buffer, dataStart, dataLength);
+                                        else
+                                            resultBytes.AddRange(new ArraySegment<byte>(buffer, dataStart, dataLength));
+                                    }
+                                }
+                                else
+                                {
+                                    if (fileStream != null)
+                                        fileStream.Write(buffer, 0, bytesRead);
+                                    else
+                                        resultBytes.AddRange(new ArraySegment<byte>(buffer, 0, bytesRead));
+                                }
+
+                                if (contentLength != -1 && (fileStream?.Length ?? resultBytes.Count) >= contentLength)
+                                    break;
+                            }
+
+                            if(saveTo != "")
+                            {
+                                File.WriteAllBytes(saveTo, resultBytes.ToArray());
+                            }
+                            return fileStream == null ? resultBytes.ToArray() : File.ReadAllBytes(saveTo); // Read directly if saved
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return null;
+                }
+            }
+        }
+
+        public static List<byte> getContentBytesList(string url, string saveTo, string fileName = "")
+        {
+            using (TcpClient client = new TcpClient())
+            {
+                try
+                {
+                    string serverIp = GlobalValues.ServerIP;
+                    int serverPort = 80;
+                    client.Connect(serverIp, serverPort);
+
+                    using (NetworkStream stream = client.GetStream())
+                    {
+                        // Construct HTTP GET request
+                        StringBuilder requestBuilder = new StringBuilder();
+                        requestBuilder.Append($"GET /{fileName} HTTP/1.1\r\n");
+                        requestBuilder.Append("User-Agent: CustomClient/1.0\r\n");
+                        requestBuilder.Append("Accept: */*\r\n");
+                        requestBuilder.Append($"Host: {serverIp}\r\n");
+                        requestBuilder.Append("Connection: Close\r\n\r\n");
+
+                        byte[] requestBytes = Encoding.ASCII.GetBytes(requestBuilder.ToString());
+                        stream.Write(requestBytes, 0, requestBytes.Length);
+
+                        int contentLength = -1;
+                        bool headersParsed = false;
+                        byte[] buffer = new byte[8192]; // 8 KB buffer
+
+                        using (FileStream fileStream = !string.IsNullOrEmpty(saveTo) ? new FileStream(saveTo, FileMode.Create) : null)
+                        {
+                            int bytesRead;
+                            List<byte> resultBytes = new List<byte>(); // Store response if no file path given
+
+                            while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
+                            {
+                                if (!headersParsed)
+                                {
+                                    string responsePart = Encoding.ASCII.GetString(buffer, 0, bytesRead);
+                                    int headerEndIdx = responsePart.IndexOf("\r\n\r\n");
+
+                                    if (headerEndIdx != -1)
+                                    {
+                                        headersParsed = true;
+                                        headerEndIdx += 4; // Position after headers
+                                        string headers = responsePart.Substring(0, headerEndIdx);
+
+                                        // Check for Content-Length directly
+                                        int contentIndex = headers.IndexOf("Content-Length:", StringComparison.OrdinalIgnoreCase);
+                                        if (contentIndex != -1)
+                                        {
+                                            int start = contentIndex + "Content-Length:".Length;
+                                            int end = headers.IndexOf("\r\n", start);
+                                            contentLength = int.Parse(headers.Substring(start, end - start).Trim());
+                                        }
+
+                                        int dataStart = headerEndIdx;
+                                        int dataLength = bytesRead - dataStart;
+
+                                        if (fileStream != null)
+                                            fileStream.Write(buffer, dataStart, dataLength);
+                                        else
+                                            resultBytes.AddRange(new ArraySegment<byte>(buffer, dataStart, dataLength));
+                                    }
+                                }
+                                else
+                                {
+                                    if (fileStream != null)
+                                        fileStream.Write(buffer, 0, bytesRead);
+                                    else
+                                        resultBytes.AddRange(new ArraySegment<byte>(buffer, 0, bytesRead));
+                                }
+
+                                if (contentLength != -1 && (fileStream?.Length ?? resultBytes.Count) >= contentLength)
+                                    break;
+                            }
+
+                            switch(fileStream == null)
+                            {
+                                case true:
+                                    return resultBytes;
+                                case false:
+                                    File.ReadAllBytes(saveTo);
+                                    return resultBytes;
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return null;
+                }
             }
         }
     }

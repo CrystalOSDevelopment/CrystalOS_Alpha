@@ -9,6 +9,7 @@ using CrystalOSAlpha.Applications;
 using CrystalOSAlpha.System32;
 using CrystalOS_Alpha;
 using Kernel = CrystalOS_Alpha.Kernel;
+using System;
 
 namespace CrystalOSAlpha.Graphics.Widgets
 {
@@ -342,7 +343,11 @@ namespace CrystalOSAlpha.Graphics.Widgets
                 //Dropd.Render(x, y);
             }
 
-            ImprovedVBE.DrawImageAlpha(Back, x, y, ImprovedVBE.cover);
+            if (ImprovedVBE.RequestRedraw || SideNav.RequestDrawLocal == true)
+            {
+                ImprovedVBE.DrawImageAlpha(Back, x, y, ImprovedVBE.cover);
+            }
+            //ImprovedVBE.DrawImageAlpha(Back, x, y, ImprovedVBE.cover);
             if (MouseManager.MouseState == MouseState.None && clicked == true)
             {
                 clicked = false;
@@ -351,13 +356,13 @@ namespace CrystalOSAlpha.Graphics.Widgets
 
             if (MouseManager.MouseState == MouseState.Left)
             {
-                if (((MouseManager.X > x && MouseManager.X < x + Back.Width) && (MouseManager.Y > y && MouseManager.Y < y + Back.Height)) || mem == false)
+                if (((MouseManager.X > x && MouseManager.X < x + Back.Width) && (MouseManager.Y > y && MouseManager.Y < y + Back.Height)))
                 {
-                    if (mem == true)
+                    if (mem == false)
                     {
                         x_dif = (int)MouseManager.X - x;
                         y_dif = (int)MouseManager.Y - y;
-                        mem = false;
+                        mem = true;
                     }
                     x = (int)MouseManager.X - x_dif;
                     y = (int)MouseManager.Y - y_dif;
@@ -385,11 +390,9 @@ namespace CrystalOSAlpha.Graphics.Widgets
                     if (x + Back.Width > ImprovedVBE.width - 200)
                     {
                         x = SideNav.X + 15;
-                        y = SideNav.start_y;
                     }
                 }
-                SideNav.start_y += (int)Back.Height + 20;
-                if (mem == false)
+                if (mem == true)
                 {
                     x = (int)MouseManager.X - x_dif;
                     y = (int)MouseManager.Y - y_dif;
@@ -400,14 +403,13 @@ namespace CrystalOSAlpha.Graphics.Widgets
                 if (x + Back.Width > ImprovedVBE.width - 200)
                 {
                     x = SideNav.X + 15;
-                    y = SideNav.start_y;
-                    SideNav.start_y += (int)Back.Height + 20;
+                    y = (int)(TaskScheduler.Apps.IndexOf(this) * (Back.Height + 20) + 80);
                 }
-            }
-            if (mem == false && MouseManager.MouseState == MouseState.None)
-            {
-                mem = true;
-                Get_Back = true;
+                if (mem == true)
+                {
+                    mem = false;
+                    Get_Back = true;
+                }
             }
             #endregion Graphical
         }

@@ -197,19 +197,23 @@ namespace CrystalOSAlpha.Graphics
                     try
                     {
                         app.App();
+                        //Todo: Add Rendering when requested
                         app.RightClick();
                     }
                     catch (Exception e)
                     {
-                        if(e.Message.Length > 5)
+                        if (!e.Message.Contains("TCP"))
                         {
-                            Apps.Add(new MsgBox(999, ImprovedVBE.width / 2 - 200, ImprovedVBE.height / 2 - 100, 400, 200, "Error!", e.Message, Resources.Celebration));
+                            if(e.Message.Length > 5)
+                            {
+                                Apps.Add(new MsgBox(999, ImprovedVBE.width / 2 - 200, ImprovedVBE.height / 2 - 100, 400, 200, "Error!", e.Message, Resources.Celebration));
+                            }
+                            else
+                            {
+                                Apps.Add(new MsgBox(999, ImprovedVBE.width / 2 - 300, ImprovedVBE.height / 2 - 100, 600, 200, "Error!", "An unknown error occoured!\nIf restarting the app doesn't help, open a github issue at:\nhttps://github.com/CrystalOSDevelopment/CrystalOS_Alpha\n" + e.Message, Resources.Celebration));
+                            }
+                            Apps.Remove(app);
                         }
-                        else
-                        {
-                            Apps.Add(new MsgBox(999, ImprovedVBE.width / 2 - 300, ImprovedVBE.height / 2 - 100, 600, 200, "Error!", "An unknown error occoured!\nIf restarting the app doesn't help, open a github issue at:\nhttps://github.com/CrystalOSDevelopment/CrystalOS_Alpha\n" + e.Message, Resources.Celebration));
-                        }
-                        Apps.Remove(app);
                     }
                     //Resize if every requirement checks out
                     if(MouseManager.MouseState == MouseState.Left)

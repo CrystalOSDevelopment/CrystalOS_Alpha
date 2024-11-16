@@ -1,6 +1,9 @@
 ﻿using Cosmos.Core.Memory;
+using Cosmos.HAL;
 using Cosmos.System;
 using Cosmos.System.Graphics;
+using Cosmos.System.Network.Config;
+using Cosmos.System.Network.IPv4;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics.TaskBar;
@@ -34,7 +37,7 @@ namespace CrystalOSAlpha.System32
                     }
                 }
                 BitFont.DrawBitFontString(ImprovedVBE.cover, "ArialCustomCharset16", Color.White, "Start up with disk support(Y/N): " + input, 2, 2);
-                ImprovedVBE.Display(Kernel.vbe);
+                ImprovedVBE.Display(Kernel.vbe, false);
                 Heap.Collect();
             }
             string option = "";
@@ -54,8 +57,70 @@ namespace CrystalOSAlpha.System32
                     }
                 }
                 BitFont.DrawBitFontString(ImprovedVBE.cover, "ArialCustomCharset16", Color.White, "Enter setup mode(Y) or continue with preset?(N): " + option, 2, 2);
-                ImprovedVBE.Display(Kernel.vbe);
+                ImprovedVBE.Display(Kernel.vbe, false);
                 Heap.Collect();
+            }
+            string IP = "";
+            while (true)
+            {
+                Array.Fill(ImprovedVBE.cover.RawData, 0);
+                KeyEvent key;
+                if (KeyboardManager.TryReadKey(out key))
+                {
+                    if (key.Key == ConsoleKeyEx.Enter)
+                    {
+                        break;
+                    }
+                    if (option.Length < 10)
+                    {
+                        IP = Keyboard.HandleKeyboard(IP, key);
+                    }
+                }
+                BitFont.DrawBitFontString(ImprovedVBE.cover, "ArialCustomCharset16", Color.White, "Enable network? (if yes, please type in the ip of the TCP client and the local web server): " + IP + "\n  Example: x.x.x.x x.x.x.x or blank to disable", 2, 2);
+                ImprovedVBE.Display(Kernel.vbe, false);
+                Heap.Collect();
+            }
+            if(IP != "")
+            {
+                string[] Split = IP.Split(' ');
+                if(Split.Length == 2)
+                {
+                    string[] Left = Split[0].Split('.');
+                    string[] Right = Split[1].Split('.');
+                    if (Left.Length == 4 && Right.Length == 4)
+                    {
+                        try
+                        {
+                            try
+                            {
+                                NetworkDevice nic = NetworkDevice.GetDeviceByName("eth0"); //get network device by name
+                                IPConfig.Enable(nic, new Address(192, 168, 1, 69), new Address(255, 255, 255, 0), new Address(192, 168, 1, 254)); //enable IPv4 configuration
+
+                                using (var xClient = new Cosmos.System.Network.IPv4.UDP.DHCP.DHCPClient())
+                                {
+                                    /** Send a DHCP Discover packet **/
+                                    //This will automatically set the IP config after DHCP response
+                                    xClient.SendDiscoverPacket();
+
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+
+                            }
+                            GlobalValues.TCPIP = Split[0];              //This is for the console app
+                            GlobalValues.ServerIP = Split[1];           //This is for the web server
+                            //Comment out before pushing to GitHub
+                            GlobalValues.TCPIP = "192.168.159.1";       //IP of your vm (Ethernet adapter VMware Network Adapter VMnet8 in my case)
+                            GlobalValues.ServerIP = "192.168.0.22";     //This is the ip of your computer (Wireless LAN adapter Wi-Fi in my case)
+                            Kernel.IsNetSupport = true;
+                        }
+                        catch
+                        {
+                            
+                        }
+                    }
+                }
             }
             if (VMTools.IsVMWare == true)
             {
@@ -78,7 +143,7 @@ namespace CrystalOSAlpha.System32
                             ImprovedVBE.DrawImageAlpha(Kernel.C, (int)MouseManager.X, (int)MouseManager.Y, ImprovedVBE.cover);
 
                             //Renders to the screen
-                            ImprovedVBE.Display(Kernel.vbe);
+                            ImprovedVBE.Display(Kernel.vbe, false);
 
                             //By calling this, the system won't crash after a certain amount of time
                             Heap.Collect();
@@ -104,7 +169,7 @@ namespace CrystalOSAlpha.System32
                                 ImprovedVBE.DrawImageAlpha(Kernel.C, (int)MouseManager.X, (int)MouseManager.Y, ImprovedVBE.cover);
 
                                 //Renders to the screen
-                                ImprovedVBE.Display(Kernel.vbe);
+                                ImprovedVBE.Display(Kernel.vbe, false);
 
                                 //By calling this, the system won't crash after a certain amount of time
                                 Heap.Collect();
@@ -445,7 +510,7 @@ namespace CrystalOSAlpha.System32
                         ImprovedVBE.DrawImageAlpha(Kernel.C, (int)MouseManager.X, (int)MouseManager.Y, ImprovedVBE.cover);
 
                         //Renders to the screen
-                        ImprovedVBE.Display(Kernel.vbe);
+                        ImprovedVBE.Display(Kernel.vbe, false);
 
                         //By calling this, the system won't crash after a certain amount of time
                         Heap.Collect();
@@ -593,7 +658,7 @@ namespace CrystalOSAlpha.System32
                             ImprovedVBE.DrawImageAlpha(Kernel.C, (int)MouseManager.X, (int)MouseManager.Y, ImprovedVBE.cover);
 
                             //Renders to the screen
-                            ImprovedVBE.Display(Kernel.vbe);
+                            ImprovedVBE.Display(Kernel.vbe, false);
 
                             //By calling this, the system won't crash after a certain amount of time
                             Heap.Collect();
@@ -619,7 +684,7 @@ namespace CrystalOSAlpha.System32
                                 ImprovedVBE.DrawImageAlpha(Kernel.C, (int)MouseManager.X, (int)MouseManager.Y, ImprovedVBE.cover);
 
                                 //Renders to the screen
-                                ImprovedVBE.Display(Kernel.vbe);
+                                ImprovedVBE.Display(Kernel.vbe, false);
 
                                 //By calling this, the system won't crash after a certain amount of time
                                 Heap.Collect();
@@ -960,7 +1025,7 @@ namespace CrystalOSAlpha.System32
                         ImprovedVBE.DrawImageAlpha(Kernel.C, (int)MouseManager.X, (int)MouseManager.Y, ImprovedVBE.cover);
 
                         //Renders to the screen
-                        ImprovedVBE.Display(Kernel.vbe);
+                        ImprovedVBE.Display(Kernel.vbe, false);
 
                         //By calling this, the system won't crash after a certain amount of time
                         Heap.Collect();
@@ -1087,7 +1152,7 @@ namespace CrystalOSAlpha.System32
                 }
             }
 
-            ImprovedVBE.Display(Kernel.vbe);
+            ImprovedVBE.Display(Kernel.vbe, false);
         }
 
         public static void Animation(int Seconds)
@@ -1113,7 +1178,7 @@ namespace CrystalOSAlpha.System32
                     ImprovedVBE.DrawImageAlpha(Temp, (int)ImprovedVBE.width / 2 - (int)Temp.Width / 2, 100, ImprovedVBE.cover);
                     BitFont.DrawBitFontString(ImprovedVBE.cover, "VerdanaCustomCharset32", Color.White, "CrystalOS Alpha", (int)ImprovedVBE.width / 2 - (int)Temp.Width / 2 + 118, 595);
 
-                    ImprovedVBE.Display(Kernel.vbe);
+                    ImprovedVBE.Display(Kernel.vbe, false);
                 }
                 Heap.Collect();
             }

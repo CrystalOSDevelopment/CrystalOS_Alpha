@@ -1,5 +1,6 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
+using CrystalOS_Alpha;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.TaskBar;
 using IL2CPU.API.Attribs;
@@ -30,8 +31,10 @@ namespace CrystalOSAlpha
         /// </summary>
         public static Bitmap Temp = new Bitmap(VBECanvas);
 
-        public static int width = 1920;
-        public static int height = 1080;
+        public static Bitmap CursorBack = new Bitmap(18, 30, ColorDepth.ColorDepth32);
+
+        public static int width = (int)cover.Width;
+        public static int height = (int)cover.Height;
         public static bool Res = true;
         #endregion Wallpaper & Resolution
 
@@ -39,18 +42,23 @@ namespace CrystalOSAlpha
         public static int Counter = 0;
         public static bool isMoving = false;
         public static int Clock = -99;
+        public static bool RequestRedraw = true;
 
         /// <summary>
         /// To display the rendered frame.
         /// </summary>
         /// <param name="c"></param>
-        public static void Display(VBECanvas c)
+        public static void Display(VBECanvas c, bool EnableCursor = true)
         {
             if(isMoving == false)
             {
                 if (Counter == 7)
                 {
                     c.DrawImage(cover, 0, 0);
+                    if (EnableCursor)
+                    {
+                        c.DrawImageAlpha(CrystalOS_Alpha.Kernel.C, (int)MouseManager.X, (int)MouseManager.Y);
+                    }
                     c.Display();
                     if (Res == true)
                     {
@@ -106,6 +114,7 @@ namespace CrystalOSAlpha
                         Res = false;
                     }
                     c.DrawImage(cover, 0, 0);
+                    c.DrawImageAlpha(CrystalOS_Alpha.Kernel.C, (int)MouseManager.X, (int)MouseManager.Y);
                     c.Display();
                     Counter = 0;
                 }
@@ -121,9 +130,18 @@ namespace CrystalOSAlpha
         /// Clear the frame by copying a fresh version from the backbuffer onto the main canvas.
         /// </summary>
         /// <param name="col"></param>
-        public static void Clear()
+        public static void Clear(bool RequestClear = false)
         {
-            data.RawData.CopyTo(cover.RawData, 0);
+            // Start of original code
+            //data.RawData.CopyTo(cover.RawData, 0);
+            // End of original code
+
+            if (MouseManager.MouseState == MouseState.Left || MouseManager.MouseState == MouseState.Right || RequestClear)//Separate the mouse update from window movement for the love of God!
+            {
+                data.RawData.CopyTo(cover.RawData, 0);
+                RequestRedraw = true;
+                SideNav.RequestDrawLocal = true;    //If you don't have a SideNav, you can remove this line
+            }
         }
         #endregion Render to the screen and Clear
 
@@ -526,7 +544,7 @@ namespace CrystalOSAlpha
         {
             int TempX = x;
             int[] line = new int[image.Width];
-            switch(x < into.Width)
+            switch(x < into.Width && x + image.Width >= 0)
             {
                 case true:
                     switch(x < 0)
@@ -1025,18 +1043,18 @@ namespace CrystalOSAlpha
             int yMax = points[0].Y;
             for (int i = 1; i < points.Count; i++)
             {
-                if (points[i].Y < yMin) yMin = points[i].Y;
-                if (points[i].Y > yMax) yMax = points[i].Y;
+                yMin = Math.Min(yMin, points[i].Y);
+                yMax = Math.Max(yMax, points[i].Y);
             }
 
-            // Step 2: Create the edge table
+            // Step 2: Create and reuse the edge table
             List<Edge>[] edgeTable = new List<Edge>[yMax - yMin + 1];
             for (int i = 0; i < edgeTable.Length; i++)
             {
                 edgeTable[i] = new List<Edge>();
             }
 
-            // Step 3: Add edges to the edge table
+            // Step 3: Populate the edge table
             for (int i = 0; i < points.Count; i++)
             {
                 Point start = points[i];
@@ -1046,9 +1064,7 @@ namespace CrystalOSAlpha
                 {
                     if (start.Y > end.Y)
                     {
-                        Point temp = start;
-                        start = end;
-                        end = temp;
+                        (start, end) = (end, start); // Swap start and end
                     }
 
                     int deltaY = end.Y - start.Y;
@@ -1058,15 +1074,28 @@ namespace CrystalOSAlpha
                 }
             }
 
-            // Step 4: Fill the polygon using the edge table
+            // Step 4: Fill the polygon
             List<Edge> activeEdges = new List<Edge>();
 
             for (int y = yMin; y <= yMax; y++)
             {
-                // Add edges from the edge table to the active edge list
-                activeEdges.AddRange(edgeTable[y - yMin]);
+                // Add new edges to the active edge list from the edge table, inserting in the correct position
+                foreach (var edge in edgeTable[y - yMin])
+                {
+                    // Insert the new edge in the correct sorted position
+                    int insertIndex = activeEdges.Count;
+                    for (int i = 0; i < activeEdges.Count; i++)
+                    {
+                        if (activeEdges[i].X > edge.X)
+                        {
+                            insertIndex = i;
+                            break;
+                        }
+                    }
+                    activeEdges.Insert(insertIndex, edge);
+                }
 
-                // Remove edges where y has exceeded the max Y of the edge
+                // Remove edges where the Ymax has been exceeded
                 for (int i = activeEdges.Count - 1; i >= 0; i--)
                 {
                     if (activeEdges[i].YMax <= y)
@@ -1075,25 +1104,12 @@ namespace CrystalOSAlpha
                     }
                 }
 
-                // Active edges are already sorted, just insert new ones in the right place
-                for (int i = 0; i < activeEdges.Count - 1; i++)
-                {
-                    if (activeEdges[i].X > activeEdges[i + 1].X)
-                    {
-                        // Swap the edges
-                        var temp = activeEdges[i];
-                        activeEdges[i] = activeEdges[i + 1];
-                        activeEdges[i + 1] = temp;
-                    }
-                }
-
-                // Step 5: Fill between pairs of active edges with horizontal lines
+                // Step 5: Fill between pairs of active edges
                 int Height = (int)(y * canvas.Width);
                 for (int i = 0; i < activeEdges.Count; i += 2)
                 {
                     int xStart = (int)activeEdges[i].X;
                     int xEnd = (int)activeEdges[i + 1].X;
-
 
                     if (xStart <= xEnd)
                     {
@@ -1104,10 +1120,10 @@ namespace CrystalOSAlpha
                     }
                 }
 
-                // Update the X values of active edges for the next scanline
-                for (int i = 0; i < activeEdges.Count; i++)
+                // Step 6: Update the X values for the next scanline
+                foreach (var edge in activeEdges)
                 {
-                    activeEdges[i].X += activeEdges[i].Slope;
+                    edge.X += edge.Slope;
                 }
             }
         }
@@ -1171,6 +1187,50 @@ namespace CrystalOSAlpha
             x_1 = 0;
         }
         #endregion
+
+        #region UI Elements
+        #region Glassy Effect
+        public static void DrawCircularGradient(Bitmap canvas, Color startColor, Color endColor, int centerX, int centerY, int diameter)
+        {
+            int radius = diameter / 2;
+            for (int r = radius; r > 0; r--)
+            {
+                // Calculate interpolation factor (0.0 at edge to 1.0 at center)
+                float t = (float)r / radius;
+
+                // Linearly interpolate between startColor and endColor
+                int red = (int)(startColor.R * (1 - t) + endColor.R * t);
+                int green = (int)(startColor.G * (1 - t) + endColor.G * t);
+                int blue = (int)(startColor.B * (1 - t) + endColor.B * t);
+
+                // Draw the filled circle at each radius step
+                DrawFilledEllipse(canvas, centerX, centerY, r, r, colourToNumber(red, green, blue));
+            }
+        }
+        public static void DrawFilledArc(Bitmap canvas, int color, int centerX, int centerY, int width, int height, int startAngle, int endAngle)
+        {
+            int radius = width / 2;
+            int arcHeight = height / 2; // Limiting the arc to the upper half
+
+            for (int y = 0; y <= arcHeight; y++)
+            {
+                int rowRadius = (int)Math.Sqrt(radius * radius - y * y); // Row width based on the circle equation
+                int startX = centerX - rowRadius;
+                int endX = centerX + rowRadius;
+
+                for (int x = startX; x <= endX; x++)
+                {
+                    try
+                    {
+                        canvas.RawData[canvas.Width * (centerY - y) + x] = color;
+                    }
+                    catch { }
+                    //canvas.SetPixel(x, centerY - y, color); // Draw only in the upper half
+                }
+            }
+        }
+        #endregion Glassy Effect
+        #endregion UI Elements
     }
 
     // Helper class to store edge data

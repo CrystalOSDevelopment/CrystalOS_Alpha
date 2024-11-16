@@ -5,9 +5,10 @@ using CrystalOSAlpha.System32;
 using CrystalOSAlpha.UI_Elements;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
 using TaskScheduler = CrystalOSAlpha.Graphics.TaskScheduler;
+using System.Net.Sockets;
+using System.Text;
+using CrystalOS_Alpha;
 using Kernel = CrystalOS_Alpha.Kernel;
 
 namespace CrystalOSAlpha.Applications.WebscapeNavigator
@@ -34,11 +35,15 @@ namespace CrystalOSAlpha.Applications.WebscapeNavigator
 
         public int Reg_Y = 0;
         public int CurrentColor = ImprovedVBE.colourToNumber(GlobalValues.R, GlobalValues.G, GlobalValues.B);
+        public int KernelCycle = 0;
+        public int Left = 0;
+        public int Top = 0;
 
         public bool initial = true;
         public bool clicked = false;
         public bool once { get; set; }
         public bool temp = true;
+        public bool WaitToFetch = false;
 
         public string content = "";
         public string source = "";
@@ -51,59 +56,73 @@ namespace CrystalOSAlpha.Applications.WebscapeNavigator
         public List<UIElementHandler> Buttons = new List<UIElementHandler>();
         public List<UIElementHandler> TextBoxes = new List<UIElementHandler>();
 
+        public byte[] Parts = new byte[0];
+
+        public List<Tab> Tabs = new List<Tab>();
+
         public void App()
         {
+            if (Kernel.IsNetSupport == false)
+            {
+                throw new Exception("Failed to establish an Ethernet\nconnection!");
+            }
             if (initial == true)
             {
-                Buttons.Add(new Button(5, 27, 50, 20, "Go", 1));
+                Buttons.Add(new Button(450, 45, 85, 30, "Go", 1));
+                Buttons.Add(new Button(550, 45, 85, 30, "Bookmark", 1));
 
-                Scroll.Add(new VerticalScrollbar(width - 22, 52, 20, height - 60, 20, 0, 500, ""));
+                Scroll.Add(new VerticalScrollbar(width - 22, 118, 20, height - 146, 20, 0, 10000, ""));
 
-                TextBoxes.Add(new TextBox(60, 27, width - 84, 20, ImprovedVBE.colourToNumber(60, 60, 60), "httpforever.com", "Url:", TextBox.Options.left, "URL"));
+                TextBoxes.Add(new TextBox(10, 45, 430, 30, ImprovedVBE.colourToNumber(60, 60, 60), "google.com", "Url:", TextBox.Options.left, "URL"));
+
+                Tabs.Add(new Tab(10, 98, 100, 20, "Google", "google.com", true));
+                Tabs.Add(new Tab(115, 98, 100, 20, "ChatGPT", "chatgpt.com", false));
+                Tabs.Add(new Tab(220, 98, 100, 20, "Milk", "milk.com", false));
 
                 initial = false;
             }
             if (once == true)
             {
-                Bitmap back = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
-                (canvas, back, window) = WindowGenerator.Generate(x, y, width, height, CurrentColor, name);
+                once = false;
+                temp = true;
 
-                Container = new Bitmap((uint)(width - 29), (uint)(height - 60), ColorDepth.ColorDepth32);
-                Array.Fill(Container.RawData, ImprovedVBE.colourToNumber(255, 255, 255));
-
-                foreach (var button in Buttons)
+                for(int i = 0; i < 1; i++)//A cheap and dirty way of rerendering
                 {
-                    if (button.Clicked == true)
-                    {
-                        int Col = button.Color;
-                        button.Color = Color.White.ToArgb();
-                        button.Render(canvas);
-                        button.Color = Col;
+                    Bitmap back = new Bitmap((uint)width, (uint)height, ColorDepth.ColorDepth32);
+                    (canvas, back, window) = WindowGenerator.Generate(x, y, width, height, CurrentColor, name);
 
-                        switch (button.Text)
+                    Container = new Bitmap(688, 360, ColorDepth.ColorDepth32);
+                    Array.Fill(Container.RawData, ImprovedVBE.colourToNumber(255, 255, 255));
+
+                    foreach (var button in Buttons)
+                    {
+                        if (button.Clicked == true)
                         {
-                            case "Go":
-                                content = Kernel.getContent(TextBoxes[0].Text);//"<html>\n  <head></head>\n  <body>\n\n    <h1>Connection error.</h1>\n    <p>the page that you were searching was not found.<br>plese try to reload the page</p>\n    \n  </body>\n</html>";
-                                File.WriteAllText("0:\\index.txt", content);
-                                temp = true;
-                                break;
+                            switch (button.Text)
+                            {
+                                case "Go":
+                                    Tabs.Find(d => d.IsActive == true).TriggerLoading = false;
+                                    Scroll[0].Value = 0;
+                                    if ((TextBoxes[0].Text.Contains("discord.com") || TextBoxes[0].Text.Contains("google")) && TextBoxes.Count != 2)
+                                    {
+                                        height += 35;
+                                        TextBoxes.Add(new TextBox(10, height - 35, (int)Container.Width, 30, ImprovedVBE.colourToNumber(60, 60, 60), "", "Type your message here!", TextBox.Options.left, "MSG"));//2
+                                        i = -1;
+                                    }
+                                    WaitToFetch = true;
+                                    break;
+                            }
+                        }
+                        button.Render(canvas);
+                        if (MouseManager.MouseState == MouseState.None)
+                        {
+                            button.Clicked = false;
                         }
                     }
-                    else
-                    {
-                        button.Render(canvas);
-                    }
-                    if (MouseManager.MouseState == MouseState.None)
-                    {
-                        button.Clicked = false;
-                    }
+
                 }
 
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
-                
-                //Array.Copy(Container.RawData, 0, Webrendering.Render(Container, content).RawData, 0, Container.RawData.Length);
-                once = false;
-                temp = true;
             }
 
             foreach (var button in Buttons)
@@ -123,7 +142,7 @@ namespace CrystalOSAlpha.Applications.WebscapeNavigator
                         }
                     }
                 }
-                if (clicked == true && MouseManager.MouseState == MouseState.None)
+                if (button.Clicked == true && MouseManager.MouseState == MouseState.None)
                 {
                     once = true;
                     button.Clicked = false;
@@ -139,18 +158,22 @@ namespace CrystalOSAlpha.Applications.WebscapeNavigator
                 }
             }
 
-            foreach (var Box in TextBoxes)
+            foreach (var UIElement in TextBoxes)
             {
-                if (Box.CheckClick(x + Box.X, y + Box.Y) == true && clicked == false)
+                if (UIElement.CheckClick(x, y))
                 {
-                    foreach (var box2 in TextBoxes)
+                    foreach (UIElementHandler UI in TextBoxes)
                     {
-                        box2.Clicked = false;
+                        if (UI.TypeOfElement == TypeOfElement.TextBox)
+                        {
+                            UI.Clicked = false;
+                        }
                     }
-                    clicked = true;
-                    Box.Clicked = true;
+                    UIElement.Clicked = true;
                 }
             }
+
+            Tabs.Find(d => d.IsActive == true).Load(TextBoxes[0].Text);
 
             if (TaskScheduler.counter == TaskScheduler.Apps.Count - 1)
             {
@@ -159,40 +182,172 @@ namespace CrystalOSAlpha.Applications.WebscapeNavigator
                 {
                     if (key.Key == ConsoleKeyEx.Enter)
                     {
-                        Buttons[0].Clicked = true;
-                        clicked = true;
-                        once = true;
+                        if(TextBoxes.Count == 1)
+                        {
+                            Buttons[0].Clicked = true;
+                            clicked = true;
+                            once = true;
+                        }
+                        if (TextBoxes.Count != 1)
+                        {
+                            try
+                            {
+                                Tabs.Find(d => d.IsActive == true).SendKeys(TextBoxes[1].Text);
+                            }
+                            catch { }
+                            TextBoxes[1].Text = "";
+                        }
                     }
                     else
                     {
-                        TextBoxes[0].Text = Keyboard.HandleKeyboard(TextBoxes[0].Text, key);
+                        try
+                        {
+                            TextBoxes.Find(d => d.Clicked == true).Text = Keyboard.HandleKeyboard(TextBoxes.Find(d => d.Clicked == true).Text, key);
+                        }
+                        catch { }
                     }
 
                     Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
                     temp = true;
                 }
+                if(MouseManager.MouseState == MouseState.Left && clicked == false)
+                {
+                    Top = (int)(MouseManager.Y - y - 118) * 2 + Scroll[0].Value;
+                    Left = (int)(MouseManager.X - x - 10) * 2;
+                    if (Top - Scroll[0].Value >= 0 && Top - Scroll[0].Value < Container.Height * 2 && Left >= 0 && Left < Container.Width * 2)
+                    {
+                        //Tabs.Find(d => d.IsActive == true).SendClick(Left, Top);
+                        WaitToFetch = true;
+                    }
+                    
+                    //Change tabs using this code
+                    if (MouseManager.Y > y + 98 && MouseManager.Y < y + 118)
+                    {
+                        for (int i = 0; i < 3; i++)
+                        {
+                            if (MouseManager.X > x + 10 + (i * 105) && MouseManager.X < x + 110 + (i * 105))
+                            {
+                                Tabs.ForEach(tab => tab.IsActive = false);
+                                Tabs[i].IsActive = true;
+                                Tabs[i].RequestRerender = true;
+                                TextBoxes[0].Text = Tabs[i].URL;
+                                once = true;
+                                break;
+                            }
+                        }
+                    }
+                    clicked = true;
+                }
+                else if(MouseManager.ScrollDelta != 0)
+                {
+                    int Top = (int)(MouseManager.Y - y - 118) * 2 + Scroll[0].Value;
+                    int Left = (int)(MouseManager.X - x - 10) * 2;
+
+                    string serverIp = GlobalValues.TCPIP;
+                    int serverPort = 1312;
+                    try
+                    {
+                        using (TcpClient client = new TcpClient())
+                        {
+                            /**Connect to server **/
+                            client.Connect(serverIp, serverPort);
+                            NetworkStream stream = client.GetStream();
+
+                            /** Send data **/
+                            string messageToSend = "BrowserScroll:" + MouseManager.ScrollDelta + "," + Left + "," + Top;
+                            byte[] dataToSend = Encoding.ASCII.GetBytes(messageToSend);
+                            stream.Write(dataToSend, 0, dataToSend.Length);
+                            stream.Close();
+                            client.Close();
+                        }
+                    }
+                    catch { }
+                    MouseManager.ResetScrollDelta();
+                    WaitToFetch = true;
+                }
+
+                if(MouseManager.MouseState == MouseState.None && clicked)
+                {
+                    if(Math.Abs(Left - (int)(MouseManager.X - x - 10) * 2) > 10 || Math.Abs(Top - (MouseManager.Y - y - 118) * 2 + Scroll[0].Value) > 10)
+                    {
+                        int Xdiff = (int)(MouseManager.X - x - 10) * 2 - Left;
+                        int Ydiff = (int)(MouseManager.Y - y - 118) * 2 + Scroll[0].Value - Top;
+                        Tabs.Find(d => d.IsActive == true).SendDrag(Left, Top, Xdiff, Ydiff);
+                    }
+                    else
+                    {
+                        if(MouseManager.X > x + 10 && MouseManager.X < x + 10 + Container.Width && MouseManager.Y > y + 118 && MouseManager.Y < y + 118 + Container.Height)
+                        {
+                            Tabs.Find(d => d.IsActive == true).SendClick(Left, Top);
+                        }
+                        //Tabs.Find(d => d.IsActive == true).SendClick(Left, Top);
+                    }
+                    clicked = false;
+                }
+
+                if (MouseManager.MouseState == MouseState.Right && KernelCycle >= 150)
+                {
+                    Tabs.Find(d => d.IsActive == true).SendClick(-1, -1);
+                    //Tabs.Find(d => d.IsActive == true).SendDrag((int)MouseManager.X, (int)MouseManager.Y, 100, 0);
+                    KernelCycle = 0;
+                }
+                else
+                {
+                    KernelCycle++;
+                }
             }
 
-            if (temp == true)
+            if (temp == true || Tabs.Find(d => d.IsActive == true).Render(Container, Scroll[0].Value))
             {
-                Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
-                foreach (var vscroll in Scroll)
+                if(temp == true)
                 {
-                    vscroll.X = width - 22;
-                    vscroll.Height = height - 60;
-                    vscroll.Render(window);
+                    //Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
+                    foreach (var Tab in Tabs)
+                    {
+                        Tab.RenderTab(window);
+                        if(Tab.IsActive == true)
+                        {
+                            if (Tab.URL.Contains("https://www."))
+                            {
+                                TextBoxes[0].Text = Tab.URL.Remove(0, "https://www.".Length + 1);
+                            }
+                        }
+                    }
+
+                    foreach (var vscroll in Scroll)
+                    {
+                        vscroll.X = width - 22;
+                        vscroll.Height = height - 126;
+                        vscroll.Render(window);
+                    }
+                    foreach (var Box in TextBoxes)
+                    {
+                        if(Box.ID == "URL")
+                        {
+                            Box.Width = 430;
+                        }
+                        Box.Render(window);
+                    }
                 }
-                foreach (var Box in TextBoxes)
-                {
-                    Box.Width = width - 84;
-                    Box.Render(window);
-                }
-                ImprovedVBE.DrawImageAlpha(Container, 5, 52, window);
+
+                ImprovedVBE.DrawImage(Container, 10, 118, window);
 
                 temp = false;
             }
-            
-            ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
+
+            if (ImprovedVBE.RequestRedraw == true)
+            {
+                switch (GlobalValues.TaskBarType)
+                {
+                    case "Classic":
+                        ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
+                        break;
+                    case "Nostalgia":
+                        ImprovedVBE.DrawImage(window, x, y, ImprovedVBE.cover);
+                        break;
+                }
+            }
+            //ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
         }
 
         public void RightClick()

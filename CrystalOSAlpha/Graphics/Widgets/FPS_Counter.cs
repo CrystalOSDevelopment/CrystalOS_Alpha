@@ -42,6 +42,7 @@ namespace CrystalOS_Alpha.Graphics.Widgets
         public bool Get_Back = true;
         public bool mem = true;
         
+        public Bitmap BackBuffer;
         public Bitmap Back;
 
         public void App()
@@ -49,21 +50,40 @@ namespace CrystalOS_Alpha.Graphics.Widgets
             string output = "FPS: " + FPS.ToString();
             if(Get_Back == true)
             {
+                ImprovedVBE.Clear(true);
                 if(x >= ImprovedVBE.width)
                 {
                     sizeDec = 40;
                 }
-                Back = Base.Widget_Back(200 - sizeDec, 200 - sizeDec, ImprovedVBE.colourToNumber(GlobalValues.R, GlobalValues.G, GlobalValues.B));
-                Back = ImprovedVBE.EnableTransparency(Back, x, y, Back);
+                if(BackBuffer == null)
+                {
+                    BackBuffer = Base.Widget_Back(200 - sizeDec, 200 - sizeDec, ImprovedVBE.colourToNumber(GlobalValues.R, GlobalValues.G, GlobalValues.B));
+                    Back = Base.Widget_Back(200 - sizeDec, 200 - sizeDec, ImprovedVBE.colourToNumber(GlobalValues.R, GlobalValues.G, GlobalValues.B));
+                    BackBuffer = ImprovedVBE.EnableTransparency(BackBuffer, x, y, BackBuffer);
+                    Back = ImprovedVBE.EnableTransparency(Back, x, y, Back);
+                }
+                else
+                {
+                    Array.Copy(BackBuffer.RawData, Back.RawData, Back.RawData.Length);
+                }
                 BitFont.DrawBitFontString(Back, "ArialCustomCharset16", GlobalValues.c, output, ((100 - sizeDec / 2) - output.Length * 4), (int)(Back.Height / 2 - 8));//92
                 Heap.Collect();
+                ImprovedVBE.DrawImageAlpha(Back, x, y, ImprovedVBE.cover);
+                ImprovedVBE.RequestRedraw = true;
                 Get_Back = false;
             }
-            ImprovedVBE.DrawImageAlpha(Back, x, y, ImprovedVBE.cover);
+            else if (ImprovedVBE.RequestRedraw || SideNav.RequestDrawLocal == true)
+            {
+                ImprovedVBE.DrawImageAlpha(Back, x, y, ImprovedVBE.cover);
+            }
 
             if (LastS == -1)
             {
                 LastS = DateTime.UtcNow.Second;
+            }
+            if(Ticken % 50 == 0)
+            {
+                Heap.Collect();
             }
             if (DateTime.UtcNow.Second != LastS)
             {
@@ -79,13 +99,13 @@ namespace CrystalOS_Alpha.Graphics.Widgets
 
             if (MouseManager.MouseState == MouseState.Left)
             {
-                if (((MouseManager.X > x && MouseManager.X < x + Back.Width) && (MouseManager.Y > y && MouseManager.Y < y + Back.Height)) || mem == false)
+                if (((MouseManager.X > x && MouseManager.X < x + Back.Width) && (MouseManager.Y > y && MouseManager.Y < y + Back.Height)))
                 {
-                    if (mem == true)
+                    if (mem == false)
                     {
                         x_dif = (int)MouseManager.X - x;
                         y_dif = (int)MouseManager.Y - y;
-                        mem = false;
+                        mem = true;
                     }
                     x = (int)MouseManager.X - x_dif;
                     y = (int)MouseManager.Y - y_dif;
@@ -95,6 +115,7 @@ namespace CrystalOS_Alpha.Graphics.Widgets
                         {
                             Back = ImprovedVBE.ScaleImageStock(Back, (uint)(Back.Width - sizeDec), (uint)(Back.Height - sizeDec));
                             sizeDec += 10;
+                            BackBuffer = null;
                             Get_Back = true;
                         }
                     }
@@ -104,6 +125,7 @@ namespace CrystalOS_Alpha.Graphics.Widgets
                         {
                             Back = ImprovedVBE.ScaleImageStock(Back, (uint)(Back.Width - sizeDec), (uint)(Back.Height - sizeDec));
                             sizeDec -= 10;
+                            BackBuffer = null;
                             Get_Back = true;
                         }
                     }
@@ -113,11 +135,9 @@ namespace CrystalOS_Alpha.Graphics.Widgets
                     if (x + Back.Width > ImprovedVBE.width - 200)
                     {
                         x = SideNav.X + 15;
-                        y = SideNav.start_y;
                     }
                 }
-                SideNav.start_y += (int)Back.Height + 20;
-                if (mem == false)
+                if (mem == true)
                 {
                     x = (int)MouseManager.X - x_dif;
                     y = (int)MouseManager.Y - y_dif;
@@ -128,14 +148,14 @@ namespace CrystalOS_Alpha.Graphics.Widgets
                 if (x + Back.Width > ImprovedVBE.width - 200)
                 {
                     x = SideNav.X + 15;
-                    y = SideNav.start_y;
-                    SideNav.start_y += (int)Back.Height + 20;
+                    y = (int)(TaskScheduler.Apps.IndexOf(this) * (Back.Height + 20) + 80);
                 }
-            }
-            if (mem == false && MouseManager.MouseState == MouseState.None)
-            {
-                mem = true;
-                Get_Back = true;
+                if (mem == true)
+                {
+                    mem = false;
+                    BackBuffer = null;
+                    Get_Back = true;
+                }
             }
         }
 

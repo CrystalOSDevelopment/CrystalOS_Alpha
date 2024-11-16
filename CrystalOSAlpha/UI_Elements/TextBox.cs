@@ -59,6 +59,8 @@ namespace CrystalOSAlpha.UI_Elements
 
             ImprovedVBE.DrawFilledRectangle(canvas, Color, 2, 2, Width - 4, Height - 4, false);
 
+            string displayText = Text;  // Use displayText for rendering, keeping Text unchanged
+
             switch (opt)
             {
                 case Options.left:
@@ -69,37 +71,38 @@ namespace CrystalOSAlpha.UI_Elements
                     else
                     {
                         offset = 0;
-                        for(int i = Text.Length; i > 0; i--)
+                        for (int i = Text.Length; i > 0; i--)
                         {
-                            offset += BitFont.DrawBitFontString(canvas_Blank, "ArialCustomCharset16", System.Drawing.Color.Black, Text[i].ToString(), 0, 0);
-                            if(offset > Width - 15)
+                            offset += BitFont.DrawBitFontString(canvas_Blank, "ArialCustomCharset16", System.Drawing.Color.Black, Text[i - 1].ToString(), 0, 0);
+                            if (offset > Width - 15)
                             {
-                                Text = Text.Remove(0, i);
+                                displayText = Text.Substring(i - 1);  // Adjust displayText instead of modifying Text
                                 break;
                             }
                         }
-                        BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", ComplimentaryColor.Generate(Color), Text, 5, Height / 2 - 8);
+                        BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", ComplimentaryColor.Generate(Color), displayText, 5, Height / 2 - 8);
                     }
                     break;
                 case Options.right:
-                    if(Text == "")
+                    if (Text == "")
                     {
                         BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", System.Drawing.Color.Gray, PlaceHolder, (Width / 2) - (PlaceHolder.Length * 4), Height / 2 - 8);
                     }
                     else
                     {
-                        if(Text.Length > 30)
+                        if (Text.Length > 30)
                         {
-                            Text = Text.Remove(0, Text.Length - 30);
+                            displayText = Text.Substring(Text.Length - 30);  // Trim only for display, keep full Text
                         }
-                        offset = BitFont.DrawBitFontString(canvas_Blank, "ArialCustomCharset16", System.Drawing.Color.White, Text, Width - (Text.Length * 6) - 3, Height / 2 - 8);
-                        BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", ComplimentaryColor.Generate(Color), Text, Width - offset - 3, Height / 2 - 8);
+                        offset = BitFont.DrawBitFontString(canvas_Blank, "ArialCustomCharset16", System.Drawing.Color.White, displayText, Width - (displayText.Length * 6) - 3, Height / 2 - 8);
+                        BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", ComplimentaryColor.Generate(Color), displayText, Width - offset - 3, Height / 2 - 8);
                     }
                     break;
             }
 
             ImprovedVBE.DrawImage(canvas, X, Y, Canvas);
         }
+
 
         public bool CheckClick(int X, int Y)
         {

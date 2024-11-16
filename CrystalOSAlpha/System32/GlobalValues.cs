@@ -45,6 +45,10 @@ namespace CrystalOSAlpha.Graphics
 
         //Public bool for the setup
         public static bool Clicked = false;
+
+        //Network
+        public static string TCPIP = "";
+        public static string ServerIP = "";
     }
     public enum KeyboardLayout
     {

@@ -96,7 +96,18 @@ namespace CrystalOSAlpha.SystemApps
 
                 ImprovedVBE.DrawImageAlpha(Resources.Celebration, 20, (int)(height / 2 - Resources.Celebration.Height / 2), canvas);
 
-                BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, message, (int)(Resources.Celebration.Width + 60), (int)(height / 2 - Resources.Celebration.Height / 2 + 10));
+                if (ImprovedVBE.RequestRedraw == true)
+                {
+                    switch (GlobalValues.TaskBarType)
+                    {
+                        case "Classic":
+                            BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, message, (int)(Resources.Celebration.Width + 60), (int)(height / 2 - Resources.Celebration.Height / 2 + 10));
+                            break;
+                        case "Nostalgia":
+                            BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.Black, message, (int)(Resources.Celebration.Width + 60), (int)(height / 2 - Resources.Celebration.Height / 2 + 10));
+                            break;
+                    }
+                }
 
                 Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
                 once = false;
@@ -127,7 +138,18 @@ namespace CrystalOSAlpha.SystemApps
                 }
             }
 
-            ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
+            if (ImprovedVBE.RequestRedraw == true)
+            {
+                switch (GlobalValues.TaskBarType)
+                {
+                    case "Classic":
+                        ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
+                        break;
+                    case "Nostalgia":
+                        ImprovedVBE.DrawImage(window, x, y, ImprovedVBE.cover);
+                        break;
+                }
+            }
         }
 
         public void RightClick()

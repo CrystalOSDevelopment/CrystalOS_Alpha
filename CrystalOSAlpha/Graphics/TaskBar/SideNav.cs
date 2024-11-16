@@ -11,16 +11,17 @@ namespace CrystalOSAlpha.Graphics.TaskBar
         public static int X = ImprovedVBE.width;
         public static int Y = 0;
         public static int start_y = 40;
+        public static int KernelCycle = 1;
 
         public static bool Get_Back = true;
-        public static bool keyframes = false;
+        public static bool RequestDrawLocal = false;
 
         public static Bitmap Back;
         public static string temp = "";
 
         public static void Core()
         {
-            if(TaskScheduler.Apps.FindAll(d => d.minimised == false).Count - 3 == 0)
+            if(TaskScheduler.Apps.FindAll(d => d.minimised == false).Count == 5 || TaskScheduler.Apps.FindAll(d => d.minimised == false).Count == 3)
             {
                 if(temp != GlobalValues.TaskBarType)
                 {
@@ -38,6 +39,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                                 if (X > ImprovedVBE.width - 200)
                                 {
                                     X -= 5;
+                                    ImprovedVBE.Clear(true);
                                 }
                             }
                         }
@@ -55,7 +57,7 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                             BitFont.DrawBitFontString(Back, "VerdanaCustomCharset24", Color.White, "Widgets", 2, 5);
                             Get_Back = false;
                         }
-                        if(X < ImprovedVBE.width - 2)
+                        if(X < ImprovedVBE.width - 2 && ImprovedVBE.RequestRedraw)
                         {
                             ImprovedVBE.DrawImageAlpha(Back, X, Y, ImprovedVBE.cover);
                         }
@@ -69,12 +71,14 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                                 if (X > ImprovedVBE.width - 200)
                                 {
                                     X -= 5;
+                                    ImprovedVBE.Clear(true);
                                 }
                             }
                             else
                             {
                                 if (X < ImprovedVBE.width)
                                 {
+                                    ImprovedVBE.Clear(true);
                                     X += 5;
                                 }
                             }
@@ -83,7 +87,12 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                         {
                             if (X < ImprovedVBE.width)
                             {
+                                ImprovedVBE.Clear(true);
                                 X += 5;
+                            }
+                            else
+                            {
+                                RequestDrawLocal = false;
                             }
                         }
                         if (Get_Back == true)
@@ -93,9 +102,29 @@ namespace CrystalOSAlpha.Graphics.TaskBar
                             BitFont.DrawBitFontString(Back, "VerdanaCustomCharset24", Color.White, "Widgets", 2, 5);
                             Get_Back = false;
                         }
-                        if (X < ImprovedVBE.width - 2 && TaskManager.calendar == false)
+                        if (X < ImprovedVBE.width - 2 && TaskManager.calendar == false && ImprovedVBE.RequestRedraw || RequestDrawLocal)
                         {
-                            ImprovedVBE.DrawImageAlpha(Back, X, Y + 47, ImprovedVBE.cover);
+                            if(MouseManager.MouseState == MouseState.Left)
+                            {
+                                ImprovedVBE.DrawImageAlpha(Back, X, Y + 47, ImprovedVBE.cover);
+                            }
+                            else
+                            {
+                                if(KernelCycle % 3 == 0)
+                                {
+                                    KernelCycle = 1;
+                                    RequestDrawLocal = false;
+                                }
+                                else
+                                {
+                                    ImprovedVBE.DrawImageAlpha(Back, X, Y + 47, ImprovedVBE.cover);
+                                    KernelCycle++;
+                                }
+                            }
+                            if(ImprovedVBE.RequestRedraw == true)
+                            {
+                                RequestDrawLocal = true;
+                            }
                         }
                         break;
                 }
