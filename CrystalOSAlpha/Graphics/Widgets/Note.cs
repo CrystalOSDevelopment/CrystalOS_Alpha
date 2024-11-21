@@ -7,9 +7,7 @@ using CrystalOSAlpha.UI_Elements;
 using System.Drawing;
 using CrystalOSAlpha.Applications;
 using CrystalOSAlpha.System32;
-using CrystalOS_Alpha;
 using Kernel = CrystalOS_Alpha.Kernel;
-using System;
 
 namespace CrystalOSAlpha.Graphics.Widgets
 {
@@ -354,62 +352,63 @@ namespace CrystalOSAlpha.Graphics.Widgets
                 Get_Back = true;
             }
 
-            if (MouseManager.MouseState == MouseState.Left)
+            switch (MouseManager.MouseState)
             {
-                if (((MouseManager.X > x && MouseManager.X < x + Back.Width) && (MouseManager.Y > y && MouseManager.Y < y + Back.Height)))
-                {
-                    if (mem == false)
+                case MouseState.Left:
+                    if ((MouseManager.X > x && MouseManager.X < x + Back.Width) && (MouseManager.Y > y && MouseManager.Y < y + Back.Height))
                     {
-                        x_dif = (int)MouseManager.X - x;
-                        y_dif = (int)MouseManager.Y - y;
-                        mem = true;
-                    }
-                    x = (int)MouseManager.X - x_dif;
-                    y = (int)MouseManager.Y - y_dif;
-                    if (x + Back.Width > ImprovedVBE.width - 200)
-                    {
-                        if (sizeDec < 40)
+                        if (mem == false)
                         {
-                            Back = ImprovedVBE.ScaleImageStock(Back, (uint)(Back.Width - sizeDec), (uint)(Back.Height - sizeDec));
-                            sizeDec += 10;
-                            Get_Back = true;
+                            x_dif = (int)MouseManager.X - x;
+                            y_dif = (int)MouseManager.Y - y;
+                            mem = true;
+                        }
+                        x = (int)MouseManager.X - x_dif;
+                        y = (int)MouseManager.Y - y_dif;
+                        if (x + Back.Width > ImprovedVBE.width - 200)
+                        {
+                            if (sizeDec < 40)
+                            {
+                                Back = ImprovedVBE.ScaleImageStock(Back, (uint)(Back.Width - sizeDec), (uint)(Back.Height - sizeDec));
+                                sizeDec += 10;
+                                Get_Back = true;
+                            }
+                        }
+                        else
+                        {
+                            if (sizeDec > 0)
+                            {
+                                Back = ImprovedVBE.ScaleImageStock(Back, (uint)(Back.Width - sizeDec), (uint)(Back.Height - sizeDec));
+                                sizeDec -= 10;
+                                Get_Back = true;
+                            }
                         }
                     }
                     else
                     {
-                        if (sizeDec > 0)
+                        if (x + Back.Width > ImprovedVBE.width - 200)
                         {
-                            Back = ImprovedVBE.ScaleImageStock(Back, (uint)(Back.Width - sizeDec), (uint)(Back.Height - sizeDec));
-                            sizeDec -= 10;
-                            Get_Back = true;
+                            x = SideNav.X + 15;
                         }
                     }
-                }
-                else
-                {
+                    if (mem == true)
+                    {
+                        x = (int)MouseManager.X - x_dif;
+                        y = (int)MouseManager.Y - y_dif;
+                    }
+                    break;
+                default:
                     if (x + Back.Width > ImprovedVBE.width - 200)
                     {
                         x = SideNav.X + 15;
+                        y = (int)(TaskScheduler.Apps.IndexOf(this) * (Back.Height + 20) + 80);
                     }
-                }
-                if (mem == true)
-                {
-                    x = (int)MouseManager.X - x_dif;
-                    y = (int)MouseManager.Y - y_dif;
-                }
-            }
-            else
-            {
-                if (x + Back.Width > ImprovedVBE.width - 200)
-                {
-                    x = SideNav.X + 15;
-                    y = (int)(TaskScheduler.Apps.IndexOf(this) * (Back.Height + 20) + 80);
-                }
-                if (mem == true)
-                {
-                    mem = false;
-                    Get_Back = true;
-                }
+                    if (mem == true)
+                    {
+                        mem = false;
+                        Get_Back = true;
+                    }
+                    break;
             }
             #endregion Graphical
         }

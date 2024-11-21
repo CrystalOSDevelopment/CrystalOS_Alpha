@@ -449,12 +449,15 @@ namespace CrystalOSAlpha.Applications.Clock
 
         public void DrawHand(Bitmap Canvas, int xStart, int yStart, double angleInDegrees, int radius)
         {
-            double angleInRadians = (angleInDegrees - 90) * (Math.PI / 180); // Start from 12 o'clock and rotate clockwise
+            double angleInRadians = (angleInDegrees - 90) * (Math.PI / 180); // Rotate clockwise from 12 o'clock
 
-            // Calculate the end point of the line on the circle's edge
-            int endX = xStart + (int)(radius * Math.Cos(angleInRadians));
-            int endY = yStart + (int)(radius * Math.Sin(angleInRadians));
+            // Calculate end point, rounding after computation to minimize precision errors
+            int endX = xStart + (int)Math.Round(radius * Math.Cos(angleInRadians));
+            int endY = yStart + (int)Math.Round(radius * Math.Sin(angleInRadians));
 
+            // Safeguard: Ensure endX and endY are within canvas bounds
+            endX = (int)Math.Clamp(endX, 0, Canvas.Width - 1);
+            endY = (int)Math.Clamp(endY, 0, Canvas.Height - 1);
 
             ImprovedVBE.DrawLine(Canvas, xStart, yStart, endX, endY, ImprovedVBE.colourToNumber(255, 0, 0));
         }

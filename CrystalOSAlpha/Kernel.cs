@@ -208,9 +208,15 @@ namespace CrystalOS_Alpha
             ImprovedVBE.Display(vbe);
 
             //For more sensitive scrolling, MouseManager.ResetScrollDelta is called in every second kernel cycle
-            if (collect % 2 == 0)
+            switch(collect)
             {
-                MouseManager.ResetScrollDelta();
+                case 3:
+                    MouseManager.ResetScrollDelta();
+                    collect = 0;
+                    break;
+                default:
+                    collect++;
+                    break;
             }
         }
 

@@ -7,8 +7,6 @@ using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics.TaskBar;
 using CrystalOSAlpha.Graphics.Widgets;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 

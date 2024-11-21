@@ -1,5 +1,4 @@
 ﻿using Cosmos.System.Graphics;
-using CrystalOSAlpha;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -9,13 +8,15 @@ namespace CrystalOSAlpha.Graphics.Engine
     public struct BitFontDescriptor
     {
         public string Charset;
+        public string Name;
         public MemoryStream MS;
         public int Size;
-        public BitFontDescriptor(string aCharset, MemoryStream aMS, int aSize)
+        public BitFontDescriptor(string aCharset, MemoryStream aMS, int aSize, string Name)
         {
             Charset = aCharset;
             MS = aMS;
             Size = aSize;
+            this.Name = Name;
         }
     }
 
@@ -24,16 +25,17 @@ namespace CrystalOSAlpha.Graphics.Engine
     /// </summary>
     static class BitFont
     {
-        public static Dictionary<string, BitFontDescriptor> RegisteredBitFont = new Dictionary<string, BitFontDescriptor>();
+        //public static Dictionary<string, BitFontDescriptor> RegisteredBitFont = new Dictionary<string, BitFontDescriptor>();
+        public static List<BitFontDescriptor> RegisteredBitFont = new List<BitFontDescriptor>();
 
         /// <summary>
         /// The BitFont Should Be Left Aligned
         /// </summary>
         /// <param name="Name"></param>
         /// <param name="bitFontDescriptor"></param>
-        public static void RegisterBitFont(string Name, BitFontDescriptor bitFontDescriptor)
+        public static void RegisterBitFont(BitFontDescriptor bitFontDescriptor)
         {
-            RegisteredBitFont.Add(Name, bitFontDescriptor);
+            RegisteredBitFont.Add(bitFontDescriptor);
         }
 
         /// <summary>
@@ -49,14 +51,18 @@ namespace CrystalOSAlpha.Graphics.Engine
         /// <param name="Devide"></param>
         public static int DrawBitFontString(Bitmap Canvas, string FontName, Color color, string Text, int X, int Y, int Devide = 2, bool DisableAntiAliasing = false)
         {
-            if (!RegisteredBitFont.ContainsKey(FontName))
+            int index = RegisteredBitFont.FindIndex(d => d.Name == FontName);
+            if (index == -1)
             {
                 throw new KeyNotFoundException($"\"{FontName}\" is not registered yet");
             }
 
-            BitFontDescriptor bitFontDescriptor = RegisteredBitFont[FontName];
+            BitFontDescriptor bitFontDescriptor = RegisteredBitFont[index];
             string[] Lines = Text.Split('\n');
             int UsedX = 0;
+
+            int ColorRGB = color.ToArgb();
+            int AliasingColor = ImprovedVBE.colourToNumber(color.R / 2, color.G / 2, color.B / 2);
             for (int l = 0; l < Lines.Length; l++)
             {
                 if(Y + bitFontDescriptor.Size * l >= -8 && Y + bitFontDescriptor.Size * l <= Canvas.Height)
@@ -67,12 +73,12 @@ namespace CrystalOSAlpha.Graphics.Engine
                         char c = Lines[l][i];
                         if(Lines[l].Length >= 60 && i < 60 && Lines[l][0] == ' ' && Lines[l][^1] == ' ')
                         {
-                            int ja = DrawBitFontChar(Canvas, bitFontDescriptor.MS, bitFontDescriptor.Size, color, bitFontDescriptor.Charset.Impl_Str_IndexOf(c), UsedX + X, Y + bitFontDescriptor.Size * l, !DisableAntiAliasing) + Devide;
+                            int ja = DrawBitFontChar(Canvas, bitFontDescriptor.MS, bitFontDescriptor.Size, ColorRGB, AliasingColor, bitFontDescriptor.Charset.Impl_Str_IndexOf(c), UsedX + X, Y + bitFontDescriptor.Size * l, !DisableAntiAliasing) + Devide;
                             UsedX += 8;
                         }
                         else
                         {
-                            UsedX += DrawBitFontChar(Canvas, bitFontDescriptor.MS, bitFontDescriptor.Size, color, bitFontDescriptor.Charset.Impl_Str_IndexOf(c), UsedX + X, Y + bitFontDescriptor.Size * l, !DisableAntiAliasing) + Devide;
+                            UsedX += DrawBitFontChar(Canvas, bitFontDescriptor.MS, bitFontDescriptor.Size, ColorRGB, AliasingColor, bitFontDescriptor.Charset.Impl_Str_IndexOf(c), UsedX + X, Y + bitFontDescriptor.Size * l, !DisableAntiAliasing) + Devide;
                         }
                     }
                 }
@@ -82,12 +88,13 @@ namespace CrystalOSAlpha.Graphics.Engine
 
         public static int DrawBitFontString(Bitmap Canvas, string FontName, Color[] color, string Text, int X, int Y, int Devide = 2, bool DisableAntiAliasing = false)
         {
-            if (!RegisteredBitFont.ContainsKey(FontName))
+            int index = RegisteredBitFont.FindIndex(d => d.Name == FontName);
+            if (index == -1)
             {
                 throw new KeyNotFoundException($"\"{FontName}\" is not registered yet");
             }
 
-            BitFontDescriptor bitFontDescriptor = RegisteredBitFont[FontName];
+            BitFontDescriptor bitFontDescriptor = RegisteredBitFont[index];
             string[] Lines = Text.Split('\n');
             int UsedX = 0;
             int counter = 0;
@@ -97,7 +104,7 @@ namespace CrystalOSAlpha.Graphics.Engine
                 for (int i = 0; i < Lines[l].Length; i++)
                 {
                     char c = Lines[l][i];
-                    UsedX += DrawBitFontChar(Canvas, bitFontDescriptor.MS, bitFontDescriptor.Size, color[counter], bitFontDescriptor.Charset.Impl_Str_IndexOf(c), UsedX + X, Y + bitFontDescriptor.Size * l, !DisableAntiAliasing) + Devide;
+                    UsedX += DrawBitFontChar(Canvas, bitFontDescriptor.MS, bitFontDescriptor.Size, color[counter].ToArgb(), ImprovedVBE.colourToNumber(color[counter].R / 2, color[counter].G / 2, color[counter].B / 2), bitFontDescriptor.Charset.Impl_Str_IndexOf(c), UsedX + X, Y + bitFontDescriptor.Size * l, !DisableAntiAliasing) + Devide;
                     counter++;
                 }
             }
@@ -128,7 +135,7 @@ namespace CrystalOSAlpha.Graphics.Engine
         /// <param name="X"></param>
         /// <param name="Y"></param>
         /// <returns></returns>
-        public static int DrawBitFontChar(Bitmap Canvas, MemoryStream MemoryStream, int Size, Color Color, int Index, int X, int Y, bool UseAntiAliasing)
+        public static int DrawBitFontChar(Bitmap Canvas, MemoryStream MemoryStream, int Size, int Color, int AntiAlisingColor, int Index, int X, int Y, bool UseAntiAliasing)
         {
             if (Index == -1) return Size / 2;
 
@@ -148,28 +155,32 @@ namespace CrystalOSAlpha.Graphics.Engine
 
                     for (int ww = 0; ww < 8; ww++)
                     {
-                        if ((Font[h * (Size / 8) + aw] & 0x80 >> ww) != 0)
+                        switch((Font[h * (Size / 8) + aw] & 0x80 >> ww) != 0)
                         {
-                            ImprovedVBE.DrawPixel(Canvas, X + aw * 8 + ww, Y + h, Color.ToArgb());
-
-                            if (aw * 8 + ww > MaxX)
-                            {
-                                MaxX = aw * 8 + ww;
-                            }
-
-                            if (LastPixelIsNotDrawn)
-                            {
-                                if (UseAntiAliasing)
+                            case true:
+                                ImprovedVBE.DrawPixel(Canvas, X + aw * 8 + ww, Y + h, Color);
+                                switch(aw * 8 + ww > MaxX)
                                 {
-                                    ImprovedVBE.DrawPixel(Canvas, X + aw * 8 + ww - 1, Y + h, ImprovedVBE.colourToNumber(Color.R / 2, Color.G / 2, Color.B / 2));
+                                    case true:
+                                        MaxX = aw * 8 + ww;
+                                        break;
                                 }
-
-                                LastPixelIsNotDrawn = false;
-                            }
-                        }
-                        else
-                        {
-                            LastPixelIsNotDrawn = true;
+                                switch (LastPixelIsNotDrawn)
+                                {
+                                    case true:
+                                        switch(UseAntiAliasing)
+                                        {
+                                            case true:
+                                                ImprovedVBE.DrawPixel(Canvas, X + aw * 8 + ww - 1, Y + h, AntiAlisingColor);
+                                                break;
+                                        }
+                                        LastPixelIsNotDrawn = false;
+                                        break;
+                                }
+                                break;
+                            case false:
+                                LastPixelIsNotDrawn = true;
+                                break;
                         }
                     }
                 }

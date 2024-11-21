@@ -67,7 +67,7 @@ namespace CrystalOSAlpha.Graphics
                     int textX = (width / 2) - (name.Length * 6) / 2; // Center text horizontally
                     BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.Black, name, textX, 0);
 
-                    return (canvas, back_canvas, canvas); // Return updated bitmaps
+                    return (canvas, back_canvas, window); // Return updated bitmaps
                 default:
                     return (canvas, back_canvas, window);
             }

@@ -305,7 +305,8 @@ namespace CrystalOSAlpha.Applications.Terminal
                                             }
                                         }
                                         command = "";
-                                        while(content.Split('\n').Length * 16 > Container.Height * 5)
+                                        CommandLibrary.output = "";
+                                        while (content.Split('\n').Length * 16 > Container.Height * 5)
                                         {
                                             content = content.Remove(0, content.IndexOf("\n") + 1);
                                         }
@@ -384,6 +385,8 @@ namespace CrystalOSAlpha.Applications.Terminal
 
                         Array.Copy(canvas.RawData, 0, window.RawData, 0, canvas.RawData.Length);
                         temp = true;
+
+                        ImprovedVBE.RequestRedraw = true;
                     }
                     break;
             }

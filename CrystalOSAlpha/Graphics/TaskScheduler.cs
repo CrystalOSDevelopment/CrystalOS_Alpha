@@ -1,5 +1,6 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
+using CrystalOS_Alpha.Graphics.Widgets;
 using CrystalOSAlpha.Applications;
 using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics.Icons;
@@ -22,6 +23,7 @@ namespace CrystalOSAlpha.Graphics
         public static int y_offset = TaskManager.Top - 35;
         public static int FromX = 0;
         public static int FromY = 0;
+        public static int MaxApp = 0;
 
         public static Bitmap Preview = new Bitmap(13, 13, ColorDepth.ColorDepth32);
 
@@ -32,22 +34,27 @@ namespace CrystalOSAlpha.Graphics
         public static List<App> Apps = new List<App>();
         public static List<App> AppsQuick = new List<App>();
         public static List<Button> Buttons = new List<Button>();
+        public static Random rnd = new Random();
         public static void Exec()
         {
-            Random rnd = new Random();
-            for (int i = 0; i < Apps.Count; i++)
+            if(Apps.Count != MaxApp)
             {
-                for (int j = 0; j < Apps.Count - i - 1; j++)
+                for (int i = 0; i < Apps.Count; i++)
                 {
-                    if (Apps[j].z > Apps[j + 1].z)
+                    for (int j = 0; j < Apps.Count - i - 1; j++)
                     {
-                        // Swap objects
-                        App temp = Apps[j];
-                        Apps[j] = Apps[j + 1];
-                        Apps[j + 1] = temp;
+                        if (Apps[j].z > Apps[j + 1].z)
+                        {
+                            // Swap objects
+                            App temp = Apps[j];
+                            Apps[j] = Apps[j + 1];
+                            Apps[j + 1] = temp;
+                        }
                     }
                 }
+                MaxApp = Apps.Count;
             }
+
             for (int i = 0; i < Apps.Count; i++)
             {
                 Apps[i].z = i;
@@ -67,10 +74,18 @@ namespace CrystalOSAlpha.Graphics
                         app.once = true;
                         break;
                 }
-                switch(app.y <= 1)
+                switch(app.y < 1)
                 {
                     case true:
                         app.y = 1;
+                        break;
+                    case false:
+                        switch(app.y < TaskManager.TaskBar.Height && GlobalValues.TaskBarType == "Nostalgia")
+                        {
+                            case true:
+                                app.y = (int)TaskManager.TaskBar.Height;
+                                break;
+                        }
                         break;
                 }
                 switch(app.x <= 0 && app.name != null)
@@ -80,195 +95,184 @@ namespace CrystalOSAlpha.Graphics
                         break;
                 }
 
-                if (app.y < TaskManager.TaskBar.Height && GlobalValues.TaskBarType == "Nostalgia")
+                switch((TaskManager.MenuOpened == false || TaskManager.calendar == false) && TaskManager.clicked == false) //Checks if the menu/calendar isn't opened
                 {
-                    app.y = (int)TaskManager.TaskBar.Height;
-                }
-                if ((TaskManager.MenuOpened == false || TaskManager.calendar == false) && TaskManager.clicked == false)
-                {
-                    if (MouseManager.MouseState == MouseState.Left && app.movable == false && ImprovedVBE.isMoving == false)
-                    {
-                        if(MouseManager.X < app.x + app.width && MouseManager.X > app.x + app.width - 21)
+                    case true:
+                        switch (MouseManager.MouseState == MouseState.Left && app.movable == false && ImprovedVBE.isMoving == false) //Checks if the left mouse button is pressed and if the app is movable(widget)
                         {
-                            if(MouseManager.Y > app.y + 2 && MouseManager.Y < app.y + 18)
-                            {
-                                if (Clicked == false)
+                            case true:
+                                switch(MouseManager.Y > app.y && MouseManager.Y < app.y + 21) //Checks if the mouse is within the bounds of the app titlebar
                                 {
-                                    bool found = false;
-                                    for(int i = index + 1; i < Apps.Count; ++i)
-                                    {
-                                        if (Apps[i].x + Apps[i].width >= app.x + app.width - 21 && Apps[i].x + Apps[i].width <= app.x + app.width + 21)
+                                    case true:
+                                        int WidthAndX = app.x + app.width;
+                                        if (MouseManager.X < WidthAndX && MouseManager.X > WidthAndX - 21)
                                         {
-                                            if (Apps[i].y >= app.y - 22 && Apps[i].y <= app.y + 22)
+                                            if (Clicked == false)
                                             {
-                                                if (Apps[i].minimised == false)
+                                                bool found = false;
+                                                for (int i = index + 1; i < Apps.Count; ++i)
                                                 {
-                                                    found = true;
+                                                    if (Apps[i].x + Apps[i].width >= WidthAndX - 21 && Apps[i].x + Apps[i].width <= WidthAndX + 21)
+                                                    {
+                                                        if (Apps[i].y >= app.y - 22 && Apps[i].y <= app.y + 22)
+                                                        {
+                                                            if (Apps[i].minimised == false)
+                                                            {
+                                                                found = true;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                                if (found == false)
+                                                {
+                                                    Apps.Remove(app);
+                                                    Clicked = true;
+                                                }
+                                            }
+                                        } //Close button
+                                        if (MouseManager.X < WidthAndX - 26 && MouseManager.X > WidthAndX - 42)
+                                        {
+                                            app.minimised = true;
+                                        } // Minimise button
+                                        if (MouseManager.X < WidthAndX - 45 && MouseManager.X > app.x)
+                                        {
+                                            bool found = false;
+                                            for (int i = index + 1; i < Apps.Count; i++)
+                                            {
+                                                if (MouseManager.X > Apps[i].x && MouseManager.X < Apps[i].x + Apps[i].width)
+                                                {
+                                                    if (MouseManager.Y > Apps[i].y && MouseManager.Y < Apps[i].y + Apps[i].height)
+                                                    {
+                                                        if (Apps[i].minimised == false)
+                                                        {
+                                                            found = true;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            if (found == false)
+                                            {
+                                                if (get_values == true)
+                                                {
+                                                    neg_x = (int)MouseManager.X - app.x;
+                                                    neg_y = (int)MouseManager.Y - app.y;
+                                                    app.movable = true;
+                                                    get_values = false;
+                                                }
+                                                if (TaskManager.disable == false)
+                                                {
+                                                    app.z = 999;
+                                                    TaskManager.disable = true;
+                                                }
+                                            }
+                                        } //Move window by titlebar
+                                        break;
+                                }
+                                break;
+                        }
+                        switch (app.movable)
+                        {
+                            case true:
+                                ImprovedVBE.isMoving = true;
+                                app.x = (int)MouseManager.X - neg_x;
+                                app.y = (int)MouseManager.Y - neg_y;
+                                if (MouseManager.MouseState == MouseState.None)
+                                {
+                                    app.movable = false;
+                                    get_values = true;
+                                    ImprovedVBE.isMoving = false;
+                                }
+                                break;
+                        }
+                        break;
+                }
+
+                //Refactored till here
+                switch (app.minimised)
+                {
+                    case false:
+                        try
+                        {
+                            app.App();
+                            //Todo: Add Rendering when requested
+                            app.RightClick();
+                        }
+                        catch (Exception e)
+                        {
+                            if (!e.Message.Contains("TCP"))
+                            {
+                                if(e.Message.Length > 5)
+                                {
+                                    Apps.Add(new MsgBox(999, ImprovedVBE.width / 2 - 200, ImprovedVBE.height / 2 - 100, 400, 200, "Error!", e.Message, Resources.Celebration));
+                                }
+                                else
+                                {
+                                    Apps.Add(new MsgBox(999, ImprovedVBE.width / 2 - 300, ImprovedVBE.height / 2 - 100, 600, 200, "Error!", "An unknown error occoured!\nIf restarting the app doesn't help, open a github issue at:\nhttps://github.com/CrystalOSDevelopment/CrystalOS_Alpha\n" + e.Message, Resources.Celebration));
+                                }
+                                Apps.Remove(app);
+                            }
+                        }
+                        //Resize if every requirement checks out
+                        switch(MouseManager.MouseState == MouseState.Left)
+                        {
+                            case true:
+                                if (MouseManager.X > app.x + app.width - 10 && MouseManager.X < app.x + app.width)
+                                {
+                                    if (MouseManager.Y > app.y + app.height - 10 && MouseManager.Y < app.y + app.height)
+                                    {
+                                        bool Found = false;
+                                        for (int i = counter + 1; i < Apps.Count; i++)
+                                        {
+                                            if (Apps[i].minimised == false)
+                                            {
+                                                if (Apps[i].x + Apps[i].width > app.width - 10)
+                                                {
+                                                    if (Apps[i].y + Apps[i].height > app.height - 10)
+                                                    {
+                                                        Found = true;
+                                                    }
                                                 }
                                             }
                                         }
-                                    }
-                                    if(found == false)
-                                    {
-                                        Apps.Remove(app);
-                                        Clicked = true;
+                                        if (Found == false)
+                                        {
+                                            FromX = app.x;
+                                            FromY = app.y;
+                                            isResizing = true;
+                                        }
                                     }
                                 }
-                            }
-                        }
-                        if (MouseManager.X < app.x + app.width - 26 && MouseManager.X > app.x + app.width - 42)
-                        {
-                            if (MouseManager.Y > app.y + 2 && MouseManager.Y < app.y + 18)
-                            {
-                                app.minimised = true;
-                            }
-                        }
-                        if (MouseManager.X < app.x + app.width - 21 && MouseManager.X > app.x)
-                        {
-                            if (MouseManager.Y > app.y && MouseManager.Y < app.y + 21)
-                            {
-                                bool found = false;
-                                for (int i = index + 1; i < Apps.Count; i++)
+                                switch (isResizing)
                                 {
-                                    if (MouseManager.X > Apps[i].x && MouseManager.X < Apps[i].x + Apps[i].width)
-                                    {
-                                        if (MouseManager.Y > Apps[i].y && MouseManager.Y < Apps[i].y + Apps[i].height)
+                                    case true: ImprovedVBE.DrawRectangle(ImprovedVBE.cover, FromX, FromY, (int)MouseManager.X - FromX, (int)MouseManager.Y - FromY, ImprovedVBE.colourToNumber(255, 255, 255)); break;
+                                }
+                                break;
+                            case false:
+                                switch(MouseManager.MouseState == MouseState.None && isResizing == true)
+                                {
+                                    case true:
+                                        if (app.x == FromX && app.y == FromY)
                                         {
-                                            if(Apps[i].minimised == false)
+                                            app.width = (int)MouseManager.X - FromX;
+                                            app.height = (int)MouseManager.Y - FromY;
+                                            app.once = true;
+                                            FromX = 0;
+                                            FromY = 0;
+                                            isResizing = false;
+                                            if (app.width < 150)
                                             {
-                                                found = true;
+                                                app.width = 150;
+                                            }
+                                            if (app.height < 150)
+                                            {
+                                                app.height = 150;
                                             }
                                         }
-                                    }
+                                        break;
                                 }
-                                if (found == false)
-                                {
-                                    if (get_values == true)
-                                    {
-                                        neg_x = (int)MouseManager.X - app.x;
-                                        neg_y = (int)MouseManager.Y - app.y;
-                                        app.movable = true;
-                                        get_values = false;
-                                    }
-                                }
-                            }
+                                break;
                         }
-                        if(MouseManager.X > app.x && MouseManager.X < app.x + app.width)
-                        {
-                            if (MouseManager.Y > app.y && MouseManager.Y < app.y + app.height)
-                            {
-                                bool found = false;
-                                for (int i = index + 1; i < Apps.Count; i++)
-                                {
-                                    if (MouseManager.X > Apps[i].x && MouseManager.X < Apps[i].x + Apps[i].width)
-                                    {
-                                        if (MouseManager.Y > Apps[i].y && MouseManager.Y < Apps[i].y + Apps[i].height)
-                                        {
-                                            found = true;
-                                        }
-                                    }
-                                }
-                                if (found == false)
-                                {
-                                    if(TaskManager.disable == false)
-                                    {
-                                        app.z = 999;
-                                        TaskManager.disable = true;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    if(app.movable == true)
-                    {
-                        ImprovedVBE.isMoving = true;
-                        app.x = (int)MouseManager.X - neg_x;
-                        app.y = (int)MouseManager.Y - neg_y;
-                        if(MouseManager.MouseState == MouseState.None)
-                        {
-                            app.movable = false;
-                            get_values = true;
-                            ImprovedVBE.isMoving = false;
-                        }
-                    }
-                }
-                if(app.minimised == false)
-                {
-                    try
-                    {
-                        app.App();
-                        //Todo: Add Rendering when requested
-                        app.RightClick();
-                    }
-                    catch (Exception e)
-                    {
-                        if (!e.Message.Contains("TCP"))
-                        {
-                            if(e.Message.Length > 5)
-                            {
-                                Apps.Add(new MsgBox(999, ImprovedVBE.width / 2 - 200, ImprovedVBE.height / 2 - 100, 400, 200, "Error!", e.Message, Resources.Celebration));
-                            }
-                            else
-                            {
-                                Apps.Add(new MsgBox(999, ImprovedVBE.width / 2 - 300, ImprovedVBE.height / 2 - 100, 600, 200, "Error!", "An unknown error occoured!\nIf restarting the app doesn't help, open a github issue at:\nhttps://github.com/CrystalOSDevelopment/CrystalOS_Alpha\n" + e.Message, Resources.Celebration));
-                            }
-                            Apps.Remove(app);
-                        }
-                    }
-                    //Resize if every requirement checks out
-                    if(MouseManager.MouseState == MouseState.Left)
-                    {
-                        if(MouseManager.X > app.x + app.width - 10 && MouseManager.X < app.x + app.width)
-                        {
-                            if(MouseManager.Y > app.y + app.height - 10 && MouseManager.Y < app.y + app.height)
-                            {
-                                bool Found = false;
-                                for(int i = counter + 1; i < Apps.Count; i++)
-                                {
-                                    if (Apps[i].minimised == false)
-                                    {
-                                        if(Apps[i].x + Apps[i].width > app.width - 10)
-                                        {
-                                            if(Apps[i].y + Apps[i].height > app.height - 10)
-                                            {
-                                                Found = true;
-                                            }
-                                        }
-                                    }
-                                }
-                                if(Found == false)
-                                {
-                                    FromX = app.x;
-                                    FromY = app.y;
-                                    isResizing = true;
-                                }
-                            }
-                        }
-                        if(isResizing == true)
-                        {
-                            ImprovedVBE.DrawRectangle(ImprovedVBE.cover, FromX, FromY, (int)MouseManager.X - FromX, (int)MouseManager.Y - FromY, ImprovedVBE.colourToNumber(255, 255, 255));
-                        }
-                    }
-                    else if(MouseManager.MouseState == MouseState.None && isResizing == true)
-                    {
-                        if(app.x == FromX && app.y == FromY)
-                        {
-                            app.width = (int)MouseManager.X - FromX;
-                            app.height = (int)MouseManager.Y - FromY;
-                            app.once = true;
-                            FromX = 0;
-                            FromY = 0;
-                            isResizing = false;
-                            if(app.width < 150)
-                            {
-                                app.width = 150;
-                            }
-                            if(app.height < 150)
-                            {
-                                app.height = 150;
-                            }
-                        }
-                    }
+                        break;
                 }
                 index++;
                 counter++;

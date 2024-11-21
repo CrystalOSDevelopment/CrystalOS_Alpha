@@ -50,79 +50,49 @@ namespace CrystalOSAlpha
         /// <param name="c"></param>
         public static void Display(VBECanvas c, bool EnableCursor = true)
         {
-            if(isMoving == false)
+            //This is an artificial delay part which only gets activated when a window is being dragged to avoid tearing
+            switch (Counter)
             {
-                if (Counter == 7)
-                {
-                    c.DrawImage(cover, 0, 0);
-                    if (EnableCursor)
+                case 7:
+                    switch (Res)
                     {
-                        c.DrawImageAlpha(CrystalOS_Alpha.Kernel.C, (int)MouseManager.X, (int)MouseManager.Y);
-                    }
-                    c.Display();
-                    if (Res == true)
-                    {
-                        try
-                        {
-                            data = ScaleImageStock(Temp, (uint)width, (uint)height);
-                            cover = ScaleImageStock(Temp, (uint)width, (uint)height);
+                        case true:
+                            try
+                            {
+                                data = ScaleImageStock(Temp, (uint)width, (uint)height);
+                                cover = ScaleImageStock(Temp, (uint)width, (uint)height);
 
-                            MouseManager.ScreenWidth = (uint)width;
-                            MouseManager.ScreenHeight = (uint)height;
+                                MouseManager.ScreenWidth = (uint)width;
+                                MouseManager.ScreenHeight = (uint)height;
 
-                            TaskManager.Top = height;
-                            TaskManager.Left = width / 2 + 60;
-                        }
-                        catch
-                        {
+                                TaskManager.Top = height;
+                                TaskManager.Left = width / 2 + 60;
+                            }
+                            catch
+                            {
 
-                        }
+                            }
 
-                        Res = false;
-                    }
-                    Counter = 0;
-                }
-                else
-                {
-                    Counter++;
-                }
-                Clear();
-            }
-            else
-            {
-                //This is an artificial delay part which only gets activated when a window is being dragged to avoid tearing
-                if(Counter == 7)
-                {
-                    if(Res == true)
-                    {
-                        try
-                        {
-                            data = ScaleImageStock(Temp, (uint)width, (uint)height);
-                            cover = ScaleImageStock(Temp, (uint)width, (uint)height);
-
-                            MouseManager.ScreenWidth = (uint)width;
-                            MouseManager.ScreenHeight = (uint)height;
-
-                            TaskManager.Top = height;
-                            TaskManager.Left = width / 2 + 60;
-                        }
-                        catch
-                        {
-
-                        }
-
-                        Res = false;
+                            Res = false;
+                            break;
                     }
                     c.DrawImage(cover, 0, 0);
-                    c.DrawImageAlpha(CrystalOS_Alpha.Kernel.C, (int)MouseManager.X, (int)MouseManager.Y);
+                    switch (EnableCursor)
+                    {
+                        case true:
+                            c.DrawImageAlpha(CrystalOS_Alpha.Kernel.C, (int)MouseManager.X, (int)MouseManager.Y);
+                            break;
+                    }
                     c.Display();
                     Counter = 0;
-                }
-                else
-                {
+                    break;
+                case 6:
+                    Clear();
                     Counter++;
-                }
-                Clear();
+                    break;
+                default:
+                    Counter++;
+                    break;
             }
         }
 
@@ -136,11 +106,13 @@ namespace CrystalOSAlpha
             //data.RawData.CopyTo(cover.RawData, 0);
             // End of original code
 
-            if (MouseManager.MouseState == MouseState.Left || MouseManager.MouseState == MouseState.Right || RequestClear)//Separate the mouse update from window movement for the love of God!
+            switch(MouseManager.MouseState == MouseState.Left || RequestClear || MouseManager.MouseState == MouseState.Right)
             {
-                data.RawData.CopyTo(cover.RawData, 0);
-                RequestRedraw = true;
-                SideNav.RequestDrawLocal = true;    //If you don't have a SideNav, you can remove this line
+                case true:
+                    data.RawData.CopyTo(cover.RawData, 0);
+                    RequestRedraw = true;
+                    SideNav.RequestDrawLocal = true;
+                    break;
             }
         }
         #endregion Render to the screen and Clear
@@ -155,10 +127,16 @@ namespace CrystalOSAlpha
         /// <param name="color">Color of the pixel in integer</param>
         public static void DrawPixel(Bitmap Canvas, int x, int y, int color)
         {
-            switch(x > 0 && x < Canvas.Width && y >= 0 && y < Canvas.Height)
+            switch (x >= 0 && x < width)
             {
                 case true:
-                    Canvas.RawData[y * Canvas.Width + x] = color;
+                    int index = y * (int)Canvas.Width + x;
+                    switch (index >= 0 && index < Canvas.RawData.Length)
+                    {
+                        case true:
+                            Canvas.RawData[index] = color;
+                            break;
+                    }
                     break;
             }
         }
@@ -184,26 +162,24 @@ namespace CrystalOSAlpha
         /// <param name="x2">Ending X coordinate</param>
         /// <param name="y2">Ending Y coordinate</param>
         /// <param name="color">Color of the line in integer</param>
-        public static void DrawLine(Bitmap Canvas, float x1, float y1, float x2, float y2, int color)
+        public static void DrawLine(Bitmap canvas, float x1, float y1, float x2, float y2, int color)
         {
-            switch(y1 == y2)
+            int dx = (int)Math.Abs(x2 - x1), sx = x1 < x2 ? 1 : -1;
+            int dy = (int)Math.Abs(y2 - y1), sy = y1 < y2 ? 1 : -1;
+            int err = (dx > dy ? dx : -dy) / 2, e2;
+
+            while (true)
             {
-                case false:
-                    float dx = x2 - x1;
-                    float dy = y2 - y1;
+                // Draw the current pixel
+                DrawPixel(canvas, (int)x1, (int)y1, color);
 
-                    float length = (float)Math.Sqrt(dx * dx + dy * dy);
+                // Check if we've reached the endpoint
+                if (x1 == x2 && y1 == y2) break;
 
-                    float angle = (float)Math.Atan2(dy, dx);
-
-                    for (float i = 0; i < length; i++)
-                    {
-                        DrawPixel(Canvas, (int)(x1 + Math.Cos(angle) * i), (int)(y1 + Math.Sin(angle) * i), color);
-                    }
-                    break;
-                case true:
-                    DrawFilledRectangle(Canvas, color, (int)x1, (int)y1, (int)(x2 - x1), 1);
-                    break;
+                // Update error term and coordinates
+                e2 = err;
+                if (e2 > -dx) { err -= dy; x1 += sx; }
+                if (e2 < dy) { err += dx; y1 += sy; }
             }
         }
 
@@ -606,46 +582,49 @@ namespace CrystalOSAlpha
                             switch (found == false)
                             {
                                 case true:
-                                    if (_y < into.Height - 1 && _y > 0)
+                                    switch(_y < into.Height - 1 && _y > 0)
                                     {
-                                        if(x < 0)
-                                        {
-                                            x = 0;
-                                        }
-                                        line.CopyTo(into.RawData, _y * into.Width + x);
-                                        counter += (int)image.Width;
-                                    }
-                                    else
-                                    {
-                                        counter += (int)image.Width;
+                                        case true:
+                                            switch(x < 0)
+                                            {
+                                                case true:
+                                                    x = 0;
+                                                    break;
+                                            }
+                                            line.CopyTo(into.RawData, _y * into.Width + x);
+                                            counter += (int)image.Width;
+                                            break;
+                                        case false:
+                                            counter += (int)image.Width;
+                                            break;
                                     }
                                     break;
                                 case false:
                                     x = TempX;
                                     for (int _x = x; _x < x + image.Width; _x++)
                                     {
-                                        if (_y < into.Height - 1)
+                                        switch(_y < into.Height - 1)
                                         {
-                                            if (_x <= into.Width && _x >= 0)
-                                            {
-                                                if (image.RawData[counter] == 0)
+                                            case true:
+                                                switch (_x <= into.Width && _x >= 0)
                                                 {
-                                                    counter++;
+                                                    case true:
+                                                        switch (image.RawData[counter])
+                                                        {
+                                                            case 0:
+                                                                counter++;
+                                                                break;
+                                                            default:
+                                                                DrawPixel(into, _x, _y, image.RawData[counter]);
+                                                                counter++;
+                                                                break;
+                                                        }
+                                                        break;
                                                 }
-                                                else
-                                                {
-                                                    DrawPixel(into, _x, _y, image.RawData[counter]);
-                                                    counter++;
-                                                }
-                                            }
-                                            else
-                                            {
-                                                counter++;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            counter += (int)image.Width;
+                                                break;
+                                            case false:
+                                                counter += (int)image.Width;
+                                                break;
                                         }
                                     }
 

@@ -48,114 +48,119 @@ namespace CrystalOS_Alpha.Graphics.Widgets
         public void App()
         {
             string output = "FPS: " + FPS.ToString();
-            if(Get_Back == true)
+            switch (Get_Back)
             {
-                ImprovedVBE.Clear(true);
-                if(x >= ImprovedVBE.width)
-                {
-                    sizeDec = 40;
-                }
-                if(BackBuffer == null)
-                {
-                    BackBuffer = Base.Widget_Back(200 - sizeDec, 200 - sizeDec, ImprovedVBE.colourToNumber(GlobalValues.R, GlobalValues.G, GlobalValues.B));
-                    Back = Base.Widget_Back(200 - sizeDec, 200 - sizeDec, ImprovedVBE.colourToNumber(GlobalValues.R, GlobalValues.G, GlobalValues.B));
-                    BackBuffer = ImprovedVBE.EnableTransparency(BackBuffer, x, y, BackBuffer);
-                    Back = ImprovedVBE.EnableTransparency(Back, x, y, Back);
-                }
-                else
-                {
-                    Array.Copy(BackBuffer.RawData, Back.RawData, Back.RawData.Length);
-                }
-                BitFont.DrawBitFontString(Back, "ArialCustomCharset16", GlobalValues.c, output, ((100 - sizeDec / 2) - output.Length * 4), (int)(Back.Height / 2 - 8));//92
-                Heap.Collect();
-                ImprovedVBE.DrawImageAlpha(Back, x, y, ImprovedVBE.cover);
-                ImprovedVBE.RequestRedraw = true;
-                Get_Back = false;
-            }
-            else if (ImprovedVBE.RequestRedraw || SideNav.RequestDrawLocal == true)
-            {
-                ImprovedVBE.DrawImageAlpha(Back, x, y, ImprovedVBE.cover);
+                case true:
+                    ImprovedVBE.Clear(true);
+                    if(x >= ImprovedVBE.width)
+                    {
+                        sizeDec = 40;
+                    }
+                    if(BackBuffer == null)
+                    {
+                        BackBuffer = Base.Widget_Back(200 - sizeDec, 200 - sizeDec, ImprovedVBE.colourToNumber(GlobalValues.R, GlobalValues.G, GlobalValues.B));
+                        Back = Base.Widget_Back(200 - sizeDec, 200 - sizeDec, ImprovedVBE.colourToNumber(GlobalValues.R, GlobalValues.G, GlobalValues.B));
+                        BackBuffer = ImprovedVBE.EnableTransparency(BackBuffer, x, y, BackBuffer);
+                        Back = ImprovedVBE.EnableTransparency(Back, x, y, Back);
+                    }
+                    else
+                    {
+                        Array.Copy(BackBuffer.RawData, Back.RawData, Back.RawData.Length);
+                    }
+                    BitFont.DrawBitFontString(Back, "ArialCustomCharset16", GlobalValues.c, output, ((100 - sizeDec / 2) - output.Length * 4), (int)(Back.Height / 2 - 8));//92
+                    Heap.Collect();
+                    ImprovedVBE.DrawImageAlpha(Back, x, y, ImprovedVBE.cover);
+                    ImprovedVBE.RequestRedraw = true;
+                    Get_Back = false;
+                    break;
+                case false:
+                    switch(ImprovedVBE.RequestRedraw || SideNav.RequestDrawLocal == true)
+                    {
+                        case true:
+                            ImprovedVBE.DrawImageAlpha(Back, x, y, ImprovedVBE.cover);
+                            break;
+                    }
+                    break;
             }
 
             if (LastS == -1)
             {
                 LastS = DateTime.UtcNow.Second;
             }
-            if(Ticken % 50 == 0)
+            switch(Ticken % 200 == 0)
             {
-                Heap.Collect();
+                case true:
+                    Heap.Collect();
+                    break;
             }
-            if (DateTime.UtcNow.Second != LastS)
+            switch(DateTime.UtcNow.Second != LastS)
             {
-                if (DateTime.UtcNow.Second > LastS)
-                {
+                case true:
                     FPS = Ticken;
                     Get_Back = true;
-                }
-                LastS = DateTime.UtcNow.Second;
-                Ticken = 0;
+                    LastS = DateTime.UtcNow.Second;
+                    Ticken = 0;
+                    break;
             }
             Ticken++;
 
-            if (MouseManager.MouseState == MouseState.Left)
+            switch (MouseManager.MouseState)
             {
-                if (((MouseManager.X > x && MouseManager.X < x + Back.Width) && (MouseManager.Y > y && MouseManager.Y < y + Back.Height)))
-                {
-                    if (mem == false)
+                case MouseState.Left:
+                    if ((MouseManager.X > x && MouseManager.X < x + Back.Width) && (MouseManager.Y > y && MouseManager.Y < y + Back.Height))
                     {
-                        x_dif = (int)MouseManager.X - x;
-                        y_dif = (int)MouseManager.Y - y;
-                        mem = true;
-                    }
-                    x = (int)MouseManager.X - x_dif;
-                    y = (int)MouseManager.Y - y_dif;
-                    if (x + Back.Width > ImprovedVBE.width - 200)
-                    {
-                        if (sizeDec < 40)
+                        if (mem == false)
                         {
-                            Back = ImprovedVBE.ScaleImageStock(Back, (uint)(Back.Width - sizeDec), (uint)(Back.Height - sizeDec));
-                            sizeDec += 10;
-                            BackBuffer = null;
-                            Get_Back = true;
+                            x_dif = (int)MouseManager.X - x;
+                            y_dif = (int)MouseManager.Y - y;
+                            mem = true;
+                        }
+                        x = (int)MouseManager.X - x_dif;
+                        y = (int)MouseManager.Y - y_dif;
+                        if (x + Back.Width > ImprovedVBE.width - 200)
+                        {
+                            if (sizeDec < 40)
+                            {
+                                Back = ImprovedVBE.ScaleImageStock(Back, (uint)(Back.Width - sizeDec), (uint)(Back.Height - sizeDec));
+                                sizeDec += 10;
+                                Get_Back = true;
+                            }
+                        }
+                        else
+                        {
+                            if (sizeDec > 0)
+                            {
+                                Back = ImprovedVBE.ScaleImageStock(Back, (uint)(Back.Width - sizeDec), (uint)(Back.Height - sizeDec));
+                                sizeDec -= 10;
+                                Get_Back = true;
+                            }
                         }
                     }
                     else
                     {
-                        if (sizeDec > 0)
+                        if (x + Back.Width > ImprovedVBE.width - 200)
                         {
-                            Back = ImprovedVBE.ScaleImageStock(Back, (uint)(Back.Width - sizeDec), (uint)(Back.Height - sizeDec));
-                            sizeDec -= 10;
-                            BackBuffer = null;
-                            Get_Back = true;
+                            x = SideNav.X + 15;
                         }
                     }
-                }
-                else
-                {
+                    if (mem == true)
+                    {
+                        x = (int)MouseManager.X - x_dif;
+                        y = (int)MouseManager.Y - y_dif;
+                    }
+                    break;
+                default:
                     if (x + Back.Width > ImprovedVBE.width - 200)
                     {
                         x = SideNav.X + 15;
+                        y = (int)(TaskScheduler.Apps.IndexOf(this) * (Back.Height + 20) + 80);
                     }
-                }
-                if (mem == true)
-                {
-                    x = (int)MouseManager.X - x_dif;
-                    y = (int)MouseManager.Y - y_dif;
-                }
-            }
-            else
-            {
-                if (x + Back.Width > ImprovedVBE.width - 200)
-                {
-                    x = SideNav.X + 15;
-                    y = (int)(TaskScheduler.Apps.IndexOf(this) * (Back.Height + 20) + 80);
-                }
-                if (mem == true)
-                {
-                    mem = false;
-                    BackBuffer = null;
-                    Get_Back = true;
-                }
+                    if (mem == true)
+                    {
+                        mem = false;
+                        Get_Back = true;
+                    }
+                    break;
             }
         }
 
