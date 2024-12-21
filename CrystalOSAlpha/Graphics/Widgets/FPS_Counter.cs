@@ -159,6 +159,7 @@ namespace CrystalOS_Alpha.Graphics.Widgets
                     {
                         mem = false;
                         Get_Back = true;
+                        BackBuffer = null;
                     }
                     break;
             }

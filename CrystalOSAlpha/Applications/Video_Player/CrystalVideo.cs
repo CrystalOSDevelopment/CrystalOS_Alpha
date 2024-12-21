@@ -279,7 +279,7 @@ namespace CrystalOSAlpha.Applications.Video_Player
                 }
                 temp = false;
             }
-            ImprovedVBE.DrawImage(window, x, y, ImprovedVBE.cover);
+            //ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
             if(AllowPlay == true)
             {
                 Thread.Sleep(1);

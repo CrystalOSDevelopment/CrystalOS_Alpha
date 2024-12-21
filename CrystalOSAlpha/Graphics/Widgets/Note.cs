@@ -417,5 +417,10 @@ namespace CrystalOSAlpha.Graphics.Widgets
         {
 
         }
+
+        public void Render()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

@@ -3,6 +3,7 @@ using Cosmos.System;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 
 namespace CrystalOSAlpha.UI_Elements
 {
@@ -24,6 +25,8 @@ namespace CrystalOSAlpha.UI_Elements
         public TypeOfElement TypeOfElement { get; set; }
         public List<Point> Points { get; set; }
         public float Sensitivity { get; set; }
+        public int DeltaValue { get; private set; } // DeltaValue property
+
         public VerticalScrollbar(int x, int y, int width, int height, int Pos, int MinVal, int MaxVal, string ID)
         {
             this.X = x;
@@ -37,6 +40,7 @@ namespace CrystalOSAlpha.UI_Elements
             this.ID = ID;
             this.TypeOfElement = TypeOfElement.VerticalScrollbar;
         }
+
         public void Render(Bitmap canvas)
         {
             Pos = Math.Clamp(Pos, 20, Height - 40);
@@ -52,6 +56,7 @@ namespace CrystalOSAlpha.UI_Elements
             Sensitivity = (float)(((float)MaxVal - (float)MinVal) / ((float)this.Height - 60.0));
             Value = (int)((Pos - 20) * Sensitivity);
         }
+
         public bool CheckClick(int X, int Y)
         {
             if (MouseManager.MouseState == MouseState.Left)
@@ -66,12 +71,12 @@ namespace CrystalOSAlpha.UI_Elements
                     }
                     if (Clicked == true)
                     {
-                        if (Y - this.Y - LockedPos != Pos)
-                        {
-                            Pos = Y - this.Y - LockedPos;
-                            Pos = Math.Clamp(Pos, 20, Height - 40);
-                            return true;
-                        }
+                        int oldPos = Pos; // Store the old position
+                        Pos = Y - this.Y - LockedPos;
+                        Pos = Math.Clamp(Pos, 20, Height - 40);
+
+                        DeltaValue = (int)((Pos - oldPos) * Sensitivity); // Update DeltaValue
+                        return true;
                     }
                     return false;
                 }
@@ -86,6 +91,15 @@ namespace CrystalOSAlpha.UI_Elements
                 return false;
             }
             return false;
+        }
+
+        public void HandleScrollWheel(int scrollDelta)
+        {
+            int oldPos = Pos; // Store the old position
+            Pos += scrollDelta; // Adjust position based on scroll delta
+            Pos = Math.Clamp(Pos, 20, Height - 40);
+
+            DeltaValue = (int)((Pos - oldPos) * Sensitivity); // Update DeltaValue
         }
 
         public void SetValue(int X, int Y, string Value, bool writeprotected)

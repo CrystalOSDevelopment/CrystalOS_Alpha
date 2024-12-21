@@ -91,6 +91,7 @@ namespace CrystalOSAlpha.System32
                         break;
                 }
             }
+            ImprovedVBE.RequestRedraw = true;       // After every key press, request a redraw
             return temp;
         }
 

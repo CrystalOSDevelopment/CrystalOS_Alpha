@@ -252,10 +252,7 @@ namespace CrystalOSAlpha.Applications.Settings
                 {
                     if (button.Clicked == true)
                     {
-                        int Col = button.Color;
-                        button.Color = Color.White.ToArgb();
                         button.Render(window);
-                        button.Color = Col;
                         switch (button.Text)
                         {
                             case "Display":
@@ -408,25 +405,9 @@ namespace CrystalOSAlpha.Applications.Settings
                             BitFont.DrawBitFontString(Container, "ArialCustomCharset16", Color.White, "Use monocolor presets", 6, 154 - VerticalScrollbar[0].Value);
                             foreach (var button in Colors)
                             {
-                                if (button.ID.StartsWith("Crystal"))
+                                if (VerticalScrollbar[0] is UI_Elements.VerticalScrollbar vscroll)
                                 {
-                                    button.Y = 182 - VerticalScrollbar[0].Value;
-                                }
-                                else if (button.ID.StartsWith("LoadFile"))
-                                {
-                                    button.Y = 265 - VerticalScrollbar[0].Value;
-                                }
-                                else if (button.ID.StartsWith("Old"))
-                                {
-                                    button.Y = 943 - VerticalScrollbar[0].Value;
-                                }
-                                else if (button.ID.StartsWith("Animated"))
-                                {
-                                    button.Y = 943 - VerticalScrollbar[0].Value;
-                                }
-                                else
-                                {
-                                    button.Y = 212 - VerticalScrollbar[0].Value;
+                                    button.Y -= vscroll.DeltaValue;
                                 }
                                 if (button.Color == ImprovedVBE.data.RawData[^1])
                                 {
@@ -466,58 +447,10 @@ namespace CrystalOSAlpha.Applications.Settings
                             //Render every slider
                             foreach (var v in Slider)
                             {
-                                switch (v.ID)
+                                
+                                if (VerticalScrollbar[0] is UI_Elements.VerticalScrollbar vscroll)
                                 {
-                                    case "WindowRed":
-                                        v.Y = 378 - VerticalScrollbar[0].Value;
-                                        break;
-                                    case "WindowGreen":
-                                        v.Y = 402 - VerticalScrollbar[0].Value;
-                                        break;
-                                    case "WindowBlue":
-                                        v.Y = 426 - VerticalScrollbar[0].Value;
-                                        break;
-                                    case "TaskbarRed":
-                                        v.Y = 479 - VerticalScrollbar[0].Value;
-                                        break;
-                                    case "TaskbarGreen":
-                                        v.Y = 503 - VerticalScrollbar[0].Value;
-                                        break;
-                                    case "TaskbarBlue":
-                                        v.Y = 527 - VerticalScrollbar[0].Value;
-                                        break;
-                                    case "SatrtRed":
-                                        v.Y = 585 - VerticalScrollbar[0].Value;
-                                        break;
-                                    case "StartGreen":
-                                        v.Y = 609 - VerticalScrollbar[0].Value;
-                                        break;
-                                    case "StartBlue":
-                                        v.Y = 633 - VerticalScrollbar[0].Value;
-                                        break;
-
-                                    case "EndRed":
-                                        v.Y = 682 - VerticalScrollbar[0].Value;
-                                        break;
-                                    case "EndGreen":
-                                        v.Y = 706 - VerticalScrollbar[0].Value;
-                                        break;
-                                    case "EndBlue":
-                                        v.Y = 730 - VerticalScrollbar[0].Value;
-                                        break;
-                                    case "Transparency":
-                                        v.Y = 785 - VerticalScrollbar[0].Value;
-                                        break;
-
-                                    case "IconR":
-                                        v.Y = 834 - VerticalScrollbar[0].Value;
-                                        break;
-                                    case "IconG":
-                                        v.Y = 858 - VerticalScrollbar[0].Value;
-                                        break;
-                                    case "IconB":
-                                        v.Y = 882 - VerticalScrollbar[0].Value;
-                                        break;
+                                    v.Y -= vscroll.DeltaValue;
                                 }
                                 v.Render(Container);
                             }
@@ -634,20 +567,6 @@ namespace CrystalOSAlpha.Applications.Settings
                 }
             }
 
-            if (ImprovedVBE.RequestRedraw == true)
-            {
-                switch (GlobalValues.TaskBarType)
-                {
-                    case "Classic":
-                        ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
-                        break;
-                    case "Nostalgia":
-                        ImprovedVBE.DrawImage(window, x, y, ImprovedVBE.cover);
-                        break;
-                }
-            }
-
-            //ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
             foreach (var button in Colors)
             {
                 if (MouseManager.MouseState == MouseState.Left)

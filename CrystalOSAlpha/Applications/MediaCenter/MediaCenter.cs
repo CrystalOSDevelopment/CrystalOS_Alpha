@@ -118,8 +118,6 @@ namespace CrystalOSAlpha.Applications.MediaCenter
                     }
                 }
             }
-
-            ImprovedVBE.DrawImage(window, x, y, ImprovedVBE.cover);
         }
 
         public void RightClick()

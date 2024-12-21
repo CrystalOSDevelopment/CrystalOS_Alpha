@@ -146,7 +146,7 @@ namespace CrystalOSAlpha.SystemApps
                         ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
                         break;
                     case "Nostalgia":
-                        ImprovedVBE.DrawImage(window, x, y, ImprovedVBE.cover);
+                        ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
                         break;
                 }
             }

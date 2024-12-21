@@ -12,9 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using CSystem.Text.RegularExpressions;
 using Kernel = CrystalOS_Alpha.Kernel;
-using CrystalOSAlpha.SystemApps;
 using System.Linq;
 using System.Text;
 
@@ -386,13 +384,16 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
             }
 
             //Renders the window to the screen
-            if (GlobalValues.TaskBarType == "Nostalgia")
+            if (ImprovedVBE.RequestRedraw == true)
             {
-                Array.Copy(window.RawData, 0, ImprovedVBE.cover.RawData, ImprovedVBE.width * TaskManager.TaskBar.Height, window.RawData.Length);
-            }
-            else
-            {
-                Array.Copy(window.RawData, 0, ImprovedVBE.cover.RawData, 0, window.RawData.Length);
+                if (GlobalValues.TaskBarType == "Nostalgia")
+                {
+                    Array.Copy(window.RawData, 0, ImprovedVBE.cover.RawData, ImprovedVBE.width * TaskManager.TaskBar.Height, window.RawData.Length);
+                }
+                else
+                {
+                    Array.Copy(window.RawData, 0, ImprovedVBE.cover.RawData, 0, window.RawData.Length);
+                }
             }
         }
 

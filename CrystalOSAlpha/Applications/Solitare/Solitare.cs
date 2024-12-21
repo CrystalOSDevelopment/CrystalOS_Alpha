@@ -1,8 +1,6 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
 using CrystalOSAlpha.Graphics;
-using System;
-using System.Collections.Generic;
 
 namespace CrystalOSAlpha.Applications.Solitare
 {

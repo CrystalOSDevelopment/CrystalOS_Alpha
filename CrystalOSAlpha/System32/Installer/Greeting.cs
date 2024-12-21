@@ -1,10 +1,8 @@
 ﻿using Cosmos.System;
 using Cosmos.System.Graphics;
 using CrystalOSAlpha.Applications;
-using CrystalOSAlpha.Applications.CarbonIDE;
 using CrystalOSAlpha.Graphics;
 using CrystalOSAlpha.Graphics.Engine;
-using CrystalOSAlpha.Graphics.Icons;
 using CrystalOSAlpha.Graphics.TaskBar;
 using CrystalOSAlpha.UI_Elements;
 using System;

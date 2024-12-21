@@ -1,5 +1,4 @@
-﻿using Cosmos.Core.Memory;
-using Cosmos.System;
+﻿using Cosmos.System;
 using Cosmos.System.Graphics;
 using CrystalOSAlpha;
 using CrystalOSAlpha.Applications;
@@ -8,7 +7,6 @@ using CrystalOSAlpha.Graphics.Engine;
 using CrystalOSAlpha.Graphics.TaskBar;
 using CrystalOSAlpha.Graphics.Widgets;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Text;
@@ -176,6 +174,11 @@ namespace CrystalOS_Alpha.Graphics.Widgets
             }
 
             return output.ToString();
+        }
+
+        public void Render()
+        {
+            throw new NotImplementedException();
         }
     }
 }

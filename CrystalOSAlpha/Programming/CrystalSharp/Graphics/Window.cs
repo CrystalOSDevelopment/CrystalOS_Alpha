@@ -581,7 +581,7 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.Graphics
                     Array.Copy(window.RawData, 0, ImprovedVBE.cover.RawData, ImprovedVBE.width * y, window.RawData.Length);
                     break;
                 default:
-                    ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
+                    
                     break;
             }
         }
@@ -934,7 +934,6 @@ namespace CrystalOSAlpha.Programming.CrystalSharp.Graphics
                     Array.Copy(window.RawData, 0, ImprovedVBE.cover.RawData, ImprovedVBE.width * y, window.RawData.Length);
                     break;
                 default:
-                    ImprovedVBE.DrawImageAlpha(window, x, y, RenderTo);
                     break;
             }
         }

@@ -201,8 +201,6 @@ namespace CrystalOSAlpha.Applications.CarbonIDE
                     clicked = true;
                 }
             }
-
-            ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
         }
 
         public void RightClick()

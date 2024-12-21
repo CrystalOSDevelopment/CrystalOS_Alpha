@@ -37,7 +37,28 @@ namespace CrystalOSAlpha.Graphics
                     BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, name, 2, 2);
                     return (canvas, back_canvas, window);
                 case "Nostalgia":
+                    #region corners
+                    ImprovedVBE.DrawFilledEllipse(canvas, 10, 10, 10, 10, CurrentColor);
+                    ImprovedVBE.DrawFilledEllipse(canvas, width - 11, 10, 10, 10, CurrentColor);
+                    ImprovedVBE.DrawFilledEllipse(canvas, 10, height - 10, 10, 10, CurrentColor);
+                    ImprovedVBE.DrawFilledEllipse(canvas, width - 11, height - 10, 10, 10, CurrentColor);
 
+                    ImprovedVBE.DrawFilledRectangle(canvas, CurrentColor, 0, 10, width, height - 20, false);
+                    ImprovedVBE.DrawFilledRectangle(canvas, CurrentColor, 5, 0, width - 10, 15, false);
+                    ImprovedVBE.DrawFilledRectangle(canvas, CurrentColor, 5, height - 15, width - 10, 15, false);
+                    #endregion corners
+
+                    canvas = ImprovedVBE.EnableTransparency(canvas, x, y, canvas);
+
+                    ImprovedVBE.DrawGradientLeftToRight(canvas);
+
+                    ImprovedVBE.DrawFilledEllipse(canvas, width - 13, 10, 8, 8, ImprovedVBE.colourToNumber(255, 0, 0));
+                    ImprovedVBE.DrawFilledEllipse(canvas, width - 34, 10, 8, 8, ImprovedVBE.colourToNumber(227, 162, 37));
+
+                    BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.White, name, 2, 2);
+                    return (canvas, back_canvas, window);
+                    
+                default:
                     // Clear the canvas with a light gray background
                     Array.Fill(canvas.RawData, ImprovedVBE.colourToNumber(240, 240, 240));
 
@@ -68,8 +89,6 @@ namespace CrystalOSAlpha.Graphics
                     BitFont.DrawBitFontString(canvas, "ArialCustomCharset16", Color.Black, name, textX, 0);
 
                     return (canvas, back_canvas, window); // Return updated bitmaps
-                default:
-                    return (canvas, back_canvas, window);
             }
         }
     }

@@ -1,11 +1,4 @@
-﻿using Cosmos.System;
-using Cosmos.System.Graphics;
-using CrystalOSAlpha.Graphics;
-using CrystalOSAlpha.Graphics.Engine;
-using CrystalOSAlpha.UI_Elements;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using Cosmos.System.Graphics;
 namespace CrystalOSAlpha.Applications.Artistic_Stuff.ColorView
 {
     class ColorPalette : App
@@ -31,6 +24,12 @@ namespace CrystalOSAlpha.Applications.Artistic_Stuff.ColorView
         {
             //TODO: Needs a comple re-write, since the other one wasn't working at all
         }
+
+        public void Render()
+        {
+            throw new System.NotImplementedException();
+        }
+
         public void RightClick()
         {
 

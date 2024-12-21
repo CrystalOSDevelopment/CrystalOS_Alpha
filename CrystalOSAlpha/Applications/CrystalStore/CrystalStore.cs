@@ -256,21 +256,6 @@ namespace CrystalOSAlpha.Applications.CrystalStore
             {
                 clicked = false;
             }
-            
-            if (ImprovedVBE.RequestRedraw == true)
-            {
-                switch (GlobalValues.TaskBarType)
-                {
-                    case "Classic":
-                        ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
-                        break;
-                    case "Nostalgia":
-                        ImprovedVBE.DrawImage(window, x, y, ImprovedVBE.cover);
-                        break;
-                }
-            }
-
-            //ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
 
             if (AnimationEnabled)
             {

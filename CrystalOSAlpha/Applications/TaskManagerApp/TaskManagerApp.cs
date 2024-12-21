@@ -144,7 +144,6 @@ namespace CrystalOSAlpha.Applications.TaskManagerApp
                     }
                 }
             }
-            ImprovedVBE.DrawImageAlpha(window, x, y, ImprovedVBE.cover);
         }
 
         public void RightClick()
